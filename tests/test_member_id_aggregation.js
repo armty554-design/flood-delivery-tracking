@@ -22,7 +22,7 @@ console.log('  ✔ PASS: Pillar cards indicate statistics are counted as 1 membe
 
 // 4. Check 4-Branch comparison table headers
 assert(template.includes('รหัสสมาชิกทั้งหมด'), 'Table must specify รหัสสมาชิกทั้งหมด');
-assert(template.includes('เข้าส่งได้ (รหัส)'), 'Table must specify เข้าส่งได้ (รหัส)');
+assert(template.includes('สำเร็จ (รหัส)') || template.includes('เข้าส่งได้ (รหัส)'), 'Table must specify สำเร็จ (รหัส) or เข้าส่งได้ (รหัส)');
 assert(template.includes('ยังส่งไม่ได้ (รหัส)'), 'Table must specify ยังส่งไม่ได้ (รหัส)');
 assert(template.includes('รหัสที่มีงานโอน (รอบ)'), 'Table must specify รหัสที่มีงานโอน (รอบ)');
 console.log('  ✔ PASS: Branch matrix table headers reflect unique member counts and transfer rounds');

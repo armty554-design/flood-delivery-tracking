@@ -385,7 +385,7 @@
         <!-- 2. ส่งสำเร็จแล้ว (Delivered & Auto Closed) -->
         <div onclick="setQuickStatusFilter('SUCCESS')" class="cursor-pointer group bg-gradient-to-br from-emerald-500/5 via-white to-white p-4 rounded-2xl border border-emerald-200 hover:border-emerald-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
           <div class="flex items-center justify-between text-emerald-800 text-xs font-bold mb-1">
-            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> 🟢 เข้าส่งได้ (สำเร็จ)</span>
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> 🟢 สำเร็จ</span>
             <span id="kpiSuccessPct" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
           </div>
           <div class="my-1">
@@ -831,7 +831,7 @@
         <div class="bg-white rounded-2xl p-5 border-2 border-emerald-500/30 shadow-sm relative overflow-hidden">
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide flex items-center">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span> 1. เข้าส่งได้ (Accessible)
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span> 1. สำเร็จ (Successful)
             </span>
             <span id="sumCardSuccessPct" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
           </div>
@@ -896,10 +896,10 @@
               <tr>
                 <th class="py-2.5 px-3">สาขา</th>
                 <th class="py-2.5 px-3 text-right">รหัสสมาชิกทั้งหมด</th>
-                <th class="py-2.5 px-3 text-right text-emerald-700">🟢 เข้าส่งได้ (รหัส)</th>
+                <th class="py-2.5 px-3 text-right text-emerald-700">🟢 สำเร็จ (รหัส)</th>
                 <th class="py-2.5 px-3 text-right text-red-700">🔴 ยังส่งไม่ได้ (รหัส)</th>
                 <th class="py-2.5 px-3 text-right text-purple-700">🟣 รหัสที่มีงานโอน (รอบ)</th>
-                <th class="py-2.5 px-3 text-right">% เข้าส่งได้</th>
+                <th class="py-2.5 px-3 text-right">% สำเร็จ</th>
                 <th class="py-2.5 px-3 text-center">ระดับความเสี่ยง</th>
               </tr>
             </thead>
@@ -46628,22 +46628,26 @@
       memberMap.forEach((m, mId) => {
         let isAuto = false;
         let isAccessible = false;
-        let hasTransfer = false;
+        let hadFlood = false;
+        let hadTransfer = false;
+
+        m.attempts.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        const latestAttempt = m.attempts[m.attempts.length - 1];
 
         m.attempts.forEach(a => {
-          const note = a.note || '';
-          const reason = a.reason || '';
+          const note = (a.note || '').toLowerCase();
+          const reason = (a.reason || '').toLowerCase();
           const status = a.status || '';
           const round = a.round || '';
           const transferRaw = a.transferRaw || '';
-          const group = a.deliveryGroup || '';
 
-          const isAutoJob = note.includes('auto ปิด Job 30') || 
-                            reason.includes('auto ปิด Job 30') || 
+          const isAutoJob = note.includes('auto ปิด job 30') || 
+                            reason.includes('auto ปิด job 30') || 
                             transferRaw.includes('auto ปิด Job 30') || 
                             round.includes('auto ปิด Job 30') ||
                             status.includes('auto ปิด Job 30') ||
-                            status.includes('Auto Job 30');
+                            note.includes('งดรับน้ำ') ||
+                            reason.includes('งดรับน้ำ');
 
           if (isAutoJob) {
             isAuto = true;
@@ -46651,28 +46655,53 @@
           }
 
           if (a.isTransferred || round === 'โอนงานสิ้นวัน' || (transferRaw && (transferRaw.includes('ผู้ทำรายการ') || transferRaw.includes('โอนงาน')))) {
-            hasTransfer = true;
+            hadTransfer = true;
           }
 
-          const isFlood = reason.includes('น้ำท่วม') || status === 'รอน้ำลด';
-          const isTransferAttempt = a.isTransferred || round === 'โอนงานสิ้นวัน' || (transferRaw && (transferRaw.includes('ผู้ทำรายการ') || transferRaw.includes('โอนงาน')));
+          if (reason.includes('น้ำท่วม') || status === 'รอน้ำลด') {
+            hadFlood = true;
+          }
 
-          const isDelivered = status === 'ส่งสำเร็จแล้ว' || status === 'ลูกค้าตั้งถัง' || status === 'พบลูกค้า' || status === 'นัดส่งชดเชย' || (!group.includes('ยังส่งไม่ได้') && !status.includes('ยังส่งไม่ได้') && !isFlood && !isTransferAttempt);
-
-          const isNonFloodFail = (group === 'ยังส่งไม่ได้' || status === 'ยังส่งไม่ได้' || reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('เกิดข้อผิดพลาด') || reason.includes('เลื่อนวันที่ส่ง')) && !isFlood && !isTransferAttempt;
-
-          if (isDelivered || isNonFloodFail) {
+          const isDelivered = status === 'ส่งสำเร็จแล้ว' || status === 'ลูกค้าตั้งถัง' || status === 'พบลูกค้า' || a.changedWater > 0;
+          if (isDelivered) {
             isAccessible = true;
           }
         });
 
+        // กฎข้อ 2 และ 3: ถ้าไม่มีสถานะเดิมขึ้นซ้ำแปลว่าสำเร็จ แต่กรณีที่มีรอบเดียวและยังไม่มีสถานะอื่นก็คงสถานะเดิมไว้
+        if (!isAccessible && (hadFlood || hadTransfer)) {
+          if (m.attempts.length > 1) {
+            const latestReason = latestAttempt ? (latestAttempt.reason || '') : '';
+            const latestStatus = latestAttempt ? (latestAttempt.status || '') : '';
+            const latestRound = latestAttempt ? (latestAttempt.round || '') : '';
+            const latestTransRaw = latestAttempt ? (latestAttempt.transferRaw || '') : '';
+
+            const lastIsFlood = latestReason.includes('น้ำท่วม') || latestStatus === 'รอน้ำลด';
+            const lastIsTransfer = (latestAttempt && latestAttempt.isTransferred) || latestRound === 'โอนงานสิ้นวัน' || (latestTransRaw && (latestTransRaw.includes('ผู้ทำรายการ') || latestTransRaw.includes('โอนงาน')));
+
+            if (hadFlood && !hadTransfer && !lastIsFlood) {
+              isAccessible = true;
+            } else if (hadTransfer && !hadFlood && !lastIsTransfer) {
+              isAccessible = true;
+            } else if (hadFlood && hadTransfer && !lastIsFlood && !lastIsTransfer) {
+              isAccessible = true;
+            }
+          }
+          // มีรอบเดียวและยังไม่มีสถานะอื่น ➔ คงสถานะเดิมไว้
+        }
+
         memberStatusMap.set(mId, {
           isAuto,
           isAccessible,
-          hasTransfer,
+          hadTransfer,
+          hasTransfer: hadTransfer,
+          hadFlood,
+          hasFlood: hadFlood,
           isPending: !isAccessible
         });
       });
+
+      window.globalMemberStatusMap = memberStatusMap;
 
       filteredItems = allItems.filter(item => {
         // 1. Date filter
@@ -46700,7 +46729,7 @@
           if (statusVal === 'SUCCESS' && !memStatus.isAccessible) return false;
           if (statusVal === 'AUTO_JOB30' && !memStatus.isAuto) return false;
           if (statusVal === 'FAIL' && !memStatus.isPending) return false;
-          if (statusVal === 'TRANSFER' && !memStatus.hasTransfer) return false;
+          if (statusVal === 'TRANSFER' && !memStatus.hadTransfer) return false;
         }
 
         // 5. Search filter
@@ -48187,19 +48216,19 @@
             labels: ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'],
             datasets: [
               {
-                label: '🟢 ส่งสำเร็จแล้ว',
+                label: '🟢 สำเร็จ (ราย)',
                 data: [0, 0, 0, 0],
                 backgroundColor: '#10B981',
                 borderRadius: 6
               },
               {
-                label: '🔴 ส่งไม่สำเร็จ / ติดน้ำท่วม',
+                label: '🔴 ยังไม่สำเร็จ (น้ำท่วม/อื่นๆ)',
                 data: [0, 0, 0, 0],
                 backgroundColor: '#EF4444',
                 borderRadius: 6
               },
               {
-                label: '🟣 โอนงานที่ส่ง',
+                label: '🟣 โอนงานค้างส่ง (ราย)',
                 data: [0, 0, 0, 0],
                 backgroundColor: '#A855F7',
                 borderRadius: 6
@@ -48354,26 +48383,28 @@
         };
 
         const targetItems = filteredItems.length > 0 ? filteredItems : allItems;
-        targetItems.forEach(i => {
-          const b = i.branch;
-          if (!branchStats[b]) return;
-          const isTransfer = i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน')));
-          if (isTransfer) branchStats[b].transfer++;
-
-          const isFail = i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || i.status === 'รอน้ำลด' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง') || i.reason.includes('น้ำท่วม')));
-          if (isFail) branchStats[b].fail++;
-          else branchStats[b].succ++;
+        const branches = ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'];
+        branches.forEach(b => {
+          const bItems = targetItems.filter(i => i.branch === b);
+          if (bItems.length > 0) {
+            const agg = getMemberAggregation(bItems);
+            branchStats[b].succ = agg.accessibleMembers;
+            branchStats[b].fail = agg.pendingMembers;
+            branchStats[b].transfer = agg.transferMembers; // โอนงานค้างส่ง (หักยอดที่จัดส่งสำเร็จออกไปแล้วตามข้อ 2 และ 3)
+          }
         });
 
-        const branches = ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'];
         if (chartBranchCompareInstance.data && Array.isArray(chartBranchCompareInstance.data.datasets)) {
           if (chartBranchCompareInstance.data.datasets[0]) {
+            chartBranchCompareInstance.data.datasets[0].label = '🟢 สำเร็จ (ราย)';
             chartBranchCompareInstance.data.datasets[0].data = branches.map(b => branchStats[b].succ);
           }
           if (chartBranchCompareInstance.data.datasets[1]) {
+            chartBranchCompareInstance.data.datasets[1].label = '🔴 ยังไม่สำเร็จ (น้ำท่วม/อื่นๆ)';
             chartBranchCompareInstance.data.datasets[1].data = branches.map(b => branchStats[b].fail);
           }
           if (chartBranchCompareInstance.data.datasets[2]) {
+            chartBranchCompareInstance.data.datasets[2].label = '🟣 โอนงานค้างส่ง (ราย)';
             chartBranchCompareInstance.data.datasets[2].data = branches.map(b => branchStats[b].transfer);
           }
         }
@@ -49491,17 +49522,22 @@
         if (selectedTrucks.size > 0 && !selectedTrucks.has(item.truck)) return false;
         if (cType !== 'ALL' && item.customerType !== cType) return false;
         if (status !== 'ALL') {
+          const mId = item.memberId || item.id;
+          const memStatus = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || null;
+          const isAutoJob30 = (item.note || '').includes('auto ปิด Job 30') || (item.reason || '').includes('auto ปิด Job 30') || (item.transferRaw || '').includes('auto ปิด Job 30');
           const isFail = item.deliveryGroup === 'ยังส่งไม่ได้' || item.status === 'ยังส่งไม่ได้' || item.status === 'รอน้ำลด' || (item.reason && (item.reason.includes('ไม่สามารถเข้าส่งได้') || item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง')));
-          if (status === 'FAIL') {
-            if (!isFail) return false;
+          const isMemberSuccess = isAutoJob30 || (memStatus ? memStatus.isAccessible : (!isFail || (item.changedWater > 0)));
+
+          if (status === 'SUCCESS') {
+            if (!isMemberSuccess) return false;
+          } else if (status === 'FAIL') {
+            if (isMemberSuccess) return false;
           } else if (status === 'FAIL_FLOOD') {
             const isFlood = item.reason && (item.reason.includes('น้ำท่วมสูงในพื้นที่') || (item.reason.includes('ไม่สามารถเข้าส่งได้') && item.reason.includes('น้ำท่วม')));
             if (!isFlood) return false;
           } else if (status === 'FAIL_ERROR') {
             const isError = item.reason && (item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง'));
             if (!isError) return false;
-          } else if (status === 'SUCCESS') {
-            if (isFail) return false;
           } else if ((item.status || '') !== status) {
             return false;
           }
@@ -49576,17 +49612,34 @@
 
         const isErrorPostpone = item.reason && (item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง'));
 
-        let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-700">🔴 ยังส่งไม่ได้</span>';
+        const mId = item.memberId || item.id;
+        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || null;
+
+        let isMemberSuccess = false;
+        if (isAutoJob30) {
+          isMemberSuccess = true;
+        } else if (memEval) {
+          isMemberSuccess = memEval.isAccessible;
+        } else {
+          const isDelivered = item.status === 'ส่งสำเร็จแล้ว' || item.status === 'ลูกค้าตั้งถัง' || item.status === 'พบลูกค้า' || (item.changedWater > 0);
+          isMemberSuccess = isDelivered || !isFail;
+        }
+
+        let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-700">🔴 ยังไม่สำเร็จ</span>';
         if (isAutoJob30) {
           statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 text-teal-800 border border-teal-200"><i data-lucide="zap" class="w-3 h-3 mr-1 text-teal-600"></i>⚡ Auto ปิด Job 30 (สำเร็จ)</span>';
+        } else if (isMemberSuccess) {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300"><i data-lucide="check-circle" class="w-3 h-3 mr-1 text-emerald-600"></i>🟢 สำเร็จ</span>';
         } else if (item.status === 'นัดส่งชดเชย') {
           statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">🟡 นัดส่งชดเชย</span>';
         } else if (isErrorPostpone && (!item.status || item.status === 'ยังส่งไม่ได้' || item.status === 'รอน้ำลด')) {
-          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">⚠️ เกิดข้อผิดพลาด (เลื่อนส่ง)</span>';
-        } else if (!isFail) {
-          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-700">🟢 เข้าส่งได้</span>';
+          statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">⚠️ เลื่อนส่ง</span>';
         } else if (item.status === 'ลูกค้ายกเลิก') {
           statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">⚪ ขอยกเลิก</span>';
+        } else if (memEval && memEval.hadFlood) {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200"><i data-lucide="alert-circle" class="w-3 h-3 mr-1 text-rose-600"></i>🔴 ยังไม่สำเร็จ (น้ำท่วม)</span>';
+        } else if (memEval && memEval.hadTransfer) {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-200"><i data-lucide="clock" class="w-3 h-3 mr-1 text-purple-600"></i>🔄 โอนงานค้างส่ง</span>';
         }
 
         const cTypeBadge = item.customerType === 'B2B' 
@@ -49596,12 +49649,14 @@
         let reasonHtml = '';
         if (isAutoJob30) {
           reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 text-teal-900 border border-teal-200 truncate block" title="' + (item.note || 'auto ปิด Job 30') + '"><i data-lucide="zap" class="w-3 h-3 mr-1 text-teal-600 shrink-0"></i>' + (item.note || 'auto ปิด Job 30') + '</span>';
+        } else if (isMemberSuccess && isFail) {
+          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 truncate block" title="' + item.reason + ' (ส่งสำเร็จในรอบถัดไป)"><i data-lucide="check-check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>สำเร็จแล้ว (' + item.reason + ')</span>';
         } else if (isErrorPostpone) {
           reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-900 border border-amber-200 truncate block" title="' + item.reason + '"><i data-lucide="alert-triangle" class="w-3 h-3 mr-1 text-amber-600 shrink-0"></i>' + item.reason + '</span>';
         } else if (isFail) {
           reasonHtml = '<span class="text-red-600 font-semibold text-xs truncate block" title="' + item.reason + '">🔴 ' + item.reason + '</span>';
         } else {
-          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200" title="' + item.reason + '"><i data-lucide="check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>เข้าส่งได้: ' + (item.reason || 'ปกติ') + '</span>';
+          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200" title="' + item.reason + '"><i data-lucide="check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>สำเร็จ: ' + (item.reason || 'ปกติ') + '</span>';
         }
 
         const isTransfer = item.isTransferred || item.round === 'โอนงานสิ้นวัน' || (item.transferRaw && (item.transferRaw.includes('ผู้ทำรายการ') || item.transferRaw.includes('โอนงาน')));
@@ -49849,19 +49904,22 @@
       }
 
       // Check overall evaluation status according to business rules
-      const hasAutoJob30 = events.some(e => 
+      const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(memberId)) || null;
+
+      const hasAutoJob30 = (memEval && memEval.isAuto) || events.some(e => 
         (e.note && e.note.includes('auto ปิด Job 30')) ||
         (e.reason && e.reason.includes('auto ปิด Job 30')) ||
         (e.transferRaw && e.transferRaw.includes('auto ปิด Job 30'))
       );
 
-      const hasSuccess = hasAutoJob30 || !!r || events.some(e => {
+      const hasSuccess = hasAutoJob30 || (memEval ? memEval.isAccessible : (!!r || events.some(e => {
         const isF = (e.status === 'ยังส่งไม่ได้' || e.status === 'รอน้ำลด') || 
                     (e.reason && (e.reason.includes('ไม่สามารถเข้าส่งได้') || e.reason.includes('เกิดข้อผิดพลาด') || e.reason.includes('เลื่อนวันที่ส่ง')));
         return !isF && (e.status === 'เข้าส่งได้' || (e.reason && (e.reason.includes('พบลูกค้า') || e.reason.includes('ลูกค้าตั้งถัง'))));
-      });
+      })));
 
-      const isTransferOnly = events.some(e => e.round === 'โอนงานสิ้นวัน' || (e.transferRaw && e.transferRaw.includes('โอนงาน')));
+      const isFloodFail = !hasSuccess && ((memEval && memEval.hadFlood) || events.some(e => (e.reason && e.reason.includes('น้ำท่วม')) || e.status === 'รอน้ำลด'));
+      const isTransferOnly = !hasSuccess && ((memEval && memEval.hadTransfer) || events.some(e => e.round === 'โอนงานสิ้นวัน' || (e.transferRaw && e.transferRaw.includes('โอนงาน'))));
 
       // Update Evaluation Banner
       const evalBanner = document.getElementById('modalEvaluationBanner');
@@ -49874,35 +49932,43 @@
 
       if (hasAutoJob30) {
         if (evalBanner) evalBanner.className = 'p-3 rounded-xl border flex items-center justify-between bg-teal-50 border-teal-200 text-teal-950 shadow-2xs';
-        if (evalTitle) evalTitle.innerHTML = '⚡ สถานะประเมิน: สำเร็จสมบูรณ์ (Auto ปิด Job 30)';
+        if (evalTitle) evalTitle.innerHTML = '⚡ สถานะประเมิน: สำเร็จ (Auto ปิด Job 30)';
         if (evalSub) evalSub.textContent = 'ระบบ MDFSS ขึ้นหมายเหตุ auto ปิด Job 30 ถือว่าปิดงานสำเร็จสมบูรณ์ตามเกณฑ์';
         if (headerStatusBadge) {
           headerStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/40';
-          headerStatusBadge.textContent = '⚡ Auto ปิด Job 30';
+          headerStatusBadge.textContent = '⚡ สำเร็จ (Auto Job 30)';
         }
       } else if (hasSuccess) {
         if (evalBanner) evalBanner.className = 'p-3 rounded-xl border flex items-center justify-between bg-emerald-50 border-emerald-200 text-emerald-950 shadow-2xs';
-        if (evalTitle) evalTitle.innerHTML = '🟢 สถานะประเมิน: เข้าส่งได้ (สำเร็จตามเงื่อนไข)';
-        if (evalSub) evalSub.textContent = 'พบประวัติส่งมอบน้ำดื่มเรียบร้อยแล้ว (พบลูกค้า / ลูกค้าตั้งถัง)';
+        if (evalTitle) evalTitle.innerHTML = '🟢 สถานะประเมิน: สำเร็จ (จัดส่งเรียบร้อย)';
+        if (evalSub) evalSub.textContent = 'จัดส่งมอบน้ำดื่มเรียบร้อยแล้ว หรือไม่มีสถานะติดขัดซ้ำในรอบถัดไปตามเกณฑ์';
         if (headerStatusBadge) {
           headerStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
-          headerStatusBadge.textContent = '🟢 เข้าส่งได้ (สำเร็จ)';
+          headerStatusBadge.textContent = '🟢 สำเร็จ';
         }
-      } else if (isFail) {
+      } else if (isFloodFail) {
         if (evalBanner) evalBanner.className = 'p-3 rounded-xl border flex items-center justify-between bg-rose-50 border-rose-200 text-rose-950 shadow-2xs';
-        if (evalTitle) evalTitle.innerHTML = '🔴 สถานะประเมิน: ยังส่งไม่ได้ (ติดน้ำท่วมสูงในพื้นที่)';
+        if (evalTitle) evalTitle.innerHTML = '🔴 สถานะประเมิน: ยังไม่สำเร็จ (ติดน้ำท่วมสูงในพื้นที่)';
         if (evalSub) evalSub.textContent = 'อยู่ในกลุ่มประสานงานช่วยเหลือน้ำท่วม รอระดับน้ำลดเพื่อเข้าส่งซ้ำ';
         if (headerStatusBadge) {
           headerStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40';
-          headerStatusBadge.textContent = '🔴 ยังส่งไม่ได้ (รอน้ำลด)';
+          headerStatusBadge.textContent = '🔴 ยังไม่สำเร็จ (รอน้ำลด)';
         }
       } else if (isTransferOnly) {
         if (evalBanner) evalBanner.className = 'p-3 rounded-xl border flex items-center justify-between bg-purple-50 border-purple-200 text-purple-950 shadow-2xs';
-        if (evalTitle) evalTitle.innerHTML = '🟣 สถานะประเมิน: มีประวัติโอนงาน (รอดำเนินการ)';
+        if (evalTitle) evalTitle.innerHTML = '🟣 สถานะประเมิน: โอนงานค้างส่ง (รอดำเนินการ)';
         if (evalSub) evalSub.textContent = 'โอนงานสิ้นวันและยังไม่มีรอบสำเร็จถัดไป ต้องติดตามจัดส่งต่อ';
         if (headerStatusBadge) {
           headerStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40';
-          headerStatusBadge.textContent = '🟣 งานโอนสิ้นวัน';
+          headerStatusBadge.textContent = '🟣 โอนงานค้างส่ง';
+        }
+      } else {
+        if (evalBanner) evalBanner.className = 'p-3 rounded-xl border flex items-center justify-between bg-slate-50 border-slate-200 text-slate-950 shadow-2xs';
+        if (evalTitle) evalTitle.innerHTML = '🔴 สถานะประเมิน: ยังไม่สำเร็จ';
+        if (evalSub) evalSub.textContent = 'ยังไม่สามารถจัดส่งได้ตามรอบ';
+        if (headerStatusBadge) {
+          headerStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-500/20 text-slate-300 border border-slate-500/40';
+          headerStatusBadge.textContent = '🔴 ยังไม่สำเร็จ';
         }
       }
 
