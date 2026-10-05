@@ -47260,12 +47260,55 @@
           }
         });
 
+        // กฎธุรกิจ: ถ้าข้อ 2 (น้ำท่วม) และ 3 (โอนงาน) ไม่มีสถานะเดิมขึ้นซ้ำแปลว่าสำเร็จ
+        // แต่กรณีที่มีรอบเดียวและยังไม่มีสถานะอื่นก็คงสถานะเดิมไว้ ยกเว้น Auto job 30 งดรับน้ำถือว่าสำเร็จ
+        let hadFlood = false;
+        let hadTransfer = false;
+
+        m.attempts.forEach((a, idx) => {
+          const reason = a.reason || '';
+          const status = a.status || '';
+          const round = a.round || '';
+          const transferRaw = a.transferRaw || '';
+
+          if (reason.includes('น้ำท่วม') || status === 'รอน้ำลด') {
+            hadFlood = true;
+          }
+          if (a.isTransferred || round === 'โอนงานสิ้นวัน' || (transferRaw && (transferRaw.includes('ผู้ทำรายการ') || transferRaw.includes('โอนงาน')))) {
+            hadTransfer = true;
+          }
+        });
+
+        if (!isAccessible && (hadFlood || hadTransfer)) {
+          if (m.attempts.length > 1) {
+            const latestReason = latestAttempt ? (latestAttempt.reason || '') : '';
+            const latestStatus = latestAttempt ? (latestAttempt.status || '') : '';
+            const latestRound = latestAttempt ? (latestAttempt.round || '') : '';
+            const latestTransRaw = latestAttempt ? (latestAttempt.transferRaw || '') : '';
+
+            const lastIsFlood = latestReason.includes('น้ำท่วม') || latestStatus === 'รอน้ำลด';
+            const lastIsTransfer = (latestAttempt && latestAttempt.isTransferred) || latestRound === 'โอนงานสิ้นวัน' || (latestTransRaw && (latestTransRaw.includes('ผู้ทำรายการ') || latestTransRaw.includes('โอนงาน')));
+
+            if (hadFlood && !hadTransfer && !lastIsFlood) {
+              isAccessible = true;
+              accessType = 'FLOOD_RESOLVED_NO_REPEAT';
+            } else if (hadTransfer && !hadFlood && !lastIsTransfer) {
+              isAccessible = true;
+              accessType = 'TRANSFER_RESOLVED_NO_REPEAT';
+            } else if (hadFlood && hadTransfer && !lastIsFlood && !lastIsTransfer) {
+              isAccessible = true;
+              accessType = 'MULTI_RESOLVED_NO_REPEAT';
+            }
+          }
+          // มีรอบเดียวและยังไม่มีสถานะอื่น ➔ คงสถานะเดิมไว้ (isAccessible = false)
+        }
+
         if (hasTransfer) {
           totalTransferHistoryMembers++;
           totalTransferRounds += tRounds;
           if (tRounds > 1) multiTransferMembers++;
 
-          // กฎธุรกิจใหม่: กรณีโอนงานสิ้นวันแล้วอีกวันนึงส่งได้ ถือว่าสำเร็จแล้วก็ตัดจากยอดโอนงานออกไป
+          // กฎธุรกิจ: กรณีโอนงานสิ้นวันแล้วอีกวันนึงส่งได้/ไม่มีสถานะเดิมซ้ำ ถือว่าสำเร็จแล้วก็ตัดจากยอดโอนงานออกไป
           if (!isAccessible) {
             transferMembers++;
           } else {

@@ -27,7 +27,7 @@
             รายงานวิเคราะห์สถานะจัดส่งน้ำ: น้ำท่วม &amp; โอนงานสิ้นวัน
           </h1>
           <p class="text-[var(--muted-foreground)] text-xs sm:text-sm mt-1">
-            ช่วงวันที่ 26 ก.ย. – 3 ต.ค. 2569 | กฎธุรกิจ: โอนงานสิ้นวันแล้วอีกวันนึงส่งได้ ถือว่าสำเร็จและตัดออกจากยอดโอนงานออกไป
+            ช่วงวันที่ 26 ก.ย. – 3 ต.ค. 2569 | กฎธุรกิจ: ยอดโอนถ้าในรอบถัดไปหรือวันที่มากกว่า ที่ไม่ใช่โอนงานสิ้นวันหรือน้ำท่วม ถือว่าสำเร็จและตัดยอดออก
           </p>
         </div>
         <div class="flex items-center gap-3">
@@ -78,8 +78,8 @@
             <span>🔄 โอนงานค้างส่ง</span>
             <span class="px-2 py-0.5 rounded bg-purple-500/10 text-purple-700 font-bold text-xs">ตัดยอดส่งได้แล้ว</span>
           </div>
-          <div class="text-3xl font-extrabold text-purple-600 tracking-tight">683 <span class="text-xs font-normal text-[var(--muted-foreground)]">ราย</span></div>
-          <p class="text-xs text-[var(--muted-foreground)] mt-1">ยอดโอนงานที่ยังค้างส่งอยู่จริง ณ ปัจจุบัน</p>
+          <div class="text-3xl font-extrabold text-purple-600 tracking-tight">345 <span class="text-xs font-normal text-[var(--muted-foreground)]">ราย</span></div>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">ยอดโอนงานที่ยังค้างส่งอยู่จริง (รอบถัดไปไม่ใช่โอน/น้ำท่วมตัดออก)</p>
         </div>
 
         <div class="mt-4 pt-3 border-t border-purple-500/20 text-xs text-[var(--muted-foreground)] space-y-1">
@@ -88,12 +88,12 @@
             <span class="font-semibold text-gray-700">3,147 ราย</span>
           </div>
           <div class="flex justify-between text-emerald-600">
-            <span>อีกวันส่งได้ (ตัดออกไปสำเร็จ):</span>
-            <span class="font-bold">-2,464 ราย (78.3%)</span>
+            <span>รอบถัดไปเข้าส่งได้ (ตัดออกไปสำเร็จ):</span>
+            <span class="font-bold">-2,802 ราย (89.0%)</span>
           </div>
           <div class="flex justify-between text-purple-700 font-bold">
-            <span>คงเหลือโอนงานค้างส่ง:</span>
-            <span>683 ราย (21.7%)</span>
+            <span>คงเหลือโอนงานค้างส่งจริง:</span>
+            <span>345 ราย (11.0%)</span>
           </div>
         </div>
       </div>
@@ -104,16 +104,16 @@
         <div>
           <div class="flex items-center justify-between text-xs font-medium text-emerald-700 mb-1">
             <span>✅ ได้รับน้ำสำเร็จแล้ว (3 ต.ค.)</span>
-            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 font-bold text-xs">ส่งสำเร็จ 60.3%</span>
+            <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 font-bold text-xs">ส่งสำเร็จ 67.1%</span>
           </div>
-          <div class="text-3xl font-extrabold text-emerald-600 tracking-tight">2,991 <span class="text-xs font-normal text-[var(--muted-foreground)]">ราย</span></div>
-          <p class="text-xs text-[var(--muted-foreground)] mt-1">ลูกค้าตั้งถัง / พบลูกค้า / Col H &gt; 0</p>
+          <div class="text-3xl font-extrabold text-emerald-600 tracking-tight">3,329 <span class="text-xs font-normal text-[var(--muted-foreground)]">ราย</span></div>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">รอบถัดไปไม่ใช่โอน/น้ำท่วม + ลูกค้าตั้งถัง/พบลูกค้า/Col H &gt; 0</p>
         </div>
 
         <div class="mt-4 pt-3 border-t border-emerald-500/20 text-xs text-[var(--muted-foreground)] space-y-1">
           <div class="flex justify-between">
-            <span class="text-purple-700 font-semibold">โอนงานแล้วอีกวันส่งได้:</span>
-            <span class="font-bold text-emerald-600">+2,464 ราย</span>
+            <span class="text-purple-700 font-semibold">โอนงานแล้วรอบถัดไปส่งได้:</span>
+            <span class="font-bold text-emerald-600">+2,802 ราย</span>
           </div>
           <div class="flex justify-between">
             <span class="text-rose-700 font-semibold">น้ำท่วมแล้วส่งได้:</span>
@@ -133,29 +133,29 @@
             <span>⚠️ ยังไม่ได้รับน้ำ (3 ต.ค.)</span>
             <span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 font-bold text-xs">ติดตามเร่งด่วน</span>
           </div>
-          <div class="text-3xl font-extrabold text-amber-600 tracking-tight">1,969 <span class="text-xs font-normal text-[var(--muted-foreground)]">ราย</span></div>
-          <p class="text-xs text-[var(--muted-foreground)] mt-1">สมาชิกที่ยังรอรับน้ำ (39.7% ของกลุ่มปัญหา)</p>
+          <div class="text-3xl font-extrabold text-amber-600 tracking-tight">1,631 <span class="text-xs font-normal text-[var(--muted-foreground)]">ราย</span></div>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">สมาชิกที่ยังรอรับน้ำ (32.9% ของกลุ่มปัญหา)</p>
         </div>
 
         <div class="mt-4 pt-3 border-t border-amber-500/20 text-xs text-[var(--muted-foreground)] space-y-1">
           <div class="flex justify-between">
-            <span class="text-rose-600">ยังติดน้ำท่วมสูง:</span>
-            <span class="font-bold text-rose-600">1,608 ราย (81.7%)</span>
+            <span class="text-rose-600 font-bold">ยังติดน้ำท่วมสูง:</span>
+            <span class="font-bold text-rose-600">1,608 ราย (98.6%)</span>
           </div>
           <div class="flex justify-between">
-            <span>ไม่พบถังเปล่าเปลี่ยน:</span>
-            <span class="font-semibold text-amber-600">267 ราย</span>
+            <span class="text-purple-700 font-semibold">ค้างสถานะโอนงานสิ้นวัน:</span>
+            <span class="font-semibold text-purple-700">11 ราย</span>
           </div>
           <div class="flex justify-between">
             <span>เหตุผลอื่นๆ:</span>
-            <span class="font-semibold text-gray-500">94 ราย</span>
+            <span class="font-semibold text-gray-500">12 ราย</span>
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- Executive Understanding Flowchart (ให้คนไม่รู้เรื่องดู flow นี้แล้วเข้าใจใน 10 วินาที) -->
+    <!-- Executive Understanding Flowchart -->
     <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6 shadow-sm">
       <div class="flex items-center justify-between mb-4">
         <div>
@@ -163,7 +163,7 @@
             <span>💡</span> แผนภาพการตัดยอดโอนงานสู่ความสำเร็จ (Transfer Deduction &amp; Resolution Flow)
           </h2>
           <p class="text-xs text-[var(--muted-foreground)]">
-            กฎการตัดยอด: สมาชิกที่โอนงานแล้วอีกวันส่งสำเร็จ (2,464 ราย) จะถูกตัดออกจากยอดโอนงาน ย้ายไปเป็นส่งสำเร็จทันที!
+            กฎการตัดยอด: สมาชิกที่โอนงานแล้วในรอบถัดไป/วันที่มากกว่า ที่ไม่ใช่โอนงานสิ้นวันและไม่ใช่น้ำท่วม (2,802 ราย) จะถูกตัดออกจากยอดโอนงาน ย้ายไปเป็นส่งสำเร็จทันที!
           </p>
         </div>
       </div>
@@ -193,12 +193,12 @@
         <!-- Arrow Divider Desktop -->
         <div class="hidden md:flex flex-col items-center justify-center p-2 text-center">
           <div class="text-xs font-semibold text-emerald-700 bg-emerald-500/10 px-3 py-1 rounded-full mb-2">
-            อีกวันส่งได้ ➔ ตัดยอดโอนงาน
+            รอบถัดไปไม่ใช่โอน/น้ำท่วม
           </div>
           <svg class="w-8 h-8 text-emerald-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
-          <span class="text-xs text-emerald-600 font-bold mt-2">ตัดออก 2,464 ราย ไปเป็นสำเร็จ</span>
+          <span class="text-xs text-emerald-600 font-bold mt-2">ตัดออก 2,802 ราย (89.0%) ไปเป็นสำเร็จ</span>
         </div>
 
         <!-- Step 2: ปลายทางผลลัพธ์ -->
@@ -211,23 +211,23 @@
             <div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-800">
               <div class="flex justify-between text-xs font-bold">
                 <span>✅ ได้รับน้ำสำเร็จแล้ว</span>
-                <span>2,991 ราย (60.3%)</span>
+                <span>3,329 ราย (67.1%)</span>
               </div>
-              <p class="text-xs text-emerald-700 mt-0.5">รวมโอนแล้วส่งได้ 2,464 + น้ำท่วมส่งได้ 843</p>
+              <p class="text-xs text-emerald-700 mt-0.5">รวมโอนแล้วรอบถัดไปส่งได้ 2,802 + น้ำท่วมส่งได้ 843</p>
             </div>
             <div class="p-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-800">
               <div class="flex justify-between text-xs font-bold">
                 <span>🔄 โอนงานค้างส่งจริง</span>
-                <span>683 ราย (21.7%)</span>
+                <span>345 ราย (11.0%)</span>
               </div>
-              <p class="text-xs text-purple-700 mt-0.5">ยอดที่ตัดส่งสำเร็จ 2,464 รายออกไปแล้ว</p>
+              <p class="text-xs text-purple-700 mt-0.5">ยอดที่ตัดส่งสำเร็จ 2,802 รายออกไปแล้ว (ติดน้ำท่วม 334, รอส่ง 11)</p>
             </div>
             <div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-800">
               <div class="flex justify-between text-xs font-bold">
                 <span>⚠️ ยังไม่ได้รับน้ำรวม</span>
-                <span>1,969 ราย (39.7%)</span>
+                <span>1,631 ราย (32.9%)</span>
               </div>
-              <p class="text-xs text-amber-700 mt-0.5">ติดน้ำท่วม 1,608 ราย + ถังเปล่า 267 ราย</p>
+              <p class="text-xs text-amber-700 mt-0.5">ส่วนใหญ่ 1,608 รายยังติดปัญหาน้ำท่วมสูง</p>
             </div>
           </div>
         </div>
@@ -259,44 +259,44 @@
               <td class="py-3 px-3 font-bold text-[var(--foreground)]">สาขารามอินทรา</td>
               <td class="py-3 px-3 text-right font-semibold">3,372 ราย</td>
               <td class="py-3 px-3 text-right text-rose-600">1,941 <span class="text-xs text-[var(--muted-foreground)]">(683 / 1,258)</span></td>
-              <td class="py-3 px-3 text-right text-purple-600">2,139 <span class="text-xs text-[var(--muted-foreground)]">(-1,589 / 550)</span></td>
-              <td class="py-3 px-3 text-right font-bold text-emerald-600">1,956 ราย</td>
-              <td class="py-3 px-3 text-right font-bold text-amber-600">1,416 ราย</td>
+              <td class="py-3 px-3 text-right text-purple-600">2,139 <span class="text-xs text-[var(--muted-foreground)]">(-1,798 / 341)</span></td>
+              <td class="py-3 px-3 text-right font-bold text-emerald-600">2,165 ราย</td>
+              <td class="py-3 px-3 text-right font-bold text-amber-600">1,207 ราย</td>
               <td class="py-3 px-3 text-center">
-                <span class="inline-block px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold text-xs">58.0%</span>
+                <span class="inline-block px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-bold text-xs">64.2%</span>
               </td>
             </tr>
             <tr class="hover:bg-gray-500/[0.02]">
               <td class="py-3 px-3 font-bold text-[var(--foreground)]">สาขากรุงเทพกรีฑา</td>
               <td class="py-3 px-3 text-right font-semibold">657 ราย</td>
               <td class="py-3 px-3 text-right text-rose-600">582 <span class="text-xs text-[var(--muted-foreground)]">(159 / 423)</span></td>
-              <td class="py-3 px-3 text-right text-purple-600">78 <span class="text-xs text-[var(--muted-foreground)]">(-73 / 5)</span></td>
-              <td class="py-3 px-3 text-right font-bold text-emerald-600">232 ราย</td>
-              <td class="py-3 px-3 text-right font-bold text-amber-600">425 ราย</td>
+              <td class="py-3 px-3 text-right text-purple-600">78 <span class="text-xs text-[var(--muted-foreground)]">(-75 / 3)</span></td>
+              <td class="py-3 px-3 text-right font-bold text-emerald-600">234 ราย</td>
+              <td class="py-3 px-3 text-right font-bold text-amber-600">423 ราย</td>
               <td class="py-3 px-3 text-center">
-                <span class="inline-block px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-bold text-xs">35.3%</span>
+                <span class="inline-block px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-bold text-xs">35.6%</span>
               </td>
             </tr>
             <tr class="hover:bg-gray-500/[0.02]">
               <td class="py-3 px-3 font-bold text-[var(--foreground)]">สาขาพระราม 3</td>
               <td class="py-3 px-3 text-right font-semibold">774 ราย</td>
               <td class="py-3 px-3 text-right text-rose-600">1 <span class="text-xs text-[var(--muted-foreground)]">(1 / 0)</span></td>
-              <td class="py-3 px-3 text-right text-purple-600">773 <span class="text-xs text-[var(--muted-foreground)]">(-665 / 108)</span></td>
-              <td class="py-3 px-3 text-right font-bold text-emerald-600">666 ราย</td>
-              <td class="py-3 px-3 text-right font-bold text-amber-600">108 ราย</td>
+              <td class="py-3 px-3 text-right text-purple-600">773 <span class="text-xs text-[var(--muted-foreground)]">(-772 / 1)</span></td>
+              <td class="py-3 px-3 text-right font-bold text-emerald-600">773 ราย</td>
+              <td class="py-3 px-3 text-right font-bold text-amber-600">1 ราย</td>
               <td class="py-3 px-3 text-center">
-                <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-xs">86.0%</span>
+                <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-xs">99.9%</span>
               </td>
             </tr>
             <tr class="hover:bg-gray-500/[0.02]">
               <td class="py-3 px-3 font-bold text-[var(--foreground)]">สาขาสุขุมวิท 50</td>
               <td class="py-3 px-3 text-right font-semibold">157 ราย</td>
               <td class="py-3 px-3 text-right text-rose-600">0 <span class="text-xs text-[var(--muted-foreground)]">(0 / 0)</span></td>
-              <td class="py-3 px-3 text-right text-purple-600">157 <span class="text-xs text-[var(--muted-foreground)]">(-137 / 20)</span></td>
-              <td class="py-3 px-3 text-right font-bold text-emerald-600">137 ราย</td>
-              <td class="py-3 px-3 text-right font-bold text-amber-600">20 ราย</td>
+              <td class="py-3 px-3 text-right text-purple-600">157 <span class="text-xs text-[var(--muted-foreground)]">(-157 / 0)</span></td>
+              <td class="py-3 px-3 text-right font-bold text-emerald-600">157 ราย</td>
+              <td class="py-3 px-3 text-right font-bold text-amber-600">0 ราย</td>
               <td class="py-3 px-3 text-center">
-                <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-xs">87.3%</span>
+                <span class="inline-block px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-bold text-xs">100.0%</span>
               </td>
             </tr>
           </tbody>
@@ -305,17 +305,17 @@
               <td class="py-3 px-3">รวม 4 สาขา</td>
               <td class="py-3 px-3 text-right text-blue-600 font-extrabold">4,960 ราย</td>
               <td class="py-3 px-3 text-right text-rose-600">2,524 ราย</td>
-              <td class="py-3 px-3 text-right text-purple-600">3,147 (-2,464 / 683)</td>
-              <td class="py-3 px-3 text-right text-emerald-600 font-extrabold">2,991 ราย</td>
-              <td class="py-3 px-3 text-right text-amber-600 font-extrabold">1,969 ราย</td>
-              <td class="py-3 px-3 text-center text-emerald-600 font-extrabold">60.3%</td>
+              <td class="py-3 px-3 text-right text-purple-600">3,147 (-2,802 / 345)</td>
+              <td class="py-3 px-3 text-right text-emerald-600 font-extrabold">3,329 ราย</td>
+              <td class="py-3 px-3 text-right text-amber-600 font-extrabold">1,631 ราย</td>
+              <td class="py-3 px-3 text-center text-emerald-600 font-extrabold">67.1%</td>
             </tr>
           </tfoot>
         </table>
       </div>
     </div>
 
-    <!-- Interactive Drilldown & Search (ดูตัวอย่างประวัติจริงรายบุคคล) -->
+    <!-- Interactive Drilldown & Search -->
     <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 sm:p-6 shadow-sm">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
