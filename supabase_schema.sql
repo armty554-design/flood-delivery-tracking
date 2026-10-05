@@ -1,6 +1,6 @@
 -- ==============================================================================
--- SUPABASE POSTGRESQL SCHEMA FOR FLOOD DELIVERY TRACKING SYSTEM
--- สำหรับฐานข้อมูลระบบติดตามสถานะการจัดส่งช่วงน้ำท่วม 4 สาขา
+-- SUPABASE POSTGRESQL SCHEMA FOR FLOOD DELIVERY TRACKING SYSTEM (IDEMPOTENT VERSION)
+-- รองรับการกด Run ซ้ำได้ปลอดภัย 100% ไม่ติด Error "already exists"
 -- ==============================================================================
 
 -- 1. สร้างตารางหลัก: รายการจัดส่งสินค้า (delivery_orders)
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS public.delivery_orders (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- สร้าง Indexes เพื่อความเร็วสูงสุดในการ Query และ Filter
+-- สร้าง Indexes เพื่อความเร็วสูงสุดในการค้นหาและกรองข้อมูล
 CREATE INDEX IF NOT EXISTS idx_orders_member_id ON public.delivery_orders (member_id);
 CREATE INDEX IF NOT EXISTS idx_orders_branch ON public.delivery_orders (branch);
 CREATE INDEX IF NOT EXISTS idx_orders_truck ON public.delivery_orders (truck_number);
@@ -67,34 +67,55 @@ CREATE TRIGGER set_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION public.handle_updated_at();
 
--- 4. เปิดใช้งาน Row Level Security (RLS) เพื่อความปลอดภัย
+-- 4. เปิดใช้งาน Row Level Security (RLS)
 ALTER TABLE public.delivery_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.action_logs ENABLE ROW LEVEL SECURITY;
 
--- นโยบาย Allow Read (Anonymous & Authenticated Users สามารถเปิดดูข้อมูลในแดชบอร์ดได้)
+-- ลบ Policies เดิมก่อน (ถ้ามี) เพื่อไม่ให้เกิด Error: already exists
+DROP POLICY IF EXISTS "Allow public read on delivery_orders" ON public.delivery_orders;
+DROP POLICY IF EXISTS "Allow public update on delivery_orders" ON public.delivery_orders;
+DROP POLICY IF EXISTS "Allow public insert on action_logs" ON public.action_logs;
+DROP POLICY IF EXISTS "Allow public read on action_logs" ON public.action_logs;
+
+-- สร้าง Policies ใหม่
 CREATE POLICY "Allow public read on delivery_orders" 
     ON public.delivery_orders 
     FOR SELECT 
     USING (true);
 
--- นโยบาย Allow Update (สำหรับอัปเดตสถานะการส่งและโน้ต)
 CREATE POLICY "Allow public update on delivery_orders" 
     ON public.delivery_orders 
     FOR UPDATE 
     USING (true);
 
--- นโยบาย Allow Insert on action_logs
 CREATE POLICY "Allow public insert on action_logs" 
     ON public.action_logs 
     FOR INSERT 
     WITH CHECK (true);
 
--- นโยบาย Allow Read on action_logs
 CREATE POLICY "Allow public read on action_logs" 
     ON public.action_logs 
     FOR SELECT 
     USING (true);
 
--- 5. เปิด Realtime Replication (เพื่อให้หน้าเว็บอัปเดตทันทีเมื่อมีคนเปลี่ยนสถานะ)
-ALTER PUBLICATION supabase_realtime ADD TABLE public.delivery_orders;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.action_logs;
+-- 5. เปิด Realtime Replication อย่างปลอดภัย (ตรวจเช็คก่อนเพิ่ม ป้องกัน Error ซ้ำ)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+      AND schemaname = 'public' 
+      AND tablename = 'delivery_orders'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.delivery_orders;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+      AND schemaname = 'public' 
+      AND tablename = 'action_logs'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.action_logs;
+  END IF;
+END $$;

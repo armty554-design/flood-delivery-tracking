@@ -11,9 +11,9 @@ const fs = require('fs');
 const path = require('path');
 
 // ==============================================================================
-// ตั้งค่า SUPABASE CREDENTIALS (นำค่ามาจากหน้า Dashboard > Project Settings > API)
+// ตั้งค่า SUPABASE CREDENTIALS (โปรเจกต์: water-M)
 // ==============================================================================
-const SUPABASE_URL = process.env.SUPABASE_URL || 'YOUR_SUPABASE_PROJECT_URL';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://aggfmnyrfxmuwpjbynom.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'YOUR_SUPABASE_SERVICE_ROLE_KEY_OR_ANON_KEY';
 
 async function migrateData() {
