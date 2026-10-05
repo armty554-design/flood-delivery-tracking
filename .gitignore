@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Logs and environment files
+*.log
+.env
+.env.local
+.env.*.local
+
+# IDE and agent generated files
+.agents/
+.system_generated/
+scratch/
+scratch_*.js
+
+# Clasp auth credentials (prevent leaking Google auth tokens)
+.clasprc.json
+
+# Temporary screenshots
+*.png
+
+# Operating System files
+Thumbs.db
+Desktop.ini
+.DS_Store
