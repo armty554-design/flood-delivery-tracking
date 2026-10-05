@@ -3427,6 +3427,8 @@
       let accessibleMembers = 0;
       let pendingMembers = 0;
       let transferMembers = 0;
+      let totalTransferHistoryMembers = 0;
+      let resolvedTransferMembers = 0;
       let totalTransferRounds = 0;
       let multiTransferMembers = 0;
 
@@ -3456,12 +3458,6 @@
             hasTransfer = true;
           }
         });
-
-        if (hasTransfer) {
-          transferMembers++;
-          totalTransferRounds += tRounds;
-          if (tRounds > 1) multiTransferMembers++;
-        }
 
         m.attempts.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
         const latestAttempt = m.attempts[m.attempts.length - 1];
@@ -3505,6 +3501,19 @@
           }
         });
 
+        if (hasTransfer) {
+          totalTransferHistoryMembers++;
+          totalTransferRounds += tRounds;
+          if (tRounds > 1) multiTransferMembers++;
+
+          // กฎธุรกิจใหม่: กรณีโอนงานสิ้นวันแล้วอีกวันนึงส่งได้ ถือว่าสำเร็จแล้วก็ตัดจากยอดโอนงานออกไป
+          if (!isAccessible) {
+            transferMembers++;
+          } else {
+            resolvedTransferMembers++;
+          }
+        }
+
         if (isAccessible) {
           accessibleMembers++;
           if (accessType === 'AUTO_JOB30') subAutoJob30++;
@@ -3527,6 +3536,8 @@
         accessibleMembers,
         pendingMembers,
         transferMembers,
+        totalTransferHistoryMembers,
+        resolvedTransferMembers,
         totalTransferRounds,
         multiTransferMembers,
         subNormalSuccess,
@@ -3593,7 +3604,10 @@
       const elTransCount = document.getElementById('kpiTransferCount');
       if (elTransCount) elTransCount.textContent = transferCount.toLocaleString();
       const elTransSub = document.getElementById('kpiTransferRoundsSubtext');
-      if (elTransSub) elTransSub.textContent = `คิดเป็น 1 รหัสต่อสมาชิก (โอนรวม ${transferRounds.toLocaleString()} รอบ)`;
+      if (elTransSub) {
+        const histTotal = memberStats.totalTransferHistoryMembers || transferCount;
+        elTransSub.textContent = `ตัดยอดส่งได้ออกแล้ว (โอนค้าง ${transferCount.toLocaleString()} / สะสม ${histTotal.toLocaleString()} ราย)`;
+      }
 
       // Update Summary Tab Pillar Cards
       const sumSuccCount = document.getElementById('sumCardSuccessCount');

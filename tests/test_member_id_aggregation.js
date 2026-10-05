@@ -59,11 +59,13 @@ const res = evalFn(mockOrders);
 assert.strictEqual(res.totalMembers, 3, 'Total members should be 3 unique codes');
 assert.strictEqual(res.accessibleMembers, 2, 'Accessible members should be 2 (1234 resolved + 9999 normal)');
 assert.strictEqual(res.pendingMembers, 1, 'Pending members should be 1 (5678 still pending)');
-assert.strictEqual(res.transferMembers, 2, 'Transfer members should be 2 codes (1234 and 5678)');
+assert.strictEqual(res.transferMembers, 1, 'Transfer members should be 1 code (5678 pending; 1234 delivered hence deducted)');
+assert.strictEqual(res.totalTransferHistoryMembers, 2, 'Total transfer history should be 2 codes (1234 and 5678)');
+assert.strictEqual(res.resolvedTransferMembers, 1, 'Resolved transfer members should be 1 code (1234 resolved)');
 assert.strictEqual(res.totalTransferRounds, 4, 'Total transfer rounds should be 4 (2 for 1234 + 2 for 5678)');
 
 console.log('  ✔ PASS: Mock test matches user requirements exactly:');
-console.log('         - Member 1234 transferred 3 times -> counted as 1 member in stats, resolved as accessible');
+console.log('         - Member 1234 transferred 3 times -> resolved as accessible, deducted from transfer count (ตัดยอดโอน)');
 console.log('         - Member 5678 transferred 2 times -> counted as 1 member in stats, pending (no subsequent status)');
 console.log('         - Member 9999 delivered -> counted as 1 member in stats');
 
