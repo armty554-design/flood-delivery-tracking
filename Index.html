@@ -44926,9 +44926,9 @@
     let pageSize = 15;
     let selectedItem = null;
 
-    // Supabase Live Client Configuration
+    // Supabase Live Client Configuration (PostgREST Public Anon Key)
     const SUPABASE_PROJECT_URL = 'https:' + '/' + '/aggfmnyrfxmuwpjbynom.supabase.co';
-    const SUPABASE_CLIENT_KEY = 'sb_secret_1y8nEXGgAHDg1UxyKHGS-Q__jHcUi12';
+    const SUPABASE_CLIENT_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZ2ZtbnlyZnhtdXdwamJ5bm9tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTExODM2OTcsImV4cCI6MjEwNjc1OTY5N30.HnGYGAADMLfoVMpv0lfAM3a5Z3CRZwQS1UpFXdBzsBI';
     let supabaseClient = null;
 
     try {
@@ -45012,18 +45012,32 @@
     }
 
     // Load Live Data from Supabase Database
+    // Load Live Data from Supabase Database (Ultra-fast parallel query with total count)
     async function loadDataFromSupabase(isSilent) {
       if (!supabaseClient) return false;
       try {
-        const { data, error } = await supabaseClient
-          .from('delivery_orders')
-          .select('*')
-          .order('order_code', { ascending: true })
-          .limit(10000);
+        const fetchOffsets = [0, 1000, 2000, 3000];
+        const promises = fetchOffsets.map(offset =>
+          supabaseClient
+            .from('delivery_orders')
+            .select('*', { count: 'exact' })
+            .order('order_code', { ascending: true })
+            .range(offset, offset + 999)
+        );
 
-        if (error) throw error;
-        if (data && data.length > 0) {
-          allItems = data.map(row => {
+        const results = await Promise.all(promises);
+        let combined = [];
+        let totalDbCount = 53674;
+
+        results.forEach(res => {
+          if (res.data && res.data.length > 0) {
+            combined = combined.concat(res.data);
+          }
+          if (res.count) totalDbCount = res.count;
+        });
+
+        if (combined.length > 0) {
+          allItems = combined.map(row => {
             let b = (row.branch || '').trim();
             if (b.startsWith('คลัง')) b = b.replace(/^คลัง/, 'สาขา');
             return {
@@ -45052,13 +45066,13 @@
 
           const syncEl = document.getElementById('syncStatusText');
           if (syncEl) {
-            syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>เชื่อมต่อสด Supabase (' + data.length.toLocaleString() + ' รายการ)';
+            syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>เชื่อมต่อสด Supabase (' + combined.length.toLocaleString() + ' / ' + totalDbCount.toLocaleString() + ' รายการ)';
           }
           renderTruckFilterOptions();
           applyFilters();
           updateTransferBadge();
           if (currentTab === 'transfers') renderTransfersTab();
-          if (!isSilent) showToast('เชื่อมต่อและดึงข้อมูลสดจาก Supabase เรียบร้อย (' + data.length.toLocaleString() + ' รายการ)');
+          if (!isSilent) showToast('เชื่อมต่อสด Supabase สำเร็จแล้ว (' + combined.length.toLocaleString() + ' รายการ)');
           return true;
         }
       } catch (err) {
