@@ -1837,25 +1837,59 @@
       }
     }
 
-    // Load Live Data from Supabase Database
-    // Load Live Data from Supabase Database (Ultra-fast parallel query with total count)
+    // Helper to map DB row to frontend item
+    function mapDbRowToItem(row) {
+      let b = (row.branch || '').trim();
+      if (b.startsWith('คลัง')) b = b.replace(/^คลัง/, 'สาขา');
+      return {
+        id: row.order_code || row.id,
+        memberId: row.member_id,
+        name: row.customer_name,
+        date: row.delivery_date ? row.delivery_date.replace('T', ' ').substring(0, 16) : '',
+        round: row.round || 'ปกติ',
+        reason: row.reason || '',
+        truck: row.truck_number || '',
+        day: row.delivery_day || '',
+        customerType: row.customer_type || 'B2C',
+        branch: b,
+        address: row.address || '',
+        gps: row.gps || (row.latitude && row.longitude ? (row.latitude + ',' + row.longitude) : ''),
+        district: row.district || '',
+        status: row.status || 'รอน้ำลด',
+        note: row.note || '',
+        deliveryGroup: row.delivery_group || 'ปกติ',
+        isTransferred: Boolean(row.is_transferred),
+        transferOperator: row.transfer_operator || '',
+        transferDate: row.transfer_date || '',
+        transferRaw: row.transfer_raw || ''
+      };
+    }
+
+    let isFetchingAllSupabase = false;
+
+    // Load Live Data from Supabase Database (Fast First Paint + Progressive Full Streaming to all 53,674 records)
     async function loadDataFromSupabase(isSilent) {
-      if (!supabaseClient) return false;
+      if (!supabaseClient || isFetchingAllSupabase) return false;
+      isFetchingAllSupabase = true;
+
       try {
-        const fetchOffsets = [0, 1000, 2000, 3000];
-        const promises = fetchOffsets.map(offset =>
+        const syncEl = document.getElementById('syncStatusText');
+
+        // Stage 1: Fast initial batch (first 4,000 records) to render interactive UI within 0.8s
+        const initialOffsets = [0, 1000, 2000, 3000];
+        const initialPromises = initialOffsets.map(offset =>
           supabaseClient
             .from('delivery_orders')
             .select('*', { count: 'exact' })
-            .order('order_code', { ascending: true })
+            .order('id', { ascending: true })
             .range(offset, offset + 999)
         );
 
-        const results = await Promise.all(promises);
+        const initialResults = await Promise.all(initialPromises);
         let combined = [];
         let totalDbCount = 53674;
 
-        results.forEach(res => {
+        initialResults.forEach(res => {
           if (res.data && res.data.length > 0) {
             combined = combined.concat(res.data);
           }
@@ -1863,47 +1897,65 @@
         });
 
         if (combined.length > 0) {
-          allItems = combined.map(row => {
-            let b = (row.branch || '').trim();
-            if (b.startsWith('คลัง')) b = b.replace(/^คลัง/, 'สาขา');
-            return {
-              id: row.order_code || row.id,
-              memberId: row.member_id,
-              name: row.customer_name,
-              date: row.delivery_date ? row.delivery_date.replace('T', ' ').substring(0, 16) : '',
-              round: row.round || 'ปกติ',
-              reason: row.reason || '',
-              truck: row.truck_number || '',
-              day: row.delivery_day || '',
-              customerType: row.customer_type || 'B2C',
-              branch: b,
-              address: row.address || '',
-              gps: row.gps || (row.latitude && row.longitude ? (row.latitude + ',' + row.longitude) : ''),
-              district: row.district || '',
-              status: row.status || 'รอน้ำลด',
-              note: row.note || '',
-              deliveryGroup: row.delivery_group || 'ปกติ',
-              isTransferred: Boolean(row.is_transferred),
-              transferOperator: row.transfer_operator || '',
-              transferDate: row.transfer_date || '',
-              transferRaw: row.transfer_raw || ''
-            };
-          });
+          allItems = combined.map(mapDbRowToItem);
 
-          const syncEl = document.getElementById('syncStatusText');
           if (syncEl) {
-            syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>เชื่อมต่อสด Supabase (' + combined.length.toLocaleString() + ' / ' + totalDbCount.toLocaleString() + ' รายการ)';
+            syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1 animate-pulse"></span>กำลังดึงข้อมูลสด Supabase (' + allItems.length.toLocaleString() + ' / ' + totalDbCount.toLocaleString() + ' รายการ)...';
           }
           renderTruckFilterOptions();
           applyFilters();
           updateTransferBadge();
           if (currentTab === 'transfers') renderTransfersTab();
-          if (!isSilent) showToast('เชื่อมต่อสด Supabase สำเร็จแล้ว (' + combined.length.toLocaleString() + ' รายการ)');
+
+          // Stage 2: Background progressive streaming for all remaining records up to totalDbCount
+          const remainingOffsets = [];
+          for (let off = 4000; off < totalDbCount; off += 1000) {
+            remainingOffsets.push(off);
+          }
+
+          if (remainingOffsets.length > 0) {
+            const batchSize = 4;
+            for (let i = 0; i < remainingOffsets.length; i += batchSize) {
+              const currentBatch = remainingOffsets.slice(i, i + batchSize);
+              const batchResults = await Promise.all(
+                currentBatch.map(offset =>
+                  supabaseClient
+                    .from('delivery_orders')
+                    .select('*')
+                    .order('id', { ascending: true })
+                    .range(offset, Math.min(offset + 999, totalDbCount - 1))
+                )
+              );
+
+              batchResults.forEach(res => {
+                if (res.data && res.data.length > 0) {
+                  const newMapped = res.data.map(mapDbRowToItem);
+                  allItems = allItems.concat(newMapped);
+                }
+              });
+
+              if (syncEl) {
+                syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1 animate-pulse"></span>กำลังดึงข้อมูลสด Supabase (' + allItems.length.toLocaleString() + ' / ' + totalDbCount.toLocaleString() + ' รายการ)...';
+              }
+            }
+          }
+
+          // Full 53,674 records completed
+          if (syncEl) {
+            syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>เชื่อมต่อสด Supabase (' + allItems.length.toLocaleString() + ' รายการครบถ้วน)';
+          }
+          renderTruckFilterOptions();
+          applyFilters();
+          updateTransferBadge();
+          if (currentTab === 'transfers') renderTransfersTab();
+          if (!isSilent) showToast('เชื่อมต่อสด Supabase ครบทั้ง ' + allItems.length.toLocaleString() + ' รายการเรียบร้อยแล้ว');
+          isFetchingAllSupabase = false;
           return true;
         }
       } catch (err) {
         console.warn('Supabase fetch note:', err);
       }
+      isFetchingAllSupabase = false;
       return false;
     }
 
@@ -2626,6 +2678,7 @@
       let totalPins = 0;
       let failPins = 0;
       let successPins = 0;
+      const markersToCluster = [];
 
       filteredItems.forEach(item => {
         if (!item.gps) return;
@@ -2676,10 +2729,14 @@
         `;
 
         marker.bindPopup(popupContent);
-        if (typeof markersCluster.addLayer === 'function') {
-          markersCluster.addLayer(marker);
-        }
+        markersToCluster.push(marker);
       });
+
+      if (typeof markersCluster.addLayers === 'function') {
+        markersCluster.addLayers(markersToCluster);
+      } else if (typeof markersCluster.addLayer === 'function') {
+        markersToCluster.forEach(m => markersCluster.addLayer(m));
+      }
 
       // Update counters on Map control bar
       const elAll = document.getElementById('pinCount-ALL');
