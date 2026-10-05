@@ -109,31 +109,32 @@
       <div class="space-y-1">
         <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1">เมนูการทำงานหลัก</div>
         
-        <!-- 1. Map & Flood Routes -->
-        <button onclick="switchTab('map')" id="tabBtn-map" class="tab-btn active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left bg-blue-600 text-white shadow-sm shadow-blue-600/30">
-          <span class="flex items-center"><i data-lucide="map" class="w-4 h-4 mr-2.5"></i> แผนที่พิกัด & เส้นทางน้ำท่วม</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/40 font-bold">MAP</span>
+        <!-- 1. Orders Table & Real Cases (PRIMARY ACTIVE DEFAULT) -->
+        <button onclick="switchTab('table')" id="tabBtn-table" class="tab-btn active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left bg-blue-600 text-white shadow-sm shadow-blue-600/30">
+          <span class="flex items-center"><i data-lucide="table" class="w-4 h-4 mr-2.5"></i> ตารางข้อมูล & เคสจริง</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-blue-500/40 font-bold">หลัก</span>
         </button>
 
-        <!-- 2. Analytics Dashboard -->
+        <!-- 2. Map & Flood Routes -->
+        <button onclick="switchTab('map')" id="tabBtn-map" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
+          <span class="flex items-center"><i data-lucide="map" class="w-4 h-4 mr-2.5"></i> แผนที่พิกัด & เส้นทางน้ำท่วม</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-md bg-slate-800 font-bold text-slate-400">MAP</span>
+        </button>
+
+        <!-- 3. Analytics Dashboard -->
         <button onclick="switchTab('analytics')" id="tabBtn-analytics" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
           <span class="flex items-center"><i data-lucide="bar-chart-3" class="w-4 h-4 mr-2.5"></i> แดชบอร์ดสถิติ & กราฟ</span>
         </button>
 
-        <!-- 3. Executive Summary (3 Pillars) -->
+        <!-- 4. Executive Summary (3 Pillars) -->
         <button onclick="switchTab('summary')" id="tabBtn-summary" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
           <span class="flex items-center"><i data-lucide="clipboard-check" class="w-4 h-4 mr-2.5 text-emerald-400"></i> สรุปยอด 3 สถานะหลัก</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-300">สรุปผล</span>
         </button>
 
-        <!-- 4. Trucks Fleet -->
+        <!-- 5. Trucks Fleet -->
         <button onclick="switchTab('trucks')" id="tabBtn-trucks" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
           <span class="flex items-center"><i data-lucide="truck" class="w-4 h-4 mr-2.5 text-blue-400"></i> สรุปแยกรายคัน</span>
-        </button>
-
-        <!-- 5. Orders Table -->
-        <button onclick="switchTab('table')" id="tabBtn-table" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-          <span class="flex items-center"><i data-lucide="table" class="w-4 h-4 mr-2.5"></i> ตารางข้อมูล & อัปเดตงาน</span>
         </button>
 
         <!-- 6. Transfers & Postponed -->
@@ -274,98 +275,308 @@
     <main class="flex-1 w-full p-4 sm:p-6 lg:p-7 space-y-6">
 
       <!-- ===================================================================== -->
-      <!-- 3 HERO DELIVERY PILLARS (Requirement 2: ส่งสำเร็จกี่ราย / ส่งไม่สำเร็จกี่ราย / โอนงานกี่ราย) -->
+      <!-- UNIFIED MASTER FILTER BAR (วันที่ / สาขา / เบอร์รถ / สถานะ + ค้นหาด่วน) -->
       <!-- ===================================================================== -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- 1. ส่งสำเร็จแล้ว -->
-        <div onclick="filterByDeliveryPillar('SUCCESS')" class="cursor-pointer group bg-gradient-to-br from-emerald-500/10 via-white to-white p-5 rounded-2xl border border-emerald-200 hover:border-emerald-500 shadow-xs hover:shadow-md transition relative overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-emerald-800 flex items-center">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span>
-              1. เข้าส่งได้ (Delivered / Accessible)
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-3.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
             </span>
-            <span id="kpiSuccessPct" class="text-xs font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
+            <div>
+              <h2 class="text-sm font-bold text-slate-800">ตัวกรองหลักแบบครอบคลุม (Unified Master Filters)</h2>
+              <p class="text-[11px] text-slate-500">กรองข้อมูลครอบคลุมพร้อมกันทุกมุมมอง: วันที่, สาขา, เบอร์รถ และสถานะการประเมิน</p>
+            </div>
           </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="kpiSuccessCount" class="text-3xl sm:text-4xl font-black text-emerald-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">รหัส</span>
+          <div class="flex items-center space-x-2">
+            <span id="filterResultBadge" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100">
+              กำลังประมวลผล...
+            </span>
+            <button onclick="resetGlobalFilters()" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 rounded-lg border border-slate-200 transition">
+              <i data-lucide="rotate-ccw" class="w-3 h-3 mr-1"></i> ล้างตัวกรอง
+            </button>
           </div>
-          <p class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
-            <span>ส่งสำเร็จ / พบลูกค้า / ขาดส่งเหตุอื่น</span>
-            <span class="text-emerald-700 font-bold group-hover:underline">คลิกดู ➔</span>
+        </div>
+
+        <!-- 4 Main Filters Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- 1. วันที่ (Date) -->
+          <div class="space-y-1">
+            <label for="globalFilterDate" class="text-[11px] font-bold text-slate-700 flex items-center">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 1. วันที่จัดส่ง
+            </label>
+            <select id="globalFilterDate" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+              <option value="ALL">ทุกวันที่ (26 ก.ย. - 3 ต.ค. 2569)</option>
+              <option value="2026-09-26">26 ก.ย. 2569 (เสาร์ - เริ่มวิกฤตน้ำท่วม)</option>
+              <option value="2026-09-28">28 ก.ย. 2569 (จันทร์ - เริ่มโอนรอบแรก)</option>
+              <option value="2026-09-29">29 ก.ย. 2569 (อังคาร - ส่งชดเชย & วิกฤต)</option>
+              <option value="2026-09-30">30 ก.ย. 2569 (พุธ)</option>
+              <option value="2026-10-01">1 ต.ค. 2569 (พฤหัสบดี)</option>
+              <option value="2026-10-02">2 ต.ค. 2569 (ศุกร์)</option>
+              <option value="2026-10-03">3 ต.ค. 2569 (เสาร์)</option>
+            </select>
+          </div>
+
+          <!-- 2. สาขา (Branch) -->
+          <div class="space-y-1">
+            <label for="globalFilterBranch" class="text-[11px] font-bold text-slate-700 flex items-center">
+              <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 2. สาขา (Branch)
+            </label>
+            <select id="globalFilterBranch" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+              <option value="ALL">ภาพรวมทุกสาขา (4 สาขาหลัก)</option>
+              <option value="สาขารามอินทรา">สาขารามอินทรา</option>
+              <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
+              <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
+              <option value="สาขาพระราม 3">สาขาพระราม 3</option>
+            </select>
+          </div>
+
+          <!-- 3. เบอร์รถ (Truck) -->
+          <div class="space-y-1">
+            <label for="globalFilterTruck" class="text-[11px] font-bold text-slate-700 flex items-center">
+              <i data-lucide="truck" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 3. เบอร์รถ (สายส่ง)
+            </label>
+            <select id="globalFilterTruck" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+              <option value="ALL">ทุกเบอร์รถ (ทุกสายส่ง)</option>
+            </select>
+          </div>
+
+          <!-- 4. สถานะ (Status) -->
+          <div class="space-y-1">
+            <label for="globalFilterStatus" class="text-[11px] font-bold text-slate-700 flex items-center">
+              <i data-lucide="check-square" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 4. สถานะประเมิน
+            </label>
+            <select id="globalFilterStatus" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+              <option value="ALL">ทุกสถานะ (ทั้งหมด)</option>
+              <option value="SUCCESS">🟢 สำเร็จ (เข้าส่งได้ / Auto ปิด Job 30)</option>
+              <option value="AUTO_JOB30">⚡ สำเร็จ: Auto ปิด Job 30</option>
+              <option value="FAIL">🔴 ไม่สำเร็จ (ติดน้ำท่วมสูง / รอน้ำลด)</option>
+              <option value="TRANSFER">🟣 โอนงาน (มีประวัติโอนงาน)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Bar Row -->
+        <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="globalFilterSearch" oninput="applyGlobalFilters()" placeholder="ค้นหาด่วน: รหัสสมาชิก (เช่น 00033, 08564), ชื่อลูกค้า, เบอร์รถ, ที่อยู่, ถนน, หมายเหตุ Col K..." class="w-full pl-9 pr-4 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- 4 CLEAN KPI SUMMARY CARDS (High-Contrast, Calculated by Unique Member) -->
+      <!-- ===================================================================== -->
+      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        <!-- 1. รวมสมาชิกทั้งหมด -->
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-500 text-xs font-semibold mb-1">
+            <span class="flex items-center"><i data-lucide="users" class="w-3.5 h-3.5 mr-1.5 text-slate-600"></i> รวมสมาชิกทั้งหมด</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">1 รหัส/สมาชิก</span>
+          </div>
+          <div class="my-1">
+            <span id="kpiTotalMembers" class="text-2xl sm:text-3xl font-black text-slate-800">0</span>
+            <span class="text-xs text-slate-500 ml-1">รหัส</span>
+          </div>
+          <p class="text-[11px] text-slate-400">ออเดอร์ในตัวกรอง: <span id="kpiTotal" class="font-semibold text-slate-600">0</span> รายการ</p>
+        </div>
+
+        <!-- 2. ส่งสำเร็จแล้ว (Delivered & Auto Closed) -->
+        <div onclick="setQuickStatusFilter('SUCCESS')" class="cursor-pointer group bg-gradient-to-br from-emerald-500/5 via-white to-white p-4 rounded-2xl border border-emerald-200 hover:border-emerald-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between text-emerald-800 text-xs font-bold mb-1">
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> 🟢 เข้าส่งได้ (สำเร็จ)</span>
+            <span id="kpiSuccessPct" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
+          </div>
+          <div class="my-1">
+            <span id="kpiSuccessCount" class="text-2xl sm:text-3xl font-black text-emerald-600">0</span>
+            <span class="text-xs text-slate-500 ml-1">รหัส</span>
+          </div>
+          <p class="text-[11px] text-slate-500 flex items-center justify-between">
+            <span>รวม Auto ปิด Job 30 & ส่งสำเร็จ</span>
+            <span class="text-emerald-700 font-bold group-hover:underline">กรอง ➔</span>
           </p>
         </div>
 
-        <!-- 2. ส่งไม่สำเร็จ / ติดน้ำท่วม -->
-        <div onclick="filterByDeliveryPillar('FAIL')" class="cursor-pointer group bg-gradient-to-br from-red-500/10 via-white to-white p-5 rounded-2xl border border-red-200 hover:border-red-500 shadow-xs hover:shadow-md transition relative overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-red-800 flex items-center">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-2 animate-ping"></span>
-              2. ยังส่งไม่ได้ / ติดน้ำท่วม (Pending)
-            </span>
-            <span id="kpiFailPct" class="text-xs font-black px-2 py-0.5 rounded-full bg-red-100 text-red-800">0%</span>
+        <!-- 3. ส่งไม่สำเร็จ / ติดน้ำท่วม (Pending) -->
+        <div onclick="setQuickStatusFilter('FAIL')" class="cursor-pointer group bg-gradient-to-br from-red-500/5 via-white to-white p-4 rounded-2xl border border-red-200 hover:border-red-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between text-red-800 text-xs font-bold mb-1">
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-1.5 animate-pulse"></span> 🔴 ยังส่งไม่ได้ (น้ำท่วม)</span>
+            <span id="kpiFailPct" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-red-100 text-red-800">0%</span>
           </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="kpiFailCount" class="text-3xl sm:text-4xl font-black text-red-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">รหัส</span>
+          <div class="my-1">
+            <span id="kpiFailCount" class="text-2xl sm:text-3xl font-black text-red-600">0</span>
+            <span class="text-xs text-slate-500 ml-1">รหัส</span>
           </div>
-          <p class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
-            <span>น้ำท่วมสูง / โอนงานยังไม่มีสถานะซ้ำ</span>
-            <span class="text-red-700 font-bold group-hover:underline">คลิกดู ➔</span>
+          <p class="text-[11px] text-slate-500 flex items-center justify-between">
+            <span>ติดน้ำท่วมสูง / รอน้ำลด</span>
+            <span class="text-red-700 font-bold group-hover:underline">กรอง ➔</span>
           </p>
         </div>
 
-        <!-- 3. โอนงานที่ส่ง -->
-        <div onclick="filterByDeliveryPillar('TRANSFER')" class="cursor-pointer group bg-gradient-to-br from-purple-500/10 via-white to-white p-5 rounded-2xl border border-purple-200 hover:border-purple-500 shadow-xs hover:shadow-md transition relative overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold text-purple-800 flex items-center">
-              <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1.5 text-purple-600"></i>
-              3. โอนงานที่ส่ง (Transfers)
-            </span>
-            <span class="text-xs font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">คิดสถิติ 1 รหัส</span>
+        <!-- 4. โอนงานที่ส่ง (Transfers) -->
+        <div onclick="setQuickStatusFilter('TRANSFER')" class="cursor-pointer group bg-gradient-to-br from-purple-500/5 via-white to-white p-4 rounded-2xl border border-purple-200 hover:border-purple-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div class="flex items-center justify-between text-purple-800 text-xs font-bold mb-1">
+            <span class="flex items-center"><i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-purple-600"></i> 🟣 โอนงานที่ส่ง</span>
+            <span class="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-800">งานโอน</span>
           </div>
-          <div class="flex items-baseline space-x-2">
-            <span id="kpiTransferCount" class="text-3xl sm:text-4xl font-black text-purple-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">รหัส</span>
+          <div class="my-1">
+            <span id="kpiTransferCount" class="text-2xl sm:text-3xl font-black text-purple-600">0</span>
+            <span class="text-xs text-slate-500 ml-1">รหัส</span>
           </div>
-          <p class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
+          <p class="text-[11px] text-slate-500 flex items-center justify-between">
             <span id="kpiTransferRoundsSubtext">คิดเป็น 1 รหัสต่อสมาชิก (โอนรวม - รอบ)</span>
-            <span class="text-purple-700 font-bold group-hover:underline">คลิกแท็บงานโอน ➔</span>
+            <span class="text-purple-700 font-bold group-hover:underline">กรอง ➔</span>
           </p>
         </div>
       </section>
 
-      <!-- Secondary Metrics Bar (B2B, B2C, GPS, Pending) -->
-      <section class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-2xs">
-          <span class="text-[11px] text-slate-500 font-medium block">รวมงานทั้งหมด</span>
-          <span id="kpiTotal" class="text-lg font-bold text-slate-800">0</span>
-          <span class="text-[10px] text-slate-400 block">ออเดอร์ในระบบ</span>
+      <!-- Backward compatibility hidden metrics -->
+      <div class="hidden">
+        <span id="kpiB2B">0</span>
+        <span id="kpiB2C">0</span>
+        <span id="kpiGps">0</span>
+        <span id="kpiPending">0</span>
+      </div>
+
+      <!-- ===================================================================== -->
+      <!-- 💡 REAL CASE STUDIES SHOWCASE (ตัวอย่างเคสจริงจากข้อมูลรอบส่ง & หมายเหตุระบบ Col K) -->
+      <!-- ===================================================================== -->
+      <section class="bg-white rounded-2xl border border-slate-200 shadow-xs p-4 sm:p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2">
+            <span class="p-1.5 bg-amber-50 text-amber-600 rounded-lg">
+              <i data-lucide="lightbulb" class="w-4 h-4"></i>
+            </span>
+            <div>
+              <h2 class="text-sm font-bold text-slate-800">💡 ตัวอย่างเคสจริงจากข้อมูลรอบส่ง (Real Case Studies & Column K Notes)</h2>
+              <p class="text-[11px] text-slate-500">ตัวอย่างสมาชิกที่สะท้อนวงจรการจัดส่ง การโอนงาน น้ำท่วม และหมายเหตุระบบ MDFSS (Col K) ตามเกณฑ์ประเมินจริง</p>
+            </div>
+          </div>
+          <span class="text-[11px] px-2.5 py-1 rounded-full font-bold bg-slate-100 text-slate-700">4 เคสจำลองการทำงาน</span>
         </div>
-        <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-2xs">
-          <span class="text-[11px] text-slate-500 font-medium block">ลูกค้า B2B / สำนักงาน</span>
-          <span id="kpiB2B" class="text-lg font-bold text-blue-600">0</span>
-          <span class="text-[10px] text-slate-400 block">องค์กร</span>
-        </div>
-        <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-2xs">
-          <span class="text-[11px] text-slate-500 font-medium block">ลูกค้ารายย่อย B2C</span>
-          <span id="kpiB2C" class="text-lg font-bold text-indigo-600">0</span>
-          <span class="text-[10px] text-slate-400 block">บ้านพักอาศัย</span>
-        </div>
-        <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-2xs">
-          <span class="text-[11px] text-slate-500 font-medium block">พิกัดนำทาง GPS</span>
-          <span id="kpiGps" class="text-lg font-bold text-emerald-600">0</span>
-          <span class="text-[10px] text-emerald-600 font-medium block">พร้อมปักหมุด</span>
-        </div>
-        <div class="bg-white rounded-xl p-3 border border-slate-200 shadow-2xs col-span-2 sm:col-span-1">
-          <span class="text-[11px] text-slate-500 font-medium block">รอประสานงาน</span>
-          <span id="kpiPending" class="text-lg font-bold text-amber-600">0</span>
-          <span class="text-[10px] text-amber-600 font-medium block">รอดำเนินการ</span>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- เคส 1: Auto ปิด Job 30 -->
+          <div class="bg-gradient-to-br from-teal-500/5 to-white p-4 rounded-xl border border-teal-200 hover:border-teal-400 shadow-2xs transition flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-teal-900 flex items-center">
+                  <i data-lucide="zap" class="w-3.5 h-3.5 mr-1 text-teal-600"></i> เคส 1: Auto ปิด Job 30
+                </span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-teal-100 text-teal-800">🟢 สำเร็จตามเงื่อนไขใหม่</span>
+              </div>
+              <div class="text-xs font-bold text-slate-800">
+                รหัส 00033/23 : ไทยฮอนด้า จำกัด (สำนักงานใหญ่)
+              </div>
+              <div class="text-[11px] text-slate-500 space-y-0.5">
+                <div><span class="font-medium text-slate-600">สาขา/สายรถ:</span> สาขารามอินทรา | รถ 13106 (ลาดกระบัง)</div>
+                <div><span class="font-medium text-slate-600">วันเวลา:</span> 29/09/2026 00:00 น. | รอบ: ยกเลิก รอบส่ง</div>
+              </div>
+              <div class="p-2.5 bg-teal-50/70 border border-teal-200 rounded-lg text-[11px]">
+                <div class="font-bold text-teal-900 mb-0.5">หมายเหตุระบบ MDFSS (Col K):</div>
+                <div class="font-mono text-teal-800">"ยกเลิกรอบน้ำโดยระบบ auto ปิด Job 30"</div>
+              </div>
+              <p class="text-[11px] text-slate-600">
+                <span class="font-bold text-teal-700">เกณฑ์ประเมิน:</span> ระบบ MDFSS ขึ้นหมายเหตุ auto ปิด Job 30 ถือว่าสถานะสำเร็จสมบูรณ์ (เข้าส่งได้)
+              </p>
+            </div>
+            <button onclick="filterByCaseMember('00033')" class="w-full mt-3 py-1.5 px-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center transition shadow-2xs">
+              <i data-lucide="search" class="w-3.5 h-3.5 mr-1.5"></i> ดูประวัติรหัส 00033 ในตาราง
+            </button>
+          </div>
+
+          <!-- เคส 2: วงจรโอนงาน 2 รอบ -> ส่งสำเร็จ -->
+          <div class="bg-gradient-to-br from-blue-500/5 to-white p-4 rounded-xl border border-blue-200 hover:border-blue-400 shadow-2xs transition flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-blue-900 flex items-center">
+                  <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> เคส 2: โอนงานหลายรอบแล้วสำเร็จ
+                </span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">🟢 ส่งสำเร็จแล้ว (โอน 2 รอบ)</span>
+              </div>
+              <div class="text-xs font-bold text-slate-800">
+                รหัส 08564/1 : ปนัดดา เขมญาณ
+              </div>
+              <div class="text-[11px] text-slate-500 space-y-0.5">
+                <div><span class="font-medium text-slate-600">สาขา/สายรถ:</span> สาขารามอินทรา | รถ 13302 (ลาดพร้าว)</div>
+                <div><span class="font-medium text-slate-600">วงจรจัดส่ง:</span> 26/09 (เลื่อน) ➔ 28/09 (โอน 1) ➔ 29/09 (พบลูกค้า ส่งสำเร็จ)</div>
+              </div>
+              <div class="p-2.5 bg-blue-50/70 border border-blue-200 rounded-lg text-[11px]">
+                <div class="font-bold text-blue-900 mb-0.5">หมายเหตุระบบ MDFSS (Col K):</div>
+                <div class="font-mono text-blue-800">"ผู้ทำรายการ:วุฒิชัย จีปน;โอนงานมาจากวันที่:28/09/2026"</div>
+              </div>
+              <p class="text-[11px] text-slate-600">
+                <span class="font-bold text-blue-700">เกณฑ์ประเมิน:</span> โอน 2 รอบ แต่วันที่ 29 พบลูกค้า = ส่งสำเร็จ (นับ 1 สมาชิก, มีประวัติโอน 2 รอบ)
+              </p>
+            </div>
+            <button onclick="filterByCaseMember('08564/1')" class="w-full mt-3 py-1.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center transition shadow-2xs">
+              <i data-lucide="search" class="w-3.5 h-3.5 mr-1.5"></i> ดูประวัติรหัส 08564/1 ในตาราง
+            </button>
+          </div>
+
+          <!-- เคส 3: ติดน้ำท่วมสูงในพื้นที่ -->
+          <div class="bg-gradient-to-br from-rose-500/5 to-white p-4 rounded-xl border border-rose-200 hover:border-rose-400 shadow-2xs transition flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-rose-900 flex items-center">
+                  <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-rose-600"></i> เคส 3: ติดน้ำท่วมสูงในพื้นที่
+                </span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-rose-100 text-rose-800">🔴 ยังส่งไม่ได้ (รอน้ำลด)</span>
+              </div>
+              <div class="text-xs font-bold text-slate-800">
+                รหัส 01210/3 : วรพรรณ์ ชิวะสุจินต์
+              </div>
+              <div class="text-[11px] text-slate-500 space-y-0.5">
+                <div><span class="font-medium text-slate-600">สาขา/สายรถ:</span> สาขารามอินทรา | รถ 13S01 (สะพานสูง)</div>
+                <div><span class="font-medium text-slate-600">วงจรจัดส่ง:</span> 26/09 (เลื่อน) ➔ 29/09 โอนงานสิ้นวัน (น้ำท่วมสูง)</div>
+              </div>
+              <div class="p-2.5 bg-rose-50/70 border border-rose-200 rounded-lg text-[11px]">
+                <div class="font-bold text-rose-900 mb-0.5">เหตุขาดส่ง (Col F):</div>
+                <div class="font-mono text-rose-800">"ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่ (รอน้ำลด)"</div>
+              </div>
+              <p class="text-[11px] text-slate-600">
+                <span class="font-bold text-rose-700">เกณฑ์ประเมิน:</span> ติดน้ำท่วมสูงและยังไม่มีรอบสำเร็จถัดไป = อยู่ในกลุ่มประสานงานช่วยเหลือน้ำท่วม
+              </p>
+            </div>
+            <button onclick="filterByCaseMember('01210/3')" class="w-full mt-3 py-1.5 px-3 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center transition shadow-2xs">
+              <i data-lucide="search" class="w-3.5 h-3.5 mr-1.5"></i> ดูประวัติรหัส 01210/3 ในตาราง
+            </button>
+          </div>
+
+          <!-- เคส 4: โอนงานสิ้นวัน ยังไม่มีสถานะซ้ำ -->
+          <div class="bg-gradient-to-br from-amber-500/5 to-white p-4 rounded-xl border border-amber-200 hover:border-amber-400 shadow-2xs transition flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-amber-900 flex items-center">
+                  <i data-lucide="clock" class="w-3.5 h-3.5 mr-1 text-amber-600"></i> เคส 4: โอนงานยังไม่มีสถานะซ้ำ
+                </span>
+                <span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">🟡 รอดำเนินการ (รอจัดส่งซ้ำ)</span>
+              </div>
+              <div class="text-xs font-bold text-slate-800">
+                รหัส 03237/43 : จิดาภา จิราอัครกุล
+              </div>
+              <div class="text-[11px] text-slate-500 space-y-0.5">
+                <div><span class="font-medium text-slate-600">สาขา/สายรถ:</span> สาขารามอินทรา | รถ 16204 (คันนายาว)</div>
+                <div><span class="font-medium text-slate-600">วงจรจัดส่ง:</span> 26/09 (เลื่อนส่ง) ➔ 29/09 (โอนงานสิ้นวัน)</div>
+              </div>
+              <div class="p-2.5 bg-amber-50/70 border border-amber-200 rounded-lg text-[11px]">
+                <div class="font-bold text-amber-900 mb-0.5">รอบส่ง & หมายเหตุ Col K:</div>
+                <div class="font-mono text-amber-800">"รอบ: โอนงานสิ้นวัน (ยังไม่มีรอบซ้ำอื่นขึ้นมา)"</div>
+              </div>
+              <p class="text-[11px] text-slate-600">
+                <span class="font-bold text-amber-700">เกณฑ์ประเมิน:</span> โอนงานแต่ยังไม่มีสถานะซ้ำอื่นขึ้นมา ถือว่ายังไม่สำเร็จ ต้องติดตามจัดส่งต่อ
+              </p>
+            </div>
+            <button onclick="filterByCaseMember('03237/43')" class="w-full mt-3 py-1.5 px-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center transition shadow-2xs">
+              <i data-lucide="search" class="w-3.5 h-3.5 mr-1.5"></i> ดูประวัติรหัส 03237/43 ในตาราง
+            </button>
+          </div>
         </div>
       </section>
 
     <!-- TAB 1: INTERACTIVE MAP VIEW -->
-    <section id="tabContent-map" class="space-y-4">
+    <section id="tabContent-map" class="hidden space-y-4">
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden flex flex-col">
         
         <!-- Map Control Bar with Pin Filters & Flooded Routes Toggle -->
@@ -857,7 +1068,7 @@
     </section>
 
     <!-- TAB 4: DETAILED TRACKING TABLE VIEW -->
-    <section id="tabContent-table" class="hidden space-y-4">
+    <section id="tabContent-table" class="space-y-4">
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         
         <!-- Table Controls & Search Filter Header -->
@@ -918,8 +1129,8 @@
                 <th scope="col" class="px-3 py-3">สาขา & สายรถ</th>
                 <th scope="col" class="px-3 py-3">ที่อยู่จัดส่ง / เขต</th>
                 <th scope="col" class="px-3 py-3">วันเวลา & รอบ</th>
-                <th scope="col" class="px-3 py-3">เหตุผลที่ส่งไม่ได้</th>
-                <th scope="col" class="px-3 py-3">สถานะติดตาม</th>
+                <th scope="col" class="px-3 py-3">หมายเหตุ Col K / เหตุผล</th>
+                <th scope="col" class="px-3 py-3">สถานะประเมิน</th>
                 <th scope="col" class="px-3 py-3 text-right">จัดการ</th>
               </tr>
             </thead>
@@ -45229,12 +45440,606 @@
     "transferOperator": "",
     "transferDate": "",
     "transferRaw": ""
+  },
+  {
+    "id": 1963,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-26 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13106",
+    "day": "",
+    "customerType": "Key Account 1",
+    "branch": "",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "ปกติ",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1964,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-26 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13106",
+    "day": "",
+    "customerType": "Key Account 1",
+    "branch": "",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "ปกติ",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1965,
+    "memberId": "00033/5",
+    "name": "ฮอนด้า มอเตอร์ - ไซเคิล โลจิสติคส์ (ประเทศไทย) จำกัด",
+    "date": "2026-09-26 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13105",
+    "day": "",
+    "customerType": "Key Account 2",
+    "branch": "",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.76410207,100.79243617",
+    "district": "ลาดกระบัง",
+    "status": "ปกติ",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1966,
+    "memberId": "08564/1",
+    "name": "ปนัดดา เขมญาณ",
+    "date": "2026-09-26 00:00:00",
+    "round": "ปกติ",
+    "reason": "ไม่สามารถเข้าส่งได้ เกิดข้อผิดพลาด (เลื่อนวันที่ส่ง)",
+    "truck": "13302",
+    "day": "",
+    "customerType": "B2C",
+    "branch": "",
+    "address": "51 หมู่บ้านเลิศอุบล 3 ซ.โชคชัย4 ซ.73 ถ.โชคชัย 4 แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230",
+    "gps": "13.821463333333334,100.59420999999999",
+    "district": "ลาดพร้าว",
+    "status": "ยังส่งไม่ได้",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1967,
+    "memberId": "08564/1",
+    "name": "ปนัดดา เขมญาณ",
+    "date": "2026-09-28 00:00:00",
+    "round": "โอนงานสิ้นวัน",
+    "reason": "ไม่สามารถเข้าส่งได้ เกิดข้อผิดพลาด (เลื่อนวันที่ส่ง)",
+    "truck": "13302",
+    "day": "",
+    "customerType": "B2C",
+    "branch": "",
+    "address": "51 หมู่บ้านเลิศอุบล 3 ซ.โชคชัย4 ซ.73 ถ.โชคชัย 4 แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230",
+    "gps": "13.821463333333334,100.59420999999999",
+    "district": "ลาดพร้าว",
+    "status": "ยังส่งไม่ได้",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": true,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1968,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-28 09:52:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "",
+    "customerType": "Key Account 1",
+    "branch": "",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1969,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-28 09:54:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "",
+    "customerType": "Key Account 1",
+    "branch": "",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1970,
+    "memberId": "00033/5",
+    "name": "ฮอนด้า มอเตอร์ - ไซเคิล โลจิสติคส์ (ประเทศไทย) จำกัด",
+    "date": "2026-09-28 13:06:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13105",
+    "day": "",
+    "customerType": "Key Account 2",
+    "branch": "",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.76410207,100.79243617",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1971,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-29 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "เข้าส่งได้ (Auto Job 30)",
+    "note": "ยกเลิกรอบน้ำโดยระบบ auto ปิด Job 30",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1972,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-29 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "เข้าส่งได้ (Auto Job 30)",
+    "note": "ยกเลิกรอบน้ำโดยระบบ auto ปิด Job 30",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1973,
+    "memberId": "08564/1",
+    "name": "ปนัดดา เขมญาณ",
+    "date": "2026-09-29 07:22:00",
+    "round": "โอนงานสิ้นวัน",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13302",
+    "day": "เสาร์",
+    "customerType": "B2C",
+    "branch": "สาขารามอินทรา",
+    "address": "51 หมู่บ้านเลิศอุบล 3 ซ.โชคชัย4 ซ.73 ถ.โชคชัย 4 แขวงลาดพร้าว เขตลาดพร้าว กรุงเทพฯ 10230",
+    "gps": "13.821463333333334,100.59420999999999",
+    "district": "ลาดพร้าว",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "ผู้ทำรายการ:วุฒิชัย จีปน;โอนงานมาจากวันที่:28/09/2026",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": true,
+    "transferOperator": "วุฒิชัย จีปน",
+    "transferDate": "28/09/2026",
+    "transferRaw": "ผู้ทำรายการ:วุฒิชัย จีปน;โอนงานมาจากวันที่:28/09/2026"
+  },
+  {
+    "id": 1974,
+    "memberId": "00033/5",
+    "name": "ฮอนด้า มอเตอร์ - ไซเคิล โลจิสติคส์ (ประเทศไทย) จำกัด",
+    "date": "2026-09-29 11:55:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13105",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 2",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.76410207,100.79243617",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1975,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-30 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "เข้าส่งได้ (Auto Job 30)",
+    "note": "ยกเลิกรอบน้ำโดยระบบ auto ปิด Job 30",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1976,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-09-30 00:00:00",
+    "round": "ยกเลิก รอบส่ง",
+    "reason": "",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "เข้าส่งได้ (Auto Job 30)",
+    "note": "ยกเลิกรอบน้ำโดยระบบ auto ปิด Job 30",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1977,
+    "memberId": "00033/10",
+    "name": "พิชัย โสภณประไพวงศ์",
+    "date": "2026-09-30 09:36:00",
+    "round": "ปกติ",
+    "reason": "ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่",
+    "truck": "16306",
+    "day": "พุธ",
+    "customerType": "B2C",
+    "branch": "สาขากรุงเทพกรีฑา",
+    "address": "69/195 หมู่บ้านเพอร์เฟคเพลส ซ.22/6 ถ. รามคำแหง 164 แขวงมีนบุรี เขตมีนบุรี กรงุเทพฯ 10510",
+    "gps": "13.78202231,100.72049501",
+    "district": "มีนบุรี",
+    "status": "รอน้ำลด",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1978,
+    "memberId": "00033/5",
+    "name": "ฮอนด้า มอเตอร์ - ไซเคิล โลจิสติคส์ (ประเทศไทย) จำกัด",
+    "date": "2026-09-30 12:11:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13105",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 2",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.76410207,100.79243617",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1979,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-02 10:44:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1980,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-02 15:20:00",
+    "round": "เสริมน้ำ มากกว่ารถหนึ่งคัน",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "รอบน้ำนี้เกิดจากติ๊ก checkbox ส่งน้ำมากกว่า 1 เที่ยว ใน Sprinkle Device",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1981,
+    "memberId": "00033/12",
+    "name": "สุนทร ศรีสำราญ",
+    "date": "2026-10-02 13:37:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13205",
+    "day": "ศุกร์",
+    "customerType": "B2C",
+    "branch": "สาขารามอินทรา",
+    "address": "40/93 หมู่บ้าน นคราลัย หมู่ 5 แขวงโคกแฝด เขตหนองจอก กรุงเทพฯ 10530",
+    "gps": "13.828156666666667,100.84363499999999",
+    "district": "หนองจอก",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1982,
+    "memberId": "00033/17",
+    "name": "เรืองวิทย์ บัวอุไร",
+    "date": "2026-10-02 13:40:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13205",
+    "day": "ศุกร์",
+    "customerType": "B2C",
+    "branch": "สาขารามอินทรา",
+    "address": "40/77 หมู่ 5 หมู่บ้าน นคราลัย ซ.ลำไทร ถ.เชื่อมสัมพันธ์ แขวงโคกแฝด เขตหนองจอก จ.กรุงเทพฯ 10530",
+    "gps": "13.82912662,100.84352208",
+    "district": "หนองจอก",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1983,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-02 06:51:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1984,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-02 10:43:00",
+    "round": "เสริมน้ำ มากกว่ารถหนึ่งคัน",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "รอบน้ำนี้เกิดจากติ๊ก checkbox ส่งน้ำมากกว่า 1 เที่ยว ใน Sprinkle Device",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1985,
+    "memberId": "00033/5",
+    "name": "ฮอนด้า มอเตอร์ - ไซเคิล โลจิสติคส์ (ประเทศไทย) จำกัด",
+    "date": "2026-10-02 13:04:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13105",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 2",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.76410207,100.79243617",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1986,
+    "memberId": "00033",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-01 10:50:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 (โรงงาน PE ) นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773284999999998,100.79928333333334",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1987,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-01 07:04:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1988,
+    "memberId": "00033/23",
+    "name": "ไทยฮอนด้า จำกัด (สำนักงานใหญ่)",
+    "date": "2026-10-01 11:02:00",
+    "round": "เสริมน้ำ มากกว่ารถหนึ่งคัน",
+    "reason": "ลูกค้าอยู่บ้าน(พบลูกค้า)",
+    "truck": "13106",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 1",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง โรงงาน 2W ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.773074999999999,100.79963333333332",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "รอบน้ำนี้เกิดจากติ๊ก checkbox ส่งน้ำมากกว่า 1 เที่ยว ใน Sprinkle Device",
+    "deliveryGroup": "ส่งสำเร็จ",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
+  },
+  {
+    "id": 1989,
+    "memberId": "00033/5",
+    "name": "ฮอนด้า มอเตอร์ - ไซเคิล โลจิสติคส์ (ประเทศไทย) จำกัด",
+    "date": "2026-10-01 12:23:00",
+    "round": "ปกติ",
+    "reason": "ลูกค้าตั้งถัง",
+    "truck": "13105",
+    "day": "จันทร์, อังคาร, พุธ, พฤหัสบดี, ศุกร์, เสาร์",
+    "customerType": "Key Account 2",
+    "branch": "สาขารามอินทรา",
+    "address": "410 นิคมอุตสาหกรรมลาดกระบัง ถ.ฉลองกรุง แขวงลำปลาทิว เขตลาดกระบัง จ.กรุงเทพฯ 10520",
+    "gps": "13.76410207,100.79243617",
+    "district": "ลาดกระบัง",
+    "status": "ส่งสำเร็จแล้ว",
+    "note": "",
+    "deliveryGroup": "ยังส่งไม่ได้",
+    "isTransferred": false,
+    "transferOperator": "",
+    "transferDate": "",
+    "transferRaw": ""
   }
 ];
     let filteredItems = [...allItems];
     let selectedBranch = 'ALL';
     let selectedTrucks = new Set();
-    let currentTab = 'map';
+    let currentTab = 'table';
     let currentPage = 1;
     let pageSize = 15;
     let selectedItem = null;
@@ -45287,6 +46092,8 @@
       // Initialize font scaling preference
       try { initFontScale(); } catch (e) { console.error('initFontScale error:', e); }
 
+      try { populateGlobalTrucks(); } catch (e) { console.error('populateGlobalTrucks error:', e); }
+      try { applyGlobalFilters(); } catch (e) { console.error('applyGlobalFilters error:', e); }
       try { initMap(); } catch (e) { console.error('initMap error:', e); }
       try { renderTruckFilterOptions(); } catch (e) { console.error('renderTruckFilterOptions error:', e); }
       try { calculateKPIs(); } catch (e) { console.error('calculateKPIs error:', e); }
@@ -45678,27 +46485,229 @@
       }
     }
 
-    // Apply Global Filters (Branch + Selected Trucks)
-    function applyFilters() {
+    // Populate Global Truck Dropdown Options
+    function populateGlobalTrucks() {
+      const select = document.getElementById('globalFilterTruck');
+      if (!select) return;
+      const currentVal = select.value;
+      const trucks = Array.from(new Set(allItems.map(i => (i.truck || '').trim()).filter(Boolean))).sort();
+      select.innerHTML = '<option value="ALL">ทุกเบอร์รถ (ทุกสายส่ง)</option>';
+      trucks.forEach(t => {
+        const opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = `สายรถ ${t}`;
+        select.appendChild(opt);
+      });
+      if (trucks.includes(currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    // Unified Master Filter Application (Date, Branch, Truck, Status, Search)
+    function applyGlobalFilters() {
+      const dateVal = document.getElementById('globalFilterDate') ? document.getElementById('globalFilterDate').value : 'ALL';
+      const branchVal = document.getElementById('globalFilterBranch') ? document.getElementById('globalFilterBranch').value : 'ALL';
+      const truckVal = document.getElementById('globalFilterTruck') ? document.getElementById('globalFilterTruck').value : 'ALL';
+      const statusVal = document.getElementById('globalFilterStatus') ? document.getElementById('globalFilterStatus').value : 'ALL';
+      const searchVal = (document.getElementById('globalFilterSearch') ? document.getElementById('globalFilterSearch').value : '').trim().toLowerCase();
+
+      // Sync sidebar branch selector styling
+      selectedBranch = branchVal;
+      document.querySelectorAll('.branch-btn').forEach(btn => {
+        btn.classList.remove('bg-slate-800', 'border', 'border-blue-500', 'text-blue-300');
+        btn.classList.add('text-slate-400');
+      });
+      const activeBranchBtn = document.getElementById('btnBranch-' + branchVal);
+      if (activeBranchBtn) {
+        activeBranchBtn.classList.add('bg-slate-800', 'border', 'border-blue-500', 'text-blue-300');
+        activeBranchBtn.classList.remove('text-slate-400');
+      }
+
+      // Sync search input if tableSearch exists
+      const tableSearchEl = document.getElementById('tableSearch');
+      if (tableSearchEl && tableSearchEl.value.toLowerCase().trim() !== searchVal) {
+        tableSearchEl.value = searchVal;
+      }
+
+      // Pre-evaluate member status across allItems so status filtering is 100% accurate by unique member
+      const memberMap = new Map();
+      allItems.forEach(item => {
+        const mId = item.memberId || item.id;
+        if (!memberMap.has(mId)) {
+          memberMap.set(mId, { memberId: mId, attempts: [] });
+        }
+        memberMap.get(mId).attempts.push(item);
+      });
+
+      const memberStatusMap = new Map();
+      memberMap.forEach((m, mId) => {
+        let isAuto = false;
+        let isAccessible = false;
+        let hasTransfer = false;
+
+        m.attempts.forEach(a => {
+          const note = a.note || '';
+          const reason = a.reason || '';
+          const status = a.status || '';
+          const round = a.round || '';
+          const transferRaw = a.transferRaw || '';
+          const group = a.deliveryGroup || '';
+
+          const isAutoJob = note.includes('auto ปิด Job 30') || 
+                            reason.includes('auto ปิด Job 30') || 
+                            transferRaw.includes('auto ปิด Job 30') || 
+                            round.includes('auto ปิด Job 30') ||
+                            status.includes('auto ปิด Job 30') ||
+                            status.includes('Auto Job 30');
+
+          if (isAutoJob) {
+            isAuto = true;
+            isAccessible = true;
+          }
+
+          if (a.isTransferred || round === 'โอนงานสิ้นวัน' || (transferRaw && (transferRaw.includes('ผู้ทำรายการ') || transferRaw.includes('โอนงาน')))) {
+            hasTransfer = true;
+          }
+
+          const isFlood = reason.includes('น้ำท่วม') || status === 'รอน้ำลด';
+          const isTransferAttempt = a.isTransferred || round === 'โอนงานสิ้นวัน' || (transferRaw && (transferRaw.includes('ผู้ทำรายการ') || transferRaw.includes('โอนงาน')));
+
+          const isDelivered = status === 'ส่งสำเร็จแล้ว' || status === 'ลูกค้าตั้งถัง' || status === 'พบลูกค้า' || status === 'นัดส่งชดเชย' || (!group.includes('ยังส่งไม่ได้') && !status.includes('ยังส่งไม่ได้') && !isFlood && !isTransferAttempt);
+
+          const isNonFloodFail = (group === 'ยังส่งไม่ได้' || status === 'ยังส่งไม่ได้' || reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('เกิดข้อผิดพลาด') || reason.includes('เลื่อนวันที่ส่ง')) && !isFlood && !isTransferAttempt;
+
+          if (isDelivered || isNonFloodFail) {
+            isAccessible = true;
+          }
+        });
+
+        memberStatusMap.set(mId, {
+          isAuto,
+          isAccessible,
+          hasTransfer,
+          isPending: !isAccessible
+        });
+      });
+
       filteredItems = allItems.filter(item => {
-        if (selectedBranch !== 'ALL' && item.branch !== selectedBranch) return false;
-        if (selectedTrucks.size > 0 && !selectedTrucks.has(item.truck)) return false;
+        // 1. Date filter
+        if (dateVal !== 'ALL') {
+          const itemDate = (item.date || '');
+          if (!itemDate.startsWith(dateVal) && !itemDate.includes(dateVal)) {
+            return false;
+          }
+        }
+
+        // 2. Branch filter
+        if (branchVal !== 'ALL') {
+          if (item.branch !== branchVal) return false;
+        }
+
+        // 3. Truck filter
+        if (truckVal !== 'ALL') {
+          if (item.truck !== truckVal) return false;
+        }
+
+        // 4. Status filter
+        if (statusVal !== 'ALL') {
+          const mId = item.memberId || item.id;
+          const memStatus = memberStatusMap.get(mId) || {};
+          if (statusVal === 'SUCCESS' && !memStatus.isAccessible) return false;
+          if (statusVal === 'AUTO_JOB30' && !memStatus.isAuto) return false;
+          if (statusVal === 'FAIL' && !memStatus.isPending) return false;
+          if (statusVal === 'TRANSFER' && !memStatus.hasTransfer) return false;
+        }
+
+        // 5. Search filter
+        if (searchVal) {
+          const mId = (item.memberId || '').toLowerCase();
+          const name = (item.name || '').toLowerCase();
+          const truck = (item.truck || '').toLowerCase();
+          const addr = (item.address || '').toLowerCase();
+          const dist = (item.district || '').toLowerCase();
+          const note = (item.note || '').toLowerCase();
+          const reason = (item.reason || '').toLowerCase();
+          const trans = (item.transferRaw || '').toLowerCase();
+          const round = (item.round || '').toLowerCase();
+
+          const match = mId.includes(searchVal) || name.includes(searchVal) || truck.includes(searchVal) || 
+                        addr.includes(searchVal) || dist.includes(searchVal) || note.includes(searchVal) || 
+                        reason.includes(searchVal) || trans.includes(searchVal) || round.includes(searchVal);
+          if (!match) return false;
+        }
+
         return true;
       });
 
-      calculateKPIs();
-      updateMapPins();
-      updateCharts();
-      renderTrucksTab();
       currentPage = 1;
+      calculateKPIs();
       renderTable();
-      updateTruckDropdownLabel();
-      if (typeof renderWaterTab === 'function') {
-        renderWaterTab();
+      if (typeof updateMapPins === 'function') updateMapPins();
+      if (typeof updateCharts === 'function') updateCharts();
+      if (typeof renderTrucksTab === 'function') renderTrucksTab();
+      if (typeof renderSummaryTab === 'function') renderSummaryTab();
+      if (typeof updateFilterResultBadge === 'function') updateFilterResultBadge();
+    }
+
+    // Backward-compatible alias
+    function applyFilters() {
+      applyGlobalFilters();
+    }
+
+    // Reset Global Filters
+    function resetGlobalFilters(shouldReapply = true) {
+      const d = document.getElementById('globalFilterDate');
+      if (d) d.value = 'ALL';
+      const b = document.getElementById('globalFilterBranch');
+      if (b) b.value = 'ALL';
+      const t = document.getElementById('globalFilterTruck');
+      if (t) t.value = 'ALL';
+      const s = document.getElementById('globalFilterStatus');
+      if (s) s.value = 'ALL';
+      const q = document.getElementById('globalFilterSearch');
+      if (q) q.value = '';
+      const tSearch = document.getElementById('tableSearch');
+      if (tSearch) tSearch.value = '';
+
+      if (shouldReapply) {
+        applyGlobalFilters();
       }
-      if (typeof renderTransferMatrix === 'function') {
-        renderTransferMatrix();
+    }
+
+    // Drill down to a specific member ID from Case Studies cards
+    function filterByCaseMember(memberId) {
+      resetGlobalFilters(false);
+      const searchInput = document.getElementById('globalFilterSearch');
+      if (searchInput) {
+        searchInput.value = memberId;
       }
+      const tableSearchEl = document.getElementById('tableSearch');
+      if (tableSearchEl) {
+        tableSearchEl.value = memberId;
+      }
+      switchTab('table');
+      applyGlobalFilters();
+      const tableEl = document.getElementById('tabContent-table');
+      if (tableEl) {
+        tableEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Quick Status Filter from KPI Cards
+    function setQuickStatusFilter(status) {
+      const statusSelect = document.getElementById('globalFilterStatus');
+      if (statusSelect) {
+        statusSelect.value = status;
+        applyGlobalFilters();
+      }
+    }
+
+    // Update Filter Result Badge
+    function updateFilterResultBadge() {
+      const badge = document.getElementById('filterResultBadge');
+      if (!badge) return;
+      const memberStats = getMemberAggregation(filteredItems);
+      badge.textContent = `พบ ${filteredItems.length.toLocaleString()} รายการ (${memberStats.totalMembers.toLocaleString()} สมาชิก)`;
     }
 
     // Tab Switcher (Supports map, analytics, summary, trucks, table, transfers, water, routes)
@@ -45792,19 +46801,18 @@
     // Filter by Delivery Pillar (Requirement 2 quick drill-down)
     function filterByDeliveryPillar(pillarType) {
       if (pillarType === 'TRANSFER') {
-        switchTab('transfers');
+        const s = document.getElementById('globalFilterStatus');
+        if (s) s.value = 'TRANSFER';
+        applyGlobalFilters();
         return;
       }
-      switchTab('table');
-      const filterSelect = document.getElementById('filterStatus');
-      if (filterSelect) {
-        if (pillarType === 'SUCCESS') {
-          filterSelect.value = 'เข้าส่งได้';
-        } else if (pillarType === 'FAIL') {
-          filterSelect.value = 'ยังส่งไม่ได้';
-        }
-        applyFilters();
+      const s = document.getElementById('globalFilterStatus');
+      if (s) {
+        if (pillarType === 'SUCCESS') s.value = 'SUCCESS';
+        else if (pillarType === 'FAIL') s.value = 'FAIL';
       }
+      switchTab('table');
+      applyGlobalFilters();
     }
 
     // Render "สรุปแยกรายคัน" (Trucks Fleet Tab)
@@ -46098,6 +47106,7 @@
 
       let subNormalSuccess = 0;
       let subOtherFailAccessible = 0;
+      let subAutoJob30 = 0;
       let subFloodBlocked = 0;
       let subTransferPending = 0;
 
@@ -46132,24 +47141,39 @@
         const latestAttempt = m.attempts[m.attempts.length - 1];
 
         // Rule: กรณีที่เป็นสถานะอื่นถือว่าเข้าส่งได้ ยกเว้นน้ำท่วม หรือโอนงานแต่ยังไม่มีสถานะซ้ำอื่นขึ้นมา
+        // กฎการดำเนินงานใหม่: ระบบขึ้นหมายเหตุ "ยกเลิกรอบน้ำโดยระบบ auto ปิด Job 30" แปลว่าสำเร็จ
         let isAccessible = false;
         let accessType = '';
 
         m.attempts.forEach(a => {
+          const note = a.note || '';
           const reason = a.reason || '';
           const status = a.status || '';
+          const round = a.round || '';
+          const transferRaw = a.transferRaw || '';
           const group = a.deliveryGroup || '';
+
+          const isAutoJob = note.includes('auto ปิด Job 30') || 
+                            reason.includes('auto ปิด Job 30') || 
+                            transferRaw.includes('auto ปิด Job 30') || 
+                            round.includes('auto ปิด Job 30') ||
+                            status.includes('auto ปิด Job 30') ||
+                            status.includes('Auto Job 30');
+
           const isFlood = reason.includes('น้ำท่วม') || status === 'รอน้ำลด';
-          const isTransferAttempt = a.isTransferred || a.round === 'โอนงานสิ้นวัน' || (a.transferRaw && (a.transferRaw.includes('ผู้ทำรายการ') || a.transferRaw.includes('โอนงาน')));
+          const isTransferAttempt = a.isTransferred || round === 'โอนงานสิ้นวัน' || (transferRaw && (transferRaw.includes('ผู้ทำรายการ') || transferRaw.includes('โอนงาน')));
 
           const isDelivered = status === 'ส่งสำเร็จแล้ว' || status === 'ลูกค้าตั้งถัง' || status === 'พบลูกค้า' || status === 'นัดส่งชดเชย' || (!group.includes('ยังส่งไม่ได้') && !status.includes('ยังส่งไม่ได้') && !isFlood && !isTransferAttempt);
 
           const isNonFloodFail = (group === 'ยังส่งไม่ได้' || status === 'ยังส่งไม่ได้' || reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('เกิดข้อผิดพลาด') || reason.includes('เลื่อนวันที่ส่ง')) && !isFlood && !isTransferAttempt;
 
-          if (isDelivered) {
+          if (isAutoJob) {
+            isAccessible = true;
+            accessType = 'AUTO_JOB30';
+          } else if (isDelivered && accessType !== 'AUTO_JOB30') {
             isAccessible = true;
             accessType = 'DELIVERED';
-          } else if (isNonFloodFail && accessType !== 'DELIVERED') {
+          } else if (isNonFloodFail && !isAccessible) {
             isAccessible = true;
             accessType = 'NON_FLOOD_FAIL';
           }
@@ -46157,7 +47181,8 @@
 
         if (isAccessible) {
           accessibleMembers++;
-          if (accessType === 'DELIVERED') subNormalSuccess++;
+          if (accessType === 'AUTO_JOB30') subAutoJob30++;
+          else if (accessType === 'DELIVERED') subNormalSuccess++;
           else subOtherFailAccessible++;
         } else {
           pendingMembers++;
@@ -46180,6 +47205,7 @@
         multiTransferMembers,
         subNormalSuccess,
         subOtherFailAccessible,
+        subAutoJob30,
         subFloodBlocked,
         subTransferPending,
         b2bMembers,
@@ -46207,14 +47233,17 @@
 
       const subNormalSuccess = memberStats.subNormalSuccess;
       const subCompSuccess = memberStats.subOtherFailAccessible;
+      const subAutoJob30 = memberStats.subAutoJob30 || 0;
       const subFloodBlocked = memberStats.subFloodBlocked;
       const subPostponed = memberStats.subTransferPending;
       const subTransferEod = memberStats.totalTransferRounds;
       const subTransferWithOp = memberStats.multiTransferMembers;
 
       // Update Secondary KPIs
+      const elTotalMembers = document.getElementById('kpiTotalMembers');
+      if (elTotalMembers) elTotalMembers.textContent = total.toLocaleString();
       const elTotal = document.getElementById('kpiTotal');
-      if (elTotal) elTotal.textContent = total.toLocaleString();
+      if (elTotal) elTotal.textContent = filteredItems.length.toLocaleString();
       const elB2B = document.getElementById('kpiB2B');
       if (elB2B) elB2B.textContent = b2b.toLocaleString();
       const elB2C = document.getElementById('kpiB2C');
@@ -48378,12 +49407,27 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/80 transition';
 
+        const noteStr = item.note || '';
+        const reasonStr = item.reason || '';
+        const statusStr = item.status || '';
+        const roundStr = item.round || '';
+        const rawStr = item.transferRaw || '';
+
+        const isAutoJob30 = noteStr.includes('auto ปิด Job 30') || 
+                            reasonStr.includes('auto ปิด Job 30') || 
+                            rawStr.includes('auto ปิด Job 30') || 
+                            roundStr.includes('auto ปิด Job 30') ||
+                            statusStr.includes('auto ปิด Job 30') ||
+                            statusStr.includes('Auto Job 30');
+
         const isFail = item.deliveryGroup === 'ยังส่งไม่ได้' || item.status === 'ยังส่งไม่ได้' || item.status === 'รอน้ำลด' || (item.reason && (item.reason.includes('ไม่สามารถเข้าส่งได้') || item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง')));
 
         const isErrorPostpone = item.reason && (item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง'));
 
         let statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-700">🔴 ยังส่งไม่ได้</span>';
-        if (item.status === 'นัดส่งชดเชย') {
+        if (isAutoJob30) {
+          statusBadge = '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-100 text-teal-800 border border-teal-200"><i data-lucide="zap" class="w-3 h-3 mr-1 text-teal-600"></i>⚡ Auto ปิด Job 30 (สำเร็จ)</span>';
+        } else if (item.status === 'นัดส่งชดเชย') {
           statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-700">🟡 นัดส่งชดเชย</span>';
         } else if (isErrorPostpone && (!item.status || item.status === 'ยังส่งไม่ได้' || item.status === 'รอน้ำลด')) {
           statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800 border border-amber-200">⚠️ เกิดข้อผิดพลาด (เลื่อนส่ง)</span>';
@@ -48398,12 +49442,14 @@
           : '<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600">B2C</span>';
 
         let reasonHtml = '';
-        if (isErrorPostpone) {
+        if (isAutoJob30) {
+          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 text-teal-900 border border-teal-200 truncate block" title="' + (item.note || 'auto ปิด Job 30') + '"><i data-lucide="zap" class="w-3 h-3 mr-1 text-teal-600 shrink-0"></i>' + (item.note || 'auto ปิด Job 30') + '</span>';
+        } else if (isErrorPostpone) {
           reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-900 border border-amber-200 truncate block" title="' + item.reason + '"><i data-lucide="alert-triangle" class="w-3 h-3 mr-1 text-amber-600 shrink-0"></i>' + item.reason + '</span>';
         } else if (isFail) {
           reasonHtml = '<span class="text-red-600 font-semibold text-xs truncate block" title="' + item.reason + '">🔴 ' + item.reason + '</span>';
         } else {
-          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200" title="' + item.reason + '"><i data-lucide="check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>เข้าส่งได้: ' + item.reason + '</span>';
+          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200" title="' + item.reason + '"><i data-lucide="check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>เข้าส่งได้: ' + (item.reason || 'ปกติ') + '</span>';
         }
 
         const isTransfer = item.isTransferred || item.round === 'โอนงานสิ้นวัน' || (item.transferRaw && (item.transferRaw.includes('ผู้ทำรายการ') || item.transferRaw.includes('โอนงาน')));
@@ -48443,7 +49489,7 @@
           <td class="px-3 py-3 max-w-xs">
             ` + reasonHtml + `
             ` + transferOperatorText + `
-            ${item.note ? '<div class="text-slate-500 text-[11px] italic mt-0.5">โน้ต: ' + item.note + '</div>' : ''}
+            ${(item.note && !isAutoJob30) ? '<div class="text-slate-700 bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 mt-0.5 text-[11px] font-mono truncate" title="' + item.note + '">Col K: ' + item.note + '</div>' : ''}
           </td>
           <td class="px-3 py-3 whitespace-nowrap">
             ` + statusBadge + `
