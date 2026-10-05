@@ -50,6 +50,9 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- Supabase Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
     body { font-family: 'Kanit', sans-serif; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -1758,6 +1761,19 @@
     let pageSize = 15;
     let selectedItem = null;
 
+    // Supabase Live Client Configuration
+    const SUPABASE_PROJECT_URL = 'https:' + '/' + '/aggfmnyrfxmuwpjbynom.supabase.co';
+    const SUPABASE_CLIENT_KEY = 'sb_secret_1y8nEXGgAHDg1UxyKHGS-Q__jHcUi12';
+    let supabaseClient = null;
+
+    try {
+      if (typeof window !== 'undefined' && window.supabase && window.supabase.createClient) {
+        supabaseClient = window.supabase.createClient(SUPABASE_PROJECT_URL, SUPABASE_CLIENT_KEY);
+      }
+    } catch (sbErr) {
+      console.warn('Supabase initialization note:', sbErr);
+    }
+
     // Leaflet Map & Clusters
     let map = null;
     let markersCluster = null;
@@ -1811,8 +1827,18 @@
         }
       });
 
-      // Check if running inside Google Apps Script
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
+      // Check Supabase connection first for ultra-fast load and Realtime sync
+      if (supabaseClient) {
+        loadDataFromSupabase(true).then(loaded => {
+          if (!loaded && typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler(onLiveGoogleSheetsData)
+              .withFailureHandler(err => console.log('Apps Script fetch note:', err))
+              .getDashboardData();
+          }
+        });
+        setupSupabaseRealtime();
+      } else if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(onLiveGoogleSheetsData)
           .withFailureHandler(err => console.log('Apps Script fetch note:', err))
@@ -1820,6 +1846,125 @@
       }
     }
 
+    // Load Live Data from Supabase Database
+    async function loadDataFromSupabase(isSilent) {
+      if (!supabaseClient) return false;
+      try {
+        const { data, error } = await supabaseClient
+          .from('delivery_orders')
+          .select('*')
+          .order('order_code', { ascending: true })
+          .limit(10000);
+
+        if (error) throw error;
+        if (data && data.length > 0) {
+          allItems = data.map(row => {
+            let b = (row.branch || '').trim();
+            if (b.startsWith('คลัง')) b = b.replace(/^คลัง/, 'สาขา');
+            return {
+              id: row.order_code || row.id,
+              memberId: row.member_id,
+              name: row.customer_name,
+              date: row.delivery_date ? row.delivery_date.replace('T', ' ').substring(0, 16) : '',
+              round: row.round || 'ปกติ',
+              reason: row.reason || '',
+              truck: row.truck_number || '',
+              day: row.delivery_day || '',
+              customerType: row.customer_type || 'B2C',
+              branch: b,
+              address: row.address || '',
+              gps: row.gps || (row.latitude && row.longitude ? (row.latitude + ',' + row.longitude) : ''),
+              district: row.district || '',
+              status: row.status || 'รอน้ำลด',
+              note: row.note || '',
+              deliveryGroup: row.delivery_group || 'ปกติ',
+              isTransferred: Boolean(row.is_transferred),
+              transferOperator: row.transfer_operator || '',
+              transferDate: row.transfer_date || '',
+              transferRaw: row.transfer_raw || ''
+            };
+          });
+
+          const syncEl = document.getElementById('syncStatusText');
+          if (syncEl) {
+            syncEl.innerHTML = '<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>เชื่อมต่อสด Supabase (' + data.length.toLocaleString() + ' รายการ)';
+          }
+          renderTruckFilterOptions();
+          applyFilters();
+          updateTransferBadge();
+          if (currentTab === 'transfers') renderTransfersTab();
+          if (!isSilent) showToast('เชื่อมต่อและดึงข้อมูลสดจาก Supabase เรียบร้อย (' + data.length.toLocaleString() + ' รายการ)');
+          return true;
+        }
+      } catch (err) {
+        console.warn('Supabase fetch note:', err);
+      }
+      return false;
+    }
+
+    // Realtime Listener for Instant Updates Across Team
+    function setupSupabaseRealtime() {
+      if (!supabaseClient) return;
+      try {
+        supabaseClient
+          .channel('realtime_delivery_changes')
+          .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'delivery_orders' },
+            payload => {
+              if (payload.new && payload.new.member_id) {
+                const targetMid = payload.new.member_id;
+                let found = false;
+                allItems.forEach(item => {
+                  if (item.memberId === targetMid) {
+                    item.status = payload.new.status || item.status;
+                    item.note = payload.new.note !== undefined ? payload.new.note : item.note;
+                    found = true;
+                  }
+                });
+                if (found) {
+                  calculateKPIs();
+                  renderTable();
+                  updateMapPins();
+                  showToast('⚡ อัปเดตสด: สมาชิก ' + targetMid + ' เปลี่ยนเป็น ' + payload.new.status);
+                }
+              }
+            }
+          )
+          .subscribe();
+      } catch (e) {
+        console.warn('Realtime subscribe error:', e);
+      }
+    }
+
+    // Save status update to Supabase
+    async function saveStatusToSupabase(memberId, newStatus, note) {
+      if (!supabaseClient) return;
+      try {
+        const { error } = await supabaseClient
+          .from('delivery_orders')
+          .update({
+            status: newStatus,
+            note: note,
+            updated_at: new Date().toISOString()
+          })
+          .eq('member_id', memberId);
+
+        if (error) console.error('Supabase update error:', error);
+
+        // Also record to audit log
+        await supabaseClient
+          .from('action_logs')
+          .insert([{
+            member_id: memberId,
+            status: newStatus,
+            note: note,
+            user_email: 'Dispatcher'
+          }]);
+      } catch (e) {
+        console.error('Supabase save error:', e);
+      }
+    }
 
     function onLiveGoogleSheetsData(res) {
       if (!res) return;
@@ -4094,7 +4239,12 @@
       closeModal();
       showToast('บันทึกสถานะของสมาชิก ' + selectedItem.memberId + ' เรียบร้อยแล้ว');
 
-      // Sync back to Google Apps Script if active
+      // 1. Sync directly to Supabase Database (Realtime)
+      if (typeof saveStatusToSupabase === 'function' && supabaseClient) {
+        saveStatusToSupabase(selectedItem.memberId, newStatus, note);
+      }
+
+      // 2. Sync back to Google Apps Script if active
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => console.log('Saved to Google Sheets:', res))
@@ -4102,7 +4252,7 @@
       }
     }
 
-    // Refresh Data
+    // Refresh Data (Prioritize Supabase, Fallback to Google Sheets)
     function reloadData() {
       const icon = document.getElementById('refreshIcon');
       icon.classList.add('animate-spin');
@@ -4111,7 +4261,21 @@
         refreshWaterData(false);
       }
 
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
+      if (typeof loadDataFromSupabase === 'function' && supabaseClient) {
+        loadDataFromSupabase(false).then(loaded => {
+          icon.classList.remove('animate-spin');
+          if (!loaded && typeof google !== 'undefined' && google.script && google.script.run) {
+            google.script.run
+              .withSuccessHandler(res => {
+                onLiveGoogleSheetsData(res);
+              })
+              .withFailureHandler(err => {
+                showToast('รีเฟรชข้อมูลเรียบร้อย (แคชล่าสุด)');
+              })
+              .getDashboardData();
+          }
+        });
+      } else if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => {
             icon.classList.remove('animate-spin');
