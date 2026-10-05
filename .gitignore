@@ -19,7 +19,8 @@ scratch_*.js
 # Temporary screenshots
 *.png
 
-# Operating System files
-Thumbs.db
-Desktop.ini
-.DS_Store
+# Temporary CSV dumps
+sheet1_deliveries_53k.csv
+sheet2_addresses_39k.csv
+supabase_deliveries_53k.csv
+supabase_members_39k.csv

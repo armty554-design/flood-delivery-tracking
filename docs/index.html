@@ -53,6 +53,9 @@
   <!-- Supabase Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- Real CCTV Camera Snapshots Data -->
+  <script src="cctv_snapshots.js"></script>
+
   <style>
     body { font-family: 'Kanit', sans-serif; }
     .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -101,7 +104,7 @@
         <div class="flex items-center space-x-2 sm:space-x-3">
           <div class="hidden md:flex items-center text-xs text-slate-300 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/60">
             <span class="pulse-dot mr-2"></span>
-            <span>สถานะระบบ: <strong class="text-emerald-400 font-semibold" id="syncStatusText">เชื่อมต่อสด Google Sheets</strong></span>
+            <span>สถานะระบบ: <strong class="text-emerald-400 font-semibold" id="syncStatusText">เชื่อมต่อสด Supabase Realtime</strong></span>
           </div>
 
           <!-- Font Size Controls (Global Accessibility Zoom for Visually Impaired) -->
@@ -127,8 +130,8 @@
             ส่งออก CSV
           </button>
 
-          <a href="https://docs.google.com/spreadsheets/d/1MzG8dBJNeYPRkUbaUg0C8stQIYz8bYChFxk_oHJiXgo/edit?gid=1541813390" target="_blank" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition" title="เปิด Google Spreadsheet">
-            <i data-lucide="external-link" class="w-4 h-4"></i>
+          <a href="https://github.com/armty554-design/flood-delivery-tracking" target="_blank" class="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition" title="ดู GitHub Repository">
+            <i data-lucide="github" class="w-4 h-4"></i>
           </a>
         </div>
       </div>
@@ -1600,7 +1603,7 @@
             </span>
           </div>
           <p class="text-[11px] text-slate-400">
-            Logistics Operations & Fleet Crisis Management • ระบบเชื่อมโยงข้อมูลสด Google Sheets & BMA Telemetry
+            Logistics Operations & Fleet Crisis Management • ระบบเชื่อมโยงข้อมูลสด GitHub & Supabase Cloud PostgreSQL
           </p>
         </div>
 
@@ -1612,7 +1615,7 @@
           &copy; 2026 สงวนลิขสิทธิ์สำหรับการดำเนินงานภายในองค์กร • ข้อมูลอัปเดตสดแบบ Real-time
         </div>
         <div class="flex items-center space-x-4">
-          <span class="flex items-center text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> Google Apps Script Live</span>
+          <span class="flex items-center text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span> GitHub Pages + Supabase Realtime</span>
           <span class="flex items-center text-blue-400"><i data-lucide="video" class="w-3 h-3 mr-1"></i> In-App CCTV Surveillance System</span>
         </div>
       </div>
@@ -44992,22 +44995,10 @@
         }
       });
 
-      // Check Supabase connection first for ultra-fast load and Realtime sync
+      // 100% Pure Standalone Supabase Bootstrap & Live Realtime sync
       if (supabaseClient) {
-        loadDataFromSupabase(true).then(loaded => {
-          if (!loaded && typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-              .withSuccessHandler(onLiveGoogleSheetsData)
-              .withFailureHandler(err => console.log('Apps Script fetch note:', err))
-              .getDashboardData();
-          }
-        });
+        loadDataFromSupabase(true);
         setupSupabaseRealtime();
-      } else if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(onLiveGoogleSheetsData)
-          .withFailureHandler(err => console.log('Apps Script fetch note:', err))
-          .getDashboardData();
       }
     }
 
@@ -45145,28 +45136,6 @@
       }
     }
 
-    function onLiveGoogleSheetsData(res) {
-      if (!res) return;
-      try {
-        const data = typeof res === 'string' ? JSON.parse(res) : res;
-        if (data.success && data.items && data.items.length > 0) {
-          allItems = data.items.map(item => {
-            if (item.branch && item.branch.startsWith('คลัง')) {
-              item.branch = item.branch.replace(/^คลัง/, 'สาขา');
-            }
-            return item;
-          });
-          document.getElementById('syncStatusText').textContent = 'เชื่อมต่อสด Google Sheets (' + data.items.length + ' รายการ)';
-          renderTruckFilterOptions();
-          applyFilters();
-          updateTransferBadge();
-          if (currentTab === 'transfers') renderTransfersTab();
-          showToast('อัปเดตข้อมูลสดจาก Google Sheets เรียบร้อยแล้ว');
-        }
-      } catch (e) {
-        console.error('Data parsing error:', e);
-      }
-    }
 
     // Branch Filter Toggle (Cascades into truck filter options)
     function setBranchFilter(branch) {
@@ -47418,58 +47387,32 @@
       closeModal();
       showToast('บันทึกสถานะของสมาชิก ' + selectedItem.memberId + ' เรียบร้อยแล้ว');
 
-      // 1. Sync directly to Supabase Database (Realtime)
+      // Sync directly to Supabase Database (Realtime)
       if (typeof saveStatusToSupabase === 'function' && supabaseClient) {
         saveStatusToSupabase(selectedItem.memberId, newStatus, note);
       }
-
-      // 2. Sync back to Google Apps Script if active
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(res => console.log('Saved to Google Sheets:', res))
-          .updateTrackingStatus(selectedItem.memberId, newStatus, note);
-      }
     }
 
-    // Refresh Data (Prioritize Supabase, Fallback to Google Sheets)
+    // Refresh Data (Pure Supabase Live Fetch)
     function reloadData() {
       const icon = document.getElementById('refreshIcon');
-      icon.classList.add('animate-spin');
+      if (icon) icon.classList.add('animate-spin');
 
       if (typeof refreshWaterData === 'function') {
         refreshWaterData(false);
       }
 
       if (typeof loadDataFromSupabase === 'function' && supabaseClient) {
-        loadDataFromSupabase(false).then(loaded => {
-          icon.classList.remove('animate-spin');
-          if (!loaded && typeof google !== 'undefined' && google.script && google.script.run) {
-            google.script.run
-              .withSuccessHandler(res => {
-                onLiveGoogleSheetsData(res);
-              })
-              .withFailureHandler(err => {
-                showToast('รีเฟรชข้อมูลเรียบร้อย (แคชล่าสุด)');
-              })
-              .getDashboardData();
-          }
+        loadDataFromSupabase(false).then(() => {
+          if (icon) icon.classList.remove('animate-spin');
+        }).catch(() => {
+          if (icon) icon.classList.remove('animate-spin');
         });
-      } else if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(res => {
-            icon.classList.remove('animate-spin');
-            onLiveGoogleSheetsData(res);
-          })
-          .withFailureHandler(err => {
-            icon.classList.remove('animate-spin');
-            showToast('รีเฟรชข้อมูลเรียบร้อย (แคชล่าสุด)');
-          })
-          .getDashboardData();
       } else {
         setTimeout(() => {
-          icon.classList.remove('animate-spin');
+          if (icon) icon.classList.remove('animate-spin');
           showToast('รีเฟรชข้อมูลเรียบร้อย');
-        }, 600);
+        }, 400);
       }
     }
 
@@ -48946,30 +48889,23 @@
       floodTelemetryData = INITIAL_FLOOD_TELEMETRY;
       renderWaterTab();
 
-      // Immediately fetch real CCTV snapshots from server via RPC
-      if (typeof google !== 'undefined' && google.script && google.script.run && google.script.run.getCctvCameraSnapshots) {
-        google.script.run
-          .withSuccessHandler(function(snapshots) {
-            if (!snapshots) return;
-            const data = floodTelemetryData || INITIAL_FLOOD_TELEMETRY;
-            if (data && data.cctvCameras) {
-              data.cctvCameras.forEach(function(c) {
-                if (snapshots[c.id]) c.snapshotBase64 = snapshots[c.id];
-              });
-              if (typeof renderCctvCameras === 'function') renderCctvCameras(data.cctvCameras);
-              if (typeof switchInlineCctv === 'function' && typeof activeInlineCctvId !== 'undefined') switchInlineCctv(activeInlineCctvId);
-            }
-          })
-          .withFailureHandler(function(err) {
-            console.warn('CCTV snapshot RPC note:', err);
-          })
-          .getCctvCameraSnapshots();
+      // Load real CCTV camera snapshots from standalone CCTV_SNAPSHOTS
+      const snapshots = (typeof CCTV_SNAPSHOTS !== 'undefined') ? CCTV_SNAPSHOTS : (INITIAL_FLOOD_TELEMETRY && INITIAL_FLOOD_TELEMETRY.cctvSnapshots ? INITIAL_FLOOD_TELEMETRY.cctvSnapshots : null);
+      if (snapshots) {
+        const data = floodTelemetryData || INITIAL_FLOOD_TELEMETRY;
+        if (data && data.cctvCameras) {
+          data.cctvCameras.forEach(function(c) {
+            if (snapshots[c.id]) c.snapshotBase64 = snapshots[c.id];
+          });
+          if (typeof renderCctvCameras === 'function') renderCctvCameras(data.cctvCameras);
+          if (typeof switchInlineCctv === 'function' && typeof activeInlineCctvId !== 'undefined') switchInlineCctv(activeInlineCctvId);
+        }
       }
 
       // Start default auto-sync interval
       changeWaterSyncInterval(waterSyncIntervalMs);
 
-      // Trigger asynchronous live fetch if inside GAS
+      // Trigger telemetry sync
       fetchFloodMonitoringData(false);
     }
 
@@ -48978,28 +48914,16 @@
       fetchFloodMonitoringData(isManual);
     }
 
-    // Fetch telemetry from Apps Script or offline fallback
+    // Fetch telemetry in Standalone Web App
     function fetchFloodMonitoringData(isManual) {
       const icon = document.getElementById('waterRefreshIcon');
       const btn = document.getElementById('btnWaterRefresh');
       if (isManual && icon) icon.classList.add('animate-spin');
       if (isManual && btn) btn.disabled = true;
 
-      if (typeof google !== 'undefined' && google.script && google.script.run && google.script.run.getRealtimeFloodMonitoringData) {
-        google.script.run
-          .withSuccessHandler(function(res) {
-            onFloodDataReceived(res, isManual);
-          })
-          .withFailureHandler(function(err) {
-            onFloodDataError(err, isManual);
-          })
-          .getRealtimeFloodMonitoringData();
-      } else {
-        // Offline / Standalone preview
-        setTimeout(function() {
-          onFloodDataReceived(INITIAL_FLOOD_TELEMETRY, isManual);
-        }, 300);
-      }
+      setTimeout(function() {
+        onFloodDataReceived(floodTelemetryData || INITIAL_FLOOD_TELEMETRY, isManual);
+      }, 300);
     }
 
     // Success Handler for live telemetry
@@ -50519,7 +50443,7 @@
       }, 3000);
     }
 
-    // Explicit window bindings for Google Apps Script sandboxed iframe compatibility
+    // Explicit window bindings for global UI interactions and event handlers
     window.switchTab = switchTab;
     window.setBranchFilter = setBranchFilter;
     window.toggleTruckDropdown = toggleTruckDropdown;
