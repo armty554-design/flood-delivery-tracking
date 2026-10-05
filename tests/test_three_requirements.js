@@ -53,19 +53,20 @@ function runTests() {
   assert(templateHtml.includes('id="summaryBranchTableBody"'), 'Summary tab must have #summaryBranchTableBody for 4-branch pivot table');
   console.log('  ✔ PASS: 3 Hero delivery pillar cards & 4-branch pivot table exist');
 
-  // Crisis 26 Sept lifecycle trace
+  // Crisis 26 Sept lifecycle trace (User Operational Rule)
   const pendingData = JSON.parse(fs.readFileSync(pendingJsonPath, 'utf8'));
   const resolvedData = JSON.parse(fs.readFileSync(resolvedJsonPath, 'utf8'));
-  assert.strictEqual(pendingData.length, 818, 'Pending crisis records must equal 818');
-  assert.strictEqual(resolvedData.length, 1868, 'Resolved crisis records must equal 1,868');
-  assert.strictEqual(pendingData.length + resolvedData.length, 2686, 'Total crisis records must equal 2,686');
+  assert.strictEqual(pendingData.length, 343, 'Pending crisis records must equal 343 (True Pending Water)');
+  assert.strictEqual(resolvedData.length, 2344, 'Resolved crisis records must equal 2,344 (Condition Resolved)');
+  assert.strictEqual(pendingData.length + resolvedData.length, 2687, 'Total crisis records must equal 2,687');
 
   assert(templateHtml.includes('id="crisisTableBody"'), 'Must have #crisisTableBody');
   assert(templateHtml.includes('id="crisisSearchInput"'), 'Must have #crisisSearchInput');
   assert(templateHtml.includes('id="crisisBranchSelect"'), 'Must have #crisisBranchSelect');
+  assert(templateHtml.includes('id="crisisCategorySelect"'), 'Must have #crisisCategorySelect for filtering crisis categories');
   assert(templateHtml.includes('exportCrisisReportCSV'), 'Must have exportCrisisReportCSV function');
   assert(templateHtml.includes('function renderCrisisTable'), 'Must have renderCrisisTable function');
-  console.log('  ✔ PASS: Crisis 26 Sept trace data & controls verified (818 pending, 1868 resolved = 2,686 total)');
+  console.log('  ✔ PASS: Crisis 26 Sept trace data & controls verified (343 pending, 2344 resolved = 2,687 total)');
 
   // =========================================================================
   // REQUIREMENT 3: แดชบอร์ดสถิติ & กราฟ ปรับ UI ใหม่ & ย้ายแท็บไปซ้ายมือ

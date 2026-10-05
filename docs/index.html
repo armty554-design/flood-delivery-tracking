@@ -659,19 +659,19 @@
         </div>
       </div>
 
-      <!-- SPECIAL SECTION: การติดตามงานวิกฤตน้ำท่วมตั้งแต่วันที่ 26 ก.ย. (2,686 ราย) -->
+      <!-- SPECIAL SECTION: การติดตามงานวิกฤตตั้งแต่วันที่ 26 ก.ย. และโอนงานไป 28/9 - 3/10 (2,687 ราย) -->
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <div class="flex items-center space-x-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
               <h3 class="text-sm font-bold text-slate-900">
-                การติดตามงานวิกฤตตั้งแต่วันที่ 26 ก.ย. ที่เข้าส่งไม่ได้ (2,686 รายการ)
+                การติดตามงานวิกฤตตั้งแต่วันที่ 26 ก.ย. และโอนงานไป 28/9 - 3/10 (2,687 รายการ)
               </h3>
               <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">Crisis Lifecycle Trace</span>
             </div>
             <p class="text-xs text-slate-500 mt-1">
-              ตรวจสอบย้อนหลังว่ารหัสที่เข้าส่งไม่ได้เมื่อวันที่ 26 ก.ย. ตอนนี้เข้าส่งได้แล้วกี่รหัส (Resolved) และยังเหลืออีกกี่รหัสที่ยังเข้าไม่ได้ (Pending) รวมถึงจำนวนครั้งที่พยายามเข้าไปส่ง
+              คัดกรองตามเงื่อนไข: หากส่งสำเร็จแล้ว หรือขาดส่งที่ไม่เกี่ยวกับน้ำท่วมสูง/โอนงานสิ้นวัน (เช่น ไม่อยู่/ไม่รับน้ำ/ปิด) ถือว่า <strong>"สำเร็จตามเงื่อนไข"</strong> เพื่อหา <strong>"สมาชิกที่ยังไม่ได้รับน้ำเลยจริง ๆ"</strong> สำหรับวางแผนจัดส่งชดเชย
             </p>
           </div>
         </div>
@@ -680,68 +680,82 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-3">
             <span class="text-[11px] text-slate-500 font-medium block">ยอดตั้งต้น (26 ก.ย.)</span>
-            <span class="text-xl font-bold text-slate-800">2,686</span>
-            <span class="text-[10px] text-slate-400 block">ออเดอร์ติดปัญหา</span>
+            <span class="text-xl font-bold text-slate-800">2,687</span>
+            <span class="text-[10px] text-slate-400 block">ออเดอร์ติดปัญหา 26 ก.ย.</span>
           </div>
           <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
-            <span class="text-[11px] text-emerald-800 font-medium block">🟢 เข้าส่งได้แล้ว (Resolved)</span>
-            <span class="text-xl font-bold text-emerald-700">1,868 <span class="text-xs font-semibold">(69.5%)</span></span>
-            <span class="text-[10px] text-emerald-600 block">ปิดงานสำเร็จแล้ว</span>
+            <span class="text-[11px] text-emerald-800 font-medium block">🟢 สำเร็จตามเงื่อนไข (Resolved)</span>
+            <span class="text-xl font-bold text-emerald-700">2,344 <span class="text-xs font-semibold">(87.2%)</span></span>
+            <span class="text-[10px] text-emerald-600 block">ส่งสำเร็จ 2,230 • ขาดส่งเหตุอื่น 114</span>
           </div>
           <div class="bg-red-50 border border-red-200 rounded-xl p-3">
-            <span class="text-[11px] text-red-800 font-medium block">🔴 ยังเข้าไม่ได้ (Pending)</span>
-            <span class="text-xl font-bold text-red-700">818 <span class="text-xs font-semibold">(30.5%)</span></span>
-            <span class="text-[10px] text-red-600 block">ยังติดน้ำท่วม/รอน้ำลด</span>
+            <span class="text-[11px] text-red-800 font-medium block">🔴 ยังไม่ได้รับน้ำเลย (Pending)</span>
+            <span class="text-xl font-bold text-red-700">343 <span class="text-xs font-semibold">(12.8%)</span></span>
+            <span class="text-[10px] text-red-600 block">น้ำท่วมสูง 341 • เลื่อนส่ง 2</span>
           </div>
           <div class="bg-purple-50 border border-purple-200 rounded-xl p-3">
-            <span class="text-[11px] text-purple-800 font-medium block">สาขาที่ยังตกค้าง</span>
+            <span class="text-[11px] text-purple-800 font-medium block">สาขาที่ต้องไปส่ง (343 ราย)</span>
             <div class="text-[11px] text-purple-900 font-bold mt-1 space-y-0.5">
-              <div>รามอินทรา: <span class="font-mono text-red-600 font-bold">356</span> | กรุงเทพกรีฑา: <span class="font-mono text-red-600 font-bold">304</span></div>
-              <div>สุขุมวิท 50: <span class="font-mono text-red-600 font-bold">146</span> | พระราม 3: <span class="font-mono text-slate-600">12</span></div>
+              <div>รามอินทรา: <span class="font-mono text-red-600 font-bold">251</span> | กรุงเทพกรีฑา: <span class="font-mono text-red-600 font-bold">92</span></div>
+              <div>สุขุมวิท 50: <span class="font-mono text-slate-600">0</span> | พระราม 3: <span class="font-mono text-slate-600">0</span></div>
             </div>
           </div>
         </div>
 
-        <!-- Attempts Breakdown Chips -->
-        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs flex flex-wrap items-center gap-3">
-          <span class="font-bold text-slate-700 flex items-center">
-            <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> สรุปจำนวนครั้งที่เข้าไปจัดส่ง (Attempts):
+        <!-- Attempts Breakdown Chips (เฉพาะ 343 สมาชิกที่ยังไม่ได้รับน้ำเลย) -->
+        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 text-xs flex flex-wrap items-center gap-2 sm:gap-3">
+          <span class="font-bold text-slate-700 flex items-center shrink-0">
+            <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> ความพยายามเข้าส่ง (เฉพาะ 343 สมาชิกที่ยังไม่ได้รับน้ำ):
           </span>
           <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-medium text-slate-700">
-            เข้าส่ง 2 ครั้ง: <strong class="text-blue-600 ml-1">1,694 ราย</strong>
+            เข้าส่ง 1 ครั้ง (ยังไม่ส่งซ้ำ): <strong class="text-amber-600 ml-1">2 ราย</strong>
           </span>
           <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-medium text-slate-700">
-            เข้าส่ง 3 ครั้ง: <strong class="text-indigo-600 ml-1">431 ราย</strong>
+            เข้าส่ง 2 ครั้ง: <strong class="text-blue-600 ml-1">295 ราย</strong>
           </span>
           <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-medium text-slate-700">
-            เข้าส่ง 4 ครั้ง: <strong class="text-amber-600 ml-1">402 ราย</strong>
+            เข้าส่ง 3 ครั้ง: <strong class="text-indigo-600 ml-1">5 ราย</strong>
           </span>
           <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-medium text-slate-700">
-            เข้าส่ง 5 ครั้งขึ้นไป: <strong class="text-red-600 ml-1">159 ราย</strong>
+            เข้าส่ง 4 ครั้ง: <strong class="text-purple-600 ml-1">39 ราย</strong>
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-white border border-slate-200 font-medium text-slate-700">
+            เข้าส่ง 5 ครั้งขึ้นไป: <strong class="text-red-600 ml-1">2 ราย</strong>
           </span>
         </div>
 
         <!-- Crisis Search & Filter Controls -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs">
           <div class="flex flex-wrap items-center gap-2">
+            <!-- Mode Buttons Group -->
             <div class="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 gap-1">
               <button onclick="setCrisisFilterMode('PENDING')" id="btnCrisisMode-PENDING" class="px-3 py-1 rounded-lg font-bold transition bg-red-600 text-white shadow-xs">
-                🔴 ยังเข้าไม่ได้ (818)
+                🔴 ยังไม่ได้รับน้ำเลย (343)
               </button>
               <button onclick="setCrisisFilterMode('RESOLVED')" id="btnCrisisMode-RESOLVED" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-emerald-700 transition">
-                🟢 เข้าส่งได้แล้ว (1,868)
+                🟢 สำเร็จตามเงื่อนไข (2,344)
               </button>
               <button onclick="setCrisisFilterMode('ALL')" id="btnCrisisMode-ALL" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
-                ทั้งหมด (2,686)
+                ทั้งหมด (2,687)
               </button>
             </div>
 
+            <!-- Branch Select -->
             <select id="crisisBranchSelect" onchange="renderCrisisTable()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-xs focus:ring-1 focus:ring-blue-500">
               <option value="ALL">ทุกสาขา</option>
-              <option value="สาขารามอินทรา">สาขารามอินทรา</option>
-              <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
-              <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
-              <option value="สาขาพระราม 3">สาขาพระราม 3</option>
+              <option value="สาขารามอินทรา">สาขารามอินทรา (251)</option>
+              <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา (92)</option>
+              <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50 (0)</option>
+              <option value="สาขาพระราม 3">สาขาพระราม 3 (0)</option>
+            </select>
+
+            <!-- Category Filter Select -->
+            <select id="crisisCategorySelect" onchange="renderCrisisTable()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-xs focus:ring-1 focus:ring-blue-500">
+              <option value="ALL">ทุกสาเหตุ / สถานะ</option>
+              <option value="FLOOD">🌊 น้ำท่วมสูงไม่สามารถส่งได้ (341)</option>
+              <option value="POSTPONED">⏳ เลื่อนวันที่ส่ง (2)</option>
+              <option value="DELIVERED">🟢 ส่งสำเร็จแล้ว (2,230)</option>
+              <option value="NON_FLOOD_FAIL">🟢 เข้าถึงพื้นที่ได้ ขาดส่งเหตุอื่น (114)</option>
             </select>
           </div>
 
@@ -46479,6 +46493,21 @@
         activeDataset = activeDataset.filter(item => item.branch === branchVal);
       }
 
+      // Category / Status Filter
+      const catSelect = document.getElementById('crisisCategorySelect');
+      const catVal = catSelect ? catSelect.value : 'ALL';
+      if (catVal !== 'ALL') {
+        if (catVal === 'FLOOD') {
+          activeDataset = activeDataset.filter(item => !item.resolvedDate && (item.pendingCategory === 'น้ำท่วมสูงไม่สามารถส่งได้' || (item.lastReason && item.lastReason.includes('น้ำท่วม'))));
+        } else if (catVal === 'POSTPONED') {
+          activeDataset = activeDataset.filter(item => !item.resolvedDate && (item.pendingCategory === 'เลื่อนวันที่ส่ง' || (item.lastReason && item.lastReason.includes('เลื่อนวันที่ส่ง'))));
+        } else if (catVal === 'DELIVERED') {
+          activeDataset = activeDataset.filter(item => item.resolvedDate && (!item.resolvedType || item.resolvedType.includes('ส่งสำเร็จ')));
+        } else if (catVal === 'NON_FLOOD_FAIL') {
+          activeDataset = activeDataset.filter(item => item.resolvedDate && item.resolvedType && item.resolvedType.includes('ขาดส่งเหตุอื่น'));
+        }
+      }
+
       const searchInput = document.getElementById('crisisSearchInput');
       const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : '';
       if (searchVal) {
@@ -46531,9 +46560,27 @@
           ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 font-mono">${item.attemptsCount} ครั้ง</span>`
           : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 font-mono">${item.attemptsCount} ครั้ง</span>`;
 
-        const statusTag = isResolved
-          ? `<div class="font-bold text-emerald-700 text-xs">🟢 ส่งสำเร็จแล้ว (${item.resolvedDate})</div><div class="text-[11px] text-slate-500">${item.resolvedReason || 'ลูกค้าตั้งถัง'}</div>`
-          : `<div class="font-bold text-red-700 text-xs">🔴 ยังเข้าไม่ได้ (${item.lastDate || 'ล่าสุด'})</div><div class="text-[11px] text-red-600 truncate max-w-xs">${item.lastReason || 'ไม่สามารถเข้าส่งได้'}</div>`;
+        let statusTag = '';
+        if (isResolved) {
+          const isNonFloodFail = item.resolvedType && item.resolvedType.includes('ขาดส่งเหตุอื่น');
+          if (isNonFloodFail) {
+            statusTag = `
+              <div class="font-bold text-emerald-800 text-xs">🟢 สำเร็จตามเงื่อนไข (${item.resolvedDate})</div>
+              <div class="text-[10px] text-emerald-700 font-medium">เข้าถึงพื้นที่ได้ (ขาดส่งเหตุอื่น)</div>
+              <div class="text-[11px] text-slate-500 truncate max-w-xs">${item.resolvedReason || '-'}</div>
+            `;
+          } else {
+            statusTag = `
+              <div class="font-bold text-emerald-700 text-xs">🟢 ส่งสำเร็จแล้ว (${item.resolvedDate})</div>
+              <div class="text-[11px] text-slate-500">${item.resolvedReason || 'ลูกค้าตั้งถัง'}</div>
+            `;
+          }
+        } else {
+          statusTag = `
+            <div class="font-bold text-red-700 text-xs">🔴 ยังไม่ได้รับน้ำเลย (${item.lastDate || 'ล่าสุด'})</div>
+            <div class="text-[11px] text-red-600 font-semibold truncate max-w-xs">${item.lastReason || item.pendingCategory || 'น้ำท่วมสูงในพื้นที่'}</div>
+          `;
+        }
 
         // Parse history arrow string
         const historyHtml = (item.history || '')
@@ -46596,9 +46643,29 @@
     function exportCrisisReportCSV() {
       const pendingList = getCrisisPendingData();
       const resolvedList = getCrisisResolvedData();
-      const list = crisisFilterMode === 'PENDING' ? pendingList
-                 : crisisFilterMode === 'RESOLVED' ? resolvedList
-                 : [...pendingList, ...resolvedList];
+      let list = crisisFilterMode === 'PENDING' ? pendingList
+               : crisisFilterMode === 'RESOLVED' ? resolvedList
+               : [...pendingList, ...resolvedList];
+
+      const branchSelect = document.getElementById('crisisBranchSelect');
+      const branchVal = branchSelect ? branchSelect.value : 'ALL';
+      if (branchVal !== 'ALL') {
+        list = list.filter(item => item.branch === branchVal);
+      }
+
+      const catSelect = document.getElementById('crisisCategorySelect');
+      const catVal = catSelect ? catSelect.value : 'ALL';
+      if (catVal !== 'ALL') {
+        if (catVal === 'FLOOD') {
+          list = list.filter(item => !item.resolvedDate && (item.pendingCategory === 'น้ำท่วมสูงไม่สามารถส่งได้' || (item.lastReason && item.lastReason.includes('น้ำท่วม'))));
+        } else if (catVal === 'POSTPONED') {
+          list = list.filter(item => !item.resolvedDate && (item.pendingCategory === 'เลื่อนวันที่ส่ง' || (item.lastReason && item.lastReason.includes('เลื่อนวันที่ส่ง'))));
+        } else if (catVal === 'DELIVERED') {
+          list = list.filter(item => item.resolvedDate && (!item.resolvedType || item.resolvedType.includes('ส่งสำเร็จ')));
+        } else if (catVal === 'NON_FLOOD_FAIL') {
+          list = list.filter(item => item.resolvedDate && item.resolvedType && item.resolvedType.includes('ขาดส่งเหตุอื่น'));
+        }
+      }
 
       if (!list || list.length === 0) {
         alert('ไม่มีข้อมูลสำหรับส่งออก');
@@ -46606,14 +46673,18 @@
       }
 
       let csv = '\uFEFF';
-      csv += 'รหัสสมาชิก,ชื่อสมาชิก,สาขา,สายรถ,จำนวนครั้งที่เข้าส่ง,สถานะล่าสุด,เหตุผล,ที่อยู่,ประวัติการเข้าส่ง\n';
+      csv += 'รหัสสมาชิก,ชื่อสมาชิก,สาขา,สายรถ,จำนวนครั้งที่เข้าส่ง,สถานะตามเงื่อนไข,ประเภทการปิดงาน/ตกค้าง,เหตุผลล่าสุด,ที่อยู่,ประวัติการเข้าส่ง\n';
 
       list.forEach(i => {
-        const status = i.resolvedDate ? 'ส่งสำเร็จแล้ว' : 'ยังเข้าไม่ได้';
+        const isResolved = !!i.resolvedDate;
+        const status = isResolved ? 'สำเร็จตามเงื่อนไข' : 'ยังไม่ได้รับน้ำเลย';
+        const type = isResolved
+          ? (i.resolvedType || 'ส่งสำเร็จแล้ว')
+          : (i.pendingCategory || 'น้ำท่วมสูงไม่สามารถส่งได้');
         const reason = (i.resolvedReason || i.lastReason || '').replace(/"/g, '""');
         const addr = (i.address || '').replace(/"/g, '""');
         const hist = (i.history || '').replace(/"/g, '""');
-        csv += `"${i.memberId}","${i.name}","${i.branch}","${i.truck}",${i.attemptsCount},"${status}","${reason}","${addr}","${hist}"\n`;
+        csv += `"${i.memberId}","${i.name}","${i.branch}","${i.truck}",${i.attemptsCount},"${status}","${type}","${reason}","${addr}","${hist}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
