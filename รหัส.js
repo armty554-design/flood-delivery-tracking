@@ -35,7 +35,13 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.TEXT);
     }
 
-    return HtmlService.createHtmlOutputFromFile('Index')
+    let output = null;
+    try {
+      output = HtmlService.createHtmlOutputFromFile('index');
+    } catch (eIndex) {
+      output = HtmlService.createHtmlOutputFromFile('Index');
+    }
+    return output
       .setTitle('ระบบติดตามสถานะการจัดส่งช่วงน้ำท่วม - 4 สาขา')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
