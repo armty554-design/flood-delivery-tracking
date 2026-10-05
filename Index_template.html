@@ -2827,6 +2827,8 @@
       if (trucks.includes(currentVal)) {
         select.value = currentVal;
       }
+    }
+
     // Helper function to evaluate delivery status of a single order / attempt
     function checkOrderDeliveryStatus(order) {
       if (!order) return { isSuccess: false, isAuto: false, isFlood: false, isTransfer: false, type: 'EMPTY' };
