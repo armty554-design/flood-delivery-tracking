@@ -282,16 +282,16 @@
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-bold text-emerald-800 flex items-center">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span>
-              1. ส่งสำเร็จแล้ว (Delivered)
+              1. เข้าส่งได้ (Delivered / Accessible)
             </span>
             <span id="kpiSuccessPct" class="text-xs font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
           </div>
           <div class="flex items-baseline space-x-2">
             <span id="kpiSuccessCount" class="text-3xl sm:text-4xl font-black text-emerald-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">ราย</span>
+            <span class="text-xs font-semibold text-slate-500">รหัส</span>
           </div>
           <p class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
-            <span>ลูกค้าตั้งถัง / พบลูกค้า / ส่งชดเชยสำเร็จ</span>
+            <span>ส่งสำเร็จ / พบลูกค้า / ขาดส่งเหตุอื่น</span>
             <span class="text-emerald-700 font-bold group-hover:underline">คลิกดู ➔</span>
           </p>
         </div>
@@ -301,16 +301,16 @@
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-bold text-red-800 flex items-center">
               <span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-2 animate-ping"></span>
-              2. ส่งไม่สำเร็จ / ติดน้ำท่วม (Pending)
+              2. ยังส่งไม่ได้ / ติดน้ำท่วม (Pending)
             </span>
             <span id="kpiFailPct" class="text-xs font-black px-2 py-0.5 rounded-full bg-red-100 text-red-800">0%</span>
           </div>
           <div class="flex items-baseline space-x-2">
             <span id="kpiFailCount" class="text-3xl sm:text-4xl font-black text-red-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">ราย</span>
+            <span class="text-xs font-semibold text-slate-500">รหัส</span>
           </div>
           <p class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
-            <span>น้ำท่วมสูงในพื้นที่ / ไม่รับน้ำ / เลื่อนส่ง</span>
+            <span>น้ำท่วมสูง / โอนงานยังไม่มีสถานะซ้ำ</span>
             <span class="text-red-700 font-bold group-hover:underline">คลิกดู ➔</span>
           </p>
         </div>
@@ -322,14 +322,14 @@
               <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1.5 text-purple-600"></i>
               3. โอนงานที่ส่ง (Transfers)
             </span>
-            <span class="text-xs font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">คอลัมน์ K</span>
+            <span class="text-xs font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">คิดสถิติ 1 รหัส</span>
           </div>
           <div class="flex items-baseline space-x-2">
             <span id="kpiTransferCount" class="text-3xl sm:text-4xl font-black text-purple-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">ราย</span>
+            <span class="text-xs font-semibold text-slate-500">รหัส</span>
           </div>
           <p class="text-[11px] text-slate-500 mt-2 flex items-center justify-between">
-            <span>โอนงานสิ้นวัน / เลื่อนส่งรอบชดเชย</span>
+            <span id="kpiTransferRoundsSubtext">คิดเป็น 1 รหัสต่อสมาชิก (โอนรวม - รอบ)</span>
             <span class="text-purple-700 font-bold group-hover:underline">คลิกแท็บงานโอน ➔</span>
           </p>
         </div>
@@ -580,17 +580,17 @@
         <div class="bg-white rounded-2xl p-5 border-2 border-emerald-500/30 shadow-sm relative overflow-hidden">
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs font-bold text-emerald-800 uppercase tracking-wide flex items-center">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span> 1. ส่งสำเร็จแล้ว (Delivered)
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span> 1. เข้าส่งได้ (Accessible)
             </span>
             <span id="sumCardSuccessPct" class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
           </div>
           <div class="flex items-baseline space-x-2">
             <span id="sumCardSuccessCount" class="text-3xl sm:text-4xl font-black text-emerald-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">ราย</span>
+            <span class="text-xs font-semibold text-slate-500">รหัส</span>
           </div>
           <div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-1">
             <div class="flex justify-between"><span>ลูกค้าตั้งถัง / พบลูกค้า:</span> <strong id="sumSubNormalSuccess" class="text-slate-800 font-mono">0</strong></div>
-            <div class="flex justify-between"><span>ส่งรอบชดเชยสำเร็จ:</span> <strong id="sumSubCompSuccess" class="text-emerald-700 font-mono">0</strong></div>
+            <div class="flex justify-between"><span>ขาดส่งเหตุอื่น (เข้าถึงพื้นที่ได้):</span> <strong id="sumSubCompSuccess" class="text-emerald-700 font-mono">0</strong></div>
           </div>
         </div>
 
@@ -604,11 +604,11 @@
           </div>
           <div class="flex items-baseline space-x-2">
             <span id="sumCardFailCount" class="text-3xl sm:text-4xl font-black text-red-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">ราย</span>
+            <span class="text-xs font-semibold text-slate-500">รหัส</span>
           </div>
           <div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-1">
             <div class="flex justify-between"><span>น้ำท่วมสูงในพื้นที่ / ซอยตัน:</span> <strong id="sumSubFloodBlocked" class="text-red-700 font-mono">0</strong></div>
-            <div class="flex justify-between"><span>เลื่อนส่ง / รอประสานงาน:</span> <strong id="sumSubPostponed" class="text-amber-700 font-mono">0</strong></div>
+            <div class="flex justify-between"><span>โอนงานยังไม่มีสถานะซ้ำ / เลื่อนส่ง:</span> <strong id="sumSubPostponed" class="text-amber-700 font-mono">0</strong></div>
           </div>
         </div>
 
@@ -618,15 +618,15 @@
             <span class="text-xs font-bold text-purple-800 uppercase tracking-wide flex items-center">
               <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1.5 text-purple-600"></i> 3. โอนงานที่ส่ง (Transferred)
             </span>
-            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">คอลัมน์ K</span>
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">คิดสถิติ 1 รหัส</span>
           </div>
           <div class="flex items-baseline space-x-2">
             <span id="sumCardTransferCount" class="text-3xl sm:text-4xl font-black text-purple-700">0</span>
-            <span class="text-xs font-semibold text-slate-500">ราย</span>
+            <span class="text-xs font-semibold text-slate-500">รหัส</span>
           </div>
           <div class="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-600 space-y-1">
-            <div class="flex justify-between"><span>โอนงานสิ้นวัน:</span> <strong id="sumSubTransferEod" class="text-purple-700 font-mono">0</strong></div>
-            <div class="flex justify-between"><span>มีชื่อผู้ทำรายการโอน:</span> <strong id="sumSubTransferWithOp" class="text-indigo-700 font-mono">0</strong></div>
+            <div class="flex justify-between"><span>รวมรอบโอนทั้งหมด:</span> <strong id="sumSubTransferEod" class="text-purple-700 font-mono">0 รอบ</strong></div>
+            <div class="flex justify-between"><span>โอนซ้ำหลายรอบ (>1 ครั้ง):</span> <strong id="sumSubTransferWithOp" class="text-indigo-700 font-mono">0 รหัส</strong></div>
           </div>
         </div>
       </div>
@@ -637,18 +637,18 @@
           <h3 class="text-sm font-bold text-slate-800 flex items-center">
             <i data-lucide="layers" class="w-4 h-4 mr-2 text-blue-600"></i> ตารางเปรียบเทียบผลการจัดส่ง 4 สาขา (Branch Breakdown Matrix)
           </h3>
-          <span class="text-xs text-slate-500">คำนวณสดจากฐานข้อมูล Supabase Realtime</span>
+          <span class="text-xs text-slate-500">คำนวณตามรหัสสมาชิก (คิดสถิติ 1 รหัสต่อสมาชิก) จากฐานข้อมูล Supabase</span>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
               <tr>
                 <th class="py-2.5 px-3">สาขา</th>
-                <th class="py-2.5 px-3 text-right">ออเดอร์ทั้งหมด</th>
-                <th class="py-2.5 px-3 text-right text-emerald-700">🟢 ส่งสำเร็จแล้ว</th>
-                <th class="py-2.5 px-3 text-right text-red-700">🔴 ส่งไม่สำเร็จ / น้ำท่วม</th>
-                <th class="py-2.5 px-3 text-right text-purple-700">🟣 โอนงานที่ส่ง</th>
-                <th class="py-2.5 px-3 text-right">% สำเร็จ</th>
+                <th class="py-2.5 px-3 text-right">รหัสสมาชิกทั้งหมด</th>
+                <th class="py-2.5 px-3 text-right text-emerald-700">🟢 เข้าส่งได้ (รหัส)</th>
+                <th class="py-2.5 px-3 text-right text-red-700">🔴 ยังส่งไม่ได้ (รหัส)</th>
+                <th class="py-2.5 px-3 text-right text-purple-700">🟣 รหัสที่มีงานโอน (รอบ)</th>
+                <th class="py-2.5 px-3 text-right">% เข้าส่งได้</th>
                 <th class="py-2.5 px-3 text-center">ระดับความเสี่ยง</th>
               </tr>
             </thead>
@@ -1002,11 +1002,11 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
           <div class="p-3.5 bg-gradient-to-br from-purple-50/80 to-purple-100/40 rounded-2xl border border-purple-200/80 shadow-2xs">
             <div class="flex items-center justify-between text-purple-700 text-xs font-semibold mb-1">
-              <span>รวมงานโอนที่ไม่ผ่านในวัน</span>
+              <span>รวมรหัสสมาชิกที่มีงานโอน</span>
               <i data-lucide="repeat" class="w-4 h-4 text-purple-600"></i>
             </div>
-            <div class="text-xl sm:text-2xl font-bold font-mono text-purple-950" id="transferKpiTotal">0</div>
-            <div class="text-[11px] text-purple-700 mt-0.5" id="transferTabKpiPercent">คิดเป็น -% ของงานทั้งหมด</div>
+            <div class="text-xl sm:text-2xl font-bold font-mono text-purple-950" id="transferKpiTotal">0 รหัส</div>
+            <div class="text-[11px] text-purple-700 mt-0.5" id="transferTabKpiPercent">คิดสถิติ 1 รหัสต่อสมาชิก (รวม - รอบโอน)</div>
           </div>
 
           <div class="p-3.5 bg-gradient-to-br from-indigo-50/80 to-indigo-100/40 rounded-2xl border border-indigo-200/80 shadow-2xs">
@@ -2902,50 +2902,150 @@
       showToast('แสดงรายการงานโอนของสายรถ ' + truckNo);
     }
 
-    // Calculate KPIs (3 Delivery Pillars + Summary Breakdown)
-    function calculateKPIs() {
-      const total = filteredItems.length;
-      let b2b = 0;
-      let b2c = 0;
-      let withGps = 0;
-      let pending = 0;
+    // Aggregate items by unique member ID (Requirement: นับสถิติ 1 รหัสต่อสมาชิก พร้อมนับรอบโอนในรายละเอียด)
+    function getMemberAggregation(items) {
+      const memberMap = new Map();
+      
+      items.forEach(item => {
+        const mId = item.memberId || item.id;
+        if (!memberMap.has(mId)) {
+          memberMap.set(mId, {
+            memberId: mId,
+            name: item.name,
+            branch: item.branch,
+            truck: item.truck,
+            customerType: item.customerType,
+            gps: item.gps,
+            address: item.address,
+            district: item.district,
+            attempts: []
+          });
+        }
+        memberMap.get(mId).attempts.push(item);
+      });
 
-      let successCount = 0;
-      let failCount = 0;
-      let transferCount = 0;
+      let totalMembers = memberMap.size;
+      let accessibleMembers = 0;
+      let pendingMembers = 0;
+      let transferMembers = 0;
+      let totalTransferRounds = 0;
+      let multiTransferMembers = 0;
 
       let subNormalSuccess = 0;
-      let subCompSuccess = 0;
+      let subOtherFailAccessible = 0;
       let subFloodBlocked = 0;
-      let subPostponed = 0;
-      let subTransferEod = 0;
-      let subTransferWithOp = 0;
+      let subTransferPending = 0;
 
-      filteredItems.forEach(i => {
-        if (i.customerType === 'B2B' || (i.customerType || '').includes('Key')) b2b++;
-        else b2c++;
+      let b2bMembers = 0;
+      let b2cMembers = 0;
+      let withGpsMembers = 0;
 
-        if (i.gps) withGps++;
+      memberMap.forEach((m, mId) => {
+        if (m.customerType === 'B2B' || (m.customerType || '').includes('Key')) b2bMembers++;
+        else b2cMembers++;
 
-        const isTransfer = i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน')));
-        if (isTransfer) {
-          transferCount++;
-          if (i.round === 'โอนงานสิ้นวัน') subTransferEod++;
-          if (i.transferOperator) subTransferWithOp++;
+        if (m.gps) withGpsMembers++;
+
+        let tRounds = 0;
+        let hasTransfer = false;
+
+        m.attempts.forEach(a => {
+          const isTrans = a.isTransferred || a.round === 'โอนงานสิ้นวัน' || (a.transferRaw && (a.transferRaw.includes('ผู้ทำรายการ') || a.transferRaw.includes('โอนงาน')));
+          if (isTrans) {
+            tRounds++;
+            hasTransfer = true;
+          }
+        });
+
+        if (hasTransfer) {
+          transferMembers++;
+          totalTransferRounds += tRounds;
+          if (tRounds > 1) multiTransferMembers++;
         }
 
-        const isFail = i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || i.status === 'รอน้ำลด' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง') || i.reason.includes('น้ำท่วม')));
-        if (isFail) {
-          failCount++;
-          pending++;
-          if (i.reason && i.reason.includes('น้ำท่วม')) subFloodBlocked++;
-          else subPostponed++;
+        m.attempts.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        const latestAttempt = m.attempts[m.attempts.length - 1];
+
+        // Rule: กรณีที่เป็นสถานะอื่นถือว่าเข้าส่งได้ ยกเว้นน้ำท่วม หรือโอนงานแต่ยังไม่มีสถานะซ้ำอื่นขึ้นมา
+        let isAccessible = false;
+        let accessType = '';
+
+        m.attempts.forEach(a => {
+          const reason = a.reason || '';
+          const status = a.status || '';
+          const group = a.deliveryGroup || '';
+          const isFlood = reason.includes('น้ำท่วม') || status === 'รอน้ำลด';
+          const isTransferAttempt = a.isTransferred || a.round === 'โอนงานสิ้นวัน' || (a.transferRaw && (a.transferRaw.includes('ผู้ทำรายการ') || a.transferRaw.includes('โอนงาน')));
+
+          const isDelivered = status === 'ส่งสำเร็จแล้ว' || status === 'ลูกค้าตั้งถัง' || status === 'พบลูกค้า' || status === 'นัดส่งชดเชย' || (!group.includes('ยังส่งไม่ได้') && !status.includes('ยังส่งไม่ได้') && !isFlood && !isTransferAttempt);
+
+          const isNonFloodFail = (group === 'ยังส่งไม่ได้' || status === 'ยังส่งไม่ได้' || reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('เกิดข้อผิดพลาด') || reason.includes('เลื่อนวันที่ส่ง')) && !isFlood && !isTransferAttempt;
+
+          if (isDelivered) {
+            isAccessible = true;
+            accessType = 'DELIVERED';
+          } else if (isNonFloodFail && accessType !== 'DELIVERED') {
+            isAccessible = true;
+            accessType = 'NON_FLOOD_FAIL';
+          }
+        });
+
+        if (isAccessible) {
+          accessibleMembers++;
+          if (accessType === 'DELIVERED') subNormalSuccess++;
+          else subOtherFailAccessible++;
         } else {
-          successCount++;
-          if (i.status === 'นัดส่งชดเชย' || (i.reason && i.reason.includes('ชดเชย'))) subCompSuccess++;
-          else subNormalSuccess++;
+          pendingMembers++;
+          const latestReason = latestAttempt ? (latestAttempt.reason || '') : '';
+          const latestStatus = latestAttempt ? (latestAttempt.status || '') : '';
+          if (latestReason.includes('น้ำท่วม') || latestStatus === 'รอน้ำลด') {
+            subFloodBlocked++;
+          } else {
+            subTransferPending++;
+          }
         }
       });
+
+      return {
+        totalMembers,
+        accessibleMembers,
+        pendingMembers,
+        transferMembers,
+        totalTransferRounds,
+        multiTransferMembers,
+        subNormalSuccess,
+        subOtherFailAccessible,
+        subFloodBlocked,
+        subTransferPending,
+        b2bMembers,
+        b2cMembers,
+        withGpsMembers
+      };
+    }
+
+    // Calculate KPIs (3 Delivery Pillars + Summary Breakdown)
+    function calculateKPIs() {
+      // Aggregate by unique member ID (สถิติ 1 รหัสต่อสมาชิก)
+      const memberStats = getMemberAggregation(filteredItems);
+
+      const total = memberStats.totalMembers;
+      const b2b = memberStats.b2bMembers;
+      const b2c = memberStats.b2cMembers;
+      const withGps = memberStats.withGpsMembers;
+      const pending = memberStats.pendingMembers;
+
+      const successCount = memberStats.accessibleMembers;
+      const failCount = memberStats.pendingMembers;
+      const transferCount = memberStats.transferMembers;
+      const transferRounds = memberStats.totalTransferRounds;
+      const multiTransferCount = memberStats.multiTransferMembers;
+
+      const subNormalSuccess = memberStats.subNormalSuccess;
+      const subCompSuccess = memberStats.subOtherFailAccessible;
+      const subFloodBlocked = memberStats.subFloodBlocked;
+      const subPostponed = memberStats.subTransferPending;
+      const subTransferEod = memberStats.totalTransferRounds;
+      const subTransferWithOp = memberStats.multiTransferMembers;
 
       // Update Secondary KPIs
       const elTotal = document.getElementById('kpiTotal');
@@ -2972,6 +3072,8 @@
 
       const elTransCount = document.getElementById('kpiTransferCount');
       if (elTransCount) elTransCount.textContent = transferCount.toLocaleString();
+      const elTransSub = document.getElementById('kpiTransferRoundsSubtext');
+      if (elTransSub) elTransSub.textContent = `คิดเป็น 1 รหัสต่อสมาชิก (โอนรวม ${transferRounds.toLocaleString()} รอบ)`;
 
       // Update Summary Tab Pillar Cards
       const sumSuccCount = document.getElementById('sumCardSuccessCount');
@@ -2996,25 +3098,32 @@
       const elSubPost = document.getElementById('sumSubPostponed');
       if (elSubPost) elSubPost.textContent = subPostponed.toLocaleString();
       const elSubEod = document.getElementById('sumSubTransferEod');
-      if (elSubEod) elSubEod.textContent = subTransferEod.toLocaleString();
+      if (elSubEod) elSubEod.textContent = subTransferEod.toLocaleString() + ' รอบ';
       const elSubWithOp = document.getElementById('sumSubTransferWithOp');
-      if (elSubWithOp) elSubWithOp.textContent = subTransferWithOp.toLocaleString();
+      if (elSubWithOp) elSubWithOp.textContent = subTransferWithOp.toLocaleString() + ' รหัส';
 
-      // Update Branch Badges in Sidebar
-      const counts = { 'สาขารามอินทรา': 0, 'สาขากรุงเทพกรีฑา': 0, 'สาขาสุขุมวิท 50': 0, 'สาขาพระราม 3': 0 };
+      // Update Branch Badges in Sidebar (Unique Member Counts)
+      const branchUniqueMembers = {};
+      ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'].forEach(b => {
+        branchUniqueMembers[b] = new Set();
+      });
+      const allUniqueMembers = new Set();
       allItems.forEach(i => {
-        if (counts[i.branch] !== undefined) counts[i.branch]++;
+        allUniqueMembers.add(i.memberId);
+        if (branchUniqueMembers[i.branch]) {
+          branchUniqueMembers[i.branch].add(i.memberId);
+        }
       });
       const bAll = document.getElementById('badge-ALL');
-      if (bAll) bAll.textContent = allItems.length.toLocaleString();
+      if (bAll) bAll.textContent = allUniqueMembers.size.toLocaleString();
       const bRam = document.getElementById('badge-ramindra');
-      if (bRam) bRam.textContent = counts['สาขารามอินทรา'].toLocaleString();
+      if (bRam && branchUniqueMembers['สาขารามอินทรา']) bRam.textContent = branchUniqueMembers['สาขารามอินทรา'].size.toLocaleString();
       const bKru = document.getElementById('badge-krungthep');
-      if (bKru) bKru.textContent = counts['สาขากรุงเทพกรีฑา'].toLocaleString();
+      if (bKru && branchUniqueMembers['สาขากรุงเทพกรีฑา']) bKru.textContent = branchUniqueMembers['สาขากรุงเทพกรีฑา'].size.toLocaleString();
       const bSuk = document.getElementById('badge-sukhumvit');
-      if (bSuk) bSuk.textContent = counts['สาขาสุขุมวิท 50'].toLocaleString();
+      if (bSuk && branchUniqueMembers['สาขาสุขุมวิท 50']) bSuk.textContent = branchUniqueMembers['สาขาสุขุมวิท 50'].size.toLocaleString();
       const bRam3 = document.getElementById('badge-rama3');
-      if (bRam3) bRam3.textContent = counts['สาขาพระราม 3'].toLocaleString();
+      if (bRam3 && branchUniqueMembers['สาขาพระราม 3']) bRam3.textContent = branchUniqueMembers['สาขาพระราม 3'].size.toLocaleString();
 
       if (currentTab === 'summary') {
         renderSummaryBranchTable();
@@ -3222,40 +3331,26 @@
       if (!tbody) return;
 
       const branches = ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'];
-      const stats = {};
-      branches.forEach(b => {
-        stats[b] = { total: 0, succ: 0, fail: 0, transfer: 0 };
-      });
-
       const sourceItems = filteredItems.length > 0 ? filteredItems : allItems;
-      sourceItems.forEach(i => {
-        const b = i.branch;
-        if (!stats[b]) return;
-        stats[b].total++;
-        const isTransfer = i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน')));
-        if (isTransfer) stats[b].transfer++;
 
-        const isFail = i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || i.status === 'รอน้ำลด' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง') || i.reason.includes('น้ำท่วม')));
-        if (isFail) stats[b].fail++;
-        else stats[b].succ++;
-      });
-
-      let grandTotal = 0, grandSucc = 0, grandFail = 0, grandTrans = 0;
+      let grandTotal = 0, grandSucc = 0, grandFail = 0, grandTrans = 0, grandTransRounds = 0;
 
       let html = branches.map(b => {
-        const s = stats[b];
-        grandTotal += s.total;
-        grandSucc += s.succ;
-        grandFail += s.fail;
-        grandTrans += s.transfer;
+        const bItems = sourceItems.filter(i => i.branch === b);
+        const s = getMemberAggregation(bItems);
+        grandTotal += s.totalMembers;
+        grandSucc += s.accessibleMembers;
+        grandFail += s.pendingMembers;
+        grandTrans += s.transferMembers;
+        grandTransRounds += s.totalTransferRounds;
 
-        const succPct = s.total > 0 ? ((s.succ / s.total) * 100).toFixed(1) : '0.0';
-        const failPct = s.total > 0 ? ((s.fail / s.total) * 100).toFixed(1) : '0.0';
+        const succPct = s.totalMembers > 0 ? ((s.accessibleMembers / s.totalMembers) * 100).toFixed(1) : '0.0';
+        const failPct = s.totalMembers > 0 ? ((s.pendingMembers / s.totalMembers) * 100).toFixed(1) : '0.0';
 
         let riskBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">ปกติ</span>';
-        if (s.fail > 200 || failPct > 5.0) {
+        if (s.pendingMembers > 200 || failPct > 5.0) {
           riskBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 animate-pulse">วิกฤตน้ำท่วม</span>';
-        } else if (s.fail > 50 || failPct > 2.0) {
+        } else if (s.pendingMembers > 50 || failPct > 2.0) {
           riskBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">เฝ้าระวัง</span>';
         }
 
@@ -3265,10 +3360,10 @@
               <span class="w-2 h-2 rounded-full mr-2 ${b.includes('รามอินทรา') ? 'bg-amber-500' : b.includes('กรุงเทพกรีฑา') ? 'bg-red-500' : 'bg-blue-500'}"></span>
               ${b}
             </td>
-            <td class="py-2.5 px-3 text-right font-mono font-semibold text-slate-700">${s.total.toLocaleString()}</td>
-            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">${s.succ.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">(${succPct}%)</span></td>
-            <td class="py-2.5 px-3 text-right font-mono font-bold text-red-600">${s.fail.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">(${failPct}%)</span></td>
-            <td class="py-2.5 px-3 text-right font-mono font-bold text-purple-600">${s.transfer.toLocaleString()}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-semibold text-slate-700">${s.totalMembers.toLocaleString()}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-600">${s.accessibleMembers.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">(${succPct}%)</span></td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-red-600">${s.pendingMembers.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">(${failPct}%)</span></td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-purple-600">${s.transferMembers.toLocaleString()} <span class="text-[10px] text-slate-400 font-normal">(${s.totalTransferRounds.toLocaleString()} รอบ)</span></td>
             <td class="py-2.5 px-3 text-right font-mono font-bold text-slate-800">${succPct}%</td>
             <td class="py-2.5 px-3 text-center">${riskBadge}</td>
           </tr>
@@ -3284,7 +3379,7 @@
           <td class="py-2.5 px-3 text-right font-mono text-slate-900">${grandTotal.toLocaleString()}</td>
           <td class="py-2.5 px-3 text-right font-mono text-emerald-700">${grandSucc.toLocaleString()} (${grandSuccPct}%)</td>
           <td class="py-2.5 px-3 text-right font-mono text-red-700">${grandFail.toLocaleString()} (${grandFailPct}%)</td>
-          <td class="py-2.5 px-3 text-right font-mono text-purple-700">${grandTrans.toLocaleString()}</td>
+          <td class="py-2.5 px-3 text-right font-mono text-purple-700">${grandTrans.toLocaleString()} (${grandTransRounds.toLocaleString()} รอบ)</td>
           <td class="py-2.5 px-3 text-right font-mono text-slate-900">${grandSuccPct}%</td>
           <td class="py-2.5 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">4 สาขา</span></td>
         </tr>
@@ -4246,10 +4341,11 @@
 
     function updateTransferBadge() {
       const allTransfers = allItems.filter(i => i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน'))));
+      const uniqueTransferMembers = new Set(allTransfers.map(i => i.memberId)).size;
       const badge = document.getElementById('tabBadgeTransfers');
-      if (badge) badge.textContent = allTransfers.length.toLocaleString();
+      if (badge) badge.textContent = uniqueTransferMembers.toLocaleString();
       const bannerBadge = document.getElementById('analyticsTransferBannerBadge');
-      if (bannerBadge) bannerBadge.textContent = allTransfers.length.toLocaleString() + ' รายการ';
+      if (bannerBadge) bannerBadge.textContent = `${uniqueTransferMembers.toLocaleString()} รหัส (${allTransfers.length.toLocaleString()} รอบ)`;
     }
 
     function viewTransferredForTruck(truckNo) {
@@ -4685,6 +4781,24 @@
       const endIdx = Math.min(startIdx + transferPageSize, filteredTransfers.length);
       const pageItems = filteredTransfers.slice(startIdx, endIdx);
 
+      // Precompute member transfer rounds and accessibility resolution across allItems
+      const memberTransferCountMap = {};
+      const memberAccessibleMap = {};
+      allItems.forEach(i => {
+        const m = i.memberId;
+        if (!m) return;
+        const isTrans = i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน')));
+        if (isTrans) {
+          memberTransferCountMap[m] = (memberTransferCountMap[m] || 0) + 1;
+        }
+        const isFlood = (i.reason && (i.reason.includes('น้ำท่วม') || i.reason.includes('น้ำท่วมสูง'))) || i.status === 'รอน้ำลด';
+        const isSuccessStatus = i.status === 'ส่งสำเร็จแล้ว' || i.status === 'ลูกค้าตั้งถัง' || i.status === 'พบลูกค้า' || i.status === 'นัดส่งชดเชย';
+        const isNonFloodFail = (i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง')))) && !isFlood && !isTrans;
+        if (isSuccessStatus || isNonFloodFail) {
+          memberAccessibleMap[m] = true;
+        }
+      });
+
       let html = '';
       pageItems.forEach((item, idx) => {
         const rowNo = startIdx + idx + 1;
@@ -4701,11 +4815,30 @@
         }
 
         const addr = item.address || ('เขต ' + (item.district || item.truck));
+        const rounds = memberTransferCountMap[item.memberId] || 1;
+        const isMemberAccessible = Boolean(memberAccessibleMap[item.memberId]);
+
+        let roundBadge = '';
+        if (rounds > 1) {
+          roundBadge = `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-200 text-purple-900 border border-purple-300">🔁 โอน ${rounds} รอบ</span>`;
+        } else {
+          roundBadge = `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700 border border-purple-200">โอน 1 รอบ</span>`;
+        }
+
+        let accessStatusBadge = isMemberAccessible
+          ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">🟢 เข้าส่งได้แล้ว</span>`
+          : `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">🔴 ยังค้างส่ง</span>`;
 
         html += `
           <tr class="hover:bg-purple-50/30 transition">
             <td class="px-3.5 py-2.5 text-center text-slate-400 font-mono">${rowNo}</td>
-            <td class="px-3.5 py-2.5 font-mono font-bold text-slate-900">${item.memberId}</td>
+            <td class="px-3.5 py-2.5">
+              <div class="font-mono font-bold text-slate-900 text-xs">${item.memberId}</div>
+              <div class="flex flex-wrap items-center gap-1 mt-0.5">
+                ${roundBadge}
+                ${accessStatusBadge}
+              </div>
+            </td>
             <td class="px-3.5 py-2.5">
               <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-700 font-mono mr-1">
                 ${item.truck}
@@ -4858,14 +4991,17 @@
         return true;
       });
 
-      // Update KPIs
+      // Update KPIs (คิดสถิติคือ 1 รหัสต่อสมาชิก พร้อมแสดงจำนวนรอบโอน)
+      const transMemberSet = new Set(filteredTransfers.map(i => i.memberId));
+      const uniqueTransCount = transMemberSet.size;
+      const totalRoundsCount = filteredTransfers.length;
+
       const kpiTotal = document.getElementById('transferKpiTotal') || document.getElementById('transferTabKpiTotal');
-      if (kpiTotal) kpiTotal.textContent = filteredTransfers.length.toLocaleString();
+      if (kpiTotal) kpiTotal.textContent = `${uniqueTransCount.toLocaleString()} รหัส`;
 
       const kpiPercent = document.getElementById('transferTabKpiPercent');
       if (kpiPercent) {
-        const pct = allItems.length > 0 ? ((filteredTransfers.length / allItems.length) * 100).toFixed(1) : 0;
-        kpiPercent.textContent = `คิดเป็น ${pct}% ของงานทั้งหมด (${allItems.length.toLocaleString()} งาน)`;
+        kpiPercent.textContent = `คิดสถิติ 1 รหัสต่อสมาชิก (รวมทั้งสิ้น ${totalRoundsCount.toLocaleString()} รอบโอน)`;
       }
 
       const truckMap = {};
