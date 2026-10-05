@@ -1876,3 +1876,5 @@ const CCTV_SNAPSHOTS = {"CAM-BKK-01":"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQE
 function getCctvCameraSnapshots() {
   return CCTV_SNAPSHOTS;
 }
+
+// build 1791190892356
