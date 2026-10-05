@@ -24,9 +24,11 @@ const mockJob30Items = [
   }
 ];
 
+const checkOrderFnMatch = template.match(/function checkOrderDeliveryStatus\([\s\S]*?\n    \}/);
+const evalLifecycleFnMatch = template.match(/function evaluateMemberLifecycle\([\s\S]*?\n    \}/);
 const fnMatch = template.match(/function getMemberAggregation\([\s\S]*?\n    \}/);
-assert(fnMatch, 'Could not find getMemberAggregation function');
-const evalFn = new Function('items', fnMatch[0] + '\nreturn getMemberAggregation(items);');
+assert(checkOrderFnMatch && evalLifecycleFnMatch && fnMatch, 'Could not find required aggregation functions');
+const evalFn = new Function('items', checkOrderFnMatch[0] + '\n' + evalLifecycleFnMatch[0] + '\n' + fnMatch[0] + '\nreturn getMemberAggregation(items);');
 const res30 = evalFn(mockJob30Items);
 
 assert.strictEqual(res30.totalMembers, 1, 'Total members should be 1');

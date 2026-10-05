@@ -49,11 +49,13 @@ const mockOrders = [
   { memberId: '9999', name: 'Member 9999', date: '2026-09-26 11:00', round: 'ปกติ', isTransferred: false, reason: '', status: 'ส่งสำเร็จแล้ว', branch: 'สาขารามอินทรา' }
 ];
 
-// Extract getMemberAggregation code from template and eval test
+// Extract getMemberAggregation and lifecycle codes from template and eval test
+const checkOrderFnMatch = template.match(/function checkOrderDeliveryStatus\([\s\S]*?\n    \}/);
+const evalLifecycleFnMatch = template.match(/function evaluateMemberLifecycle\([\s\S]*?\n    \}/);
 const fnMatch = template.match(/function getMemberAggregation\([\s\S]*?\n    \}/);
-assert(fnMatch, 'Could not extract getMemberAggregation function code');
+assert(checkOrderFnMatch && evalLifecycleFnMatch && fnMatch, 'Could not extract required aggregation functions');
 
-const evalFn = new Function('items', fnMatch[0] + '\nreturn getMemberAggregation(items);');
+const evalFn = new Function('items', checkOrderFnMatch[0] + '\n' + evalLifecycleFnMatch[0] + '\n' + fnMatch[0] + '\nreturn getMemberAggregation(items);');
 const res = evalFn(mockOrders);
 
 assert.strictEqual(res.totalMembers, 3, 'Total members should be 3 unique codes');
