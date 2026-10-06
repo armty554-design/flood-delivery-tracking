@@ -1219,6 +1219,83 @@
 
     <!-- TAB 4: DETAILED TRACKING TABLE VIEW -->
     <section id="tabContent-table" class="space-y-4">
+
+      <!-- Interactive Charts Panel for Table View (กราฟวิเคราะห์ประกอบตาราง) -->
+      <div class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <span class="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+              <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+            </span>
+            <div>
+              <h3 class="text-sm font-bold text-slate-800">กราฟวิเคราะห์ภาพรวมการจัดส่ง (Delivery Insights &amp; Trends)</h3>
+              <p class="text-[11px] text-slate-500">อัปเดตตามตัวกรองและข้อมูลที่เลือกแบบเรียลไทม์ (26 ก.ย. – 3 ต.ค. 2569)</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 text-xs">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 flex items-center">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> สถิติสด
+            </span>
+            <button type="button" onclick="toggleTableChartsView()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition flex items-center" id="btnToggleTableCharts">
+              <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i> <span id="toggleTableChartsLabel">ย่อกราฟ</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="tableChartsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
+          <!-- Chart 1: Donut Proportion (4 cols) -->
+          <div class="lg:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-bold text-slate-700 flex items-center">
+                <i data-lucide="pie-chart" class="w-3.5 h-3.5 mr-1.5 text-blue-600"></i> สัดส่วนสถานะการจัดส่ง
+              </h4>
+              <span id="tableChartSuccessRate" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">สำเร็จ 0%</span>
+            </div>
+            <div class="relative aspect-square max-h-48 w-full flex items-center justify-center my-auto">
+              <canvas id="chartTableStatusDonut"></canvas>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 pt-3 border-t border-slate-200/60 text-[11px]" id="tableChartDonutLegend">
+              <!-- Dynamic legend values -->
+            </div>
+          </div>
+
+          <!-- Chart 2: Branch Comparison (4 cols) -->
+          <div class="lg:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-bold text-slate-700 flex items-center">
+                <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1.5 text-indigo-600"></i> เปรียบเทียบ 4 สาขาหลัก
+              </h4>
+              <span class="text-[10px] text-slate-500 font-medium">สำเร็จ vs น้ำท่วม vs โอน</span>
+            </div>
+            <div class="relative h-48 w-full">
+              <canvas id="chartTableBranchBar"></canvas>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
+              <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1"></span> สำเร็จ</span>
+              <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-rose-500 mr-1"></span> น้ำท่วม</span>
+              <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-purple-500 mr-1"></span> งานโอน</span>
+            </div>
+          </div>
+
+          <!-- Chart 3: Daily Trend 26 ก.ย. - 3 ต.ค. (4 cols) -->
+          <div class="lg:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-bold text-slate-700 flex items-center">
+                <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> แนวโน้มรายวัน (26 ก.ย. – 3 ต.ค.)
+              </h4>
+              <span class="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">รอบวิกฤต</span>
+            </div>
+            <div class="relative h-48 w-full">
+              <canvas id="chartTableDailyTrend"></canvas>
+            </div>
+            <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
+              <span>วิกฤต: 26 &amp; 29 ก.ย.</span>
+              <span class="font-bold text-emerald-600">ฟื้นตัว: 30 ก.ย. - 3 ต.ค.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         
         <!-- Table Controls & Search Filter Header -->
@@ -3192,6 +3269,7 @@
       renderTable();
       if (typeof updateMapPins === 'function') updateMapPins();
       if (typeof updateCharts === 'function') updateCharts();
+      if (typeof updateTableCharts === 'function') updateTableCharts();
       if (typeof renderTrucksTab === 'function') renderTrucksTab();
       if (typeof renderSummaryTab === 'function') renderSummaryTab();
       if (typeof updateFilterResultBadge === 'function') updateFilterResultBadge();
@@ -4535,6 +4613,7 @@
     const customDataLabelsPlugin = {
       id: 'customDataLabelsPlugin',
       afterDatasetsDraw(chart) {
+        if (chart.options && chart.options.plugins && chart.options.plugins.customDataLabels === false) return;
         const { ctx } = chart;
         ctx.save();
         chart.data.datasets.forEach((dataset, i) => {
@@ -4599,6 +4678,11 @@
       '#14B8A6'  // Teal
     ];
 
+    // Table View Interactive Charts Instances
+    let chartTableStatusDonutInstance = null;
+    let chartTableBranchBarInstance = null;
+    let chartTableDailyTrendInstance = null;
+
     function initCharts() {
       if (typeof Chart === 'undefined') {
         console.warn('Chart.js not loaded yet, retrying initCharts in 250ms...');
@@ -4613,6 +4697,14 @@
         } catch (e) {
           console.warn('Chart plugin registration:', e);
         }
+      }
+
+      // Initialize Table View Charts as well
+      try {
+        initTableCharts();
+        updateTableCharts();
+      } catch (err) {
+        console.warn('initTableCharts error:', err);
       }
 
       // 0. Grouped Branch Comparison Chart (Requirement 3: Analytics UI Redesign)
@@ -4926,6 +5018,354 @@
         distinctDates: sortedDates,
         truckList: truckList
       };
+    }
+
+    // ==========================================
+    // TABLE VIEW INTERACTIVE CHARTS ENGINE
+    // กราฟวิเคราะห์และแนวโน้มการจัดส่งในแท็บตารางข้อมูล
+    // ==========================================
+    function initTableCharts() {
+      if (typeof Chart === 'undefined') return;
+
+      // 1. Donut Chart: Delivery Status Proportion
+      const ctxDonut = document.getElementById('chartTableStatusDonut');
+      if (ctxDonut && !chartTableStatusDonutInstance) {
+        chartTableStatusDonutInstance = new Chart(ctxDonut.getContext('2d'), {
+          type: 'doughnut',
+          data: {
+            labels: ['จัดส่งสำเร็จ', 'Auto Job 30', 'น้ำท่วมสูง', 'โอนงานค้างส่ง', 'รอส่ง/อื่นๆ'],
+            datasets: [{
+              data: [0, 0, 0, 0, 0],
+              backgroundColor: ['#10B981', '#06B6D4', '#EF4444', '#A855F7', '#94A3B8'],
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const val = context.parsed || 0;
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0';
+                    return ` ${label}: ${val.toLocaleString()} ราย (${pct}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Bar Chart: Branch Comparison (สำเร็จ vs น้ำท่วม vs โอน)
+      const ctxBranch = document.getElementById('chartTableBranchBar');
+      if (ctxBranch && !chartTableBranchBarInstance) {
+        chartTableBranchBarInstance = new Chart(ctxBranch.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['รามอินทรา', 'กรุงเทพกรีฑา', 'สุขุมวิท 50', 'พระราม 3'],
+            datasets: [
+              {
+                label: '🟢 สำเร็จ',
+                data: [0, 0, 0, 0],
+                backgroundColor: '#10B981',
+                borderRadius: 4
+              },
+              {
+                label: '🔴 น้ำท่วม',
+                data: [0, 0, 0, 0],
+                backgroundColor: '#EF4444',
+                borderRadius: 4
+              },
+              {
+                label: '🟣 งานโอน',
+                data: [0, 0, 0, 0],
+                backgroundColor: '#A855F7',
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return ` ${context.dataset.label}: ${context.parsed.y.toLocaleString()} ราย`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Kanit', size: 10 } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' },
+                ticks: { font: { family: 'Kanit', size: 10 } }
+              }
+            }
+          }
+        });
+      }
+
+      // 3. Line Chart: Daily Trend (26 ก.ย. – 3 ต.ค.)
+      const ctxTrend = document.getElementById('chartTableDailyTrend');
+      if (ctxTrend && !chartTableDailyTrendInstance) {
+        chartTableDailyTrendInstance = new Chart(ctxTrend.getContext('2d'), {
+          type: 'line',
+          data: {
+            labels: ['26 ก.ย.', '28 ก.ย.', '29 ก.ย.', '30 ก.ย.', '1 ต.ค.', '2 ต.ค.', '3 ต.ค.'],
+            datasets: [
+              {
+                label: '🟢 สำเร็จ',
+                data: [0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#10B981',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: false,
+                pointRadius: 3,
+                pointHoverRadius: 5
+              },
+              {
+                label: '🔴 น้ำท่วม',
+                data: [0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#EF4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: false,
+                pointRadius: 3,
+                pointHoverRadius: 5
+              },
+              {
+                label: '🟣 งานโอน',
+                data: [0, 0, 0, 0, 0, 0, 0],
+                borderColor: '#A855F7',
+                backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: false,
+                pointRadius: 3,
+                pointHoverRadius: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              customDataLabels: false,
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return ` ${context.dataset.label}: ${context.parsed.y.toLocaleString()} ราย`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { font: { family: 'Kanit', size: 10 } }
+              },
+              y: {
+                beginAtZero: true,
+                grid: { color: '#f1f5f9' },
+                ticks: { font: { family: 'Kanit', size: 10 } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function updateTableCharts() {
+      if (!chartTableStatusDonutInstance && !chartTableBranchBarInstance && !chartTableDailyTrendInstance) {
+        initTableCharts();
+      }
+
+      const targetItems = (typeof filteredItems !== 'undefined' && filteredItems.length > 0)
+        ? filteredItems
+        : (typeof allItems !== 'undefined' ? allItems : []);
+
+      if (targetItems.length === 0) return;
+
+      // 1. Tally Status Breakdown
+      let deliveredCount = 0;
+      let autoJobCount = 0;
+      let floodCount = 0;
+      let transferCount = 0;
+      let otherFailCount = 0;
+
+      // 2. Tally 4 Branches Breakdown
+      const branchStats = {
+        'สาขารามอินทรา': { succ: 0, flood: 0, transfer: 0 },
+        'สาขากรุงเทพกรีฑา': { succ: 0, flood: 0, transfer: 0 },
+        'สาขาสุขุมวิท 50': { succ: 0, flood: 0, transfer: 0 },
+        'สาขาพระราม 3': { succ: 0, flood: 0, transfer: 0 }
+      };
+
+      // 3. Tally Daily Breakdown
+      const dailyMap = {};
+
+      targetItems.forEach(item => {
+        const mId = item.memberId || item.id;
+        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle([item]) : {});
+        const itemStatus = (typeof checkOrderDeliveryStatus === 'function') ? checkOrderDeliveryStatus(item) : {};
+
+        let statusCategory = 'OTHER';
+        if (itemStatus.isAuto || memEval.isAuto) {
+          autoJobCount++;
+          statusCategory = 'AUTO';
+        } else if (memEval.isAccessible || itemStatus.isSuccess) {
+          deliveredCount++;
+          statusCategory = 'SUCCESS';
+        } else if (memEval.isPendingFlood || itemStatus.isFlood) {
+          floodCount++;
+          statusCategory = 'FLOOD';
+        } else if (memEval.isPendingTransfer || itemStatus.isTransfer) {
+          transferCount++;
+          statusCategory = 'TRANSFER';
+        } else {
+          otherFailCount++;
+          statusCategory = 'OTHER';
+        }
+
+        // Branch tally
+        if (item.branch && branchStats[item.branch]) {
+          if (statusCategory === 'SUCCESS' || statusCategory === 'AUTO') {
+            branchStats[item.branch].succ++;
+          } else if (statusCategory === 'FLOOD') {
+            branchStats[item.branch].flood++;
+          } else if (statusCategory === 'TRANSFER') {
+            branchStats[item.branch].transfer++;
+          }
+        }
+
+        // Daily tally
+        let dateKey = '2026-09-26';
+        if (item.date) {
+          dateKey = item.date.split(' ')[0];
+        }
+        if (!dailyMap[dateKey]) {
+          dailyMap[dateKey] = { succ: 0, flood: 0, transfer: 0, total: 0 };
+        }
+        dailyMap[dateKey].total++;
+        if (statusCategory === 'SUCCESS' || statusCategory === 'AUTO') {
+          dailyMap[dateKey].succ++;
+        } else if (statusCategory === 'FLOOD') {
+          dailyMap[dateKey].flood++;
+        } else if (statusCategory === 'TRANSFER') {
+          dailyMap[dateKey].transfer++;
+        }
+      });
+
+      // Update Donut Chart
+      if (chartTableStatusDonutInstance) {
+        chartTableStatusDonutInstance.data.datasets[0].data = [
+          deliveredCount,
+          autoJobCount,
+          floodCount,
+          transferCount,
+          otherFailCount
+        ];
+        chartTableStatusDonutInstance.update();
+
+        // Update Success Rate Badge & Legend in UI
+        const totalAll = deliveredCount + autoJobCount + floodCount + transferCount + otherFailCount;
+        const totalSucc = deliveredCount + autoJobCount;
+        const succRate = totalAll > 0 ? ((totalSucc / totalAll) * 100).toFixed(1) : '0';
+        const rateEl = document.getElementById('tableChartSuccessRate');
+        if (rateEl) {
+          rateEl.textContent = `สำเร็จ ${succRate}% (${totalSucc.toLocaleString()} ราย)`;
+        }
+
+        const legendEl = document.getElementById('tableChartDonutLegend');
+        if (legendEl) {
+          legendEl.innerHTML = `
+            <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
+              <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>สำเร็จ</span>
+              <span class="font-bold text-slate-800">${deliveredCount.toLocaleString()}</span>
+            </div>
+            <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
+              <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-cyan-500 mr-1.5"></span>Auto Job</span>
+              <span class="font-bold text-slate-800">${autoJobCount.toLocaleString()}</span>
+            </div>
+            <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
+              <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-rose-500 mr-1.5"></span>น้ำท่วม</span>
+              <span class="font-bold text-slate-800">${floodCount.toLocaleString()}</span>
+            </div>
+            <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
+              <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-purple-500 mr-1.5"></span>งานโอน</span>
+              <span class="font-bold text-slate-800">${transferCount.toLocaleString()}</span>
+            </div>
+          `;
+        }
+      }
+
+      // Update Branch Bar Chart
+      if (chartTableBranchBarInstance) {
+        const branches = ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'];
+        chartTableBranchBarInstance.data.datasets[0].data = branches.map(b => branchStats[b].succ);
+        chartTableBranchBarInstance.data.datasets[1].data = branches.map(b => branchStats[b].flood);
+        chartTableBranchBarInstance.data.datasets[2].data = branches.map(b => branchStats[b].transfer);
+        chartTableBranchBarInstance.update();
+      }
+
+      // Update Daily Trend Chart
+      if (chartTableDailyTrendInstance) {
+        const sortedDates = Object.keys(dailyMap).sort();
+        const displayDates = sortedDates.length > 0 ? sortedDates : ['2026-09-26', '2026-09-28', '2026-09-29', '2026-09-30', '2026-10-01', '2026-10-02', '2026-10-03'];
+
+        const dateLabels = displayDates.map(d => {
+          if (d.includes('-09-26')) return '26 ก.ย.';
+          if (d.includes('-09-28')) return '28 ก.ย.';
+          if (d.includes('-09-29')) return '29 ก.ย.';
+          if (d.includes('-09-30')) return '30 ก.ย.';
+          if (d.includes('-10-01')) return '1 ต.ค.';
+          if (d.includes('-10-02')) return '2 ต.ค.';
+          if (d.includes('-10-03')) return '3 ต.ค.';
+          return d.replace('2026-', '');
+        });
+
+        chartTableDailyTrendInstance.data.labels = dateLabels;
+        chartTableDailyTrendInstance.data.datasets[0].data = displayDates.map(d => dailyMap[d] ? dailyMap[d].succ : 0);
+        chartTableDailyTrendInstance.data.datasets[1].data = displayDates.map(d => dailyMap[d] ? dailyMap[d].flood : 0);
+        chartTableDailyTrendInstance.data.datasets[2].data = displayDates.map(d => dailyMap[d] ? dailyMap[d].transfer : 0);
+        chartTableDailyTrendInstance.update();
+      }
+    }
+
+    function toggleTableChartsView() {
+      const container = document.getElementById('tableChartsContainer');
+      const label = document.getElementById('toggleTableChartsLabel');
+      if (!container) return;
+      const isHidden = container.classList.toggle('hidden');
+      if (label) {
+        label.textContent = isHidden ? 'แสดงกราฟ' : 'ย่อกราฟ';
+      }
+      if (!isHidden) {
+        if (chartTableStatusDonutInstance) chartTableStatusDonutInstance.resize();
+        if (chartTableBranchBarInstance) chartTableBranchBarInstance.resize();
+        if (chartTableDailyTrendInstance) chartTableDailyTrendInstance.resize();
+      }
+      if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
+      }
     }
 
     // ==========================================
@@ -5964,6 +6404,7 @@
       currentPage = 1;
       renderTable();
       updateMapPins();
+      if (typeof updateTableCharts === 'function') updateTableCharts();
     }
 
     function changePageSize() {
@@ -9576,6 +10017,11 @@
     window.captureCctvSnapshot = captureCctvSnapshot;
     window.renderQuadCctvScreens = renderQuadCctvScreens;
     window.initApp = initApp;
+
+    // Table View Charts window bindings
+    window.initTableCharts = initTableCharts;
+    window.updateTableCharts = updateTableCharts;
+    window.toggleTableChartsView = toggleTableChartsView;
 
     // Accessibility Font Scaling window bindings
     window.setFontScale = setFontScale;
