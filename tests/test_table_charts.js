@@ -254,6 +254,55 @@ assert.strictEqual(dailyMap['2026-10-03'].succ, 1, '3 Oct should have 1 successf
 
 console.log('  ✔ PASS: Daily Trend Chart groups by date and tallies unique members per day');
 
+// [6. Uniform Thai Short Date Formatting Verification]
+console.log('\n[6. Consistent Thai Date Formatting]');
+assert(templateContent.includes('function formatThaiShortDate(dStr, includeYear)'), 'formatThaiShortDate function must exist');
+assert(templateContent.includes('window.formatThaiShortDate = formatThaiShortDate'), 'formatThaiShortDate must be bound to window');
+assert(htmlContent.includes('id="tableDailyTrendTitle"'), 'tableDailyTrendTitle id must exist');
+assert(htmlContent.includes('25 ก.ย. – 5 ต.ค.'), 'Header must reference full operational range 25 Sep - 5 Oct');
+
+// Extract and test formatThaiShortDate implementation directly from template
+const formatThaiFuncMatch = templateContent.match(/function formatThaiShortDate\(dStr, includeYear\) \{([\s\S]*?)\n    \}/);
+assert(formatThaiFuncMatch, 'Must be able to extract formatThaiShortDate function');
+const formatThaiShortDate = new Function('dStr', 'includeYear', formatThaiFuncMatch[1]);
+
+const testCases = [
+  { input: '2026-09-25', expected: '25 ก.ย.' },
+  { input: '2026-09-26', expected: '26 ก.ย.' },
+  { input: '2026-09-27', expected: '27 ก.ย.' },
+  { input: '2026-09-28', expected: '28 ก.ย.' },
+  { input: '2026-09-29', expected: '29 ก.ย.' },
+  { input: '2026-09-30', expected: '30 ก.ย.' },
+  { input: '2026-10-01', expected: '1 ต.ค.' },
+  { input: '2026-10-02', expected: '2 ต.ค.' },
+  { input: '2026-10-03', expected: '3 ต.ค.' },
+  { input: '2026-10-04', expected: '4 ต.ค.' },
+  { input: '2026-10-05', expected: '5 ต.ค.' },
+  { input: '09-25', expected: '25 ก.ย.' },
+  { input: '10-04', expected: '4 ต.ค.' },
+  { input: '26/09/2026', expected: '26 ก.ย.' },
+  { input: '26 ก.ย.', expected: '26 ก.ย.' }
+];
+
+testCases.forEach(tc => {
+  const result = formatThaiShortDate(tc.input);
+  assert.strictEqual(result, tc.expected, `Input ${tc.input} must format to ${tc.expected}, got ${result}`);
+});
+
+// Verify no mixed date formats are produced
+const sampleDates = ['2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28', '2026-09-29', '2026-09-30', '2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05'];
+const labels = sampleDates.map(d => formatThaiShortDate(d));
+labels.forEach(l => {
+  assert(/^\d{1,2}\s+(ก\.ย\.|ต\.ค\.)$/.test(l), `Label ${l} must match Thai short date pattern`);
+});
+assert(!labels.includes('09-25'), 'Must not contain 09-25');
+assert(!labels.includes('09-27'), 'Must not contain 09-27');
+assert(!labels.includes('10-04'), 'Must not contain 10-04');
+assert(!labels.includes('10-05'), 'Must not contain 10-05');
+
+console.log('  ✔ PASS: All dates from 25 Sep - 5 Oct formatted consistently in Thai format');
+console.log('  ✔ PASS: No English/ISO fallback formats (09-25, 10-04) remain');
+
 console.log('\n================================================================');
 console.log('ALL TABLE VIEW INTERACTIVE CHARTS & TRENDS TESTS PASSED! (100%)');
 console.log('================================================================\n');

@@ -155,7 +155,7 @@
         </button>
 
         <!-- 7. Water Monitoring & CCTV -->
-        <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
+        <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
           <span class="flex items-center"><i data-lucide="waves" class="w-4 h-4 mr-2.5 text-cyan-400"></i> ระดับน้ำ & CCTV สด</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-cyan-500/20 text-cyan-300 animate-pulse">LIVE</span>
         </button>
@@ -415,8 +415,10 @@
             </label>
             <select id="globalFilterDate" onchange="applyGlobalFilters()" 
                     class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-800 py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-2xs truncate">
-              <option value="ALL">ทุกวันที่ (26 ก.ย. - 5 ต.ค.)</option>
+              <option value="ALL">ทุกวันที่ (25 ก.ย. - 5 ต.ค.)</option>
+              <option value="2026-09-25">25 ก.ย. 69 (ศุกร์)</option>
               <option value="2026-09-26">26 ก.ย. 69 (เสาร์ - เริ่มวิกฤต)</option>
+              <option value="2026-09-27">27 ก.ย. 69 (อาทิตย์)</option>
               <option value="2026-09-28">28 ก.ย. 69 (จันทร์ - เริ่มโอนรอบแรก)</option>
               <option value="2026-09-29">29 ก.ย. 69 (อังคาร - ส่งชดเชย)</option>
               <option value="2026-09-30">30 ก.ย. 69 (พุธ)</option>
@@ -1241,7 +1243,7 @@
             </span>
             <div>
               <h3 class="text-sm font-bold text-slate-800">กราฟวิเคราะห์ภาพรวมการจัดส่ง (Delivery Insights &amp; Trends)</h3>
-              <p class="text-[11px] text-slate-500">นับสถิติ 1 รหัสสมาชิกต่อ 1 ราย ตามสถานะล่าสุดแบบเรียลไทม์ (26 ก.ย. – 3 ต.ค. 2569)</p>
+              <p class="text-[11px] text-slate-500">นับสถิติ 1 รหัสสมาชิกต่อ 1 ราย ตามสถานะล่าสุดแบบเรียลไทม์ (25 ก.ย. – 5 ต.ค. 2569)</p>
             </div>
           </div>
           <div class="flex items-center space-x-2 text-xs">
@@ -1289,11 +1291,11 @@
             </div>
           </div>
 
-          <!-- Chart 3: Daily Trend 26 ก.ย. - 3 ต.ค. (4 cols) -->
+          <!-- Chart 3: Daily Trend 25 ก.ย. - 5 ต.ค. (4 cols) -->
           <div class="lg:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70 flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
-              <h4 class="text-xs font-bold text-slate-700 flex items-center">
-                <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> แนวโน้มรายวัน (26 ก.ย. – 3 ต.ค.)
+              <h4 id="tableDailyTrendTitle" class="text-xs font-bold text-slate-700 flex items-center">
+                <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> แนวโน้มรายวัน (25 ก.ย. – 5 ต.ค.)
               </h4>
               <span class="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">1 รหัส/วัน</span>
             </div>
@@ -1302,7 +1304,7 @@
             </div>
             <div class="flex items-center justify-between pt-2 border-t border-slate-200/60 text-[11px] text-slate-500">
               <span>วิกฤต: 26 &amp; 29 ก.ย.</span>
-              <span class="font-bold text-emerald-600">ฟื้นตัว: 30 ก.ย. - 3 ต.ค.</span>
+              <span class="font-bold text-emerald-600">ฟื้นตัว: 30 ก.ย. – 5 ต.ค.</span>
             </div>
           </div>
         </div>
@@ -47006,6 +47008,70 @@
       return isNaN(t) ? 0 : t;
     }
 
+    // Universal Thai short date formatter (e.g. '2026-09-25' -> '25 ก.ย.', '26/09/2026' -> '26 ก.ย.')
+    function formatThaiShortDate(dStr, includeYear) {
+      if (!dStr) return '';
+      const s = String(dStr).trim();
+      if (!s) return '';
+
+      // If already in short Thai format like "26 ก.ย." or "1 ต.ค." (without year)
+      if (!includeYear && /^\d{1,2}\s+(ม\.ค\.|ก\.พ\.|มี\.ค\.|เม\.ย\.|พ\.ค\.|มิ\.ย\.|ก\.ค\.|ส\.ค\.|ก\.ย\.|ต\.ค\.|พ\.ย\.|ธ\.ค\.)/.test(s)) {
+        const match = s.match(/^(\d{1,2}\s+(?:ม\.ค\.|ก\.พ\.|มี\.ค\.|เม\.ย\.|พ\.ค\.|มิ\.ย\.|ก\.ค\.|ส\.ค\.|ก\.ย\.|ต\.ค\.|พ\.ย\.|ธ\.ค\.))/);
+        if (match) return match[1];
+      }
+
+      const thaiMonths = ['', 'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      let day = null;
+      let month = null;
+      let year = null;
+
+      const datePart = s.split('T')[0].split(',')[0].trim().split(' ')[0];
+      if (datePart.includes('/')) {
+        const parts = datePart.split('/');
+        if (parts.length === 3) {
+          day = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10);
+          year = parseInt(parts[2], 10);
+        } else if (parts.length === 2) {
+          day = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10);
+        }
+      } else if (datePart.includes('-')) {
+        const parts = datePart.split('-');
+        if (parts.length === 3) {
+          year = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10);
+          day = parseInt(parts[2], 10);
+        } else if (parts.length === 2) {
+          month = parseInt(parts[0], 10);
+          day = parseInt(parts[1], 10);
+        }
+      }
+
+      if (month && month >= 1 && month <= 12 && day && !isNaN(day)) {
+        if (includeYear && year) {
+          const bYear = year > 2500 ? year : year + 543;
+          return `${day} ${thaiMonths[month]} ${bYear}`;
+        }
+        return `${day} ${thaiMonths[month]}`;
+      }
+
+      const t = Date.parse(s);
+      if (!isNaN(t)) {
+        const dt = new Date(t);
+        const d = dt.getDate();
+        const m = dt.getMonth() + 1;
+        const y = dt.getFullYear();
+        if (includeYear) {
+          return `${d} ${thaiMonths[m]} ${y + 543}`;
+        }
+        return `${d} ${thaiMonths[m]}`;
+      }
+
+      return s;
+    }
+    window.formatThaiShortDate = formatThaiShortDate;
+
     // Helper function to evaluate delivery status of a single order / attempt
     function checkOrderDeliveryStatus(order) {
       if (!order) return { isSuccess: false, isAuto: false, isFlood: false, isTransfer: false, type: 'EMPTY' };
@@ -49286,10 +49352,11 @@
       chartTrucksInstance.update();
 
       // 3. Update Dates (Each distinct color)
-      const sortedDates = Object.entries(dateMap).sort((a,b)=>a[0].localeCompare(b[0]));
-      chartDatesInstance.data.labels = sortedDates.map(d => d[0]);
+      const sortedDates = Object.entries(dateMap).sort((a,b)=>parseDtChart(a[0]) - parseDtChart(b[0]));
+      chartDatesInstance.data.labels = sortedDates.map(d => formatThaiShortDate(d[0]) || d[0]);
       chartDatesInstance.data.datasets[0].data = sortedDates.map(d => d[1]);
-      chartDatesInstance.data.datasets[0].backgroundColor = ['#3B82F6', '#8B5CF6', '#06B6D4', '#10B981', '#F59E0B'].slice(0, sortedDates.length);
+      const datePalette = ['#3B82F6', '#8B5CF6', '#06B6D4', '#10B981', '#F59E0B', '#EC4899', '#6366F1', '#14B8A6', '#F97316', '#64748B'];
+      chartDatesInstance.data.datasets[0].backgroundColor = datePalette.slice(0, sortedDates.length);
       const maxDate = sortedDates.length > 0 ? Math.max(...sortedDates.map(d => d[1])) : 100;
       chartDatesInstance.options.scales.y.suggestedMax = Math.ceil(maxDate * 1.15);
       chartDatesInstance.update();
@@ -49450,17 +49517,17 @@
         });
       }
 
-      // 3. Line Chart: Daily Trend (26 ก.ย. – 3 ต.ค.)
+      // 3. Line Chart: Daily Trend (25 ก.ย. – 5 ต.ค.)
       const ctxTrend = document.getElementById('chartTableDailyTrend');
       if (ctxTrend && typeof ctxTrend.getContext === 'function' && !chartTableDailyTrendInstance) {
         chartTableDailyTrendInstance = new Chart(ctxTrend.getContext('2d'), {
           type: 'line',
           data: {
-            labels: ['26 ก.ย.', '28 ก.ย.', '29 ก.ย.', '30 ก.ย.', '1 ต.ค.', '2 ต.ค.', '3 ต.ค.'],
+            labels: ['25 ก.ย.', '26 ก.ย.', '27 ก.ย.', '28 ก.ย.', '29 ก.ย.', '30 ก.ย.', '1 ต.ค.', '2 ต.ค.', '3 ต.ค.', '4 ต.ค.', '5 ต.ค.'],
             datasets: [
               {
                 label: '🟢 สำเร็จ',
-                data: [0, 0, 0, 0, 0, 0, 0],
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 borderColor: '#10B981',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 borderWidth: 2,
@@ -49471,7 +49538,7 @@
               },
               {
                 label: '🔴 น้ำท่วม',
-                data: [0, 0, 0, 0, 0, 0, 0],
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 borderColor: '#EF4444',
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 borderWidth: 2,
@@ -49482,7 +49549,7 @@
               },
               {
                 label: '🟣 งานโอน',
-                data: [0, 0, 0, 0, 0, 0, 0],
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 borderColor: '#A855F7',
                 backgroundColor: 'rgba(168, 85, 247, 0.1)',
                 borderWidth: 2,
@@ -49725,25 +49792,26 @@
 
       // Update Daily Trend Chart
       if (chartTableDailyTrendInstance) {
-        const sortedDates = Object.keys(dailyMap).sort();
-        const displayDates = sortedDates.length > 0 ? sortedDates : ['2026-09-26', '2026-09-28', '2026-09-29', '2026-09-30', '2026-10-01', '2026-10-02', '2026-10-03'];
+        const sortedDates = Object.keys(dailyMap).sort((a, b) => parseDt(a) - parseDt(b));
+        const displayDates = sortedDates.length > 0 ? sortedDates : ['2026-09-25', '2026-09-26', '2026-09-27', '2026-09-28', '2026-09-29', '2026-09-30', '2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05'];
 
-        const dateLabels = displayDates.map(d => {
-          if (d.includes('-09-26')) return '26 ก.ย.';
-          if (d.includes('-09-28')) return '28 ก.ย.';
-          if (d.includes('-09-29')) return '29 ก.ย.';
-          if (d.includes('-09-30')) return '30 ก.ย.';
-          if (d.includes('-10-01')) return '1 ต.ค.';
-          if (d.includes('-10-02')) return '2 ต.ค.';
-          if (d.includes('-10-03')) return '3 ต.ค.';
-          return d.replace('2026-', '');
-        });
+        const dateLabels = displayDates.map(d => formatThaiShortDate(d));
 
         chartTableDailyTrendInstance.data.labels = dateLabels;
         chartTableDailyTrendInstance.data.datasets[0].data = displayDates.map(d => dailyMap[d] ? dailyMap[d].succ : 0);
         chartTableDailyTrendInstance.data.datasets[1].data = displayDates.map(d => dailyMap[d] ? dailyMap[d].flood : 0);
         chartTableDailyTrendInstance.data.datasets[2].data = displayDates.map(d => dailyMap[d] ? dailyMap[d].transfer : 0);
         chartTableDailyTrendInstance.update();
+
+        // Update Card Title with Dynamic / Formatted Range
+        const trendTitleEl = document.getElementById('tableDailyTrendTitle');
+        if (trendTitleEl && displayDates.length > 0) {
+          const firstDateStr = formatThaiShortDate(displayDates[0]);
+          const lastDateStr = formatThaiShortDate(displayDates[displayDates.length - 1]);
+          const rangeStr = firstDateStr === lastDateStr ? firstDateStr : `${firstDateStr} – ${lastDateStr}`;
+          trendTitleEl.innerHTML = `<i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> แนวโน้มรายวัน (${rangeStr})`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+        }
       }
     }
 
@@ -50015,7 +50083,7 @@
         truckCounts[t] = (truckCounts[t] || 0) + 1;
       });
 
-      const dateLabels = Object.keys(dateCounts).sort();
+      const dateLabels = Object.keys(dateCounts).sort((a, b) => parseDtTrans(a) - parseDtTrans(b));
       const dateValues = dateLabels.map(d => dateCounts[d]);
 
       const sortedTrucks = Object.entries(truckCounts).sort((a,b) => b[1] - a[1]).slice(0, 10);
@@ -50024,7 +50092,7 @@
 
       // Chart 1: Dates (Doughnut)
       if (chartTransferDatesInstance) {
-        chartTransferDatesInstance.data.labels = dateLabels.map(d => 'โอนจาก ' + d);
+        chartTransferDatesInstance.data.labels = dateLabels.map(d => 'โอนจาก ' + (formatThaiShortDate(d) || d));
         chartTransferDatesInstance.data.datasets[0].data = dateValues;
         chartTransferDatesInstance.update();
       } else if (typeof Chart !== 'undefined') {
@@ -50032,7 +50100,7 @@
           chartTransferDatesInstance = new Chart(ctxDate, {
             type: 'doughnut',
             data: {
-              labels: dateLabels.map(d => 'โอนจาก ' + d),
+              labels: dateLabels.map(d => 'โอนจาก ' + (formatThaiShortDate(d) || d)),
               datasets: [{
                 data: dateValues,
                 backgroundColor: ['#8B5CF6', '#6366F1', '#EC4899', '#3B82F6', '#10B981', '#F59E0B', '#14B8A6'],
@@ -55081,6 +55149,7 @@
     window.initTableCharts = initTableCharts;
     window.updateTableCharts = updateTableCharts;
     window.toggleTableChartsView = toggleTableChartsView;
+    window.formatThaiShortDate = formatThaiShortDate;
 
     // Supabase Uploader window bindings
     window.openSupabaseUploadModal = openSupabaseUploadModal;
