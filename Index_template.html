@@ -3337,22 +3337,25 @@
         }
       });
 
-      // กฎข้อ 2 และ 3: ถ้าข้อ 2 (น้ำท่วม) และ 3 (โอนงาน) ไม่มีสถานะเดิมขึ้นซ้ำ แปลว่าสำเร็จ
-      // แต่กรณีที่มีรอบเดียวและยังไม่มีสถานะอื่นก็คงสถานะเดิมไว้ ยกเว้น Auto job 30 งดรับน้ำถือว่าสำเร็จ
-      if (!isSuccess && (hadFlood || hadTransfer)) {
-        if (attempts.length > 1) {
-          const lastIsFlood = Boolean(latestStatus.isFlood);
-          const lastIsTransfer = Boolean(latestStatus.isTransfer);
+      // กฎการประเมินสถานะวงจรชีวิตสมาชิก (Member Lifecycle Evaluation)
+      // กฎข้อ 1 โอนงานสิ้นวัน: หากมีการจัดส่งที่ไม่ใช่สถานะโอนงานสิ้นวัน หรือน้ำท่วมเพิ่ม ให้แปลว่าสำเร็จ
+      if (!isSuccess) {
+        if (hadTransfer) {
+          const hasResolvedDelivery = attempts.some(a => {
+            const s = checkOrderDeliveryStatus(a);
+            return !s.isTransfer && !s.isFlood;
+          });
+          if (hasResolvedDelivery) {
+            isSuccess = true;
+            accessType = 'TRANSFER_RESOLVED_DELIVERY';
+          }
+        }
 
-          if (hadFlood && !hadTransfer && !lastIsFlood) {
+        // กฎข้อ 2 น้ำท่วม: ถ้าไม่มีสถานะน้ำท่วมขึ้นซ้ำ แปลว่าสำเร็จ (กรณีมากกว่า 1 รอบ และรอบล่าสุดไม่ใช่น้ำท่วมและไม่ติดโอนงาน)
+        if (!isSuccess && hadFlood) {
+          if (attempts.length > 1 && !latestStatus.isFlood && !latestStatus.isTransfer) {
             isSuccess = true;
             accessType = 'FLOOD_RESOLVED_NO_REPEAT';
-          } else if (hadTransfer && !hadFlood && !lastIsTransfer) {
-            isSuccess = true;
-            accessType = 'TRANSFER_RESOLVED_NO_REPEAT';
-          } else if (hadFlood && hadTransfer && !lastIsFlood && !lastIsTransfer) {
-            isSuccess = true;
-            accessType = 'MULTI_RESOLVED_NO_REPEAT';
           }
         }
       }
