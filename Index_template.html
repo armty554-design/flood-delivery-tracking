@@ -192,6 +192,14 @@
       </div>
     </div>
 
+    <!-- Quick Action: Supabase Uploader -->
+    <div class="px-4 py-2.5 border-t border-slate-800">
+      <button type="button" onclick="openSupabaseUploadModal()" class="w-full py-2 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-600 border border-emerald-500/30 hover:border-emerald-500 text-emerald-300 hover:text-white text-xs font-semibold flex items-center justify-center space-x-2 transition shadow-xs group">
+        <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-400 group-hover:text-white transition"></i>
+        <span>นำเข้าข้อมูล Supabase</span>
+      </button>
+    </div>
+
     <!-- Sidebar Bottom: System Info & Credit -->
     <div class="p-4 border-t border-slate-800 space-y-2 bg-slate-950/50">
       <div class="text-[11px] text-slate-400 flex items-center">
@@ -269,6 +277,11 @@
           <button onclick="reloadData()" id="btnRefresh" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl border border-slate-300 transition shadow-2xs active:scale-95">
             <i data-lucide="refresh-cw" id="refreshIcon" class="w-3.5 h-3.5 mr-1.5"></i>
             รีเฟรช
+          </button>
+
+          <button onclick="openSupabaseUploadModal()" id="btnOpenUploadModal" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-xs shadow-emerald-600/30 active:scale-95" title="อัปโหลดและนำเข้าข้อมูลเข้าสู่ Supabase Cloud">
+            <i data-lucide="upload-cloud" class="w-3.5 h-3.5 mr-1.5"></i>
+            อัปโหลดเข้า Supabase
           </button>
 
           <button onclick="exportCSV()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs shadow-blue-600/30 active:scale-95">
@@ -2533,6 +2546,199 @@
         </button>
         <button onclick="saveModalStatus()" id="btnSaveModal" class="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 rounded-xl shadow-xs shadow-blue-500/30 transition flex items-center active:scale-95">
           <i data-lucide="save" class="w-3.5 h-3.5 mr-1.5"></i> บันทึกลงระบบ Supabase
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Supabase Bulk Data Upload Modal -->
+  <div id="supabaseUploadModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-2xl max-w-3xl sm:max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in fade-in zoom-in duration-150">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 bg-gradient-to-r from-slate-900 via-slate-800 to-emerald-950 text-white flex items-center justify-between shrink-0 border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600/90 flex items-center justify-center shadow-inner shrink-0 text-white">
+            <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
+                Supabase Realtime Cloud
+              </span>
+              <span class="text-[10px] text-slate-400">Project: aggfmnyrfxmuwpjbynom</span>
+            </div>
+            <h3 class="text-base sm:text-lg font-bold text-white mt-0.5">
+              อัปโหลดและนำเข้าข้อมูลเข้าสู่ Supabase
+            </h3>
+          </div>
+        </div>
+        <button type="button" onclick="closeSupabaseUploadModal()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800/80 rounded-xl transition" title="ปิดหน้าต่าง">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-5 custom-scrollbar flex-1">
+        
+        <!-- Input Method Tabs -->
+        <div>
+          <div class="flex items-center space-x-2 border-b border-slate-200 pb-2 text-xs">
+            <button type="button" onclick="switchUploadTab('file')" id="uploadTabBtn-file" class="px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 text-white shadow-xs transition flex items-center">
+              <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 mr-1.5"></i> เลือกไฟล์ (CSV / Excel)
+            </button>
+            <button type="button" onclick="switchUploadTab('paste')" id="uploadTabBtn-paste" class="px-3.5 py-1.5 rounded-xl font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center">
+              <i data-lucide="clipboard-paste" class="w-3.5 h-3.5 mr-1.5"></i> คัดลอก &amp; วางข้อความ
+            </button>
+            <div class="ml-auto">
+              <button type="button" onclick="downloadUploadSampleCSV()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold hover:underline flex items-center py-1">
+                <i data-lucide="download" class="w-3.5 h-3.5 mr-1"></i> ดาวน์โหลดตัวอย่าง .csv
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 1: File Dropzone -->
+        <div id="uploadTabContent-file" class="space-y-3">
+          <div id="uploadDropzone" onclick="document.getElementById('uploadFileInput').click()" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition bg-slate-50/50 hover:bg-emerald-50/30 group">
+            <input type="file" id="uploadFileInput" accept=".csv,.tsv,.json,.txt" onchange="handleUploadFileSelect(event)" class="hidden">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 group-hover:bg-emerald-200 text-emerald-700 flex items-center justify-center mb-3 transition shadow-xs">
+              <i data-lucide="upload" class="w-6 h-6"></i>
+            </div>
+            <div class="font-bold text-slate-800 text-sm group-hover:text-emerald-700 transition">
+              ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
+            </div>
+            <p class="text-xs text-slate-500 mt-1">
+              รองรับไฟล์ <strong class="text-slate-700">.CSV</strong>, <strong class="text-slate-700">.TSV</strong>, หรือ <strong class="text-slate-700">.JSON</strong> (ตรวจจับคอลัมน์อัตโนมัติ)
+            </p>
+            <div id="uploadSelectedFileName" class="hidden mt-3 inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold">
+              <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i> <span id="uploadSelectedFileNameText">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Paste Raw Data -->
+        <div id="uploadTabContent-paste" class="hidden space-y-2">
+          <label class="block text-xs font-bold text-slate-700">
+            วางข้อมูลแบบคั่นด้วยแท็บหรือจุลภาค (คัดลอกจาก Excel หรือ Google Sheets):
+          </label>
+          <textarea id="uploadPasteInput" rows="6" placeholder="รหัสสมาชิก&#9;ชื่อลูกค้า&#9;สาขา&#9;เบอร์รถ&#9;วันที่&#9;สถานะ&#9;เหตุผล&#9;หมายเหตุ
+00033/23&#9;ไทยฮอนด้า&#9;สาขารามอินทรา&#9;13106&#9;2026-10-06&#9;สำเร็จ&#9;ลูกค้าตั้งถัง&#9;auto ปิด Job 30
+08564/1&#9;คุณปนัดดา&#9;สาขากรุงเทพกรีฑา&#9;12102&#9;2026-10-06&#9;สำเร็จ&#9;พบลูกค้า&#9;ส่งเรียบร้อย" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition leading-relaxed"></textarea>
+          <div class="flex justify-end">
+            <button type="button" onclick="parsePastedData()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition flex items-center">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-1.5 text-amber-400"></i> แปลงข้อความเป็นข้อมูล
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload Settings & Config -->
+        <div class="bg-slate-50/80 border border-slate-200 rounded-2xl p-4 space-y-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">ตารางปลายทางใน Supabase:</label>
+              <select id="uploadTargetTable" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <option value="delivery_orders">public.delivery_orders (รายการจัดส่ง 53,674+ รายการ)</option>
+                <option value="action_logs">public.action_logs (ประวัติบันทึกการติดตามงาน)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">รูปแบบการบันทึก (Mode):</label>
+              <select id="uploadModeSelect" class="w-full p-2 bg-white border border-slate-300 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <option value="insert">เพิ่มข้อมูลใหม่ (Append New Rows)</option>
+                <option value="upsert">อัปเดตข้อมูลเดิมตามรหัสสมาชิก (Upsert by Member ID)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Advanced Collapsible: Custom API Key / Service Role Key -->
+          <div class="pt-2 border-t border-slate-200/80">
+            <button type="button" onclick="toggleUploadAdvancedSettings()" class="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center">
+              <i data-lucide="shield" class="w-3.5 h-3.5 mr-1.5 text-slate-500"></i>
+              <span>การตั้งค่าสิทธิ์และความปลอดภัย (Advanced API Key / Bypass RLS)</span>
+              <i data-lucide="chevron-down" id="uploadAdvancedChevron" class="w-3.5 h-3.5 ml-1 transition"></i>
+            </button>
+            <div id="uploadAdvancedBox" class="hidden mt-2 pt-2 text-xs space-y-2">
+              <p class="text-[11px] text-slate-500">
+                ระบบเริ่มต้นใช้ Public Anon Key ของโครงการ หากตั้งค่า RLS Insert Policy แล้วสามารถอัปโหลดได้ทันที หากยังไม่ได้เปิด Policy สามารถระบุ Service Role Key เพื่อ Bypass RLS ได้:
+              </p>
+              <div class="relative">
+                <input type="password" id="uploadCustomKeyInput" placeholder="ใส่ Service Role Key หรือ API Key พิเศษ (ไม่จำเป็น)" class="w-full pl-3 pr-9 py-2 bg-white border border-slate-300 rounded-xl font-mono text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500">
+                <button type="button" onclick="togglePasswordVisibility('uploadCustomKeyInput')" class="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600">
+                  <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview Card & Table -->
+        <div id="uploadPreviewSection" class="hidden space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="font-bold text-slate-800 flex items-center">
+                <i data-lucide="eye" class="w-4 h-4 mr-1 text-emerald-600"></i> ตัวอย่างข้อมูลที่ตรวจพบ:
+              </span>
+              <span id="uploadRowCountBadge" class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[11px]">0 รายการ</span>
+            </div>
+            <button type="button" onclick="clearUploadData()" class="text-xs text-rose-600 hover:underline font-semibold flex items-center">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5 mr-1"></i> ล้างข้อมูล
+            </button>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl overflow-hidden max-h-56 overflow-y-auto custom-scrollbar">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead class="bg-slate-100 text-slate-700 sticky top-0 font-semibold border-b border-slate-200">
+                <tr>
+                  <th class="p-2 pl-3">รหัสสมาชิก</th>
+                  <th class="p-2">ชื่อลูกค้า</th>
+                  <th class="p-2">สาขา</th>
+                  <th class="p-2">เบอร์รถ</th>
+                  <th class="p-2">วันที่</th>
+                  <th class="p-2">สถานะ</th>
+                  <th class="p-2 pr-3">หมายเหตุ / Col K</th>
+                </tr>
+              </thead>
+              <tbody id="uploadPreviewTbody" class="divide-y divide-slate-100 text-slate-600 font-mono text-[11px]">
+                <!-- Dynamic Rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Upload Progress & Notification Banner -->
+        <div id="uploadProgressSection" class="hidden space-y-2">
+          <div class="flex items-center justify-between text-xs font-semibold">
+            <span id="uploadProgressLabel" class="text-slate-700 flex items-center">
+              <i data-lucide="loader" class="w-3.5 h-3.5 mr-1.5 animate-spin text-emerald-600"></i> กำลังอัปโหลดข้อมูลเข้า Supabase...
+            </span>
+            <span id="uploadProgressPercent" class="font-bold text-emerald-700">0%</span>
+          </div>
+          <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+            <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full transition-all duration-200" style="width: 0%"></div>
+          </div>
+          <div id="uploadProgressDetail" class="text-[11px] text-slate-500">
+            เตรียมส่งข้อมูล...
+          </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="uploadAlertBox" class="hidden p-3.5 rounded-xl border text-xs">
+          <!-- Dynamic Alert (Success / Error / SQL Helper) -->
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-3.5 sm:p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+        <button type="button" onclick="closeSupabaseUploadModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-200 rounded-xl transition">
+          ปิดหน้าต่าง
+        </button>
+        <button type="button" onclick="executeSupabaseUpload()" id="btnExecuteUpload" disabled class="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-xs shadow-emerald-500/30 transition flex items-center active:scale-95">
+          <i data-lucide="upload-cloud" class="w-4 h-4 mr-1.5"></i>
+          <span>เริ่มอัปโหลดเข้า Supabase</span>
         </button>
       </div>
 
@@ -6929,6 +7135,481 @@
       }
     }
 
+    // ==========================================
+    // SUPABASE BATCH DATA UPLOAD ENGINE
+    // ระบบอัปโหลดและนำเข้าข้อมูลเข้าสู่ Supabase Cloud
+    // ==========================================
+    let parsedUploadRows = [];
+
+    function openSupabaseUploadModal() {
+      const modal = document.getElementById('supabaseUploadModal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        try {
+          const savedKey = localStorage.getItem('supabase_upload_custom_key');
+          if (savedKey) {
+            const keyInput = document.getElementById('uploadCustomKeyInput');
+            if (keyInput) keyInput.value = savedKey;
+          }
+        } catch (e) {}
+        safeCreateIcons();
+      }
+    }
+
+    function closeSupabaseUploadModal() {
+      const modal = document.getElementById('supabaseUploadModal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+    }
+
+    // Update ESC listener for upload modal as well
+    if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+      window.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          closeModal();
+          closeSupabaseUploadModal();
+        }
+      });
+    }
+
+    function switchUploadTab(tab) {
+      const fileTab = document.getElementById('uploadTabContent-file');
+      const pasteTab = document.getElementById('uploadTabContent-paste');
+      const btnFile = document.getElementById('uploadTabBtn-file');
+      const btnPaste = document.getElementById('uploadTabBtn-paste');
+
+      if (tab === 'file') {
+        if (fileTab) fileTab.classList.remove('hidden');
+        if (pasteTab) pasteTab.classList.add('hidden');
+        if (btnFile) {
+          btnFile.className = 'px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 text-white shadow-xs transition flex items-center';
+        }
+        if (btnPaste) {
+          btnPaste.className = 'px-3.5 py-1.5 rounded-xl font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center';
+        }
+      } else {
+        if (fileTab) fileTab.classList.add('hidden');
+        if (pasteTab) pasteTab.classList.remove('hidden');
+        if (btnFile) {
+          btnFile.className = 'px-3.5 py-1.5 rounded-xl font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center';
+        }
+        if (btnPaste) {
+          btnPaste.className = 'px-3.5 py-1.5 rounded-xl font-bold bg-emerald-600 text-white shadow-xs transition flex items-center';
+        }
+      }
+      safeCreateIcons();
+    }
+
+    function toggleUploadAdvancedSettings() {
+      const box = document.getElementById('uploadAdvancedBox');
+      const chevron = document.getElementById('uploadAdvancedChevron');
+      if (box) {
+        const isHidden = box.classList.toggle('hidden');
+        if (chevron) chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+      }
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const input = document.getElementById(inputId);
+      if (input) {
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
+    }
+
+    function handleUploadFileSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const nameBadge = document.getElementById('uploadSelectedFileName');
+      const nameText = document.getElementById('uploadSelectedFileNameText');
+      if (nameBadge && nameText) {
+        nameBadge.classList.remove('hidden');
+        nameText.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const content = e.target.result;
+        try {
+          if (file.name.endsWith('.json')) {
+            const data = JSON.parse(content);
+            const rows = Array.isArray(data) ? data : (data.data || [data]);
+            processParsedUploadRows(rows);
+          } else {
+            parseRawDelimitedText(content);
+          }
+        } catch (err) {
+          showUploadAlert('error', 'เกิดข้อผิดพลาดในการอ่านไฟล์: ' + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function parsePastedData() {
+      const input = document.getElementById('uploadPasteInput');
+      const text = input ? input.value.trim() : '';
+      if (!text) {
+        showUploadAlert('warning', 'กรุณาวางข้อความข้อมูลก่อนกดแปลง');
+        return;
+      }
+      parseRawDelimitedText(text);
+    }
+
+    function parseRawDelimitedText(text) {
+      if (!text || !text.trim()) return;
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length === 0) return;
+
+      const firstLine = lines[0];
+      let sep = ',';
+      if (firstLine.includes('\t')) sep = '\t';
+      else if (firstLine.includes(';') && !firstLine.includes(',')) sep = ';';
+
+      function parseLine(lineStr, delimiter) {
+        const res = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < lineStr.length; i++) {
+          const c = lineStr[i];
+          if (c === '"') {
+            if (inQuotes && lineStr[i + 1] === '"') {
+              cur += '"';
+              i++;
+            } else {
+              inQuotes = !inQuotes;
+            }
+          } else if (c === delimiter && !inQuotes) {
+            res.push(cur.trim());
+            cur = '';
+          } else {
+            cur += c;
+          }
+        }
+        res.push(cur.trim());
+        return res;
+      }
+
+      const headers = parseLine(lines[0], sep).map(h => h.replace(/^["']|["']$/g, '').trim().toLowerCase());
+      const headerMap = {};
+      headers.forEach((h, idx) => { headerMap[h] = idx; });
+
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseLine(lines[i], sep).map(c => c.replace(/^["']|["']$/g, '').trim());
+        if (cols.length === 0 || cols.every(c => c === '')) continue;
+
+        const getCol = (keys, def = '') => {
+          for (const k of keys) {
+            if (headerMap[k] !== undefined && cols[headerMap[k]] !== undefined) {
+              const v = cols[headerMap[k]];
+              if (v) return v;
+            }
+          }
+          return def;
+        };
+
+        const memberId = getCol(['member_id', 'memberid', 'รหัสสมาชิก', 'รหัส'], cols[0] || '').trim();
+        if (!memberId) continue;
+
+        const customerName = getCol(['customer_name', 'name', 'ชื่อลูกค้า', 'ชื่อ'], cols[1] || '');
+        const branchRaw = getCol(['branch', 'สาขา', 'คลัง'], cols[2] || 'สาขารามอินทรา');
+        const branch = branchRaw.startsWith('คลัง') ? branchRaw.replace(/^คลัง/, 'สาขา') : branchRaw;
+        const truck = getCol(['truck_number', 'truck', 'เบอร์รถ', 'สายส่ง'], cols[3] || '');
+        const deliveryDate = getCol(['delivery_date', 'date', 'วันที่', 'วันจัดส่ง'], cols[4] || new Date().toISOString().slice(0, 10));
+        const round = getCol(['round', 'รอบ', 'รอบส่ง'], cols[5] || 'ปกติ');
+        const status = getCol(['status', 'สถานะ', 'สถานะจัดส่ง'], cols[6] || 'ปกติ');
+        const reason = getCol(['fail_reason', 'reason', 'เหตุผล'], cols[7] || '');
+        const note = getCol(['note', 'notes', 'หมายเหตุ', 'mdfss_note', 'col k'], cols[8] || '');
+        const address = getCol(['address', 'ที่อยู่'], cols[9] || '');
+        const district = getCol(['district', 'เขต'], cols[10] || '');
+        const customerType = getCol(['customer_type', 'custtype', 'กลุ่มลูกค้า'], cols[11] || 'B2C');
+
+        rows.push({
+          member_id: memberId,
+          customer_name: customerName,
+          branch: branch,
+          truck_number: truck,
+          delivery_date: deliveryDate,
+          round: round,
+          status: status,
+          reason: reason,
+          note: note,
+          address: address,
+          district: district,
+          customer_type: customerType
+        });
+      }
+
+      processParsedUploadRows(rows);
+    }
+
+    function processParsedUploadRows(rows) {
+      if (!Array.isArray(rows) || rows.length === 0) {
+        showUploadAlert('warning', 'ไม่พบรายการข้อมูลที่ถูกต้องในไฟล์/ข้อความ');
+        return;
+      }
+
+      parsedUploadRows = rows;
+      renderUploadPreview(rows);
+      showUploadAlert('info', `ตรวจพบข้อมูลสำเร็จ ${rows.length.toLocaleString()} รายการ พร้อมส่งเข้า Supabase`);
+    }
+
+    function renderUploadPreview(rows) {
+      const previewSection = document.getElementById('uploadPreviewSection');
+      const badge = document.getElementById('uploadRowCountBadge');
+      const tbody = document.getElementById('uploadPreviewTbody');
+      const btnUpload = document.getElementById('btnExecuteUpload');
+
+      if (previewSection) previewSection.classList.remove('hidden');
+      if (badge) badge.textContent = `${rows.length.toLocaleString()} รายการ`;
+      if (btnUpload) btnUpload.removeAttribute('disabled');
+
+      if (tbody) {
+        tbody.innerHTML = '';
+        const previewSlice = rows.slice(0, 8);
+        previewSlice.forEach(r => {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition';
+          tr.innerHTML = `
+            <td class="p-2 pl-3 font-bold text-slate-800">${r.member_id || '-'}</td>
+            <td class="p-2 font-sans text-slate-700 truncate max-w-[120px]" title="${r.customer_name || ''}">${r.customer_name || '-'}</td>
+            <td class="p-2 font-sans">${r.branch || '-'}</td>
+            <td class="p-2">${r.truck_number || '-'}</td>
+            <td class="p-2">${(r.delivery_date || '').toString().slice(0, 16)}</td>
+            <td class="p-2"><span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">${r.status || 'ปกติ'}</span></td>
+            <td class="p-2 pr-3 truncate max-w-[140px]" title="${r.note || r.reason || ''}">${r.note || r.reason || '-'}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+
+        if (rows.length > 8) {
+          const trMore = document.createElement('tr');
+          trMore.innerHTML = `
+            <td colspan="7" class="p-2 text-center text-slate-400 font-sans italic bg-slate-50/50">
+              ... และอีก ${(rows.length - 8).toLocaleString()} รายการ ...
+            </td>
+          `;
+          tbody.appendChild(trMore);
+        }
+      }
+      safeCreateIcons();
+    }
+
+    function clearUploadData() {
+      parsedUploadRows = [];
+      const previewSection = document.getElementById('uploadPreviewSection');
+      const progressSection = document.getElementById('uploadProgressSection');
+      const alertBox = document.getElementById('uploadAlertBox');
+      const btnUpload = document.getElementById('btnExecuteUpload');
+      const fileInput = document.getElementById('uploadFileInput');
+      const pasteInput = document.getElementById('uploadPasteInput');
+      const nameBadge = document.getElementById('uploadSelectedFileName');
+
+      if (previewSection) previewSection.classList.add('hidden');
+      if (progressSection) progressSection.classList.add('hidden');
+      if (alertBox) alertBox.classList.add('hidden');
+      if (btnUpload) btnUpload.setAttribute('disabled', 'true');
+      if (fileInput) fileInput.value = '';
+      if (pasteInput) pasteInput.value = '';
+      if (nameBadge) nameBadge.classList.add('hidden');
+    }
+
+    function showUploadAlert(type, message, extraHtml = '') {
+      const box = document.getElementById('uploadAlertBox');
+      if (!box) return;
+      box.classList.remove('hidden');
+
+      let colors = 'bg-blue-50 border-blue-200 text-blue-900';
+      let icon = 'info';
+      if (type === 'success') {
+        colors = 'bg-emerald-50 border-emerald-300 text-emerald-900';
+        icon = 'check-circle-2';
+      } else if (type === 'error') {
+        colors = 'bg-rose-50 border-rose-300 text-rose-900';
+        icon = 'alert-octagon';
+      } else if (type === 'warning') {
+        colors = 'bg-amber-50 border-amber-300 text-amber-900';
+        icon = 'alert-triangle';
+      }
+
+      box.className = `p-3.5 rounded-xl border text-xs flex items-start space-x-2.5 ${colors}`;
+      box.innerHTML = `
+        <i data-lucide="${icon}" class="w-4 h-4 shrink-0 mt-0.5"></i>
+        <div class="flex-1 space-y-1">
+          <div>${message}</div>
+          ${extraHtml}
+        </div>
+      `;
+      safeCreateIcons();
+    }
+
+    function copyPolicySqlToClipboard() {
+      const sql = 'CREATE POLICY "Allow public insert on delivery_orders" ON public.delivery_orders FOR INSERT WITH CHECK (true);';
+      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(sql).then(() => {
+          showToast('คัดลอกคำสั่ง SQL เรียบร้อยแล้ว!');
+        });
+      } else {
+        showToast('กรุณาคัดลอก SQL จากข้อความบนหน้าจอ');
+      }
+    }
+
+    function downloadUploadSampleCSV() {
+      const csvContent = 
+`member_id,customer_name,branch,truck_number,delivery_date,round,status,fail_reason,note,customer_type,district,address
+00033/23,ไทยฮอนด้า จำกัด (สำนักงานใหญ่),สาขารามอินทรา,13106,2026-10-06 09:00,1,สำเร็จ,ลูกค้าตั้งถัง,auto ปิด Job 30,B2B,ลาดกระบัง,410 นิคมอุตสาหกรรมลาดกระบัง
+08564/1,คุณปนัดดา มีสุข,สาขากรุงเทพกรีฑา,12102,2026-10-06 10:30,1,สำเร็จ,พบลูกค้า,ส่งมอบเรียบร้อย,B2C,สะพานสูง,88/12 ซอยกรุงเทพกรีฑา 18
+01210/3,คุณวรพรรณ รัตนวิชัย,สาขาสุขุมวิท 50,11105,2026-10-06 11:15,1,ยังไม่สำเร็จ,ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่,น้ำท่วมสูง 40 ซม.,B2C,คลองเตย,52/4 สุขุมวิท 50
+03237/43,คุณจิดาภา อักษรสาร,สาขาพระราม 3,14101,2026-10-06 13:00,โอนงานสิ้นวัน,รอน้ำลด,โอนงานสิ้นวัน,ผู้ทำรายการ: admin_bcp,B2C,ยานนาวา,19/8 พระราม 3`;
+
+      const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'sample_delivery_orders_template.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('ดาวน์โหลดไฟล์ตัวอย่างเรียบร้อยแล้ว');
+    }
+
+    async function executeSupabaseUpload() {
+      if (!parsedUploadRows || parsedUploadRows.length === 0) {
+        showUploadAlert('warning', 'ไม่มีข้อมูลสำหรับอัปโหลด');
+        return;
+      }
+
+      const targetTable = document.getElementById('uploadTargetTable') ? document.getElementById('uploadTargetTable').value : 'delivery_orders';
+      const mode = document.getElementById('uploadModeSelect') ? document.getElementById('uploadModeSelect').value : 'insert';
+      const customKeyInput = document.getElementById('uploadCustomKeyInput');
+      const customKey = customKeyInput ? customKeyInput.value.trim() : '';
+
+      const apiKey = customKey || SUPABASE_CLIENT_KEY;
+
+      if (customKey) {
+        try { localStorage.setItem('supabase_upload_custom_key', customKey); } catch (e) {}
+      }
+
+      const progressSection = document.getElementById('uploadProgressSection');
+      const progressBar = document.getElementById('uploadProgressBar');
+      const progressPercent = document.getElementById('uploadProgressPercent');
+      const progressDetail = document.getElementById('uploadProgressDetail');
+      const btnUpload = document.getElementById('btnExecuteUpload');
+
+      if (progressSection) progressSection.classList.remove('hidden');
+      if (btnUpload) btnUpload.setAttribute('disabled', 'true');
+
+      const BATCH_SIZE = 100;
+      const totalRows = parsedUploadRows.length;
+      let totalUploaded = 0;
+      let batchIndex = 0;
+      const totalBatches = Math.ceil(totalRows / BATCH_SIZE);
+
+      const endpoint = `${SUPABASE_PROJECT_URL}/rest/v1/${targetTable}`;
+
+      try {
+        for (let i = 0; i < totalRows; i += BATCH_SIZE) {
+          batchIndex++;
+          const chunk = parsedUploadRows.slice(i, i + BATCH_SIZE);
+
+          const formattedChunk = chunk.map((r, cIdx) => {
+            const isTrans = Boolean((r.round || '').includes('โอนงาน') || (r.note || '').includes('โอนงาน'));
+            return {
+              member_id: r.member_id,
+              customer_name: r.customer_name || '',
+              branch: r.branch || 'สาขารามอินทรา',
+              truck_number: r.truck_number || '',
+              delivery_date: r.delivery_date ? (r.delivery_date.includes('T') ? r.delivery_date : (r.delivery_date + 'T00:00:00+07:00')) : new Date().toISOString(),
+              round: r.round || 'ปกติ',
+              status: r.status || 'ปกติ',
+              reason: r.reason || '',
+              note: r.note || '',
+              delivery_day: r.delivery_day || r.round || 'ปกติ',
+              customer_type: r.customer_type || 'B2C',
+              address: r.address || '',
+              district: r.district || '',
+              gps: r.gps || '',
+              delivery_group: r.delivery_group || 'ปกติ',
+              is_transferred: isTrans,
+              transfer_raw: r.transfer_raw || (isTrans ? (r.note || r.round) : '')
+            };
+          });
+
+          const preferHeader = mode === 'upsert' ? 'resolution=merge-duplicates' : 'return=minimal';
+          const resp = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'apikey': apiKey,
+              'Authorization': 'Bearer ' + apiKey,
+              'Content-Type': 'application/json',
+              'Prefer': preferHeader
+            },
+            body: JSON.stringify(formattedChunk)
+          });
+
+          if (!resp.ok) {
+            const errText = await resp.text();
+            throw new Error(`HTTP ${resp.status}: ${errText}`);
+          }
+
+          totalUploaded += chunk.length;
+          const pct = Math.min(100, Math.round((totalUploaded / totalRows) * 100));
+
+          if (progressBar) progressBar.style.width = pct + '%';
+          if (progressPercent) progressPercent.textContent = pct + '%';
+          if (progressDetail) {
+            progressDetail.textContent = `ส่งข้อมูลชุดที่ ${batchIndex} / ${totalBatches} (${totalUploaded.toLocaleString()} / ${totalRows.toLocaleString()} รายการ)...`;
+          }
+        }
+
+        if (progressBar) progressBar.style.width = '100%';
+        if (progressPercent) progressPercent.textContent = '100%';
+        if (progressDetail) progressDetail.textContent = `อัปโหลดครบถ้วน ${totalUploaded.toLocaleString()} รายการ`;
+
+        const successMsg = `🎉 อัปโหลดข้อมูลสำเร็จเรียบร้อยทั้งหมด ${totalUploaded.toLocaleString()} รายการ เข้าสู่ตาราง ${targetTable} ใน Supabase Cloud!`;
+        showUploadAlert('success', successMsg);
+        showToast(`อัปโหลดเข้า Supabase สำเร็จ ${totalUploaded.toLocaleString()} รายการ`);
+
+        // Integrate new items into client memory and refresh UI
+        const newItems = parsedUploadRows.map(mapDbRowToItem);
+        allItems = newItems.concat(allItems);
+        calculateKPIs();
+        applyGlobalFilters();
+        if (typeof updateTableCharts === 'function') updateTableCharts();
+        renderTable();
+        updateMapPins();
+
+      } catch (err) {
+        console.error('Supabase upload error:', err);
+        const errMsg = err.message || '';
+        let extraInfo = '';
+
+        if (errMsg.includes('row-level security') || errMsg.includes('401') || errMsg.includes('42501')) {
+          extraInfo = `
+            <div class="mt-2 p-2.5 bg-white/80 rounded-lg border border-rose-200 text-rose-950 space-y-1.5">
+              <div class="font-bold">💡 วิธีแก้ไขสิทธิ์ Row Level Security (RLS) ของ Supabase:</div>
+              <p class="text-[11px] text-slate-600">
+                ตาราง <code class="bg-slate-100 px-1 py-0.5 rounded font-mono">public.delivery_orders</code> ยังไม่ได้เปิดสิทธิ์ INSERT ให้ Public Key กรุณาเลือกวิธีใดวิธีหนึ่ง:
+              </p>
+              <div class="flex items-center space-x-2 pt-1">
+                <button type="button" onclick="copyPolicySqlToClipboard()" class="px-2.5 py-1 rounded bg-rose-600 hover:bg-rose-700 text-white font-bold text-[11px] shadow-2xs transition">
+                  📋 คัดลอกคำสั่ง SQL Policy
+                </button>
+                <span class="text-[10px] text-slate-500">นำไปวางใน Supabase > SQL Editor แล้วกด Run</span>
+              </div>
+              <div class="text-[10px] text-slate-500 pt-1">
+                หรือเปิดช่อง "การตั้งค่าสิทธิ์" ด้านบน แล้วใส่ Service Role Key เพื่ออัปโหลดทันที
+              </div>
+            </div>
+          `;
+        }
+
+        showUploadAlert('error', `การอัปโหลดหยุดชะงัก: ${errMsg}`, extraInfo);
+      } finally {
+        if (btnUpload) btnUpload.removeAttribute('disabled');
+      }
+    }
+
     // Refresh Data (Pure Supabase Live Fetch)
     function reloadData() {
       const icon = document.getElementById('refreshIcon');
@@ -10022,6 +10703,19 @@
     window.initTableCharts = initTableCharts;
     window.updateTableCharts = updateTableCharts;
     window.toggleTableChartsView = toggleTableChartsView;
+
+    // Supabase Uploader window bindings
+    window.openSupabaseUploadModal = openSupabaseUploadModal;
+    window.closeSupabaseUploadModal = closeSupabaseUploadModal;
+    window.switchUploadTab = switchUploadTab;
+    window.handleUploadFileSelect = handleUploadFileSelect;
+    window.parsePastedData = parsePastedData;
+    window.clearUploadData = clearUploadData;
+    window.downloadUploadSampleCSV = downloadUploadSampleCSV;
+    window.executeSupabaseUpload = executeSupabaseUpload;
+    window.copyPolicySqlToClipboard = copyPolicySqlToClipboard;
+    window.toggleUploadAdvancedSettings = toggleUploadAdvancedSettings;
+    window.togglePasswordVisibility = togglePasswordVisibility;
 
     // Accessibility Font Scaling window bindings
     window.setFontScale = setFontScale;
