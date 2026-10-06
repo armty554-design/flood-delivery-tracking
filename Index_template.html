@@ -53,6 +53,9 @@
   <!-- Supabase Client Library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- SheetJS (xlsx) for reading real .xlsx / .xls Excel files directly in browser -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <!-- Real CCTV Camera Snapshots Data -->
   <script src="cctv_snapshots.js"></script>
 
@@ -2592,9 +2595,9 @@
             <button type="button" onclick="switchUploadTab('paste')" id="uploadTabBtn-paste" class="px-3.5 py-1.5 rounded-xl font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center">
               <i data-lucide="clipboard-paste" class="w-3.5 h-3.5 mr-1.5"></i> คัดลอก &amp; วางข้อความ
             </button>
-            <div class="ml-auto">
-              <button type="button" onclick="downloadUploadSampleCSV()" class="text-xs text-blue-600 hover:text-blue-800 font-semibold hover:underline flex items-center py-1">
-                <i data-lucide="download" class="w-3.5 h-3.5 mr-1"></i> ดาวน์โหลดตัวอย่าง .csv
+            <div class="ml-auto flex items-center space-x-2">
+              <button type="button" onclick="downloadUploadSampleCSV('excel')" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold hover:underline flex items-center py-1" title="ดาวน์โหลดไฟล์ตัวอย่าง Excel ตามแบบหน้างานจริง">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> ดาวน์โหลดตัวอย่าง Excel (.xlsx/.csv)
               </button>
             </div>
           </div>
@@ -2603,7 +2606,7 @@
         <!-- Tab 1: File Dropzone -->
         <div id="uploadTabContent-file" class="space-y-3">
           <div id="uploadDropzone" onclick="document.getElementById('uploadFileInput').click()" class="border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition bg-slate-50/50 hover:bg-emerald-50/30 group">
-            <input type="file" id="uploadFileInput" accept=".csv,.tsv,.json,.txt" onchange="handleUploadFileSelect(event)" class="hidden">
+            <input type="file" id="uploadFileInput" accept=".xlsx,.xls,.csv,.tsv,.json,.txt" onchange="handleUploadFileSelect(event)" class="hidden">
             <div class="w-12 h-12 mx-auto rounded-2xl bg-emerald-100 group-hover:bg-emerald-200 text-emerald-700 flex items-center justify-center mb-3 transition shadow-xs">
               <i data-lucide="upload" class="w-6 h-6"></i>
             </div>
@@ -2611,7 +2614,7 @@
               ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือกไฟล์
             </div>
             <p class="text-xs text-slate-500 mt-1">
-              รองรับไฟล์ <strong class="text-slate-700">.CSV</strong>, <strong class="text-slate-700">.TSV</strong>, หรือ <strong class="text-slate-700">.JSON</strong> (ตรวจจับคอลัมน์อัตโนมัติ)
+              รองรับไฟล์ <strong class="text-emerald-700 font-bold">.XLSX (Excel)</strong>, <strong class="text-slate-700">.XLS</strong>, <strong class="text-slate-700">.CSV</strong>, <strong class="text-slate-700">.TSV</strong>, หรือ <strong class="text-slate-700">.JSON</strong> (ตรวจจับคอลัมน์อัตโนมัติ)
             </p>
             <div id="uploadSelectedFileName" class="hidden mt-3 inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold">
               <i data-lucide="file-check" class="w-3.5 h-3.5 mr-1.5"></i> <span id="uploadSelectedFileNameText">-</span>
@@ -2622,11 +2625,12 @@
         <!-- Tab 2: Paste Raw Data -->
         <div id="uploadTabContent-paste" class="hidden space-y-2">
           <label class="block text-xs font-bold text-slate-700">
-            วางข้อมูลแบบคั่นด้วยแท็บหรือจุลภาค (คัดลอกจาก Excel หรือ Google Sheets):
+            วางข้อมูลแบบคั่นด้วยแท็บหรือจุลภาค (คัดลอกจาก Excel หรือ Google Sheets ได้โดยตรง):
           </label>
-          <textarea id="uploadPasteInput" rows="6" placeholder="รหัสสมาชิก&#9;ชื่อลูกค้า&#9;สาขา&#9;เบอร์รถ&#9;วันที่&#9;สถานะ&#9;เหตุผล&#9;หมายเหตุ
-00033/23&#9;ไทยฮอนด้า&#9;สาขารามอินทรา&#9;13106&#9;2026-10-06&#9;สำเร็จ&#9;ลูกค้าตั้งถัง&#9;auto ปิด Job 30
-08564/1&#9;คุณปนัดดา&#9;สาขากรุงเทพกรีฑา&#9;12102&#9;2026-10-06&#9;สำเร็จ&#9;พบลูกค้า&#9;ส่งเรียบร้อย" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition leading-relaxed"></textarea>
+          <textarea id="uploadPasteInput" rows="6" placeholder="รหัสสมาชิก&#9;ชื่อลูกค้า&#9;วันเวลาที่ส่งน้ำ&#9;สถานะ&#9;รอบ&#9;เหตุขาดส่ง&#9;สายรถ&#9;เปลี่ยนน้ำ&#9;หมายเหตุ&#9;พิกัด&#9;กลุ่มลูกค้า&#9;เขต&#9;สาขา
+00033/23&#9;ไทยฮอนด้า แมนูแฟคเจอริ่ง&#9;2026-09-26 09:00:00&#9;เข้าส่งได้&#9;1&#9;ลูกค้าตั้งถัง&#9;13106&#9;1&#9;auto ปิด Job 30&#9;13.7845, 100.7321&#9;B2B&#9;ลาดกระบัง&#9;สาขารามอินทรา
+08564/1&#9;คุณปนัดดา มีสุข&#9;2026-09-26 10:30:00&#9;เข้าส่งได้&#9;1&#9;พบลูกค้า&#9;12102&#9;1&#9;ส่งมอบเรียบร้อย&#9;13.7451, 100.6723&#9;B2C&#9;สะพานสูง&#9;สาขากรุงเทพกรีฑา
+01210/3&#9;คุณวรพรรณ รัตนวิชัย&#9;2026-09-26 11:15:00&#9;ยังส่งไม่ได้&#9;1&#9;น้ำท่วมสูงในพื้นที่&#9;11105&#9;1&#9;น้ำท่วมสูง 40 ซม.&#9;13.7021, 100.5982&#9;B2C&#9;คลองเตย&#9;สาขาสุขุมวิท 50" class="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition leading-relaxed"></textarea>
           <div class="flex justify-end">
             <button type="button" onclick="parsePastedData()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold transition flex items-center">
               <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-1.5 text-amber-400"></i> แปลงข้อความเป็นข้อมูล
@@ -2694,11 +2698,13 @@
                 <tr>
                   <th class="p-2 pl-3">รหัสสมาชิก</th>
                   <th class="p-2">ชื่อลูกค้า</th>
-                  <th class="p-2">สาขา</th>
-                  <th class="p-2">เบอร์รถ</th>
-                  <th class="p-2">วันที่</th>
+                  <th class="p-2">วันเวลาที่ส่งน้ำ</th>
                   <th class="p-2">สถานะ</th>
-                  <th class="p-2 pr-3">หมายเหตุ / Col K</th>
+                  <th class="p-2">เหตุขาดส่ง</th>
+                  <th class="p-2">สายรถ</th>
+                  <th class="p-2">สาขา</th>
+                  <th class="p-2">กลุ่มลูกค้า</th>
+                  <th class="p-2 pr-3">หมายเหตุ</th>
                 </tr>
               </thead>
               <tbody id="uploadPreviewTbody" class="divide-y divide-slate-100 text-slate-600 font-mono text-[11px]">
@@ -7231,17 +7237,51 @@
         nameText.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
       }
 
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const content = e.target.result;
-        try {
-          if (file.name.endsWith('.json')) {
-            const data = JSON.parse(content);
+      // Check if native Excel XLSX / XLS file
+      const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls');
+      if (isExcel) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            if (typeof XLSX === 'undefined') {
+              showUploadAlert('error', 'ระบบอ่านไฟล์ Excel ยังโหลดไม่เสร็จสมบูรณ์ กรุณาลองบันทึกเป็นไฟล์ .csv หรือวางข้อความ');
+              return;
+            }
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const matrix = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+            processParsedMatrix(matrix);
+          } catch (err) {
+            showUploadAlert('error', 'เกิดข้อผิดพลาดในการอ่านไฟล์ Excel: ' + err.message);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+        return;
+      }
+
+      // Check if JSON file
+      if (file.name.endsWith('.json')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          try {
+            const data = JSON.parse(e.target.result);
             const rows = Array.isArray(data) ? data : (data.data || [data]);
             processParsedUploadRows(rows);
-          } else {
-            parseRawDelimitedText(content);
+          } catch (err) {
+            showUploadAlert('error', 'เกิดข้อผิดพลาดในการอ่านไฟล์ JSON: ' + err.message);
           }
+        };
+        reader.readAsText(file);
+        return;
+      }
+
+      // Delimited Text: CSV / TSV / TXT
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          parseRawDelimitedText(e.target.result);
         } catch (err) {
           showUploadAlert('error', 'เกิดข้อผิดพลาดในการอ่านไฟล์: ' + err.message);
         }
@@ -7293,51 +7333,153 @@
         return res;
       }
 
-      const headers = parseLine(lines[0], sep).map(h => h.replace(/^["']|["']$/g, '').trim().toLowerCase());
-      const headerMap = {};
-      headers.forEach((h, idx) => { headerMap[h] = idx; });
+      const matrix = lines.map(line => parseLine(line, sep).map(c => c.replace(/^["']|["']$/g, '').trim()));
+      processParsedMatrix(matrix);
+    }
+
+    // Unified Matrix Parser: Smart column matching for both Excel and CSV
+    function processParsedMatrix(matrix) {
+      if (!Array.isArray(matrix) || matrix.length === 0) {
+        showUploadAlert('warning', 'ไม่พบข้อมูลที่สามารถอ่านได้ในไฟล์หรือข้อความ');
+        return;
+      }
+
+      // Filter out completely empty rows
+      const cleanRows = matrix.filter(r => Array.isArray(r) && r.some(c => c !== null && c !== undefined && String(c).trim() !== ''));
+      if (cleanRows.length === 0) {
+        showUploadAlert('warning', 'ไม่พบข้อมูลที่สามารถอ่านได้ในไฟล์หรือข้อความ');
+        return;
+      }
+
+      // 1. Detect Header Row (search up to 5 rows for keywords)
+      let headerRowIdx = -1;
+      for (let r = 0; r < Math.min(cleanRows.length, 5); r++) {
+        const rowStr = cleanRows[r].map(c => String(c || '').trim()).join(' ').toLowerCase();
+        if (rowStr.includes('รหัส') || rowStr.includes('member') || (rowStr.includes('ชื่อ') && (rowStr.includes('สาขา') || rowStr.includes('วัน') || rowStr.includes('สถานะ')))) {
+          headerRowIdx = r;
+          break;
+        }
+      }
+
+      const dataStartIdx = (headerRowIdx !== -1) ? headerRowIdx + 1 : 0;
+      if (dataStartIdx >= cleanRows.length && headerRowIdx !== -1) {
+        showUploadAlert('warning', 'ตรวจพบเฉพาะหัวตาราง ยังไม่มีแถวข้อมูลสำหรับนำเข้า');
+        return;
+      }
+
+      const rawHeaders = (headerRowIdx !== -1 ? cleanRows[headerRowIdx] : []).map(h => String(h || '').trim().toLowerCase());
+
+      function findColIdx(keywords) {
+        if (rawHeaders.length === 0) return -1;
+        for (const kw of keywords) {
+          const idx = rawHeaders.findIndex(h => h.includes(kw));
+          if (idx !== -1) return idx;
+        }
+        return -1;
+      }
+
+      let cMemberId = findColIdx(['รหัสสมาชิก', 'รหัส', 'member_id', 'memberid', 'member', 'id']);
+      let cName = findColIdx(['ชื่อลูกค้า', 'ชื่อสมาชิก', 'ชื่อ', 'customer_name', 'name']);
+      let cDate = findColIdx(['วันเวลาที่ส่งน้ำ', 'วันเวลาที่จัดส่ง', 'วันเวลาที่ทำรายการ', 'วันเวลา', 'วันที่', 'delivery_date', 'date', 'เวลา']);
+      let cStatus = findColIdx(['สถานะจัดส่ง', 'สถานะ', 'status']);
+      let cRound = findColIdx(['รอบส่งประจำสัปดาห์', 'รอบส่ง', 'รอบสัปดาห์', 'รอบ', 'round']);
+      let cReason = findColIdx(['เหตุขาดส่ง', 'สาเหตุที่เข้าไม่ได้', 'สาเหตุ', 'เหตุผล', 'เหตุ', 'fail_reason', 'reason', 'ปัญหา']);
+      let cTruck = findColIdx(['สายรถ', 'เบอร์รถ', 'สายส่ง', 'รถ', 'truck_number', 'truck']);
+      let cWater = findColIdx(['เปลี่ยนน้ำ', 'จำนวนขวด', 'จำนวนถัง', 'จำนวน', 'bottle', 'water', 'qty']);
+      let cNote = findColIdx(['หมายเหตุ', 'รายละเอียด', 'note', 'mdfss_note', 'mdfss', 'col k']);
+      let cGps = findColIdx(['พิกัด', 'gps', 'lat', 'coord']);
+      let cCustType = findColIdx(['กลุ่มลูกค้า', 'ประเภทลูกค้า', 'กลุ่ม', 'customer_type', 'custtype', 'type']);
+      let cDistrict = findColIdx(['เขต', 'แขวง', 'district', 'พื้นที่']);
+      let cBranch = findColIdx(['สาขา', 'คลัง', 'branch']);
+      let cAddress = findColIdx(['ที่อยู่จัดส่ง', 'ที่อยู่', 'บ้านเลขที่', 'address']);
+
+      const sampleRow = cleanRows[dataStartIdx] || [];
+
+      // Check if sampleRow[2] looks like a Date (User's Operational Excel layout from screenshot)
+      const sampleCol2 = String(sampleRow[2] || '').trim();
+      const col2IsDate = sampleCol2.includes('202') || sampleCol2.includes('/') || (sampleCol2.includes('-') && sampleCol2.length >= 8);
+      const sampleCol2IsBranch = sampleCol2.includes('สาขา') || sampleCol2.includes('คลัง');
+
+      if (cMemberId === -1) cMemberId = 0;
+      if (cName === -1) cName = 1;
+
+      if (col2IsDate || (!sampleCol2IsBranch && cDate === -1)) {
+        // Operational Excel Layout (Exact order matching user's Excel):
+        // 0: รหัสสมาชิก, 1: ชื่อลูกค้า, 2: วันเวลาที่ส่งน้ำ, 3: สถานะ, 4: รอบ, 5: เหตุขาดส่ง,
+        // 6: สายรถ, 7: เปลี่ยนน้ำ, 8: หมายเหตุ, 9: พิกัด, 10: กลุ่มลูกค้า, 11: เขต, 12: สาขา
+        if (cDate === -1) cDate = 2;
+        if (cStatus === -1) cStatus = 3;
+        if (cRound === -1) cRound = 4;
+        if (cReason === -1) cReason = 5;
+        if (cTruck === -1) cTruck = 6;
+        if (cWater === -1) cWater = 7;
+        if (cNote === -1) cNote = 8;
+        if (cGps === -1) cGps = 9;
+        if (cCustType === -1) cCustType = 10;
+        if (cDistrict === -1) cDistrict = 11;
+        if (cBranch === -1) cBranch = 12;
+      } else {
+        // Default Template Layout:
+        // member_id, customer_name, branch, truck_number, delivery_date, round, status, fail_reason, note, customer_type, district, address
+        if (cBranch === -1) cBranch = 2;
+        if (cTruck === -1) cTruck = 3;
+        if (cDate === -1) cDate = 4;
+        if (cRound === -1) cRound = 5;
+        if (cStatus === -1) cStatus = 6;
+        if (cReason === -1) cReason = 7;
+        if (cNote === -1) cNote = 8;
+        if (cCustType === -1) cCustType = 9;
+        if (cDistrict === -1) cDistrict = 10;
+        if (cAddress === -1) cAddress = 11;
+      }
+
+      function formatCellVal(v) {
+        if (v === null || v === undefined) return '';
+        if (v instanceof Date) {
+          const y = v.getFullYear();
+          const m = String(v.getMonth() + 1).padStart(2, '0');
+          const d = String(v.getDate()).padStart(2, '0');
+          const hh = String(v.getHours()).padStart(2, '0');
+          const mm = String(v.getMinutes()).padStart(2, '0');
+          return `${y}-${m}-${d} ${hh}:${mm}:00`;
+        }
+        return String(v).trim();
+      }
 
       const rows = [];
-      for (let i = 1; i < lines.length; i++) {
-        const cols = parseLine(lines[i], sep).map(c => c.replace(/^["']|["']$/g, '').trim());
-        if (cols.length === 0 || cols.every(c => c === '')) continue;
+      for (let i = dataStartIdx; i < cleanRows.length; i++) {
+        const row = cleanRows[i];
+        const mId = formatCellVal(cMemberId !== -1 ? row[cMemberId] : row[0]);
+        if (!mId) continue;
 
-        const getCol = (keys, def = '') => {
-          for (const k of keys) {
-            if (headerMap[k] !== undefined && cols[headerMap[k]] !== undefined) {
-              const v = cols[headerMap[k]];
-              if (v) return v;
-            }
-          }
-          return def;
-        };
-
-        const memberId = getCol(['member_id', 'memberid', 'รหัสสมาชิก', 'รหัส'], cols[0] || '').trim();
-        if (!memberId) continue;
-
-        const customerName = getCol(['customer_name', 'name', 'ชื่อลูกค้า', 'ชื่อ'], cols[1] || '');
-        const branchRaw = getCol(['branch', 'สาขา', 'คลัง'], cols[2] || 'สาขารามอินทรา');
-        const branch = branchRaw.startsWith('คลัง') ? branchRaw.replace(/^คลัง/, 'สาขา') : branchRaw;
-        const truck = getCol(['truck_number', 'truck', 'เบอร์รถ', 'สายส่ง'], cols[3] || '');
-        const deliveryDate = getCol(['delivery_date', 'date', 'วันที่', 'วันจัดส่ง'], cols[4] || new Date().toISOString().slice(0, 10));
-        const round = getCol(['round', 'รอบ', 'รอบส่ง'], cols[5] || 'ปกติ');
-        const status = getCol(['status', 'สถานะ', 'สถานะจัดส่ง'], cols[6] || 'ปกติ');
-        const reason = getCol(['fail_reason', 'reason', 'เหตุผล'], cols[7] || '');
-        const note = getCol(['note', 'notes', 'หมายเหตุ', 'mdfss_note', 'col k'], cols[8] || '');
-        const address = getCol(['address', 'ที่อยู่'], cols[9] || '');
-        const district = getCol(['district', 'เขต'], cols[10] || '');
-        const customerType = getCol(['customer_type', 'custtype', 'กลุ่มลูกค้า'], cols[11] || 'B2C');
+        const customerName = formatCellVal(cName !== -1 ? row[cName] : '');
+        let branchRaw = formatCellVal(cBranch !== -1 ? row[cBranch] : 'สาขารามอินทรา');
+        if (branchRaw.startsWith('คลัง')) branchRaw = branchRaw.replace(/^คลัง/, 'สาขา');
+        const truck = formatCellVal(cTruck !== -1 ? row[cTruck] : '');
+        let deliveryDate = formatCellVal(cDate !== -1 ? row[cDate] : '');
+        if (!deliveryDate) deliveryDate = new Date().toISOString().slice(0, 10);
+        const round = formatCellVal(cRound !== -1 ? row[cRound] : 'ปกติ');
+        const status = formatCellVal(cStatus !== -1 ? row[cStatus] : 'ปกติ');
+        const reason = formatCellVal(cReason !== -1 ? row[cReason] : '');
+        const note = formatCellVal(cNote !== -1 ? row[cNote] : '');
+        const waterQty = formatCellVal(cWater !== -1 ? row[cWater] : '');
+        const gps = formatCellVal(cGps !== -1 ? row[cGps] : '');
+        const customerType = formatCellVal(cCustType !== -1 ? row[cCustType] : 'B2C');
+        const district = formatCellVal(cDistrict !== -1 ? row[cDistrict] : '');
+        const address = formatCellVal(cAddress !== -1 ? row[cAddress] : '');
 
         rows.push({
-          member_id: memberId,
+          member_id: mId,
           customer_name: customerName,
-          branch: branch,
+          branch: branchRaw || 'สาขารามอินทรา',
           truck_number: truck,
           delivery_date: deliveryDate,
           round: round,
           status: status,
           reason: reason,
           note: note,
+          change_bottle: waterQty,
+          gps: gps,
           address: address,
           district: district,
           customer_type: customerType
@@ -7377,11 +7519,13 @@
           tr.innerHTML = `
             <td class="p-2 pl-3 font-bold text-slate-800">${r.member_id || '-'}</td>
             <td class="p-2 font-sans text-slate-700 truncate max-w-[120px]" title="${r.customer_name || ''}">${r.customer_name || '-'}</td>
-            <td class="p-2 font-sans">${r.branch || '-'}</td>
-            <td class="p-2">${r.truck_number || '-'}</td>
             <td class="p-2">${(r.delivery_date || '').toString().slice(0, 16)}</td>
             <td class="p-2"><span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">${r.status || 'ปกติ'}</span></td>
-            <td class="p-2 pr-3 truncate max-w-[140px]" title="${r.note || r.reason || ''}">${r.note || r.reason || '-'}</td>
+            <td class="p-2 truncate max-w-[120px]" title="${r.reason || ''}">${r.reason || '-'}</td>
+            <td class="p-2 font-mono">${r.truck_number || '-'}</td>
+            <td class="p-2 font-sans">${r.branch || '-'}</td>
+            <td class="p-2">${r.customer_type || 'B2C'}</td>
+            <td class="p-2 pr-3 truncate max-w-[120px]" title="${r.note || ''}">${r.note || '-'}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -7389,7 +7533,7 @@
         if (rows.length > 8) {
           const trMore = document.createElement('tr');
           trMore.innerHTML = `
-            <td colspan="7" class="p-2 text-center text-slate-400 font-sans italic bg-slate-50/50">
+            <td colspan="9" class="p-2 text-center text-slate-400 font-sans italic bg-slate-50/50">
               ... และอีก ${(rows.length - 8).toLocaleString()} รายการ ...
             </td>
           `;
@@ -7458,13 +7602,29 @@
       }
     }
 
-    function downloadUploadSampleCSV() {
-      const csvContent = 
-`member_id,customer_name,branch,truck_number,delivery_date,round,status,fail_reason,note,customer_type,district,address
-00033/23,ไทยฮอนด้า จำกัด (สำนักงานใหญ่),สาขารามอินทรา,13106,2026-10-06 09:00,1,สำเร็จ,ลูกค้าตั้งถัง,auto ปิด Job 30,B2B,ลาดกระบัง,410 นิคมอุตสาหกรรมลาดกระบัง
-08564/1,คุณปนัดดา มีสุข,สาขากรุงเทพกรีฑา,12102,2026-10-06 10:30,1,สำเร็จ,พบลูกค้า,ส่งมอบเรียบร้อย,B2C,สะพานสูง,88/12 ซอยกรุงเทพกรีฑา 18
-01210/3,คุณวรพรรณ รัตนวิชัย,สาขาสุขุมวิท 50,11105,2026-10-06 11:15,1,ยังไม่สำเร็จ,ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่,น้ำท่วมสูง 40 ซม.,B2C,คลองเตย,52/4 สุขุมวิท 50
-03237/43,คุณจิดาภา อักษรสาร,สาขาพระราม 3,14101,2026-10-06 13:00,โอนงานสิ้นวัน,รอน้ำลด,โอนงานสิ้นวัน,ผู้ทำรายการ: admin_bcp,B2C,ยานนาวา,19/8 พระราม 3`;
+    function downloadUploadSampleCSV(type = 'excel') {
+      const sampleHeaders = ['รหัสสมาชิก', 'ชื่อลูกค้า', 'วันเวลาที่ส่งน้ำ', 'สถานะ', 'รอบ', 'เหตุขาดส่ง', 'สายรถ', 'เปลี่ยนน้ำ', 'หมายเหตุ', 'พิกัด', 'กลุ่มลูกค้า', 'เขต', 'สาขา'];
+      const sampleRows = [
+        sampleHeaders,
+        ['00033/23', 'ไทยฮอนด้า แมนูแฟคเจอริ่ง', '2026-09-26 09:00:00', 'เข้าส่งได้', '1', 'ลูกค้าตั้งถัง', '13106', '1', 'auto ปิด Job 30', '13.7845, 100.7321', 'B2B', 'ลาดกระบัง', 'สาขารามอินทรา'],
+        ['08564/1', 'คุณปนัดดา มีสุข', '2026-09-26 10:30:00', 'เข้าส่งได้', '1', 'พบลูกค้า', '12102', '1', 'ส่งมอบเรียบร้อย', '13.7451, 100.6723', 'B2C', 'สะพานสูง', 'สาขากรุงเทพกรีฑา'],
+        ['01210/3', 'คุณวรพรรณ รัตนวิชัย', '2026-09-26 11:15:00', 'ยังส่งไม่ได้', '1', 'น้ำท่วมสูงในพื้นที่', '11105', '1', 'น้ำท่วมสูง 40 ซม.', '13.7021, 100.5982', 'B2C', 'คลองเตย', 'สาขาสุขุมวิท 50'],
+        ['03237/43', 'คุณจิดาภา อักษรสาร', '2026-09-26 13:00:00', 'โอนงานสิ้นวัน', 'โอนงานสิ้นวัน', 'เกิดข้อผิดพลาด เลื่อนวันที่ส่ง', '14101', '1', 'ผู้ทำรายการ: admin_bcp; โอนมาจากวันที่ 2026-09-25', '13.6892, 100.5281', 'B2C', 'ยานนาวา', 'สาขาพระราม 3']
+      ];
+
+      // Native Excel XLSX download via SheetJS if available
+      if (type === 'excel' && typeof XLSX !== 'undefined') {
+        const ws = XLSX.utils.aoa_to_sheet(sampleRows);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'รายการจัดส่ง');
+        XLSX.writeFile(wb, 'sample_delivery_orders_template.xlsx');
+        showToast('ดาวน์โหลดไฟล์ตัวอย่าง Excel (.xlsx) ตามโครงสร้างหน้างานเรียบร้อยแล้ว');
+        return;
+      }
+
+      // CSV download with UTF-8 BOM
+      const csvLines = sampleRows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','));
+      const csvContent = csvLines.join('\r\n');
 
       const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -7473,7 +7633,7 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast('ดาวน์โหลดไฟล์ตัวอย่างเรียบร้อยแล้ว');
+      showToast('ดาวน์โหลดไฟล์ตัวอย่าง .csv ตามโครงสร้างหน้างานเรียบร้อยแล้ว');
     }
 
     async function executeSupabaseUpload() {
@@ -7516,13 +7676,42 @@
           const chunk = parsedUploadRows.slice(i, i + BATCH_SIZE);
 
           const formattedChunk = chunk.map((r, cIdx) => {
-            const isTrans = Boolean((r.round || '').includes('โอนงาน') || (r.note || '').includes('โอนงาน'));
+            const isTrans = Boolean((r.round || '').includes('โอนงาน') || (r.note || '').includes('โอนงาน') || (r.status || '').includes('โอนงาน'));
+            let dateStr = r.delivery_date ? String(r.delivery_date).trim() : '';
+            if (dateStr && !dateStr.includes('T')) {
+              if (dateStr.includes(' ')) {
+                dateStr = dateStr.replace(' ', 'T') + '+07:00';
+              } else {
+                dateStr = dateStr + 'T00:00:00+07:00';
+              }
+            } else if (!dateStr) {
+              dateStr = new Date().toISOString();
+            }
+
+            if (targetTable === 'deliveries') {
+              return {
+                member_id: r.member_id,
+                customer_name: r.customer_name || '',
+                delivery_date: r.delivery_date || dateStr,
+                round: r.round || 'ปกติ',
+                status_code: r.status || 'ปกติ',
+                fail_reason: r.reason || '',
+                truck_number: r.truck_number || '',
+                change_bottle: r.change_bottle || '',
+                mdfss_note: r.note || '',
+                weekly_round: r.delivery_day || r.round || 'ปกติ',
+                customer_type: r.customer_type || 'B2C',
+                branch: r.branch || 'สาขารามอินทรา',
+                delivery_group: r.delivery_group || 'ปกติ'
+              };
+            }
+
             return {
               member_id: r.member_id,
               customer_name: r.customer_name || '',
               branch: r.branch || 'สาขารามอินทรา',
               truck_number: r.truck_number || '',
-              delivery_date: r.delivery_date ? (r.delivery_date.includes('T') ? r.delivery_date : (r.delivery_date + 'T00:00:00+07:00')) : new Date().toISOString(),
+              delivery_date: dateStr,
               round: r.round || 'ปกติ',
               status: r.status || 'ปกติ',
               reason: r.reason || '',

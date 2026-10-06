@@ -26,7 +26,8 @@ const filesToSync = [
   'pending_from_26.json',
   'resolved_from_26.json',
   'coordination_pending_water.json',
-  'condition_resolved_water.json'
+  'condition_resolved_water.json',
+  'sample_delivery_orders_template.csv'
 ];
 filesToSync.forEach(file => {
   const src = path.join(__dirname, file);
