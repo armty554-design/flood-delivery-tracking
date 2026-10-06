@@ -343,7 +343,7 @@
               ระบบติดตามสถานะจัดส่งน้ำ: น้ำท่วม &amp; โอนงานสิ้นวัน
             </h1>
             <p class="text-slate-300 text-xs sm:text-sm max-w-2xl">
-              รอบส่ง 26 ก.ย. – 3 ต.ค. 2569 | กฎธุรกิจ: กรณีโอนงานหรือน้ำท่วม หากรอบถัดไปส่งได้ถือว่าสำเร็จและตัดยอดออกจากงานโอน
+              รอบส่ง 26 ก.ย. – 5 ต.ค. 2569 | กฎธุรกิจ: กรณีรอบใดรอบหนึ่งได้รับน้ำไปแล้ว (26 ก.ย. - 5 ต.ค.) ให้นับเป็นสำเร็จ 1 รหัส และตัดออกจากยอดไม่ได้รับน้ำทันที
             </p>
           </div>
           <div class="flex items-center gap-2 shrink-0">
@@ -415,7 +415,7 @@
             </label>
             <select id="globalFilterDate" onchange="applyGlobalFilters()" 
                     class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-800 py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-2xs truncate">
-              <option value="ALL">ทุกวันที่ (26 ก.ย. - 3 ต.ค.)</option>
+              <option value="ALL">ทุกวันที่ (26 ก.ย. - 5 ต.ค.)</option>
               <option value="2026-09-26">26 ก.ย. 69 (เสาร์ - เริ่มวิกฤต)</option>
               <option value="2026-09-28">28 ก.ย. 69 (จันทร์ - เริ่มโอนรอบแรก)</option>
               <option value="2026-09-29">29 ก.ย. 69 (อังคาร - ส่งชดเชย)</option>
@@ -423,6 +423,8 @@
               <option value="2026-10-01">1 ต.ค. 69 (พฤหัสบดี)</option>
               <option value="2026-10-02">2 ต.ค. 69 (ศุกร์)</option>
               <option value="2026-10-03">3 ต.ค. 69 (เสาร์)</option>
+              <option value="2026-10-04">4 ต.ค. 69 (อาทิตย์)</option>
+              <option value="2026-10-05">5 ต.ค. 69 (จันทร์)</option>
             </select>
           </div>
 
@@ -1042,7 +1044,7 @@
               <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">Crisis Lifecycle Trace</span>
             </div>
             <p class="text-xs text-slate-500 mt-1">
-              คัดกรองตามเงื่อนไข: หากส่งสำเร็จแล้ว หรือขาดส่งที่ไม่เกี่ยวกับน้ำท่วมสูง/โอนงานสิ้นวัน (เช่น ไม่อยู่/ไม่รับน้ำ/ปิด) ถือว่า <strong>"สำเร็จตามเงื่อนไข"</strong> เพื่อหา <strong>"สมาชิกที่ยังไม่ได้รับน้ำเลยจริง ๆ"</strong> สำหรับวางแผนจัดส่งชดเชย
+              คัดกรองตามเงื่อนไข: หากรอบใดรอบหนึ่งส่งสำเร็จแล้ว หรือขาดส่งที่ไม่เกี่ยวกับน้ำท่วมสูง/โอนงานสิ้นวัน ถือว่า <strong>"ได้รับน้ำแล้ว (สำเร็จตามเงื่อนไข)"</strong> ตัดออกจากยอดค้างส่งทันที เพื่อหา <strong>"สมาชิกที่ยังไม่ได้รับน้ำเลยจริง ๆ"</strong> สำหรับวางแผนจัดส่งชดเชย
             </p>
           </div>
         </div>
@@ -3473,13 +3475,16 @@
             if (!memStatus.isAuto) return false;
           } else if (statusVal === 'FAIL') {
             // ยังไม่สำเร็จทั้งหมด (น้ำท่วม หรือ โอนงานค้างส่ง)
-            if (!memStatus.isPending) return false;
+            // กฎธุรกิจ: กรณีรอบใดรอบหนึ่งได้รับน้ำไปแล้ว (26 ก.ย. - 5 ต.ค.) ให้ตัดออกจากยอดไม่สำเร็จทันที
+            if (memStatus.isAccessible || !memStatus.isPending) return false;
           } else if (statusVal === 'FAIL_FLOOD' || statusVal === 'FLOOD') {
             // ยังไม่สำเร็จ: น้ำท่วมสูงในพื้นที่ (รอน้ำลด)
-            if (!memStatus.isPendingFlood && !itemStatus.isFlood) return false;
+            // กฎธุรกิจ: กรณีรอบใดรอบหนึ่งได้รับน้ำไปแล้ว (26 ก.ย. - 5 ต.ค.) ให้ตัดออกจากยอดติดน้ำท่วมทันที
+            if (memStatus.isAccessible || (!memStatus.isPendingFlood && !itemStatus.isFlood)) return false;
           } else if (statusVal === 'FAIL_TRANSFER' || statusVal === 'PENDING_TRANSFER') {
             // ยังไม่สำเร็จ: โอนงานค้างส่ง (รอดำเนินการ)
-            if (!memStatus.isPendingTransfer) return false;
+            // กฎธุรกิจ: กรณีรอบใดรอบหนึ่งได้รับน้ำไปแล้ว (26 ก.ย. - 5 ต.ค.) ให้ตัดออกจากยอดโอนค้างส่งทันที
+            if (memStatus.isAccessible || !memStatus.isPendingTransfer) return false;
           } else if (statusVal === 'RESOLVED_TRANSFER') {
             // ปลดล็อกโอนงานสำเร็จ (มีประวัติโอนงาน และรอบส่งสำเร็จ)
             if (!memStatus.hadTransfer || !memStatus.isAccessible) return false;
@@ -4096,7 +4101,8 @@
 
         if (m.gps) withGpsMembers++;
 
-        const evalRes = evaluateMemberLifecycle(m.attempts);
+        // กฎธุรกิจ: กรณีรอบใดรอบหนึ่งได้รับน้ำไปแล้ว (26 ก.ย. - 5 ต.ค.) ให้ใช้สถานะภาพรวมนับเป็นสำเร็จ 1 รหัส และตัดออกจากยอดไม่ได้รับน้ำ
+        const evalRes = (typeof window !== 'undefined' && window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || evaluateMemberLifecycle(m.attempts);
 
         if (evalRes.hadTransfer) {
           totalTransferHistoryMembers++;
@@ -6708,7 +6714,7 @@
         if (itemStatus.isAuto) {
           reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 text-teal-900 border border-teal-200 truncate block" title="' + (item.note || 'auto ปิด Job 30') + '"><i data-lucide="zap" class="w-3 h-3 mr-1 text-teal-600 shrink-0"></i>' + (item.note || 'auto ปิด Job 30') + '</span>';
         } else if (memEval.isAccessible && (itemStatus.isFlood || itemStatus.isTransfer || !itemStatus.isSuccess)) {
-          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 truncate block" title="' + (item.reason || 'ส่งสำเร็จในรอบถัดไป') + '"><i data-lucide="check-check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>สำเร็จแล้ว (' + (item.reason || 'รอบถัดไป') + ')</span>';
+          reasonHtml = '<span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 truncate block" title="' + (item.reason || 'ได้รับน้ำแล้วในรอบอื่น') + '"><i data-lucide="check-check" class="w-3 h-3 mr-1 text-emerald-600 shrink-0"></i>สำเร็จแล้ว (ได้รับน้ำรอบอื่นแล้ว)</span>';
         } else if (itemStatus.isFlood) {
           reasonHtml = '<span class="text-red-600 font-semibold text-xs truncate block" title="' + item.reason + '">🔴 ' + item.reason + '</span>';
         } else if (item.reason && (item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง'))) {
