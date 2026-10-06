@@ -47028,30 +47028,20 @@
       }
 
       // 4. ข้อ 2: ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่
-      const isFlood = reason.includes('น้ำท่วม') || status.includes('รอน้ำลด');
+      const isFlood = reason.includes('น้ำท่วม') || status.includes('รอน้ำลด') || note.includes('น้ำท่วม');
 
       // 5. ข้อ 3: โอนงานสิ้นวัน
-      const isTransfer = isTransferred || round.includes('โอนงานสิ้นวัน') || transRaw.includes('ผู้ทำรายการ') || transRaw.includes('โอนงาน');
+      const isTransfer = isTransferred || round.includes('โอนงานสิ้นวัน') || transRaw.includes('ผู้ทำรายการ') || transRaw.includes('โอนงาน') || reason.includes('โอนงาน');
 
-      // 6. ไม่สำเร็จตามเกณฑ์: ไม่รับน้ำ (บริษัทปิด, ถังเปล่าไม่มีคูปอง, ไม่มีถังเปล่า, แจ้งยกเลิก, ไม่อยู่, ยังไม่รับ, ย้ายที่อยู่), ปิดถนน, อาคารไม่อนุญาต, ลิฟท์เสีย, เกิดข้อผิดพลาด (เลื่อนวันที่ส่ง)
-      const isUnsuccessful = reason.includes('ไม่รับน้ำ') || 
-                             reason.includes('ไม่สามารถเข้าส่งได้') || 
-                             reason.includes('เกิดข้อผิดพลาด') || 
-                             reason.includes('เลื่อนวันที่ส่ง') || 
-                             status.includes('ยังส่งไม่ได้') || 
-                             group.includes('ยังส่งไม่ได้');
-
+      // กฎธุรกิจ: สถานะประเมินให้มีเฉพาะที่ส่งไม่ได้ เช่น โอนงานสิ้นวัน หรือ น้ำท่วมเท่านั้น สถานะอื่นทั้งหมดถือว่าจัดส่งสำเร็จ
       if (isFlood) {
         return { isSuccess: false, isAuto: false, isFlood: true, isTransfer: isTransfer, type: 'FLOOD' };
       }
       if (isTransfer) {
         return { isSuccess: false, isAuto: false, isFlood: false, isTransfer: true, type: 'TRANSFER' };
       }
-      if (isUnsuccessful) {
-        return { isSuccess: false, isAuto: false, isFlood: false, isTransfer: false, type: 'FAIL_OTHER' };
-      }
 
-      // 7. หากไม่มีสถานะขัดข้อง (เช่น reason ว่าง หรือ ปกติ และไม่ได้ติดกลุ่มยังส่งไม่ได้) ➔ จัดส่งสำเร็จปกติ
+      // 6. สถานะอื่นทั้งหมด (ไม่รับน้ำ, ไม่พบถังเปล่า, ปิดถนน, อาคารไม่อนุญาต, เลื่อนวันที่ส่ง, ลูกค้าไม่อยู่, ปกติ ฯลฯ) ➔ ถือว่าจัดส่งสำเร็จ
       return { isSuccess: true, isAuto: false, isFlood: false, isTransfer: false, type: 'NORMAL_DELIVERED' };
     }
 
@@ -47104,24 +47094,24 @@
 
       // กฎการประเมินสถานะวงจรชีวิตสมาชิก (Member Lifecycle Evaluation)
       // กฎข้อ 1 โอนงานสิ้นวัน: หากมีการจัดส่งที่ไม่ใช่สถานะโอนงานสิ้นวัน หรือน้ำท่วมเพิ่ม ให้แปลว่าสำเร็จ
-      if (!isSuccess) {
-        if (hadTransfer) {
-          const hasResolvedDelivery = attempts.some(a => {
-            const s = checkOrderDeliveryStatus(a);
-            return !s.isTransfer && !s.isFlood;
-          });
-          if (hasResolvedDelivery) {
-            isSuccess = true;
+      if (hadTransfer) {
+        const hasResolvedDelivery = attempts.some(a => {
+          const s = checkOrderDeliveryStatus(a);
+          return !s.isTransfer && !s.isFlood;
+        });
+        if (hasResolvedDelivery) {
+          isSuccess = true;
+          if (!isAuto) {
             accessType = 'TRANSFER_RESOLVED_DELIVERY';
           }
         }
+      }
 
-        // กฎข้อ 2 น้ำท่วม: ถ้าไม่มีสถานะน้ำท่วมขึ้นซ้ำ แปลว่าสำเร็จ (กรณีมากกว่า 1 รอบ และรอบล่าสุดไม่ใช่น้ำท่วมและไม่ติดโอนงาน)
-        if (!isSuccess && hadFlood) {
-          if (attempts.length > 1 && !latestStatus.isFlood && !latestStatus.isTransfer) {
-            isSuccess = true;
-            accessType = 'FLOOD_RESOLVED_NO_REPEAT';
-          }
+      // กฎข้อ 2 น้ำท่วม: ถ้าไม่มีสถานะน้ำท่วมขึ้นซ้ำ แปลว่าสำเร็จ (กรณีมากกว่า 1 รอบ และรอบล่าสุดไม่ใช่น้ำท่วมและไม่ติดโอนงาน)
+      if (!isSuccess && hadFlood) {
+        if (attempts.length > 1 && !latestStatus.isFlood && !latestStatus.isTransfer) {
+          isSuccess = true;
+          accessType = 'FLOOD_RESOLVED_NO_REPEAT';
         }
       }
 
@@ -50793,6 +50783,10 @@
             nodeBg = 'bg-amber-500 ring-4 ring-amber-100';
             borderBorder = 'border-amber-300 bg-amber-50/20';
             statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ เลื่อนวันที่ส่ง (ข้อผิดพลาด)</span>';
+          } else if (isEvTransfer) {
+            nodeBg = 'bg-purple-500 ring-4 ring-purple-100';
+            borderBorder = 'border-purple-300 bg-purple-50/20';
+            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">🟣 โอนงานสิ้นวัน</span>';
           }
 
           const colKBox = ev.note ? `
