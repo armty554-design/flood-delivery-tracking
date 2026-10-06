@@ -67,13 +67,13 @@ assert(template.includes('03237/43'), 'Must showcase Case 4: 03237/43 (Unresolve
 assert(template.includes('filterByCaseMember'), 'Must have filterByCaseMember drill-down function');
 console.log('  ✔ PASS: All 4 real case studies displayed with drill-down buttons');
 
-// 5. Default Active Landing View (Clean Table Tab)
-console.log('\n[5. Clean UI Landing: Table Tab Active by Default]');
-assert(template.includes("let currentTab = 'table';"), "JS initial state must be let currentTab = 'table';");
-assert(template.includes('id="tabContent-table" class="space-y-4"'), 'Table tab container must be active/visible by default');
+// 5. Default Active Landing View (Executive Crisis Summary Tab Active by Default)
+console.log('\n[5. Executive UI Landing: Crisis Summary Tab Active by Default]');
+assert(template.includes("let currentTab = 'summary';"), "JS initial state must be let currentTab = 'summary';");
+assert(template.includes('id="tabContent-summary" class="space-y-6"'), 'Summary tab container must be active/visible by default');
 assert(template.includes('id="tabContent-map" class="hidden space-y-4"'), 'Map tab container must be hidden by default');
-assert(template.includes('id="tabBtn-table" class="tab-btn active'), 'Sidebar table button must be marked active');
-console.log('  ✔ PASS: Clean table view is default active landing view');
+assert(template.includes('id="tabBtn-summary" class="tab-btn active'), 'Sidebar summary button must be marked active');
+console.log('  ✔ PASS: Executive Crisis Summary view is default active landing view');
 
 console.log('\n========================================================');
 console.log('ALL CLEAN UI & CASE STUDIES TESTS PASSED! (100% PASS)');
