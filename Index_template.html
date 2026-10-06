@@ -2829,6 +2829,7 @@
       try { updateTransferBadge(); } catch (e) { console.error('updateTransferBadge error:', e); }
       try { renderTransferMatrix(); } catch (e) { console.error('renderTransferMatrix error:', e); }
       try { renderSummaryTab(); } catch (e) { console.error('renderSummaryTab error:', e); }
+      try { initUrlRouting(); } catch (e) { console.error('initUrlRouting error:', e); }
 
       // Close truck dropdown on outside click
       document.addEventListener('click', (e) => {
@@ -3201,13 +3202,13 @@
     function selectSingleTruckAndSwitch(truckNo, targetTab) {
       selectedTrucks.clear();
       selectedTrucks.add(truckNo);
-      applyFilters();
-      renderTruckFilterOptions();
-      switchTab(targetTab);
+      if (typeof applyFilters === 'function') applyFilters();
+      if (typeof renderTruckFilterOptions === 'function') renderTruckFilterOptions();
       if (targetTab === 'table') {
         const searchInput = document.getElementById('tableSearch');
         if (searchInput) searchInput.value = truckNo;
       }
+      switchTab(targetTab);
     }
 
     // Populate Global Truck Dropdown Options
@@ -3697,8 +3698,208 @@
       openMemberHistoryModal(memberId);
     }
 
+    // ==========================================
+    // URL ROUTING & HASH DEEP LINKING ENGINE
+    // รองรับ /#overview, /#fleet, /#fleet?car=13207 และทุกแท็บ
+    // ==========================================
+    const TAB_ROUTING_MAP = {
+      'overview': 'summary',
+      'summary': 'summary',
+      'fleet': 'trucks',
+      'trucks': 'trucks',
+      'table': 'table',
+      'map': 'map',
+      'analytics': 'analytics',
+      'transfers': 'transfers',
+      'transfer': 'transfers',
+      'water': 'water',
+      'routes': 'routes',
+      'route': 'routes'
+    };
+
+    const TAB_TO_HASH_MAP = {
+      'summary': 'overview',
+      'trucks': 'fleet',
+      'table': 'table',
+      'map': 'map',
+      'analytics': 'analytics',
+      'transfers': 'transfers',
+      'water': 'water',
+      'routes': 'routes'
+    };
+
+    let isHandlingHashChange = false;
+
+    // แยกวิเคราะห์ Hash จาก URL (เช่น #/fleet?car=13207 หรือ #overview หรือ #/table?search=M123)
+    function parseUrlHash(hashStr) {
+      const raw = (typeof hashStr === 'string' ? hashStr : (typeof window !== 'undefined' && window.location ? window.location.hash : '')).trim();
+      if (!raw || raw === '#' || raw === '#/' || raw === '/') {
+        return { rawRoute: '', tab: null, params: {} };
+      }
+
+      // ตัดเครื่องหมาย #, #/, /#, หรือ / ด้านหน้าออกทั้งหมด
+      const clean = raw.replace(/^[/#!]+/, '').trim();
+      if (!clean) return { rawRoute: '', tab: null, params: {} };
+
+      // แยกเส้นทางแท็บและ query parameters
+      const qIndex = clean.indexOf('?');
+      const routeName = (qIndex >= 0 ? clean.substring(0, qIndex) : clean).toLowerCase().trim();
+      const queryString = qIndex >= 0 ? clean.substring(qIndex + 1) : '';
+
+      const params = {};
+      if (queryString) {
+        const pairs = queryString.split('&');
+        pairs.forEach(pair => {
+          const eqIdx = pair.indexOf('=');
+          if (eqIdx >= 0) {
+            const k = decodeURIComponent(pair.substring(0, eqIdx).trim().toLowerCase());
+            const v = decodeURIComponent(pair.substring(eqIdx + 1).trim());
+            params[k] = v;
+          } else if (pair.trim()) {
+            params[decodeURIComponent(pair.trim().toLowerCase())] = true;
+          }
+        });
+      }
+
+      const mappedTab = TAB_ROUTING_MAP[routeName] || (['map', 'analytics', 'summary', 'trucks', 'table', 'transfers', 'water', 'routes'].includes(routeName) ? routeName : null);
+      return {
+        rawRoute: routeName,
+        tab: mappedTab,
+        params: params
+      };
+    }
+
+    // สร้างข้อความ Hash ตามสถานะปัจจุบัน (เช่น /#fleet?car=13207 หรือ /#overview)
+    function getUrlHashForCurrentState(tabId) {
+      const targetTab = tabId || currentTab || 'table';
+      const hashBase = TAB_TO_HASH_MAP[targetTab] || targetTab;
+      const params = [];
+
+      if (targetTab === 'trucks') {
+        if (typeof selectedTrucks !== 'undefined' && selectedTrucks && selectedTrucks.size === 1) {
+          const car = Array.from(selectedTrucks)[0];
+          params.push('car=' + encodeURIComponent(car));
+        }
+      } else if (targetTab === 'table') {
+        const searchEl = document.getElementById('tableSearch') || document.getElementById('globalFilterSearch');
+        const searchVal = searchEl ? searchEl.value.trim() : '';
+        if (searchVal) {
+          params.push('search=' + encodeURIComponent(searchVal));
+        }
+      }
+
+      const paramStr = params.length > 0 ? '?' + params.join('&') : '';
+      return '/' + hashBase + paramStr;
+    }
+
+    // อัปเดต Hash บน URL Bar อย่างปลอดภัย ไม่กระตุก และรองรับทั้ง Static/Server
+    function setUrlHash(newHash, replace = false) {
+      if (typeof window === 'undefined' || !window.location) return;
+      if (isHandlingHashChange) return;
+
+      const formattedHash = '#' + (newHash.startsWith('#') ? newHash.slice(1) : newHash);
+      if (window.location.hash === formattedHash) return;
+
+      try {
+        if (window.history && (replace ? window.history.replaceState : window.history.pushState)) {
+          const pathname = window.location.pathname || '';
+          const search = window.location.search || '';
+          const url = pathname + search + formattedHash;
+          if (replace) {
+            window.history.replaceState(null, '', url);
+          } else {
+            window.history.pushState(null, '', url);
+          }
+        } else {
+          window.location.hash = formattedHash;
+        }
+      } catch (e) {
+        try {
+          window.location.hash = formattedHash;
+        } catch (err) {}
+      }
+    }
+
+    // ถอดรหัสและเปิดแท็บพร้อมพารามิเตอร์ตาม Hash
+    function applyRouteFromHash(hashStr, isInitial = false) {
+      const route = parseUrlHash(hashStr);
+      if (!route.tab) {
+        if (isInitial) {
+          switchTab(currentTab || 'table', { skipHashUpdate: false, replaceHash: true });
+        }
+        return false;
+      }
+
+      isHandlingHashChange = true;
+      try {
+        // 1. ตรวจสอบพารามิเตอร์รถ (car/truck)
+        const targetCar = route.params.car || route.params.truck || route.params.truckno;
+        if (targetCar) {
+          if (typeof selectedTrucks !== 'undefined') {
+            selectedTrucks.clear();
+            selectedTrucks.add(targetCar);
+          }
+          if (typeof applyFilters === 'function') applyFilters();
+          if (typeof renderTruckFilterOptions === 'function') renderTruckFilterOptions();
+
+          const globalTruckEl = document.getElementById('globalFilterTruck');
+          if (globalTruckEl) {
+            Array.from(globalTruckEl.options).forEach(opt => {
+              if (opt.value === targetCar) globalTruckEl.value = targetCar;
+            });
+          }
+
+          if (route.tab === 'table') {
+            const tableSearchEl = document.getElementById('tableSearch');
+            if (tableSearchEl) tableSearchEl.value = targetCar;
+            if (typeof applyGlobalFilters === 'function') applyGlobalFilters();
+          }
+        }
+
+        // 2. ตรวจสอบพารามิเตอร์ค้นหา (search)
+        if (route.params.search) {
+          const q = route.params.search;
+          const searchEl = document.getElementById('tableSearch') || document.getElementById('globalFilterSearch');
+          if (searchEl) {
+            searchEl.value = q;
+            if (typeof applyGlobalFilters === 'function') applyGlobalFilters();
+          }
+        }
+
+        // 3. เปลี่ยนแท็บไปยังแท็บเป้าหมาย
+        switchTab(route.tab, { skipHashUpdate: true });
+        return true;
+      } finally {
+        isHandlingHashChange = false;
+      }
+    }
+
+    // ลงทะเบียน Event Listener สำหรับ URL Hash
+    function initUrlRouting() {
+      if (typeof window === 'undefined') return;
+
+      // ฟังการกดปุ่ม Back / Forward บนเบราว์เซอร์
+      window.addEventListener('hashchange', () => {
+        if (!isHandlingHashChange) {
+          applyRouteFromHash(window.location.hash);
+        }
+      });
+
+      // ตรวจสอบ Hash ที่ระบุมาใน URL เริ่มต้น
+      if (window.location && window.location.hash) {
+        const hasRoute = applyRouteFromHash(window.location.hash, true);
+        if (!hasRoute) {
+          switchTab(currentTab || 'table', { skipHashUpdate: false, replaceHash: true });
+        }
+      } else {
+        // หากไม่มี Hash ให้ตั้ง Hash เริ่มต้น
+        setUrlHash(getUrlHashForCurrentState(currentTab || 'table'), true);
+      }
+    }
+
     // Tab Switcher (Supports map, analytics, summary, trucks, table, transfers, water, routes)
     function switchTab(tabId) {
+      const options = (arguments.length > 1 && arguments[1] !== undefined) ? arguments[1] : {};
       currentTab = tabId;
 
       // Hide/Show Tab Contents
@@ -3754,7 +3955,7 @@
       }
 
       // Auto-close mobile drawer if open
-      if (window.innerWidth < 1024) {
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
         const sidebar = document.getElementById('appSidebar');
         const backdrop = document.getElementById('mobileSidebarBackdrop');
         if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
@@ -3766,27 +3967,27 @@
       }
 
       if (tabId === 'map') {
-        if (map && typeof map.invalidateSize === 'function') map.invalidateSize();
+        if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') map.invalidateSize();
         setTimeout(() => {
-          if (map && typeof map.invalidateSize === 'function') map.invalidateSize();
+          if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') map.invalidateSize();
         }, 150);
         setTimeout(() => {
-          if (map && typeof map.invalidateSize === 'function') map.invalidateSize();
+          if (typeof map !== 'undefined' && map && typeof map.invalidateSize === 'function') map.invalidateSize();
         }, 400);
       } else if (tabId === 'analytics') {
         setTimeout(() => {
-          updateCharts();
+          if (typeof updateCharts === 'function') updateCharts();
         }, 100);
       } else if (tabId === 'summary') {
-        renderSummaryTab();
+        if (typeof renderSummaryTab === 'function') renderSummaryTab();
       } else if (tabId === 'trucks') {
-        renderTrucksTab();
+        if (typeof renderTrucksTab === 'function') renderTrucksTab();
       } else if (tabId === 'transfers') {
         setTimeout(() => {
-          renderTransfersTab();
+          if (typeof renderTransfersTab === 'function') renderTransfersTab();
         }, 50);
       } else if (tabId === 'water') {
-        renderWaterTab();
+        if (typeof renderWaterTab === 'function') renderWaterTab();
       } else if (tabId === 'routes') {
         if (typeof initRoutesMap === 'function') {
           initRoutesMap();
@@ -3805,7 +4006,15 @@
         }, 400);
       }
 
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) {}
+      }
+
+      // Update URL Hash Deep Link (เช่น /#overview, /#fleet, /#fleet?car=13207)
+      if (!options.skipHashUpdate && !isHandlingHashChange) {
+        const newHash = getUrlHashForCurrentState(tabId);
+        setUrlHash(newHash, Boolean(options.replaceHash));
+      }
     }
 
     // Filter by Delivery Pillar (Requirement 2 quick drill-down)
@@ -5391,7 +5600,7 @@
 
       // 1. Donut Chart: Delivery Status Proportion
       const ctxDonut = document.getElementById('chartTableStatusDonut');
-      if (ctxDonut && !chartTableStatusDonutInstance) {
+      if (ctxDonut && typeof ctxDonut.getContext === 'function' && !chartTableStatusDonutInstance) {
         chartTableStatusDonutInstance = new Chart(ctxDonut.getContext('2d'), {
           type: 'doughnut',
           data: {
@@ -5428,7 +5637,7 @@
 
       // 2. Bar Chart: Branch Comparison (สำเร็จ vs น้ำท่วม vs โอน)
       const ctxBranch = document.getElementById('chartTableBranchBar');
-      if (ctxBranch && !chartTableBranchBarInstance) {
+      if (ctxBranch && typeof ctxBranch.getContext === 'function' && !chartTableBranchBarInstance) {
         chartTableBranchBarInstance = new Chart(ctxBranch.getContext('2d'), {
           type: 'bar',
           data: {
@@ -5484,7 +5693,7 @@
 
       // 3. Line Chart: Daily Trend (26 ก.ย. – 3 ต.ค.)
       const ctxTrend = document.getElementById('chartTableDailyTrend');
-      if (ctxTrend && !chartTableDailyTrendInstance) {
+      if (ctxTrend && typeof ctxTrend.getContext === 'function' && !chartTableDailyTrendInstance) {
         chartTableDailyTrendInstance = new Chart(ctxTrend.getContext('2d'), {
           type: 'line',
           data: {
@@ -11156,6 +11365,16 @@
     window.setRouteStatusFilter = setRouteStatusFilter;
     window.focusRoute = focusRoute;
     window.resetRoutesMapView = resetRoutesMapView;
+
+    // URL Routing / Hash Deep Linking window bindings
+    window.switchTab = switchTab;
+    window.parseUrlHash = parseUrlHash;
+    window.getUrlHashForCurrentState = getUrlHashForCurrentState;
+    window.setUrlHash = setUrlHash;
+    window.applyRouteFromHash = applyRouteFromHash;
+    window.initUrlRouting = initUrlRouting;
+    window.TAB_ROUTING_MAP = TAB_ROUTING_MAP;
+    window.TAB_TO_HASH_MAP = TAB_TO_HASH_MAP;
 
     // Bulletproof trigger: Ensure all scripts, variables, constants, and DOM elements are ready
     if (document.readyState === 'loading') {
