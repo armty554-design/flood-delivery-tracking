@@ -120,7 +120,7 @@
       <div class="space-y-1">
         <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1 flex items-center justify-between">
           <span>เมนูหลักระดับผู้บริหาร</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-semibold">3 หน้าหลัก</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-semibold">4 หน้าหลัก</span>
         </div>
         
         <!-- 1. Executive Crisis Backlog & Attempts Tracker (PRIMARY EXECUTIVE ACTIVE DEFAULT) -->
@@ -137,8 +137,14 @@
 
         <!-- 3. Water Monitoring & Live CCTV -->
         <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-          <span class="flex items-center"><i data-lucide="waves" class="w-4 h-4 mr-2.5 text-cyan-400"></i> 3. ระดับน้ำ & CCTV สด</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-cyan-500/20 text-cyan-300 animate-pulse">LIVE</span>
+          <span class="flex items-center"><i data-lucide="waves" class="w-4 h-4 mr-2.5 text-cyan-400"></i> 3. ระดับน้ำ & ข่าวสารน้ำท่วม</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-cyan-500/20 text-cyan-300">โทรมาตร</span>
+        </button>
+
+        <!-- 4. Dedicated Live CCTV Surveillance Portal (1,800+ Live Cams) -->
+        <button onclick="switchTab('cctv')" id="tabBtn-cctv" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
+          <span class="flex items-center"><i data-lucide="video" class="w-4 h-4 mr-2.5 text-emerald-400"></i> 4. พอร์ทัลกล้องสดออนไลน์</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-300 animate-pulse">1,800+ จุด LIVE</span>
         </button>
       </div>
 
@@ -248,7 +254,7 @@
           </div>
         </div>
 
-        <!-- Center: Executive 3 Core Tabs Pills (Desktop & Tablet Quick Navigation) -->
+        <!-- Center: Executive 4 Core Tabs Pills (Desktop & Tablet Quick Navigation) -->
         <div class="hidden xl:flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/90 shadow-2xs space-x-1">
           <button type="button" onclick="switchTab('summary')" id="headerTab-summary" class="header-tab-pill active px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center bg-white text-blue-700 shadow-xs border border-blue-100">
             <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1.5 text-red-500"></i> 1. ผู้ยังไม่ได้รับน้ำ (26 ก.ย.)
@@ -257,7 +263,10 @@
             <i data-lucide="route" class="w-3.5 h-3.5 mr-1.5 text-amber-500"></i> 2. เส้นทางเดินรถ & สภาพอากาศ
           </button>
           <button type="button" onclick="switchTab('water')" id="headerTab-water" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center">
-            <i data-lucide="waves" class="w-3.5 h-3.5 mr-1.5 text-cyan-600"></i> 3. ระดับน้ำ & CCTV สด
+            <i data-lucide="waves" class="w-3.5 h-3.5 mr-1.5 text-cyan-600"></i> 3. ระดับน้ำ & ข่าวสาร
+          </button>
+          <button type="button" onclick="switchTab('cctv')" id="headerTab-cctv" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center">
+            <i data-lucide="video" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> 4. กล้องสดออนไลน์ (1,800+ จุด)
           </button>
         </div>
 
@@ -337,7 +346,10 @@
           <i data-lucide="route" class="w-3.5 h-3.5 mr-1 text-amber-600"></i> 2. เส้นทาง & น้ำท่วม
         </button>
         <button type="button" onclick="switchTab('water')" id="mobileTab-water" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
-          <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-cyan-600"></i> 3. ระดับน้ำ & CCTV
+          <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-cyan-600"></i> 3. ระดับน้ำ & ข่าวสาร
+        </button>
+        <button type="button" onclick="switchTab('cctv')" id="mobileTab-cctv" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> 4. กล้องสด (1,800+)
         </button>
         <button type="button" onclick="switchTab('table')" id="mobileTab-table" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
           <i data-lucide="table" class="w-3.5 h-3.5 mr-1 text-slate-500"></i> ตาราง & เคส
@@ -2107,15 +2119,20 @@
             </div>
           </div>
 
-          <!-- Explanation notice banner -->
-          <div class="p-2.5 bg-blue-950/70 rounded-xl border border-blue-800/60 text-xs text-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <!-- Explanation & dedicated page link banner -->
+          <div class="p-2.5 bg-gradient-to-r from-blue-950/80 via-indigo-950/80 to-emerald-950/80 rounded-xl border border-blue-800/60 text-xs text-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div class="flex items-center space-x-2">
               <i data-lucide="info" class="w-4 h-4 text-cyan-400 shrink-0"></i>
               <span><strong>สถานะกล้อง:</strong> โหมด <strong>"พอร์ทัลกล้องสดออนไลน์"</strong> แสดงสตรีมสดจริงแบบเรียลไทม์ (เห็นรถวิ่งจริง) • โหมด <strong>"Snapshot"</strong> คือภาพบันทึกสภาพน้ำท่วมขังเพื่อการตรวจสอบ</span>
             </div>
-            <button type="button" onclick="setInlineCctvViewMode('liveportal')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shrink-0 transition shadow-xs self-start sm:self-auto">
-              เปิดสตรีมสดทันที ↗
-            </button>
+            <div class="flex items-center space-x-2 self-start sm:self-auto shrink-0">
+              <button type="button" onclick="setInlineCctvViewMode('liveportal')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[11px] transition shadow-xs">
+                ดูสตรีมที่นี่
+              </button>
+              <button type="button" onclick="switchTab('cctv')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition shadow-xs flex items-center">
+                <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-emerald-200"></i> เปิดหน้ากล้องสดเต็มจอ ↗
+              </button>
+            </div>
           </div>
 
           <!-- Auto-Patrol Progress Bar (Active in Auto-Patrol mode) -->
@@ -2426,6 +2443,148 @@
         <div id="officialSourcesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
           <!-- Dynamic Official Sources Cards -->
         </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: DEDICATED LIVE CCTV SURVEILLANCE & TRAFFIC PORTAL (ศูนย์รวมพอร์ทัลกล้องสดออนไลน์ 24/7) -->
+    <!-- ========================================================================= -->
+    <section id="tabContent-cctv" class="hidden space-y-4">
+      
+      <!-- 4.1 Header Bar & Accessibility Toolbar -->
+      <div class="bg-white rounded-2xl border border-emerald-200/80 shadow-xs p-4 sm:p-5 space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-emerald-100 pb-4">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                <i data-lucide="video" class="w-4 h-4 mr-1.5 text-emerald-600"></i> ศูนย์รวมพอร์ทัลกล้องสดออนไลน์
+              </span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-red-100 text-red-800 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-red-600 mr-1.5"></span> ● LIVE 24/7
+              </span>
+              <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                🌐 ครอบคลุม 1,800+ จุด กทม. & ทั่วไทย
+              </span>
+            </div>
+            <h2 class="text-base sm:text-xl font-bold text-slate-900 mt-1">พอร์ทัลกล้องจราจรสด & สภาพน้ำท่วมผิวทาง (Interactive Live Traffic Cams)</h2>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+              หน้าต่างตรวจการณ์กล้องสดเต็มรูปแบบสำหรับค้นหา แพน ซูม และมอนิเตอร์ภาพรถวิ่งสดแบบเรียลไทม์ 24 ชม. ทั้งถนนสายหลัก ทางด่วน และจุดเสี่ยงน้ำท่วม 4 สาขา
+            </p>
+          </div>
+
+          <!-- Top Action Buttons & Controls -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Portal Select -->
+            <div class="flex items-center space-x-1.5 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1 text-xs">
+              <span class="text-slate-500 text-[11px] font-medium hidden sm:inline">เลือกพอร์ทัล:</span>
+              <select id="dedicatedPortalSelect" onchange="switchDedicatedPortalSource(this.value)" class="bg-transparent font-semibold text-slate-800 text-xs focus:outline-none cursor-pointer">
+                <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
+                <option value="https://world.tehx.dyndns.info/flood">JK World Flood Watch Surveillance</option>
+              </select>
+            </div>
+
+            <!-- Refresh Frame -->
+            <button type="button" onclick="refreshDedicatedPortalFrame()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center transition shadow-2xs" title="รีเฟรชสัญญาณสตรีม">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1 text-slate-600"></i> รีเฟรช
+            </button>
+
+            <!-- Fullscreen -->
+            <button type="button" onclick="toggleDedicatedPortalFullscreen()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center transition shadow-2xs" title="ขยายหน้าต่างแบบเต็มจอ">
+              <i data-lucide="maximize" class="w-3.5 h-3.5 mr-1 text-slate-600"></i> เต็มจอ
+            </button>
+
+            <!-- External Link -->
+            <a id="btnDedicatedExternalLink" href="https://trafficvision.live/country/thailand" target="_blank" rel="noopener" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center transition shadow-xs">
+              <span>เปิดแท็บใหม่ ↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4.2 Quick Corridor / Branch Filter Chips (ทางลัดค้นหาด่วน) -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-1">
+          <span class="text-slate-500 font-bold flex items-center mr-1 text-[11px]">
+            <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> แนะนำจุดค้นหา:
+          </span>
+          <button type="button" onclick="switchDedicatedPortalSource('https://trafficvision.live/country/thailand')" class="px-2.5 py-1 rounded-lg font-bold bg-emerald-600 text-white shadow-2xs transition">
+            🌐 กล้อง กทม. ทั้งหมด (1,800+ จุด)
+          </button>
+          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+            🏢 สาขากรุงเทพกรีฑา (ศรีนครินทร์/มอเตอร์เวย์) ↗
+          </a>
+          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+            🏢 สาขารามอินทรา (กม.1-8/มีนบุรี) ↗
+          </a>
+          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+            🏢 สาขาสุขุมวิท 50 (ทางด่วน/พระโขนง) ↗
+          </a>
+          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+            🏢 สาขาพระราม 3 (สะพานพระราม 9/คลองเตย) ↗
+          </a>
+          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition">
+            🛣️ ทางด่วนเฉลิมมหานคร & ฉลองรัช ↗
+          </a>
+          <button type="button" onclick="switchDedicatedPortalSource('https://world.tehx.dyndns.info/flood')" class="px-2.5 py-1 rounded-lg font-medium bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition">
+            🌊 JK World Flood Map
+          </button>
+        </div>
+
+        <!-- 4.3 Main Spacious Interactive Live Portal Viewport -->
+        <div id="dedicatedPortalContainer" class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl flex flex-col h-[78vh] min-h-[640px] max-h-[1000px]">
+          <!-- Surveillance Top HUD Bar -->
+          <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="font-bold text-white font-mono flex items-center">
+                <i data-lucide="radio" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i> LIVE SURVEILLANCE FEED
+              </span>
+              <span class="text-slate-500">|</span>
+              <span class="text-[11px] text-emerald-400 font-mono">BMA & EXAT STREAMING ACTIVE</span>
+            </div>
+            <div class="flex items-center space-x-3 text-slate-400 text-[11px] font-mono">
+              <span class="hidden md:inline">คุณภาพ: Full HD 1080p Real-time</span>
+              <span class="text-slate-600">|</span>
+              <span id="dedicatedPortalClock" class="text-slate-300">--:--:-- น.</span>
+            </div>
+          </div>
+
+          <!-- The Live Interactive Iframe -->
+          <div class="relative flex-1 w-full h-full bg-black">
+            <iframe id="dedicatedCctvPortalFrame" src="https://trafficvision.live/country/thailand" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- 4.4 4 Branches Quick Cross-Reference Snapshot Cards -->
+        <div class="space-y-3 pt-3 border-t border-slate-200">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <div class="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900">ภาพบันทึกระดับน้ำผิวทาง 4 สาขาหลัก (Snapshot Cross-Check)</h3>
+            </div>
+            <button type="button" onclick="switchTab('water')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center">
+              <span>ดูข้อมูลโทรมาตรคลองในหน้า 3 ↗</span>
+            </button>
+          </div>
+
+          <div id="dedicatedCctvQuadGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- 4.5 Official Streaming Citations -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+            <span><strong>แหล่งข้อมูลเชื่อมต่อ:</strong> สำนักการจราจรและขนส่ง (สจส. กทม.), การทางพิเศษแห่งประเทศไทย (EXAT), กรมทางหลวง (DOH) และศูนย์สั่งการจราจร</span>
+          </div>
+          <div class="flex items-center space-x-3 shrink-0">
+            <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="text-blue-600 hover:underline">BMA Traffic ↗</a>
+            <a href="https://traffic.longdo.com/" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Longdo Traffic ↗</a>
+            <a href="https://floodbangkok.bangkok.go.th/" target="_blank" rel="noopener" class="text-blue-600 hover:underline">DDS BKK ↗</a>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -4135,7 +4294,11 @@
       'transfer': 'transfers',
       'water': 'water',
       'routes': 'routes',
-      'route': 'routes'
+      'route': 'routes',
+      'cctv': 'cctv',
+      'live-cctv': 'cctv',
+      'livecctv': 'cctv',
+      'portal': 'cctv'
     };
 
     const TAB_TO_HASH_MAP = {
@@ -4146,7 +4309,8 @@
       'analytics': 'analytics',
       'transfers': 'transfers',
       'water': 'water',
-      'routes': 'routes'
+      'routes': 'routes',
+      'cctv': 'cctv'
     };
 
     let isHandlingHashChange = false;
@@ -4182,7 +4346,7 @@
         });
       }
 
-      const mappedTab = TAB_ROUTING_MAP[routeName] || (['map', 'analytics', 'summary', 'trucks', 'table', 'transfers', 'water', 'routes'].includes(routeName) ? routeName : null);
+      const mappedTab = TAB_ROUTING_MAP[routeName] || (['map', 'analytics', 'summary', 'trucks', 'table', 'transfers', 'water', 'routes', 'cctv'].includes(routeName) ? routeName : null);
       return {
         rawRoute: routeName,
         tab: mappedTab,
@@ -4365,6 +4529,10 @@
       if (tabContentRoutes) {
         tabContentRoutes.classList.toggle('hidden', tabId !== 'routes');
       }
+      const tabContentCctv = document.getElementById('tabContent-cctv');
+      if (tabContentCctv) {
+        tabContentCctv.classList.toggle('hidden', tabId !== 'cctv');
+      }
 
       // Update Tab Buttons (Dark Sidebar Theme)
       document.querySelectorAll('.tab-btn').forEach(b => {
@@ -4461,6 +4629,10 @@
         setTimeout(() => {
           if (typeof routesMap !== 'undefined' && routesMap && typeof routesMap.invalidateSize === 'function') routesMap.invalidateSize();
         }, 400);
+      } else if (tabId === 'cctv') {
+        if (typeof initDedicatedCctvPortal === 'function') {
+          initDedicatedCctvPortal();
+        }
       }
 
       if (typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
@@ -11268,6 +11440,104 @@
     }
 
     // =========================================================================
+    // DEDICATED LIVE CCTV SURVEILLANCE PORTAL (ศูนย์รวมพอร์ทัลกล้องสดออนไลน์เต็มรูปแบบ)
+    // =========================================================================
+    let dedicatedPortalClockTimer = null;
+
+    function initDedicatedCctvPortal() {
+      updateDedicatedPortalClock();
+      if (!dedicatedPortalClockTimer && typeof setInterval !== 'undefined') {
+        dedicatedPortalClockTimer = setInterval(updateDedicatedPortalClock, 1000);
+      }
+      renderDedicatedQuadGrid();
+    }
+
+    function updateDedicatedPortalClock() {
+      const clock = document.getElementById('dedicatedPortalClock');
+      if (!clock) return;
+      const now = new Date();
+      const yr = now.getFullYear();
+      const mo = String(now.getMonth() + 1).padStart(2, '0');
+      const da = String(now.getDate()).padStart(2, '0');
+      const hr = String(now.getHours()).padStart(2, '0');
+      const mi = String(now.getMinutes()).padStart(2, '0');
+      const sc = String(now.getSeconds()).padStart(2, '0');
+      clock.textContent = yr + '-' + mo + '-' + da + ' ' + hr + ':' + mi + ':' + sc + ' น.';
+    }
+
+    function switchDedicatedPortalSource(url) {
+      const iframe = document.getElementById('dedicatedCctvPortalFrame');
+      const extLink = document.getElementById('btnDedicatedExternalLink');
+      const select = document.getElementById('dedicatedPortalSelect');
+      if (iframe && url) {
+        iframe.src = url;
+      }
+      if (extLink && url) {
+        extLink.href = url;
+      }
+      if (select && url) {
+        select.value = url;
+      }
+      showToast('🌐 สลับสัญญาณพอร์ทัลกล้องสดเรียบร้อยแล้ว');
+    }
+
+    function refreshDedicatedPortalFrame() {
+      const iframe = document.getElementById('dedicatedCctvPortalFrame');
+      if (iframe) {
+        const curSrc = iframe.src;
+        iframe.src = 'about:blank';
+        setTimeout(() => { iframe.src = curSrc; }, 120);
+        showToast('🔄 รีเฟรชสัญญาณพอร์ทัลกล้องสดเรียบร้อยแล้ว');
+      }
+    }
+
+    function toggleDedicatedPortalFullscreen() {
+      const container = document.getElementById('dedicatedPortalContainer');
+      if (!container) return;
+      if (!document.fullscreenElement) {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function renderDedicatedQuadGrid() {
+      const container = document.getElementById('dedicatedCctvQuadGrid');
+      if (!container) return;
+      const data = floodTelemetryData || INITIAL_FLOOD_TELEMETRY;
+      const allCams = data.cctvCameras || INITIAL_FLOOD_TELEMETRY.cctvCameras || [];
+      const quadCams = [
+        allCams.find(c => c.branch === 'สาขากรุงเทพกรีฑา') || allCams[0],
+        allCams.find(c => c.branch === 'สาขารามอินทรา') || allCams[4],
+        allCams.find(c => c.branch === 'สาขาสุขุมวิท 50') || allCams[7],
+        allCams.find(c => c.branch === 'สาขาพระราม 3') || allCams[10]
+      ];
+
+      container.innerHTML = quadCams.map(cam => {
+        if (!cam) return '';
+        const depthText = cam.waterDepthCm > 0 ? cam.waterDepthCm + ' ซม.' : 'ปกติ แห้งสนิท';
+        return '<div class="relative bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex flex-col group cursor-pointer" onclick="switchTab(\'water\'); directPullCamera(\'' + cam.id + '\');">' +
+          '<div class="aspect-video w-full">' + generateCctvSvgPreview(cam) + '</div>' +
+          '<div class="p-2.5 bg-slate-900 flex items-center justify-between text-xs border-t border-slate-800">' +
+            '<div>' +
+              '<div class="font-bold text-white text-[11px] truncate">' + cam.branch + '</div>' +
+              '<div class="text-[10px] text-slate-400 truncate">' + cam.id + ' • ' + cam.road + '</div>' +
+            '</div>' +
+            '<span class="px-2 py-0.5 rounded text-[10px] font-bold ' + (cam.waterDepthCm > 0 ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800') + '">' +
+              depthText +
+            '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    // =========================================================================
     // Live CCTV Direct Pull & Auto-Patrol Operations
     // =========================================================================
     let cctvAutoPatrolTimer = null;
@@ -12590,6 +12860,11 @@
     window.toggleAutoPatrolCctv = toggleAutoPatrolCctv;
     window.switchLivePortalSource = switchLivePortalSource;
     window.refreshLivePortalFrame = refreshLivePortalFrame;
+    window.initDedicatedCctvPortal = initDedicatedCctvPortal;
+    window.switchDedicatedPortalSource = switchDedicatedPortalSource;
+    window.refreshDedicatedPortalFrame = refreshDedicatedPortalFrame;
+    window.toggleDedicatedPortalFullscreen = toggleDedicatedPortalFullscreen;
+    window.renderDedicatedQuadGrid = renderDedicatedQuadGrid;
 
     // Web-Wide Flood Intelligence & Water Volume Analyzer window bindings
     window.searchWebFloodIntel = searchWebFloodIntel;
