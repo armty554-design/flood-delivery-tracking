@@ -2089,17 +2089,17 @@
 
             <!-- View Modes & Controls -->
             <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0 flex-wrap gap-y-1">
-              <button type="button" onclick="pullAllLiveCctvFeeds(false)" title="ดึงข้อมูลสัญญาณกล้องสดทั้งหมดใหม่ทันที" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition flex items-center shadow-xs">
-                <i data-lucide="radio" class="w-3.5 h-3.5 mr-1 text-emerald-200 animate-pulse"></i> ดึงดูสด
+              <button type="button" onclick="setInlineCctvViewMode('liveportal')" id="btnInlineModePortal" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white transition flex items-center shadow-xs ring-1 ring-emerald-400">
+                <i data-lucide="globe" class="w-3.5 h-3.5 mr-1 text-emerald-200 animate-pulse"></i> 🌐 พอร์ทัลกล้องสดออนไลน์
               </button>
-              <button type="button" onclick="toggleAutoPatrolCctv()" id="btnAutoPatrolCctv" title="หมุนเวียนกล้องสดอัตโนมัติทุก 5 วินาที" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
-                <i data-lucide="scan" class="w-3.5 h-3.5 mr-1"></i> <span id="autoPatrolBtnLabel">ลาดตระเวนสด</span>
-              </button>
-              <button type="button" onclick="setInlineCctvViewMode('single')" id="btnInlineModeSingle" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs">
-                <i data-lucide="tv" class="w-3.5 h-3.5 mr-1"></i> จอเดี่ยว HD
+              <button type="button" onclick="setInlineCctvViewMode('single')" id="btnInlineModeSingle" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
+                <i data-lucide="tv" class="w-3.5 h-3.5 mr-1"></i> จอเดี่ยว (Snapshot)
               </button>
               <button type="button" onclick="setInlineCctvViewMode('quad')" id="btnInlineModeQuad" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5 mr-1"></i> 4 จอแยก 4 สาขา
+              </button>
+              <button type="button" onclick="toggleAutoPatrolCctv()" id="btnAutoPatrolCctv" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
+                <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-amber-400"></i> <span id="autoPatrolBtnLabel">ลาดตระเวนอัตโนมัติ</span>
               </button>
               <button type="button" onclick="openActiveCctvInModal()" title="ขยายหน้าต่างขนาดใหญ่" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
                 <i data-lucide="maximize-2" class="w-3.5 h-3.5 mr-1"></i> เต็มจอ
@@ -2107,34 +2107,79 @@
             </div>
           </div>
 
+          <!-- Explanation notice banner -->
+          <div class="p-2.5 bg-blue-950/70 rounded-xl border border-blue-800/60 text-xs text-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="flex items-center space-x-2">
+              <i data-lucide="info" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+              <span><strong>สถานะกล้อง:</strong> โหมด <strong>"พอร์ทัลกล้องสดออนไลน์"</strong> แสดงสตรีมสดจริงแบบเรียลไทม์ (เห็นรถวิ่งจริง) • โหมด <strong>"Snapshot"</strong> คือภาพบันทึกสภาพน้ำท่วมขังเพื่อการตรวจสอบ</span>
+            </div>
+            <button type="button" onclick="setInlineCctvViewMode('liveportal')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shrink-0 transition shadow-xs self-start sm:self-auto">
+              เปิดสตรีมสดทันที ↗
+            </button>
+          </div>
+
           <!-- Auto-Patrol Progress Bar (Active in Auto-Patrol mode) -->
           <div id="inlineCctvAutoPatrolBarContainer" class="hidden w-full bg-slate-850 rounded-full h-1 overflow-hidden">
             <div id="inlineCctvAutoPatrolBar" class="bg-gradient-to-r from-emerald-400 to-teal-400 h-full w-0 transition-all duration-100"></div>
           </div>
 
-          <!-- Video Monitor Screen (Single View) -->
-          <div id="inlineCctvSingleViewport" class="relative aspect-video sm:aspect-[21/9] max-h-[460px] w-full bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
+          <!-- 1. Embedded Live Camera Portal Viewport (Interactive Live Stream) -->
+          <div id="inlineCctvPortalViewport" class="relative w-full aspect-video sm:aspect-[21/9] min-h-[460px] max-h-[620px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex flex-col">
+            <!-- Top Controls Bar for Live Portal -->
+            <div class="px-3 py-2 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center space-x-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="font-bold text-white flex items-center">
+                  <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-emerald-400"></i> สตรีมพอร์ทัลกล้องสดออนไลน์ (Interactive Live Traffic Cams)
+                </span>
+                <span class="hidden sm:inline-block text-[10px] text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800 font-mono">● REC LIVE</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <span class="text-[11px] text-slate-400 hidden md:inline">เลือกพอร์ทัล:</span>
+                <select id="livePortalSelect" onchange="switchLivePortalSource(this.value)" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                  <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
+                  <option value="https://world.tehx.dyndns.info/flood">JK World Flood Surveillance</option>
+                </select>
+                <button type="button" onclick="refreshLivePortalFrame()" title="รีเฟรชสตรีมสด" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
+                <a id="btnExternalPortalLink" href="https://trafficvision.live/country/thailand" target="_blank" rel="noopener" title="เปิดเต็มหน้าจอในแท็บใหม่" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] flex items-center transition">
+                  <span>เปิดแท็บใหม่ ↗</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Live Iframe View -->
+            <div class="relative flex-1 w-full h-full bg-black">
+              <iframe id="inlineCctvLivePortalFrame" src="https://trafficvision.live/country/thailand" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+            </div>
+          </div>
+
+          <!-- 2. Video Monitor Screen (Single View Snapshot) -->
+          <div id="inlineCctvSingleViewport" class="hidden relative aspect-video sm:aspect-[21/9] max-h-[460px] w-full bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
             <div id="inlineCctvPlayerScreen" class="w-full h-full">
               <!-- Rendered via JS -->
             </div>
             <!-- In-App Camera HUD Overlay -->
             <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded text-xs font-mono text-emerald-400 border border-emerald-500/30 flex items-center space-x-2 pointer-events-none">
-              <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-              <span class="text-red-400 font-bold">● REC LIVE</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span class="text-amber-300 font-bold">📸 SNAPSHOT</span>
+              <span class="text-slate-500">|</span>
+              <span class="text-[10px] text-emerald-400 font-mono">● REC LIVE FEED</span>
               <span class="text-slate-500">|</span>
               <span id="inlineCctvLiveClock">2026-10-06 14:00:00 น.</span>
             </div>
             <div class="absolute top-3 right-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded text-xs font-mono text-slate-300 border border-slate-700/50 pointer-events-none flex items-center space-x-1.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span id="inlineCctvSourceTag">BMA TRAFFIC CCTV / REAL-TIME STREAM</span>
-              <span id="inlineCctvBitrateHud" class="text-slate-400 hidden sm:inline">• 4,320 kbps 30fps</span>
+              <span id="inlineCctvSourceTag">BMA TRAFFIC CCTV / LATEST SNAPSHOT</span>
+              <span id="inlineCctvBitrateHud" class="text-slate-400 hidden sm:inline">• ภาพบันทึกความเสียหาย</span>
             </div>
             <div class="absolute bottom-3 left-3 bg-black/85 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700/70 pointer-events-none space-y-0.5">
               <div id="inlineCctvWaterDepthHud" class="text-xs font-bold text-amber-400">ระดับน้ำผิวจราจร: 15 ซม. (ชะลอตัวเลนซ้าย)</div>
               <div id="inlineCctvWeatherHud" class="text-[10px] text-slate-300 font-mono">💨 ลม 12 กม./ชม. • 🌧️ ฝนสะสม 65 มม. • ระบายน้ำ 10 ลบ.ม./วิ</div>
             </div>
-            <div class="absolute bottom-3 right-3 bg-black/85 backdrop-blur px-2.5 py-1.5 rounded-lg border border-slate-700/70 pointer-events-none text-[11px] text-slate-300 font-mono">
-              <span id="inlineCctvFpsBadge">● 1080p 30fps • สตรีมสดตรงในระบบ</span>
+            <div class="absolute bottom-3 right-3 bg-black/85 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-700/70 pointer-events-none text-[11px] text-slate-300 font-mono">
+              <span id="inlineCctvFpsBadge">📸 ภาพบันทึกจุดน้ำท่วม</span>
             </div>
           </div>
 
@@ -54664,7 +54709,7 @@
             '<span>' + depthText + '</span>' +
           '</div>' +
           '<div class="absolute bottom-2.5 right-2.5 bg-black/90 backdrop-blur-xs px-2 py-0.5 rounded text-[10px] font-mono text-slate-300 border border-slate-700 pointer-events-none">' +
-            '🔴 LIVE • ' + (cam.lastUpdated || '15:10 น.') +
+            '📸 SNAPSHOT (LIVE CRAWL) • ' + (cam.lastUpdated || '26 ก.ย. - 5 ต.ค.') +
           '</div>' +
         '</div>';
       }
@@ -54792,7 +54837,7 @@
     // =========================================================================
     let activeInlineCctvId = 'CAM-BKK-01';
     let inlineCctvLiveTimer = null;
-    let inlineCctvViewMode = 'single';
+    let inlineCctvViewMode = 'liveportal';
 
     function initInlineCctvConsole() {
       const data = floodTelemetryData || INITIAL_FLOOD_TELEMETRY;
@@ -54803,6 +54848,7 @@
         activeInlineCctvId = allCams[0].id;
       }
 
+      setInlineCctvViewMode(inlineCctvViewMode || 'liveportal');
       switchInlineCctv(activeInlineCctvId);
       renderInlineCctvChannelButtons();
 
@@ -54880,24 +54926,59 @@
 
     function setInlineCctvViewMode(mode) {
       inlineCctvViewMode = mode;
+      const portalVp = document.getElementById('inlineCctvPortalViewport');
       const singleVp = document.getElementById('inlineCctvSingleViewport');
       const quadVp = document.getElementById('inlineCctvQuadViewport');
+      const btnPortal = document.getElementById('btnInlineModePortal');
       const btnSingle = document.getElementById('btnInlineModeSingle');
       const btnQuad = document.getElementById('btnInlineModeQuad');
 
-      if (mode === 'single') {
+      if (mode === 'liveportal') {
+        if (portalVp) portalVp.classList.remove('hidden');
+        if (singleVp) singleVp.classList.add('hidden');
+        if (quadVp) quadVp.classList.add('hidden');
+        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white transition flex items-center shadow-xs ring-1 ring-emerald-400';
+        if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
+        if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
+      } else if (mode === 'single') {
+        if (portalVp) portalVp.classList.add('hidden');
         if (singleVp) singleVp.classList.remove('hidden');
         if (quadVp) quadVp.classList.add('hidden');
+        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
         if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs';
         if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
       } else {
+        if (portalVp) portalVp.classList.add('hidden');
         if (singleVp) singleVp.classList.add('hidden');
         if (quadVp) quadVp.classList.remove('hidden');
+        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
         if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
         if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs';
 
         // Render Quad 4 Branches
         renderQuadCctvScreens();
+      }
+    }
+
+    function switchLivePortalSource(url) {
+      const iframe = document.getElementById('inlineCctvLivePortalFrame');
+      const extLink = document.getElementById('btnExternalPortalLink');
+      if (iframe && url) {
+        iframe.src = url;
+      }
+      if (extLink && url) {
+        extLink.href = url;
+      }
+      showToast('🌐 สลับสัญญาณพอร์ทัลกล้องสดออนไลน์เรียบร้อยแล้ว');
+    }
+
+    function refreshLivePortalFrame() {
+      const iframe = document.getElementById('inlineCctvLivePortalFrame');
+      if (iframe) {
+        const curSrc = iframe.src;
+        iframe.src = 'about:blank';
+        setTimeout(() => { iframe.src = curSrc; }, 120);
+        showToast('🔄 รีเฟรชสัญญาณสตรีมกล้องสดเรียบร้อยแล้ว');
       }
     }
 
@@ -54920,9 +55001,8 @@
         const depthText = cam.waterDepthCm > 0 ? cam.waterDepthCm + ' ซม.' : 'ปกติ';
         return '<div class="relative aspect-video bg-black rounded-xl overflow-hidden border border-slate-800 flex flex-col group cursor-pointer" onclick="switchInlineCctv(\'' + cam.id + '\'); setInlineCctvViewMode(\'single\');">' +
           '<div class="w-full h-full">' + generateCctvSvgPreview(cam) + '</div>' +
-          '<div class="absolute top-2 left-2 bg-black/75 px-2 py-0.5 rounded text-[10px] font-mono text-emerald-400 border border-emerald-500/30 flex items-center space-x-1.5">' +
-            '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>' +
-            '<span>' + cam.branch + '</span>' +
+          '<div class="absolute top-2 left-2 bg-black/75 px-2 py-0.5 rounded text-[10px] font-mono text-cyan-300 border border-cyan-500/30 flex items-center space-x-1.5">' +
+            '<span>📸 ' + cam.branch + '</span>' +
           '</div>' +
           '<div class="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 rounded text-[10px] text-amber-300 font-bold">' +
             cam.id + ' • ' + depthText +
@@ -54963,14 +55043,11 @@
         activeInlineCctvId = allCams[0].id;
       }
 
+      setInlineCctvViewMode('liveportal');
       updateInlineCctvClock();
       switchInlineCctv(activeInlineCctvId);
 
-      if (inlineCctvViewMode === 'quad') {
-        renderQuadCctvScreens();
-      }
-
-      showToast('📡 ดึงสัญญาณสดกล้อง CCTV ครบ 14 จุด (4 สาขา) เรียบร้อยแล้ว');
+      showToast('📡 เชื่อมต่อพอร์ทัลกล้องสดออนไลน์ BMA และกล้องตรวจการณ์เรียบร้อยแล้ว');
 
       if (scrollIntoView) {
         const consoleEl = document.getElementById('cctvInAppConsole');
@@ -56270,6 +56347,8 @@
     window.pullAllLiveCctvFeeds = pullAllLiveCctvFeeds;
     window.directPullCamera = directPullCamera;
     window.toggleAutoPatrolCctv = toggleAutoPatrolCctv;
+    window.switchLivePortalSource = switchLivePortalSource;
+    window.refreshLivePortalFrame = refreshLivePortalFrame;
 
     // Web-Wide Flood Intelligence & Water Volume Analyzer window bindings
     window.searchWebFloodIntel = searchWebFloodIntel;
