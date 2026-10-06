@@ -1241,12 +1241,12 @@
             </span>
             <div>
               <h3 class="text-sm font-bold text-slate-800">กราฟวิเคราะห์ภาพรวมการจัดส่ง (Delivery Insights &amp; Trends)</h3>
-              <p class="text-[11px] text-slate-500">อัปเดตตามตัวกรองและข้อมูลที่เลือกแบบเรียลไทม์ (26 ก.ย. – 3 ต.ค. 2569)</p>
+              <p class="text-[11px] text-slate-500">นับสถิติ 1 รหัสสมาชิกต่อ 1 ราย ตามสถานะล่าสุดแบบเรียลไทม์ (26 ก.ย. – 3 ต.ค. 2569)</p>
             </div>
           </div>
           <div class="flex items-center space-x-2 text-xs">
             <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 flex items-center">
-              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> สถิติสด
+              <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span> สถิติสด (1 รหัส/ราย)
             </span>
             <button type="button" onclick="toggleTableChartsView()" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition flex items-center" id="btnToggleTableCharts">
               <i data-lucide="eye" class="w-3.5 h-3.5 mr-1"></i> <span id="toggleTableChartsLabel">ย่อกราฟ</span>
@@ -1259,7 +1259,7 @@
           <div class="lg:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70 flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
               <h4 class="text-xs font-bold text-slate-700 flex items-center">
-                <i data-lucide="pie-chart" class="w-3.5 h-3.5 mr-1.5 text-blue-600"></i> สัดส่วนสถานะการจัดส่ง
+                <i data-lucide="pie-chart" class="w-3.5 h-3.5 mr-1.5 text-blue-600"></i> สัดส่วนสถานะการจัดส่ง (นับรหัสเป็น 1)
               </h4>
               <span id="tableChartSuccessRate" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">สำเร็จ 0%</span>
             </div>
@@ -1275,9 +1275,9 @@
           <div class="lg:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/70 flex flex-col justify-between">
             <div class="flex items-center justify-between mb-2">
               <h4 class="text-xs font-bold text-slate-700 flex items-center">
-                <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1.5 text-indigo-600"></i> เปรียบเทียบ 4 สาขาหลัก
+                <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1.5 text-indigo-600"></i> เปรียบเทียบ 4 สาขาหลัก (ราย)
               </h4>
-              <span class="text-[10px] text-slate-500 font-medium">สำเร็จ vs น้ำท่วม vs โอน</span>
+              <span class="text-[10px] text-slate-500 font-medium">สำเร็จ vs น้ำท่วม vs โอน (1 รหัส/ราย)</span>
             </div>
             <div class="relative h-48 w-full">
               <canvas id="chartTableBranchBar"></canvas>
@@ -1295,7 +1295,7 @@
               <h4 class="text-xs font-bold text-slate-700 flex items-center">
                 <i data-lucide="trending-up" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> แนวโน้มรายวัน (26 ก.ย. – 3 ต.ค.)
               </h4>
-              <span class="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">รอบวิกฤต</span>
+              <span class="text-[10px] text-slate-500 bg-white px-2 py-0.5 rounded-full border border-slate-200">1 รหัส/วัน</span>
             </div>
             <div class="relative h-48 w-full">
               <canvas id="chartTableDailyTrend"></canvas>
@@ -5235,26 +5235,71 @@
       const dateMap = {};
       const distMap = {};
 
+      const parseDtChart = typeof parseDateForSort === 'function' ? parseDateForSort : function(d) {
+        if (!d) return 0;
+        const s = String(d).trim();
+        if (s.includes('/')) {
+          const parts = s.split(',')[0].trim().split('/');
+          if (parts.length === 3) {
+            let y = parseInt(parts[2], 10);
+            if (y > 2500) y -= 543;
+            return new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10)).getTime();
+          }
+        }
+        return Date.parse(s) || 0;
+      };
+
+      // รวมกลุ่มตามรหัสสมาชิกเฉพาะตัว (1 รหัสสมาชิก = 1 ราย เอาสถานะล่าสุด)
+      const analyticsMemberMap = new Map();
       filteredItems.forEach(i => {
-        if ((i.customerType || '').includes('Key')) key++;
-        else if (i.customerType === 'B2B') b2b++;
+        const mId = i.memberId || i.id;
+        if (!analyticsMemberMap.has(mId)) {
+          analyticsMemberMap.set(mId, {
+            memberId: mId,
+            customerType: i.customerType,
+            truck: i.truck,
+            district: i.district,
+            branch: i.branch,
+            attempts: []
+          });
+        }
+        const m = analyticsMemberMap.get(mId);
+        m.attempts.push(i);
+        if (i.customerType) m.customerType = i.customerType;
+        if (i.truck) m.truck = i.truck;
+        if (i.district) m.district = i.district;
+      });
+
+      analyticsMemberMap.forEach((m, mId) => {
+        if ((m.customerType || '').includes('Key')) key++;
+        else if (m.customerType === 'B2B') b2b++;
         else b2c++;
 
-        // ตรวจสอบเงื่อนไขเฉพาะที่มีค่า: ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่
-        const isFloodFail = i.reason === 'ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่' || 
-                            (i.reason && i.reason.includes('ไม่สามารถเข้าส่งได้') && i.reason.includes('น้ำท่วม'));
+        m.attempts.sort((a, b) => parseDtChart(a.date) - parseDtChart(b.date));
+        const latestAttempt = m.attempts[m.attempts.length - 1];
+        const latestStatus = (typeof checkOrderDeliveryStatus === 'function' && latestAttempt)
+          ? checkOrderDeliveryStatus(latestAttempt)
+          : {};
 
-        if (i.truck && isFloodFail) {
-          truckMap[i.truck] = (truckMap[i.truck] || 0) + 1;
+        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) ||
+          (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle(m.attempts) : {});
+
+        // ตรวจสอบเงื่อนไขเฉพาะที่ยังติดปัญหาน้ำท่วม (นับเฉพาะสมาชิกที่ไม่ได้รับน้ำ 1 รหัส = 1 ราย)
+        const isFloodFail = memEval.isPendingFlood || (!memEval.isAccessible && (latestStatus.isFlood || (latestAttempt && (latestAttempt.reason || '').includes('น้ำท่วม'))));
+
+        const truckVal = (latestAttempt && latestAttempt.truck) || m.truck;
+        if (truckVal && isFloodFail) {
+          truckMap[truckVal] = (truckMap[truckVal] || 0) + 1;
         }
 
-        if (i.date) {
-          const d = i.date.split(' ')[0];
+        const distVal = (latestAttempt && latestAttempt.district) || m.district;
+        if (distVal && isFloodFail) {
+          distMap[distVal] = (distMap[distVal] || 0) + 1;
+        }
+
+        if (latestAttempt && latestAttempt.date) {
+          const d = latestAttempt.date.split(' ')[0];
           dateMap[d] = (dateMap[d] || 0) + 1;
-        }
-
-        if (i.district && isFloodFail) {
-          distMap[i.district] = (distMap[i.district] || 0) + 1;
         }
       });
 
@@ -5521,14 +5566,44 @@
 
       if (targetItems.length === 0) return;
 
-      // 1. Tally Status Breakdown
+      const parseDt = typeof parseDateForSort === 'function' ? parseDateForSort : function(d) {
+        if (!d) return 0;
+        const s = String(d).trim();
+        if (s.includes('/')) {
+          const parts = s.split(',')[0].trim().split('/');
+          if (parts.length === 3) {
+            let y = parseInt(parts[2], 10);
+            if (y > 2500) y -= 543;
+            return new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10)).getTime();
+          }
+        }
+        return Date.parse(s) || 0;
+      };
+
+      // 1. Group target items by UNIQUE member ID (กฎธุรกิจ: นับ 1 รหัสสมาชิก = 1 ราย และเอาสถานะล่าสุด)
+      const memberMap = new Map();
+      targetItems.forEach(item => {
+        const mId = item.memberId || item.id;
+        if (!memberMap.has(mId)) {
+          memberMap.set(mId, {
+            memberId: mId,
+            branch: item.branch,
+            attempts: []
+          });
+        }
+        const m = memberMap.get(mId);
+        m.attempts.push(item);
+        if (item.branch) m.branch = item.branch;
+      });
+
+      // Tally Status Breakdown
       let deliveredCount = 0;
       let autoJobCount = 0;
       let floodCount = 0;
       let transferCount = 0;
       let otherFailCount = 0;
 
-      // 2. Tally 4 Branches Breakdown
+      // Tally 4 Branches Breakdown
       const branchStats = {
         'สาขารามอินทรา': { succ: 0, flood: 0, transfer: 0 },
         'สาขากรุงเทพกรีฑา': { succ: 0, flood: 0, transfer: 0 },
@@ -5536,25 +5611,29 @@
         'สาขาพระราม 3': { succ: 0, flood: 0, transfer: 0 }
       };
 
-      // 3. Tally Daily Breakdown
-      const dailyMap = {};
+      memberMap.forEach((m, mId) => {
+        // จัดเรียงรอบการส่งตามลำดับเวลา เพื่อให้ได้รอบล่าสุดที่แน่นอน
+        m.attempts.sort((a, b) => parseDt(a.date) - parseDt(b.date));
+        const latestAttempt = m.attempts[m.attempts.length - 1];
+        const latestStatus = (typeof checkOrderDeliveryStatus === 'function' && latestAttempt)
+          ? checkOrderDeliveryStatus(latestAttempt)
+          : {};
 
-      targetItems.forEach(item => {
-        const mId = item.memberId || item.id;
-        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle([item]) : {});
-        const itemStatus = (typeof checkOrderDeliveryStatus === 'function') ? checkOrderDeliveryStatus(item) : {};
+        // ประเมินสถานะวงจรชีวิตสมาชิก (รอบใดรอบหนึ่งได้รับน้ำ = สำเร็จ, โอนงานแล้วส่งได้ = สำเร็จ)
+        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) ||
+          (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle(m.attempts) : {});
 
         let statusCategory = 'OTHER';
-        if (itemStatus.isAuto || memEval.isAuto) {
+        if (memEval.isAuto || latestStatus.isAuto) {
           autoJobCount++;
           statusCategory = 'AUTO';
-        } else if (memEval.isAccessible || itemStatus.isSuccess) {
+        } else if (memEval.isAccessible || latestStatus.isSuccess) {
           deliveredCount++;
           statusCategory = 'SUCCESS';
-        } else if (memEval.isPendingFlood || itemStatus.isFlood) {
+        } else if (memEval.isPendingFlood || latestStatus.isFlood) {
           floodCount++;
           statusCategory = 'FLOOD';
-        } else if (memEval.isPendingTransfer || itemStatus.isTransfer) {
+        } else if (memEval.isPendingTransfer || latestStatus.isTransfer) {
           transferCount++;
           statusCategory = 'TRANSFER';
         } else {
@@ -5562,33 +5641,61 @@
           statusCategory = 'OTHER';
         }
 
-        // Branch tally
-        if (item.branch && branchStats[item.branch]) {
+        // สรุปยอดแยกตามสาขา (อิงตามสาขาล่าสุดของรหัสสมาชิก)
+        const branchKey = (latestAttempt && latestAttempt.branch) || m.branch;
+        if (branchKey && branchStats[branchKey]) {
           if (statusCategory === 'SUCCESS' || statusCategory === 'AUTO') {
-            branchStats[item.branch].succ++;
+            branchStats[branchKey].succ++;
           } else if (statusCategory === 'FLOOD') {
-            branchStats[item.branch].flood++;
+            branchStats[branchKey].flood++;
           } else if (statusCategory === 'TRANSFER') {
-            branchStats[item.branch].transfer++;
+            branchStats[branchKey].transfer++;
           }
         }
+      });
 
-        // Daily tally
+      // 3. Tally Daily Breakdown (จัดกลุ่มรายวัน: ในแต่ละวันนับรหัสสมาชิกไม่ซ้ำ 1 รหัส = 1 ราย)
+      const dailyMap = {};
+      const dateMemberMap = new Map();
+      targetItems.forEach(item => {
+        const mId = item.memberId || item.id;
         let dateKey = '2026-09-26';
         if (item.date) {
           dateKey = item.date.split(' ')[0];
         }
+        if (!dateMemberMap.has(dateKey)) {
+          dateMemberMap.set(dateKey, new Map());
+        }
+        const mOnDate = dateMemberMap.get(dateKey);
+        if (!mOnDate.has(mId)) {
+          mOnDate.set(mId, []);
+        }
+        mOnDate.get(mId).push(item);
+      });
+
+      dateMemberMap.forEach((membersOnDate, dateKey) => {
         if (!dailyMap[dateKey]) {
           dailyMap[dateKey] = { succ: 0, flood: 0, transfer: 0, total: 0 };
         }
-        dailyMap[dateKey].total++;
-        if (statusCategory === 'SUCCESS' || statusCategory === 'AUTO') {
-          dailyMap[dateKey].succ++;
-        } else if (statusCategory === 'FLOOD') {
-          dailyMap[dateKey].flood++;
-        } else if (statusCategory === 'TRANSFER') {
-          dailyMap[dateKey].transfer++;
-        }
+        membersOnDate.forEach((attemptsOnDate, mId) => {
+          attemptsOnDate.sort((a, b) => parseDt(a.date) - parseDt(b.date));
+          const latestAttemptOnDate = attemptsOnDate[attemptsOnDate.length - 1];
+          const statusOnDate = (typeof checkOrderDeliveryStatus === 'function' && latestAttemptOnDate)
+            ? checkOrderDeliveryStatus(latestAttemptOnDate)
+            : {};
+
+          const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) ||
+            (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle(attemptsOnDate) : {});
+
+          dailyMap[dateKey].total++;
+          if (memEval.isAuto || statusOnDate.isAuto || memEval.isAccessible || statusOnDate.isSuccess) {
+            dailyMap[dateKey].succ++;
+          } else if (memEval.isPendingFlood || statusOnDate.isFlood) {
+            dailyMap[dateKey].flood++;
+          } else if (memEval.isPendingTransfer || statusOnDate.isTransfer) {
+            dailyMap[dateKey].transfer++;
+          }
+        });
       });
 
       // Update Donut Chart
@@ -5616,20 +5723,25 @@
           legendEl.innerHTML = `
             <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
               <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>สำเร็จ</span>
-              <span class="font-bold text-slate-800">${deliveredCount.toLocaleString()}</span>
+              <span class="font-bold text-slate-800">${deliveredCount.toLocaleString()} ราย</span>
             </div>
             <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
               <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-cyan-500 mr-1.5"></span>Auto Job</span>
-              <span class="font-bold text-slate-800">${autoJobCount.toLocaleString()}</span>
+              <span class="font-bold text-slate-800">${autoJobCount.toLocaleString()} ราย</span>
             </div>
             <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
               <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-rose-500 mr-1.5"></span>น้ำท่วม</span>
-              <span class="font-bold text-slate-800">${floodCount.toLocaleString()}</span>
+              <span class="font-bold text-slate-800">${floodCount.toLocaleString()} ราย</span>
             </div>
             <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100">
               <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-purple-500 mr-1.5"></span>งานโอน</span>
-              <span class="font-bold text-slate-800">${transferCount.toLocaleString()}</span>
+              <span class="font-bold text-slate-800">${transferCount.toLocaleString()} ราย</span>
             </div>
+            ${otherFailCount > 0 ? `
+            <div class="flex items-center justify-between p-1 bg-white rounded border border-slate-100 col-span-2">
+              <span class="flex items-center text-slate-600"><span class="w-2 h-2 rounded-full bg-slate-400 mr-1.5"></span>รอส่ง/อื่นๆ</span>
+              <span class="font-bold text-slate-800">${otherFailCount.toLocaleString()} ราย</span>
+            </div>` : ''}
           `;
         }
       }
@@ -5902,10 +6014,36 @@
       const dateCounts = {};
       const truckCounts = {};
 
+      const parseDtTrans = typeof parseDateForSort === 'function' ? parseDateForSort : function(d) {
+        if (!d) return 0;
+        const s = String(d).trim();
+        if (s.includes('/')) {
+          const parts = s.split(',')[0].trim().split('/');
+          if (parts.length === 3) {
+            let y = parseInt(parts[2], 10);
+            if (y > 2500) y -= 543;
+            return new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10)).getTime();
+          }
+        }
+        return Date.parse(s) || 0;
+      };
+
+      // รวมกลุ่มตามรหัสสมาชิกเฉพาะตัว (1 รหัสสมาชิก = 1 ราย เอาข้อมูลรอบโอนล่าสุด)
+      const transMemberMap = new Map();
       filteredTransfers.forEach(i => {
-        const d = i.transferDate || (i.date ? i.date.split(' ')[0] : 'ไม่ระบุวันที่');
+        const mId = i.memberId || i.id;
+        if (!transMemberMap.has(mId)) {
+          transMemberMap.set(mId, []);
+        }
+        transMemberMap.get(mId).push(i);
+      });
+
+      transMemberMap.forEach((attempts, mId) => {
+        attempts.sort((a, b) => parseDtTrans(a.date || a.transferDate) - parseDtTrans(b.date || b.transferDate));
+        const latest = attempts[attempts.length - 1];
+        const d = latest.transferDate || (latest.date ? latest.date.split(' ')[0] : 'ไม่ระบุวันที่');
         dateCounts[d] = (dateCounts[d] || 0) + 1;
-        const t = i.truck || 'ไม่ระบุสายรถ';
+        const t = latest.truck || 'ไม่ระบุสายรถ';
         truckCounts[t] = (truckCounts[t] || 0) + 1;
       });
 
@@ -5957,7 +6095,7 @@
             data: {
               labels: truckLabels,
               datasets: [{
-                label: 'จำนวนงานโอน (รายการ)',
+                label: 'จำนวนสมาชิกที่โอนงาน (ราย)',
                 data: truckValues,
                 backgroundColor: '#8B5CF6',
                 borderRadius: 6
