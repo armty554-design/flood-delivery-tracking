@@ -360,94 +360,79 @@
       <!-- ===================================================================== -->
       <!-- UNIFIED MASTER FILTER BAR (ค้นหาด่วน / ชิปกรองคลิกเดียว / 4 ตัวกรองหลัก) -->
       <!-- ===================================================================== -->
-      <section class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-4">
-        <!-- Top Toolbar: Title & Results Count -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-3">
-          <div class="flex items-center space-x-2">
-            <span class="p-2 bg-blue-50 text-blue-600 rounded-xl">
-              <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
-            </span>
-            <div>
-              <h2 class="text-sm font-bold text-slate-800">ตัวกรองหลักและค้นหาด่วน (Unified Filter Bar)</h2>
-              <p class="text-[11px] text-slate-500">กรองข้อมูลครอบคลุมพร้อมกันทุกมุมมอง: วันที่, สาขา, เบอร์รถ และสถานะประเมิน</p>
-            </div>
+      <!-- ===================================================================== -->
+      <!-- UNIFIED MASTER FILTER BAR (สะอาดตา • เข้าถึงง่าย • เลือกไม่ต้องเยอะ) -->
+      <!-- ===================================================================== -->
+      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-3.5 sm:p-4 space-y-3">
+        
+        <!-- แถวที่ 1: ช่องค้นหาด่วน + ผลลัพธ์ + ปุ่มรีเซ็ต -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          <!-- กล่องค้นหาด่วน -->
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-2.5"></i>
+            <input type="text" id="globalFilterSearch" oninput="applyGlobalFilters()" 
+                   placeholder="ค้นหาด่วน: พิมพ์รหัสสมาชิก, ชื่อลูกค้า, เบอร์รถ, ถนน, เขต..." 
+                   class="w-full pl-9 pr-9 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 transition shadow-2xs">
+            <button type="button" onclick="document.getElementById('globalFilterSearch').value=''; applyGlobalFilters();" 
+                    class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full" title="ล้างคำค้น">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
-          <div class="flex items-center space-x-2">
-            <span id="filterResultBadge" class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/70">
+
+          <!-- ป้ายจำนวนผลลัพธ์ + ปุ่มล้างตัวกรอง -->
+          <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+            <span id="filterResultBadge" class="text-xs font-bold px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 whitespace-nowrap">
               กำลังประมวลผล...
             </span>
-            <button onclick="resetGlobalFilters()" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 rounded-lg border border-slate-200 transition">
-              <i data-lucide="rotate-ccw" class="w-3 h-3 mr-1"></i> ล้างตัวกรอง
+            <button type="button" onclick="resetGlobalFilters()" 
+                    class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 rounded-lg border border-slate-200 transition shadow-2xs whitespace-nowrap">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 mr-1 text-slate-500"></i> ล้างตัวกรอง
             </button>
           </div>
         </div>
 
-        <!-- Prominent Search Bar with Clear Button -->
-        <div class="relative">
-          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-          <input type="text" id="globalFilterSearch" oninput="applyGlobalFilters()" placeholder="ค้นหาด่วน: รหัสสมาชิก (เช่น 00033, 08564), ชื่อลูกค้า, เบอร์รถ, ที่อยู่, ถนน, หมายเหตุ Col K..." class="w-full pl-10 pr-10 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-2xs">
-          <button type="button" onclick="document.getElementById('globalFilterSearch').value=''; applyGlobalFilters();" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-0.5 rounded-full" title="ล้างคำค้น">
-            <i data-lucide="x" class="w-4 h-4"></i>
-          </button>
+        <!-- แถวที่ 2: ปุ่มลัดสถานะประเมินแบบคลิกเดียวจบ (Quick Status - เลือกไม่ต้องเยอะ) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-0.5 custom-scrollbar text-xs">
+          <span class="text-slate-400 font-bold text-[11px] shrink-0 mr-0.5 flex items-center">
+            <i data-lucide="filter" class="w-3 h-3 mr-1 text-blue-500"></i> ด่วน:
+          </span>
+          <button type="button" onclick="setFilterPreset('ALL')" id="presetBtn-ALL" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-white whitespace-nowrap transition shadow-2xs">ทั้งหมด</button>
+          <button type="button" onclick="setFilterPreset('SUCCESS')" id="presetBtn-SUCCESS" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 whitespace-nowrap transition">🟢 สำเร็จ</button>
+          <button type="button" onclick="setFilterPreset('FAIL_FLOOD')" id="presetBtn-FAIL_FLOOD" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 whitespace-nowrap transition">🔴 ติดน้ำท่วม</button>
+          <button type="button" onclick="setFilterPreset('FAIL_TRANSFER')" id="presetBtn-FAIL_TRANSFER" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 whitespace-nowrap transition">🟣 โอนค้างส่ง</button>
+          <button type="button" onclick="setFilterPreset('AUTO_JOB30')" id="presetBtn-AUTO_JOB30" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 whitespace-nowrap transition">⚡ Auto Job 30</button>
+          <button type="button" onclick="setFilterPreset('RESOLVED_TRANSFER')" id="presetBtn-RESOLVED_TRANSFER" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 whitespace-nowrap transition">🔄 ปลดล็อกงานโอน</button>
         </div>
 
-        <!-- Quick Filter Preset Chips (คลิกเดียวกรองได้ทันที สำหรับคนไม่ถนัด Dropdown) -->
-        <div class="space-y-2 pt-1">
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
-            <span class="text-slate-500 font-bold text-[11px] shrink-0 mr-1 flex items-center">
-              <i data-lucide="filter" class="w-3 h-3 mr-1 text-blue-600"></i> ตัวกรองด่วน:
-            </span>
-            <button type="button" onclick="setFilterPreset('ALL')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-white whitespace-nowrap transition shadow-2xs">ทั้งหมด</button>
-            <button type="button" onclick="setFilterPreset('SUCCESS')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 whitespace-nowrap transition">🟢 ส่งสำเร็จ</button>
-            <button type="button" onclick="setFilterPreset('FAIL_FLOOD')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 whitespace-nowrap transition">🔴 ติดน้ำท่วม</button>
-            <button type="button" onclick="setFilterPreset('FAIL_TRANSFER')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 whitespace-nowrap transition">🟣 โอนค้างส่ง</button>
-            <button type="button" onclick="setFilterPreset('AUTO_JOB30')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 whitespace-nowrap transition">⚡ Auto Job 30</button>
-            <button type="button" onclick="setFilterPreset('RESOLVED_TRANSFER')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 whitespace-nowrap transition">🔄 ปลดล็อกงานโอน</button>
-            <span class="text-slate-300 mx-1">|</span>
-            <button type="button" onclick="setFilterPresetBranch('สาขารามอินทรา')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 รามอินทรา</button>
-            <button type="button" onclick="setFilterPresetBranch('สาขากรุงเทพกรีฑา')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 กรุงเทพกรีฑา</button>
-            <button type="button" onclick="setFilterPresetBranch('สาขาสุขุมวิท 50')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 สุขุมวิท 50</button>
-            <button type="button" onclick="setFilterPresetBranch('สาขาพระราม 3')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 พระราม 3</button>
-          </div>
-
-          <!-- Quick Archetype Drill-Down Chips -->
-          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
-            <span class="text-amber-700 font-bold text-[11px] shrink-0 mr-1 flex items-center">
-              <i data-lucide="sparkles" class="w-3 h-3 mr-1 text-amber-500"></i> เคสทดสอบจริง:
-            </span>
-            <button type="button" onclick="searchCaseStudy('00033/23')" class="px-2.5 py-1 rounded-lg font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">🏷️ 00033/23 (ไทยฮอนด้า - Auto Job 30)</button>
-            <button type="button" onclick="searchCaseStudy('08564/1')" class="px-2.5 py-1 rounded-lg font-semibold bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 whitespace-nowrap transition">🏷️ 08564/1 (ปนัดดา - โอน ➔ สำเร็จ)</button>
-            <button type="button" onclick="searchCaseStudy('01210/3')" class="px-2.5 py-1 rounded-lg font-semibold bg-rose-50 hover:bg-rose-100 text-rose-900 border border-rose-200 whitespace-nowrap transition">🏷️ 01210/3 (วรพรรณ - น้ำท่วมสูง)</button>
-            <button type="button" onclick="searchCaseStudy('03237/43')" class="px-2.5 py-1 rounded-lg font-semibold bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 whitespace-nowrap transition">🏷️ 03237/43 (จิดาภา - โอนค้าง)</button>
-          </div>
-        </div>
-
-        <!-- 4 Main Filters Grid (Dropdown Selects) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
-          <!-- 1. วันที่ (Date) -->
-          <div class="space-y-1">
-            <label for="globalFilterDate" class="text-[11px] font-bold text-slate-700 flex items-center">
-              <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 1. วันที่จัดส่ง
+        <!-- แถวที่ 3: 4 Dropdowns จำเป็น (เรียบง่าย ชัดเจน ไม่ลายตา) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 pt-1 border-t border-slate-100">
+          
+          <!-- 1. วันที่ -->
+          <div class="space-y-0.5">
+            <label for="globalFilterDate" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center">
+              <i data-lucide="calendar" class="w-3 h-3 mr-1 text-blue-500"></i> วันที่จัดส่ง
             </label>
-            <select id="globalFilterDate" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-              <option value="ALL">ทุกวันที่ (26 ก.ย. - 3 ต.ค. 2569)</option>
-              <option value="2026-09-26">26 ก.ย. 2569 (เสาร์ - เริ่มวิกฤตน้ำท่วม)</option>
-              <option value="2026-09-28">28 ก.ย. 2569 (จันทร์ - เริ่มโอนรอบแรก)</option>
-              <option value="2026-09-29">29 ก.ย. 2569 (อังคาร - ส่งชดเชย & วิกฤต)</option>
-              <option value="2026-09-30">30 ก.ย. 2569 (พุธ)</option>
-              <option value="2026-10-01">1 ต.ค. 2569 (พฤหัสบดี)</option>
-              <option value="2026-10-02">2 ต.ค. 2569 (ศุกร์)</option>
-              <option value="2026-10-03">3 ต.ค. 2569 (เสาร์)</option>
+            <select id="globalFilterDate" onchange="applyGlobalFilters()" 
+                    class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-800 py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-2xs truncate">
+              <option value="ALL">ทุกวันที่ (26 ก.ย. - 3 ต.ค.)</option>
+              <option value="2026-09-26">26 ก.ย. 69 (เสาร์ - เริ่มวิกฤต)</option>
+              <option value="2026-09-28">28 ก.ย. 69 (จันทร์ - เริ่มโอนรอบแรก)</option>
+              <option value="2026-09-29">29 ก.ย. 69 (อังคาร - ส่งชดเชย)</option>
+              <option value="2026-09-30">30 ก.ย. 69 (พุธ)</option>
+              <option value="2026-10-01">1 ต.ค. 69 (พฤหัสบดี)</option>
+              <option value="2026-10-02">2 ต.ค. 69 (ศุกร์)</option>
+              <option value="2026-10-03">3 ต.ค. 69 (เสาร์)</option>
             </select>
           </div>
 
-          <!-- 2. สาขา (Branch) -->
-          <div class="space-y-1">
-            <label for="globalFilterBranch" class="text-[11px] font-bold text-slate-700 flex items-center">
-              <i data-lucide="building-2" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 2. สาขา (Branch)
+          <!-- 2. สาขา -->
+          <div class="space-y-0.5">
+            <label for="globalFilterBranch" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center">
+              <i data-lucide="building-2" class="w-3 h-3 mr-1 text-blue-500"></i> สาขา
             </label>
-            <select id="globalFilterBranch" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-              <option value="ALL">ภาพรวมทุกสาขา (4 สาขาหลัก)</option>
+            <select id="globalFilterBranch" onchange="applyGlobalFilters()" 
+                    class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-800 py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-2xs truncate">
+              <option value="ALL">ทุกสาขา (4 สาขาหลัก)</option>
               <option value="สาขารามอินทรา">สาขารามอินทรา</option>
               <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
               <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
@@ -455,33 +440,36 @@
             </select>
           </div>
 
-          <!-- 3. เบอร์รถ (Truck) -->
-          <div class="space-y-1">
-            <label for="globalFilterTruck" class="text-[11px] font-bold text-slate-700 flex items-center">
-              <i data-lucide="truck" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 3. เบอร์รถ (สายส่ง)
+          <!-- 3. เบอร์รถ -->
+          <div class="space-y-0.5">
+            <label for="globalFilterTruck" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center">
+              <i data-lucide="truck" class="w-3 h-3 mr-1 text-blue-500"></i> เบอร์รถ / สายส่ง
             </label>
-            <select id="globalFilterTruck" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
+            <select id="globalFilterTruck" onchange="applyGlobalFilters()" 
+                    class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-semibold text-slate-800 py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-2xs truncate">
               <option value="ALL">ทุกเบอร์รถ (ทุกสายส่ง)</option>
             </select>
           </div>
 
-          <!-- 4. สถานะประเมิน (Evaluation Status) -->
-          <div class="space-y-1">
-            <label for="globalFilterStatus" class="text-[11px] font-bold text-slate-700 flex items-center">
-              <i data-lucide="check-square" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 4. สถานะประเมิน
+          <!-- 4. สถานะประเมิน -->
+          <div class="space-y-0.5">
+            <label for="globalFilterStatus" class="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center">
+              <i data-lucide="check-square" class="w-3 h-3 mr-1 text-blue-500"></i> สถานะประเมิน
             </label>
-            <select id="globalFilterStatus" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-2xs">
-              <option value="ALL">🎯 ทุกสถานะประเมิน (ทั้งหมด)</option>
-              <option value="SUCCESS">🟢 สำเร็จ (จัดส่งเรียบร้อย / ปลดล็อกโอนงาน)</option>
-              <option value="AUTO_JOB30">⚡ สำเร็จ: Auto ปิด Job 30</option>
-              <option value="FAIL_FLOOD">🔴 ยังไม่สำเร็จ: น้ำท่วมสูงในพื้นที่ (รอน้ำลด)</option>
-              <option value="FAIL_TRANSFER">🟣 ยังไม่สำเร็จ: โอนงานค้างส่ง (รอดำเนินการ)</option>
-              <option value="FAIL">🔴 ยังไม่สำเร็จทั้งหมด (น้ำท่วม หรือ โอนงาน)</option>
-              <option value="RESOLVED_TRANSFER">🔄 ปลดล็อกโอนงานสำเร็จ (มีรอบส่งถัดไป)</option>
-              <option value="TRANSFER">🟣 งานโอนทั้งหมด (ค้างส่ง + ส่งสำเร็จ)</option>
+            <select id="globalFilterStatus" onchange="applyGlobalFilters()" 
+                    class="w-full bg-blue-50/50 hover:bg-white focus:bg-white border border-blue-200 focus:border-blue-500 rounded-lg text-xs font-bold text-slate-800 py-1.5 px-2 focus:outline-none focus:ring-1 focus:ring-blue-500 transition shadow-2xs truncate">
+              <option value="ALL">🎯 ทุกสถานะประเมิน</option>
+              <option value="SUCCESS">🟢 สำเร็จ (จัดส่งเรียบร้อย)</option>
+              <option value="AUTO_JOB30">⚡ Auto ปิด Job 30</option>
+              <option value="FAIL_FLOOD">🔴 ยังไม่สำเร็จ: น้ำท่วมสูง</option>
+              <option value="FAIL_TRANSFER">🟣 ยังไม่สำเร็จ: โอนงานค้างส่ง</option>
+              <option value="FAIL">🔴 ยังไม่สำเร็จทั้งหมด</option>
+              <option value="RESOLVED_TRANSFER">🔄 ปลดล็อกโอนงานสำเร็จ</option>
+              <option value="TRANSFER">🟣 งานโอนทั้งหมด</option>
               <option value="FAIL_ERROR" class="hidden">⚠️ เลื่อนวันที่ส่ง</option>
             </select>
           </div>
+
         </div>
       </section>
 
@@ -3409,6 +3397,15 @@
       if (activeBranchBtn) {
         activeBranchBtn.classList.add('bg-slate-800', 'border', 'border-blue-500', 'text-blue-300');
         activeBranchBtn.classList.remove('text-slate-400');
+      }
+
+      // Sync quick status preset chips active styling
+      document.querySelectorAll('.preset-chip').forEach(btn => {
+        btn.classList.remove('bg-slate-800', 'text-white', 'shadow-2xs');
+      });
+      const activeChip = document.getElementById('presetBtn-' + statusVal);
+      if (activeChip) {
+        activeChip.classList.add('bg-slate-800', 'text-white', 'shadow-2xs');
       }
 
       // Sync search input if tableSearch exists
