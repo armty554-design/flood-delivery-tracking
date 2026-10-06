@@ -82,27 +82,35 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col lg:flex-row">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col lg:flex-row antialiased font-sans">
+
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/70 z-30 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
 
   <!-- ========================================================================= -->
   <!-- LEFT SIDEBAR NAVIGATION (ปรับแท็บไปซ้ายมือ) -->
   <!-- ========================================================================= -->
-  <aside id="appSidebar" class="w-full lg:w-72 bg-slate-900 text-white shrink-0 lg:min-h-screen border-r border-slate-800 flex flex-col justify-between z-30 shadow-xl lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
+  <aside id="appSidebar" class="w-full lg:w-72 bg-slate-900 text-white shrink-0 border-r border-slate-800 flex flex-col justify-between z-40 shadow-2xl fixed inset-y-0 left-0 -translate-x-full lg:translate-x-0 lg:static lg:min-h-screen lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto transition-transform duration-300">
     
     <!-- Sidebar Top: Brand & Menu -->
     <div class="p-4 sm:p-5 space-y-5">
       <!-- Brand Logo & Title -->
-      <div class="flex items-center space-x-3 pb-4 border-b border-slate-800">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0">
-          <i data-lucide="droplets" class="w-6 h-6 text-white"></i>
-        </div>
-        <div>
-          <h1 class="text-sm font-bold tracking-tight text-white leading-tight">ศูนย์ติดตามการจัดส่งน้ำท่วม</h1>
-          <div class="flex items-center space-x-1.5 mt-0.5">
-            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">4 สาขา</span>
-            <span class="text-[10px] text-slate-400">BCP Fleet Crisis</span>
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0">
+            <i data-lucide="droplets" class="w-6 h-6 text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-sm font-bold tracking-tight text-white leading-tight">ศูนย์ติดตามการจัดส่งน้ำท่วม</h1>
+            <div class="flex items-center space-x-1.5 mt-0.5">
+              <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">4 สาขา</span>
+              <span class="text-[10px] text-slate-400">BCP Fleet Crisis</span>
+            </div>
           </div>
         </div>
+        <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition" title="ปิดเมนู">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
       </div>
 
       <!-- Navigation Tabs (Vertical List) -->
@@ -204,12 +212,16 @@
     <!-- Top Action Bar -->
     <header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-4 sm:px-6 py-3 shadow-xs">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <!-- Left: Quick Breadcrumb / Active Status -->
+        <!-- Left: Mobile Menu Button + System Status -->
         <div class="flex items-center space-x-3">
-          <span class="pulse-dot"></span>
-          <span class="text-xs text-slate-600 font-medium">
-            สถานะระบบ: <strong class="text-emerald-600 font-bold" id="syncStatusText">เชื่อมต่อสด Supabase Realtime</strong>
-          </span>
+          <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="เปิดเมนูนำทาง">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div class="flex items-center space-x-2">
+            <span class="pulse-dot"></span>
+            <span class="text-xs text-slate-600 font-medium hidden sm:inline">สถานะระบบ:</span>
+            <strong class="text-emerald-600 font-bold text-xs" id="syncStatusText">เชื่อมต่อสด Supabase Realtime</strong>
+          </div>
         </div>
 
         <!-- Right Controls: Truck Selector, Accessibility, Refresh, Export, GitHub -->
@@ -274,22 +286,78 @@
     <!-- Main Content Container -->
     <main class="flex-1 w-full p-4 sm:p-6 lg:p-7 space-y-6">
 
+      <!-- Mobile Horizontal Navigation Tabs (Pill Buttons for quick mobile navigation) -->
+      <div class="lg:hidden flex items-center space-x-1.5 overflow-x-auto pb-1 px-1 custom-scrollbar text-xs">
+        <button type="button" onclick="switchTab('table')" id="mobileTab-table" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-bold bg-blue-600 text-white whitespace-nowrap shadow-xs flex items-center">
+          <i data-lucide="table" class="w-3.5 h-3.5 mr-1"></i> ตาราง & เคส
+        </button>
+        <button type="button" onclick="switchTab('summary')" id="mobileTab-summary" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="clipboard-check" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> สรุป 3 เสาหลัก
+        </button>
+        <button type="button" onclick="switchTab('analytics')" id="mobileTab-analytics" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 mr-1 text-indigo-600"></i> แดชบอร์ด
+        </button>
+        <button type="button" onclick="switchTab('map')" id="mobileTab-map" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="map" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> แผนที่
+        </button>
+        <button type="button" onclick="switchTab('transfers')" id="mobileTab-transfers" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-purple-600"></i> งานโอน
+        </button>
+        <button type="button" onclick="switchTab('trucks')" id="mobileTab-trucks" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="truck" class="w-3.5 h-3.5 mr-1 text-amber-600"></i> รายคัน
+        </button>
+        <button type="button" onclick="switchTab('water')" id="mobileTab-water" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-cyan-600"></i> CCTV สด
+        </button>
+        <button type="button" onclick="switchTab('routes')" id="mobileTab-routes" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+          <i data-lucide="route" class="w-3.5 h-3.5 mr-1 text-rose-600"></i> 8 สายทาง
+        </button>
+      </div>
+
+      <!-- Executive Welcome & Operations Overview Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800 relative overflow-hidden">
+        <div class="absolute -right-8 -bottom-8 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
+          <div class="space-y-1.5">
+            <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-xs font-semibold border border-blue-400/20">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              ศูนย์ติดตามและวิเคราะห์การจัดส่งน้ำดื่ม • วิกฤตน้ำท่วม 4 สาขา (BCP Fleet Crisis)
+            </div>
+            <h1 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-white">
+              ระบบติดตามสถานะจัดส่งน้ำ: น้ำท่วม &amp; โอนงานสิ้นวัน
+            </h1>
+            <p class="text-slate-300 text-xs sm:text-sm max-w-2xl">
+              รอบส่ง 26 ก.ย. – 3 ต.ค. 2569 | กฎธุรกิจ: กรณีโอนงานหรือน้ำท่วม หากรอบถัดไปส่งได้ถือว่าสำเร็จและตัดยอดออกจากงานโอน
+            </p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button type="button" onclick="switchTab('summary')" class="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition flex items-center">
+              <i data-lucide="clipboard-check" class="w-3.5 h-3.5 mr-1.5"></i> สรุป 3 เสาหลัก
+            </button>
+            <button type="button" onclick="switchTab('map')" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition flex items-center">
+              <i data-lucide="map" class="w-3.5 h-3.5 mr-1.5 text-blue-400"></i> แผนที่พิกัด
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- ===================================================================== -->
-      <!-- UNIFIED MASTER FILTER BAR (วันที่ / สาขา / เบอร์รถ / สถานะ + ค้นหาด่วน) -->
+      <!-- UNIFIED MASTER FILTER BAR (ค้นหาด่วน / ชิปกรองคลิกเดียว / 4 ตัวกรองหลัก) -->
       <!-- ===================================================================== -->
-      <section class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-3.5">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+      <section class="bg-white rounded-3xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-4">
+        <!-- Top Toolbar: Title & Results Count -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-2">
-            <span class="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+            <span class="p-2 bg-blue-50 text-blue-600 rounded-xl">
               <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
             </span>
             <div>
-              <h2 class="text-sm font-bold text-slate-800">ตัวกรองหลักแบบครอบคลุม (Unified Master Filters)</h2>
-              <p class="text-[11px] text-slate-500">กรองข้อมูลครอบคลุมพร้อมกันทุกมุมมอง: วันที่, สาขา, เบอร์รถ และสถานะการประเมิน</p>
+              <h2 class="text-sm font-bold text-slate-800">ตัวกรองหลักและค้นหาด่วน (Unified Filter Bar)</h2>
+              <p class="text-[11px] text-slate-500">กรองข้อมูลครอบคลุมพร้อมกันทุกมุมมอง: วันที่, สาขา, เบอร์รถ และสถานะประเมิน</p>
             </div>
           </div>
           <div class="flex items-center space-x-2">
-            <span id="filterResultBadge" class="text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100">
+            <span id="filterResultBadge" class="text-xs font-bold px-3 py-1 rounded-xl bg-blue-50 text-blue-700 border border-blue-200/70">
               กำลังประมวลผล...
             </span>
             <button onclick="resetGlobalFilters()" class="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-slate-600 hover:text-rose-600 bg-slate-100 hover:bg-rose-50 rounded-lg border border-slate-200 transition">
@@ -298,8 +366,47 @@
           </div>
         </div>
 
-        <!-- 4 Main Filters Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Prominent Search Bar with Clear Button -->
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          <input type="text" id="globalFilterSearch" oninput="applyGlobalFilters()" placeholder="ค้นหาด่วน: รหัสสมาชิก (เช่น 00033, 08564), ชื่อลูกค้า, เบอร์รถ, ที่อยู่, ถนน, หมายเหตุ Col K..." class="w-full pl-10 pr-10 py-2.5 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-2xs">
+          <button type="button" onclick="document.getElementById('globalFilterSearch').value=''; applyGlobalFilters();" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 p-0.5 rounded-full" title="ล้างคำค้น">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Quick Filter Preset Chips (คลิกเดียวกรองได้ทันที สำหรับคนไม่ถนัด Dropdown) -->
+        <div class="space-y-2 pt-1">
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
+            <span class="text-slate-500 font-bold text-[11px] shrink-0 mr-1 flex items-center">
+              <i data-lucide="filter" class="w-3 h-3 mr-1 text-blue-600"></i> ตัวกรองด่วน:
+            </span>
+            <button type="button" onclick="setFilterPreset('ALL')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-white whitespace-nowrap transition shadow-2xs">ทั้งหมด</button>
+            <button type="button" onclick="setFilterPreset('SUCCESS')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 whitespace-nowrap transition">🟢 ส่งสำเร็จ</button>
+            <button type="button" onclick="setFilterPreset('FAIL')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 whitespace-nowrap transition">🔴 ติดน้ำท่วม</button>
+            <button type="button" onclick="setFilterPreset('TRANSFER')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 whitespace-nowrap transition">🟣 งานโอน</button>
+            <button type="button" onclick="setFilterPreset('AUTO_JOB30')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 whitespace-nowrap transition">⚡ Auto Job 30</button>
+            <span class="text-slate-300 mx-1">|</span>
+            <button type="button" onclick="setFilterPresetBranch('สาขารามอินทรา')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 รามอินทรา</button>
+            <button type="button" onclick="setFilterPresetBranch('สาขากรุงเทพกรีฑา')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 กรุงเทพกรีฑา</button>
+            <button type="button" onclick="setFilterPresetBranch('สาขาสุขุมวิท 50')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 สุขุมวิท 50</button>
+            <button type="button" onclick="setFilterPresetBranch('สาขาพระราม 3')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 พระราม 3</button>
+          </div>
+
+          <!-- Quick Archetype Drill-Down Chips -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
+            <span class="text-amber-700 font-bold text-[11px] shrink-0 mr-1 flex items-center">
+              <i data-lucide="sparkles" class="w-3 h-3 mr-1 text-amber-500"></i> เคสทดสอบจริง:
+            </span>
+            <button type="button" onclick="searchCaseStudy('00033/23')" class="px-2.5 py-1 rounded-lg font-semibold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 whitespace-nowrap transition">🏷️ 00033/23 (ไทยฮอนด้า - Auto Job 30)</button>
+            <button type="button" onclick="searchCaseStudy('08564/1')" class="px-2.5 py-1 rounded-lg font-semibold bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 whitespace-nowrap transition">🏷️ 08564/1 (ปนัดดา - โอน ➔ สำเร็จ)</button>
+            <button type="button" onclick="searchCaseStudy('01210/3')" class="px-2.5 py-1 rounded-lg font-semibold bg-rose-50 hover:bg-rose-100 text-rose-900 border border-rose-200 whitespace-nowrap transition">🏷️ 01210/3 (วรพรรณ - น้ำท่วมสูง)</button>
+            <button type="button" onclick="searchCaseStudy('03237/43')" class="px-2.5 py-1 rounded-lg font-semibold bg-purple-50 hover:bg-purple-100 text-purple-900 border border-purple-200 whitespace-nowrap transition">🏷️ 03237/43 (จิดาภา - โอนค้าง)</button>
+          </div>
+        </div>
+
+        <!-- 4 Main Filters Grid (Dropdown Selects) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
           <!-- 1. วันที่ (Date) -->
           <div class="space-y-1">
             <label for="globalFilterDate" class="text-[11px] font-bold text-slate-700 flex items-center">
@@ -355,79 +462,82 @@
             </select>
           </div>
         </div>
-
-        <!-- Search Bar Row -->
-        <div class="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-          <div class="relative flex-1">
-            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
-            <input type="text" id="globalFilterSearch" oninput="applyGlobalFilters()" placeholder="ค้นหาด่วน: รหัสสมาชิก (เช่น 00033, 08564), ชื่อลูกค้า, เบอร์รถ, ที่อยู่, ถนน, หมายเหตุ Col K..." class="w-full pl-9 pr-4 py-2 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-          </div>
-        </div>
       </section>
 
       <!-- ===================================================================== -->
       <!-- 4 CLEAN KPI SUMMARY CARDS (High-Contrast, Calculated by Unique Member) -->
       <!-- ===================================================================== -->
-      <section class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- 1. รวมสมาชิกทั้งหมด -->
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col justify-between">
-          <div class="flex items-center justify-between text-slate-500 text-xs font-semibold mb-1">
-            <span class="flex items-center"><i data-lucide="users" class="w-3.5 h-3.5 mr-1.5 text-slate-600"></i> รวมสมาชิกทั้งหมด</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-mono">1 รหัส/สมาชิก</span>
+        <div class="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold mb-2">
+              <span class="flex items-center"><i data-lucide="users" class="w-4 h-4 mr-1.5 text-blue-600"></i> รวมสมาชิกทั้งหมด</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-mono font-bold">1 รหัส/สมาชิก</span>
+            </div>
+            <div class="my-1.5 flex items-baseline">
+              <span id="kpiTotalMembers" class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">0</span>
+              <span class="text-xs text-slate-500 font-semibold ml-1.5">รหัส</span>
+            </div>
           </div>
-          <div class="my-1">
-            <span id="kpiTotalMembers" class="text-2xl sm:text-3xl font-black text-slate-800">0</span>
-            <span class="text-xs text-slate-500 ml-1">รหัส</span>
+          <div class="pt-3 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+            <span>ออเดอร์ในตัวกรอง:</span>
+            <span class="font-bold text-slate-700"><span id="kpiTotal">0</span> รายการ</span>
           </div>
-          <p class="text-[11px] text-slate-400">ออเดอร์ในตัวกรอง: <span id="kpiTotal" class="font-semibold text-slate-600">0</span> รายการ</p>
         </div>
 
         <!-- 2. ส่งสำเร็จแล้ว (Delivered & Auto Closed) -->
-        <div onclick="setQuickStatusFilter('SUCCESS')" class="cursor-pointer group bg-gradient-to-br from-emerald-500/5 via-white to-white p-4 rounded-2xl border border-emerald-200 hover:border-emerald-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-          <div class="flex items-center justify-between text-emerald-800 text-xs font-bold mb-1">
-            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span> 🟢 สำเร็จ</span>
-            <span id="kpiSuccessPct" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">0%</span>
+        <div onclick="setQuickStatusFilter('SUCCESS')" class="cursor-pointer group bg-gradient-to-br from-emerald-500/10 via-white to-white p-5 rounded-3xl border border-emerald-200 hover:border-emerald-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-emerald-800 text-xs font-bold mb-2">
+              <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2 shadow-xs shadow-emerald-500"></span> 🟢 สำเร็จ</span>
+              <span id="kpiSuccessPct" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">0%</span>
+            </div>
+            <div class="my-1.5 flex items-baseline">
+              <span id="kpiSuccessCount" class="text-3xl sm:text-4xl font-black text-emerald-600 tracking-tight">0</span>
+              <span class="text-xs text-slate-500 font-semibold ml-1.5">รหัส</span>
+            </div>
           </div>
-          <div class="my-1">
-            <span id="kpiSuccessCount" class="text-2xl sm:text-3xl font-black text-emerald-600">0</span>
-            <span class="text-xs text-slate-500 ml-1">รหัส</span>
-          </div>
-          <p class="text-[11px] text-slate-500 flex items-center justify-between">
+          <div class="pt-3 border-t border-emerald-100 text-[11px] text-slate-600 flex items-center justify-between">
             <span>รวม Auto ปิด Job 30 & ส่งสำเร็จ</span>
             <span class="text-emerald-700 font-bold group-hover:underline">กรอง ➔</span>
-          </p>
+          </div>
         </div>
 
         <!-- 3. ส่งไม่สำเร็จ / ติดน้ำท่วม (Pending) -->
-        <div onclick="setQuickStatusFilter('FAIL')" class="cursor-pointer group bg-gradient-to-br from-red-500/5 via-white to-white p-4 rounded-2xl border border-red-200 hover:border-red-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-          <div class="flex items-center justify-between text-red-800 text-xs font-bold mb-1">
-            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-1.5 animate-pulse"></span> 🔴 ยังส่งไม่ได้ (น้ำท่วม)</span>
-            <span id="kpiFailPct" class="text-[10px] font-black px-2 py-0.5 rounded-full bg-red-100 text-red-800">0%</span>
+        <div onclick="setQuickStatusFilter('FAIL')" class="cursor-pointer group bg-gradient-to-br from-rose-500/10 via-white to-white p-5 rounded-3xl border border-rose-200 hover:border-rose-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-rose-800 text-xs font-bold mb-2">
+              <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 mr-2 animate-pulse shadow-xs shadow-rose-500"></span> 🔴 ยังส่งไม่ได้ (น้ำท่วม)</span>
+              <span id="kpiFailPct" class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-200">0%</span>
+            </div>
+            <div class="my-1.5 flex items-baseline">
+              <span id="kpiFailCount" class="text-3xl sm:text-4xl font-black text-rose-600 tracking-tight">0</span>
+              <span class="text-xs text-slate-500 font-semibold ml-1.5">รหัส</span>
+            </div>
           </div>
-          <div class="my-1">
-            <span id="kpiFailCount" class="text-2xl sm:text-3xl font-black text-red-600">0</span>
-            <span class="text-xs text-slate-500 ml-1">รหัส</span>
-          </div>
-          <p class="text-[11px] text-slate-500 flex items-center justify-between">
+          <div class="pt-3 border-t border-rose-100 text-[11px] text-slate-600 flex items-center justify-between">
             <span>ติดน้ำท่วมสูง / รอน้ำลด</span>
-            <span class="text-red-700 font-bold group-hover:underline">กรอง ➔</span>
-          </p>
+            <span class="text-rose-700 font-bold group-hover:underline">กรอง ➔</span>
+          </div>
         </div>
 
         <!-- 4. โอนงานที่ส่ง (Transfers) -->
-        <div onclick="setQuickStatusFilter('TRANSFER')" class="cursor-pointer group bg-gradient-to-br from-purple-500/5 via-white to-white p-4 rounded-2xl border border-purple-200 hover:border-purple-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
-          <div class="flex items-center justify-between text-purple-800 text-xs font-bold mb-1">
-            <span class="flex items-center"><i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-purple-600"></i> 🟣 โอนงานที่ส่ง</span>
-            <span class="text-[10px] font-black px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-800">งานโอน</span>
+        <div onclick="setQuickStatusFilter('TRANSFER')" class="cursor-pointer group bg-gradient-to-br from-purple-500/10 via-white to-white p-5 rounded-3xl border border-purple-200 hover:border-purple-500 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-purple-800 text-xs font-bold mb-2">
+              <span class="flex items-center"><i data-lucide="repeat" class="w-4 h-4 mr-1.5 text-purple-600"></i> 🟣 โอนงานที่ส่ง</span>
+              <span class="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200">งานโอน</span>
+            </div>
+            <div class="my-1.5 flex items-baseline">
+              <span id="kpiTransferCount" class="text-3xl sm:text-4xl font-black text-purple-600 tracking-tight">0</span>
+              <span class="text-xs text-slate-500 font-semibold ml-1.5">รหัส</span>
+            </div>
           </div>
-          <div class="my-1">
-            <span id="kpiTransferCount" class="text-2xl sm:text-3xl font-black text-purple-600">0</span>
-            <span class="text-xs text-slate-500 ml-1">รหัส</span>
-          </div>
-          <p class="text-[11px] text-slate-500 flex items-center justify-between">
+          <div class="pt-3 border-t border-purple-100 text-[11px] text-slate-600 flex items-center justify-between">
             <span id="kpiTransferRoundsSubtext">คิดเป็น 1 รหัสต่อสมาชิก (โอนรวม - รอบ)</span>
             <span class="text-purple-700 font-bold group-hover:underline">กรอง ➔</span>
-          </p>
+          </div>
         </div>
       </section>
 
@@ -46907,6 +47017,53 @@
       badge.textContent = `พบ ${filteredItems.length.toLocaleString()} รายการ (${memberStats.totalMembers.toLocaleString()} สมาชิก)`;
     }
 
+    // Toggle Mobile Sidebar Drawer
+    function toggleMobileSidebar() {
+      const sidebar = document.getElementById('appSidebar');
+      const backdrop = document.getElementById('mobileSidebarBackdrop');
+      if (!sidebar) return;
+      const isClosed = sidebar.classList.contains('-translate-x-full');
+      if (isClosed) {
+        sidebar.classList.remove('-translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
+      }
+    }
+
+    // Set Quick Filter Preset from Chips
+    function setFilterPreset(preset) {
+      if (preset === 'ALL') {
+        resetGlobalFilters();
+        return;
+      }
+      const statusSelect = document.getElementById('globalFilterStatus');
+      if (statusSelect) {
+        statusSelect.value = preset;
+        applyGlobalFilters();
+      }
+    }
+
+    // Set Branch Preset from Chips
+    function setFilterPresetBranch(branch) {
+      const branchSelect = document.getElementById('globalFilterBranch');
+      if (branchSelect) {
+        branchSelect.value = branch;
+        applyGlobalFilters();
+      }
+    }
+
+    // Search Case Study and Open Modal directly
+    function searchCaseStudy(memberId) {
+      const searchInput = document.getElementById('globalFilterSearch');
+      if (searchInput) {
+        searchInput.value = memberId;
+        applyGlobalFilters();
+      }
+      openMemberHistoryModal(memberId);
+    }
+
     // Tab Switcher (Supports map, analytics, summary, trucks, table, transfers, water, routes)
     function switchTab(tabId) {
       currentTab = tabId;
@@ -46950,6 +47107,29 @@
       if (activeBtn) {
         activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
         activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-600/30');
+      }
+
+      // Update Mobile Horizontal Tab Pills
+      document.querySelectorAll('.mobile-tab-btn').forEach(b => {
+        b.classList.remove('bg-blue-600', 'text-white', 'shadow-xs');
+        b.classList.add('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+      });
+      const activeMobileBtn = document.getElementById('mobileTab-' + tabId);
+      if (activeMobileBtn) {
+        activeMobileBtn.classList.remove('bg-white', 'text-slate-700', 'border', 'border-slate-200');
+        activeMobileBtn.classList.add('bg-blue-600', 'text-white', 'shadow-xs');
+      }
+
+      // Auto-close mobile drawer if open
+      if (window.innerWidth < 1024) {
+        const sidebar = document.getElementById('appSidebar');
+        const backdrop = document.getElementById('mobileSidebarBackdrop');
+        if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.add('-translate-x-full');
+        }
+        if (backdrop && !backdrop.classList.contains('hidden')) {
+          backdrop.classList.add('hidden');
+        }
       }
 
       if (tabId === 'map') {
@@ -53119,6 +53299,10 @@
 
     // Explicit window bindings for global UI interactions and event handlers
     window.switchTab = switchTab;
+    window.toggleMobileSidebar = toggleMobileSidebar;
+    window.setFilterPreset = setFilterPreset;
+    window.setFilterPresetBranch = setFilterPresetBranch;
+    window.searchCaseStudy = searchCaseStudy;
     window.setBranchFilter = setBranchFilter;
     window.toggleTruckDropdown = toggleTruckDropdown;
     window.setMapPinFilter = setMapPinFilter;
