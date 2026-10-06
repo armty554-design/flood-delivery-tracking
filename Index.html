@@ -46987,6 +46987,24 @@
       }
     }
 
+    // Helper function to parse dates into timestamp for reliable chronological sorting
+    function parseDateForSort(dStr) {
+      if (!dStr) return 0;
+      const s = String(dStr).trim();
+      if (s.includes('/')) {
+        const parts = s.split(',')[0].trim().split('/');
+        if (parts.length === 3) {
+          const d = parseInt(parts[0], 10);
+          const m = parseInt(parts[1], 10);
+          let y = parseInt(parts[2], 10);
+          if (y > 2500) y -= 543;
+          return new Date(y, m - 1, d).getTime();
+        }
+      }
+      const t = Date.parse(s);
+      return isNaN(t) ? 0 : t;
+    }
+
     // Helper function to evaluate delivery status of a single order / attempt
     function checkOrderDeliveryStatus(order) {
       if (!order) return { isSuccess: false, isAuto: false, isFlood: false, isTransfer: false, type: 'EMPTY' };
@@ -47041,7 +47059,7 @@
         return { isSuccess: false, isAuto: false, isFlood: false, isTransfer: true, type: 'TRANSFER' };
       }
 
-      // 6. สถานะอื่นทั้งหมด (ไม่รับน้ำ, ไม่พบถังเปล่า, ปิดถนน, อาคารไม่อนุญาต, เลื่อนวันที่ส่ง, ลูกค้าไม่อยู่, ปกติ ฯลฯ) ➔ ถือว่าจัดส่งสำเร็จ
+      // 6. สถานะอื่นทั้งหมด (ไม่รับน้ำ, ไม่พบถังเปล่า, ปิดถนน, อาคารไม่อนุญาต, ลูกค้าไม่อยู่, ปกติ ฯลฯ) ➔ ถือว่าจัดส่งสำเร็จ
       return { isSuccess: true, isAuto: false, isFlood: false, isTransfer: false, type: 'NORMAL_DELIVERED' };
     }
 
@@ -47070,8 +47088,21 @@
       let hadTransfer = false;
       let totalTransferRounds = 0;
 
-      // Sort chronological
-      attempts.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+      // Sort chronological using robust self-contained date parser
+      const parseDt = typeof parseDateForSort === 'function' ? parseDateForSort : function(d) {
+        if (!d) return 0;
+        const s = String(d).trim();
+        if (s.includes('/')) {
+          const parts = s.split(',')[0].trim().split('/');
+          if (parts.length === 3) {
+            let y = parseInt(parts[2], 10);
+            if (y > 2500) y -= 543;
+            return new Date(y, parseInt(parts[1], 10) - 1, parseInt(parts[0], 10)).getTime();
+          }
+        }
+        return Date.parse(s) || 0;
+      };
+      attempts.sort((a, b) => parseDt(a.date) - parseDt(b.date));
       const latestAttempt = attempts[attempts.length - 1];
       const latestStatus = latestAttempt ? checkOrderDeliveryStatus(latestAttempt) : {};
 
@@ -47093,13 +47124,13 @@
       });
 
       // กฎการประเมินสถานะวงจรชีวิตสมาชิก (Member Lifecycle Evaluation)
-      // กฎข้อ 1 โอนงานสิ้นวัน: หากมีการจัดส่งที่ไม่ใช่สถานะโอนงานสิ้นวัน หรือน้ำท่วมเพิ่ม ให้แปลว่าสำเร็จ
+      // กฎข้อ 1 โอนงานสิ้นวัน / เลื่อนส่ง: หากมีการจัดส่งที่ไม่ใช่สถานะโอนงานสิ้นวัน หรือน้ำท่วมเพิ่ม หรือได้รับน้ำในรอบใดรอบหนึ่ง (เช่น วันที่ 2 เกิดข้อผิดพลาด แต่วันที่ 3 ลูกค้าอยู่บ้าน) ➔ ให้ถือว่าสำเร็จ และโอนสถิติไปสำเร็จของรหัสนี้
       if (hadTransfer) {
         const hasResolvedDelivery = attempts.some(a => {
           const s = checkOrderDeliveryStatus(a);
-          return !s.isTransfer && !s.isFlood;
+          return s.isSuccess && !s.isTransfer && !s.isFlood;
         });
-        if (hasResolvedDelivery) {
+        if (hasResolvedDelivery || isSuccess) {
           isSuccess = true;
           if (!isAuto) {
             accessType = 'TRANSFER_RESOLVED_DELIVERY';
@@ -47591,8 +47622,10 @@
         else g.b2c++;
 
         if (i.district) g.districts[i.district] = (g.districts[i.district] || 0) + 1;
-        const isFail = i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || i.status === 'รอน้ำลด' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง')));
-        const stKey = isFail ? 'ยังส่งไม่ได้' : (i.status === 'นัดส่งชดเชย' ? 'นัดส่งชดเชย' : (i.status === 'ลูกค้ายกเลิก' ? 'ลูกค้ายกเลิก' : 'เข้าส่งได้'));
+        const mId = i.memberId || i.id;
+        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle([i]) : {});
+        const isFail = !memEval.isAccessible && (i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || i.status === 'รอน้ำลด' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง'))));
+        const stKey = memEval.isAccessible ? 'เข้าส่งได้' : (isFail ? 'ยังส่งไม่ได้' : (i.status === 'นัดส่งชดเชย' ? 'นัดส่งชดเชย' : (i.status === 'ลูกค้ายกเลิก' ? 'ลูกค้ายกเลิก' : 'เข้าส่งได้')));
         g.statuses[stKey] = (g.statuses[stKey] || 0) + 1;
         if (i.date && (!g.latestDate || i.date > g.latestDate)) g.latestDate = i.date;
 
@@ -50052,15 +50085,19 @@
       allItems.forEach(i => {
         const m = i.memberId;
         if (!m) return;
-        const isTrans = i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน')));
+        const isTrans = i.isTransferred || i.round === 'โอนงานสิ้นวัน' || (i.transferRaw && (i.transferRaw.includes('ผู้ทำรายการ') || i.transferRaw.includes('โอนงาน'))) || (i.reason && (i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง')));
         if (isTrans) {
           memberTransferCountMap[m] = (memberTransferCountMap[m] || 0) + 1;
         }
-        const isFlood = (i.reason && (i.reason.includes('น้ำท่วม') || i.reason.includes('น้ำท่วมสูง'))) || i.status === 'รอน้ำลด';
-        const isSuccessStatus = i.status === 'ส่งสำเร็จแล้ว' || i.status === 'ลูกค้าตั้งถัง' || i.status === 'พบลูกค้า' || i.status === 'นัดส่งชดเชย';
-        const isNonFloodFail = (i.deliveryGroup === 'ยังส่งไม่ได้' || i.status === 'ยังส่งไม่ได้' || (i.reason && (i.reason.includes('ไม่สามารถเข้าส่งได้') || i.reason.includes('เกิดข้อผิดพลาด') || i.reason.includes('เลื่อนวันที่ส่ง')))) && !isFlood && !isTrans;
-        if (isSuccessStatus || isNonFloodFail) {
+        const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(m));
+        if (memEval && memEval.isAccessible) {
           memberAccessibleMap[m] = true;
+        } else {
+          const isFlood = (i.reason && (i.reason.includes('น้ำท่วม') || i.reason.includes('น้ำท่วมสูง'))) || i.status === 'รอน้ำลด';
+          const isSuccessStatus = i.status === 'ส่งสำเร็จแล้ว' || i.status === 'ลูกค้าตั้งถัง' || i.status === 'พบลูกค้า' || i.status === 'นัดส่งชดเชย' || (i.changedWater && Number(i.changedWater) > 0);
+          if (isSuccessStatus) {
+            memberAccessibleMap[m] = true;
+          }
         }
       });
 
@@ -50269,7 +50306,14 @@
 
       const kpiPercent = document.getElementById('transferTabKpiPercent');
       if (kpiPercent) {
-        kpiPercent.textContent = `คิดสถิติ 1 รหัสต่อสมาชิก (รวมทั้งสิ้น ${totalRoundsCount.toLocaleString()} รอบโอน)`;
+        let transResolvedCount = 0;
+        let transPendingCount = 0;
+        transMemberSet.forEach(mId => {
+          const memEval = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || (typeof evaluateMemberLifecycle === 'function' ? evaluateMemberLifecycle(allItems.filter(i => (i.memberId || i.id) === mId)) : {});
+          if (memEval.isAccessible) transResolvedCount++;
+          else transPendingCount++;
+        });
+        kpiPercent.textContent = `คิด 1 รหัส/สมาชิก: 🟢 สำเร็จ ${transResolvedCount.toLocaleString()} • 🔴 ค้างส่ง ${transPendingCount.toLocaleString()} (รวม ${totalRoundsCount.toLocaleString()} รอบ)`;
       }
 
       const truckMap = {};
@@ -50662,7 +50706,7 @@
       // Assemble all timeline events
       let events = [];
       if (records.length > 1) {
-        records.sort((a, b) => new Date(a.date || '2026-09-26') - new Date(b.date || '2026-09-26'));
+        records.sort((a, b) => parseDateForSort(a.date) - parseDateForSort(b.date));
         events = records.map((rec, idx) => ({
           attempt: idx + 1,
           date: rec.date || '-',
@@ -50756,7 +50800,10 @@
       } else if (hasSuccess) {
         if (evalBanner) evalBanner.className = 'p-3 rounded-xl border flex items-center justify-between bg-emerald-50 border-emerald-200 text-emerald-950 shadow-2xs';
         if (evalTitle) evalTitle.innerHTML = '🟢 สถานะประเมิน: สำเร็จ (จัดส่งเรียบร้อย)';
-        if (evalSub) evalSub.textContent = 'จัดส่งมอบน้ำดื่มเรียบร้อยแล้ว หรือไม่มีสถานะติดขัดซ้ำในรอบถัดไปตามเกณฑ์';
+        const isTransferResolved = memEval.hadTransfer || memEval.accessType === 'TRANSFER_RESOLVED_DELIVERY';
+        if (evalSub) evalSub.textContent = isTransferResolved 
+          ? 'โอนงาน/เกิดข้อผิดพลาดในรอบก่อนหน้า และเข้าจัดส่งสำเร็จเรียบร้อยแล้ว (โอนสถิติเป็นสำเร็จ)' 
+          : 'จัดส่งมอบน้ำดื่มเรียบร้อยแล้ว หรือไม่มีสถานะติดขัดซ้ำในรอบถัดไปตามเกณฑ์';
         if (headerStatusBadge) {
           headerStatusBadge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
           headerStatusBadge.textContent = '🟢 สำเร็จ';
