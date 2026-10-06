@@ -399,9 +399,10 @@
             </span>
             <button type="button" onclick="setFilterPreset('ALL')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-slate-800 text-white whitespace-nowrap transition shadow-2xs">ทั้งหมด</button>
             <button type="button" onclick="setFilterPreset('SUCCESS')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 whitespace-nowrap transition">🟢 ส่งสำเร็จ</button>
-            <button type="button" onclick="setFilterPreset('FAIL')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 whitespace-nowrap transition">🔴 ติดน้ำท่วม</button>
-            <button type="button" onclick="setFilterPreset('TRANSFER')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 whitespace-nowrap transition">🟣 งานโอน</button>
+            <button type="button" onclick="setFilterPreset('FAIL_FLOOD')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 whitespace-nowrap transition">🔴 ติดน้ำท่วม</button>
+            <button type="button" onclick="setFilterPreset('FAIL_TRANSFER')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 whitespace-nowrap transition">🟣 โอนค้างส่ง</button>
             <button type="button" onclick="setFilterPreset('AUTO_JOB30')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 whitespace-nowrap transition">⚡ Auto Job 30</button>
+            <button type="button" onclick="setFilterPreset('RESOLVED_TRANSFER')" class="preset-chip px-2.5 py-1 rounded-lg font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 whitespace-nowrap transition">🔄 ปลดล็อกงานโอน</button>
             <span class="text-slate-300 mx-1">|</span>
             <button type="button" onclick="setFilterPresetBranch('สาขารามอินทรา')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 รามอินทรา</button>
             <button type="button" onclick="setFilterPresetBranch('สาขากรุงเทพกรีฑา')" class="preset-chip px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 whitespace-nowrap transition">🏢 กรุงเทพกรีฑา</button>
@@ -464,17 +465,21 @@
             </select>
           </div>
 
-          <!-- 4. สถานะ (Status) -->
+          <!-- 4. สถานะประเมิน (Evaluation Status) -->
           <div class="space-y-1">
             <label for="globalFilterStatus" class="text-[11px] font-bold text-slate-700 flex items-center">
               <i data-lucide="check-square" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> 4. สถานะประเมิน
             </label>
-            <select id="globalFilterStatus" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
-              <option value="ALL">ทุกสถานะ (ทั้งหมด)</option>
-              <option value="SUCCESS">🟢 สำเร็จ (เข้าส่งได้ / Auto ปิด Job 30)</option>
+            <select id="globalFilterStatus" onchange="applyGlobalFilters()" class="w-full bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-2xs">
+              <option value="ALL">🎯 ทุกสถานะประเมิน (ทั้งหมด)</option>
+              <option value="SUCCESS">🟢 สำเร็จ (จัดส่งเรียบร้อย / ปลดล็อกโอนงาน)</option>
               <option value="AUTO_JOB30">⚡ สำเร็จ: Auto ปิด Job 30</option>
-              <option value="FAIL">🔴 ไม่สำเร็จ (ติดน้ำท่วมสูง / รอน้ำลด)</option>
-              <option value="TRANSFER">🟣 โอนงาน (มีประวัติโอนงาน)</option>
+              <option value="FAIL_FLOOD">🔴 ยังไม่สำเร็จ: น้ำท่วมสูงในพื้นที่ (รอน้ำลด)</option>
+              <option value="FAIL_TRANSFER">🟣 ยังไม่สำเร็จ: โอนงานค้างส่ง (รอดำเนินการ)</option>
+              <option value="FAIL">🔴 ยังไม่สำเร็จทั้งหมด (น้ำท่วม หรือ โอนงาน)</option>
+              <option value="RESOLVED_TRANSFER">🔄 ปลดล็อกโอนงานสำเร็จ (มีรอบส่งถัดไป)</option>
+              <option value="TRANSFER">🟣 งานโอนทั้งหมด (ค้างส่ง + ส่งสำเร็จ)</option>
+              <option value="FAIL_ERROR" class="hidden">⚠️ เลื่อนวันที่ส่ง</option>
             </select>
           </div>
         </div>
@@ -1334,16 +1339,20 @@
               <option value="Key Account">Key Account</option>
             </select>
 
-            <!-- Status Filter -->
-            <select id="filterStatus" onchange="applyTableFilters()" class="bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 py-2 px-2.5 focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option value="ALL">สถานะทั้งหมด</option>
-              <option value="FAIL">🔴 ยังส่งไม่ได้ทั้งหมด (น้ำท่วม + เกิดข้อผิดพลาด)</option>
-              <option value="FAIL_FLOOD">🌊 ไม่สามารถเข้าส่งได้ น้ำท่วมสูงในพื้นที่</option>
-              <option value="FAIL_ERROR">⚠️ ไม่สามารถเข้าส่งได้ เกิดข้อผิดพลาด (เลื่อนวันที่ส่ง)</option>
-              <option value="SUCCESS">🟢 เข้าส่งได้ (ลูกค้าตั้งถัง/พบลูกค้า/เลื่อนส่ง)</option>
-              <option value="นัดส่งชดเชย">🟡 นัดส่งชดเชย</option>
-              <option value="ลูกค้ายกเลิก">⚪ ลูกค้ายกเลิก</option>
-            </select>
+            <!-- สถานะประเมิน Filter (Evaluation Status) -->
+            <div class="relative">
+              <select id="filterStatus" onchange="applyTableFilters()" class="bg-blue-50/70 hover:bg-white focus:bg-white border border-blue-200 hover:border-blue-400 rounded-lg text-xs font-bold text-slate-800 py-2 pl-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition shadow-2xs">
+                <option value="ALL">🎯 สถานะประเมิน: ทั้งหมด</option>
+                <option value="SUCCESS">🟢 สำเร็จ (จัดส่งเรียบร้อย / ปลดล็อกโอนงาน)</option>
+                <option value="AUTO_JOB30">⚡ สำเร็จ: Auto ปิด Job 30</option>
+                <option value="FAIL_FLOOD">🔴 ยังไม่สำเร็จ: น้ำท่วมสูงในพื้นที่ (รอน้ำลด)</option>
+                <option value="FAIL_TRANSFER">🟣 ยังไม่สำเร็จ: โอนงานค้างส่ง (รอดำเนินการ)</option>
+                <option value="FAIL">🔴 ยังไม่สำเร็จทั้งหมด (น้ำท่วม หรือ โอนงาน)</option>
+                <option value="RESOLVED_TRANSFER">🔄 ปลดล็อกโอนงานสำเร็จ (มีรอบส่งถัดไป)</option>
+                <option value="TRANSFER">🟣 งานโอนทั้งหมด (ค้างส่ง + ส่งสำเร็จ)</option>
+                <option value="FAIL_ERROR" class="hidden">⚠️ เลื่อนวันที่ส่ง</option>
+              </select>
+            </div>
 
             <!-- Transferred Orders Filter (คอลัมน์ K) -->
             <select id="filterTransfer" onchange="applyTableFilters()" class="bg-white border border-slate-200 rounded-lg text-xs font-semibold text-purple-700 py-2 px-2.5 focus:outline-none focus:ring-1 focus:ring-purple-500">
@@ -47143,6 +47152,12 @@
       const statusVal = (document.getElementById('globalFilterStatus') && document.getElementById('globalFilterStatus').value) ? document.getElementById('globalFilterStatus').value : 'ALL';
       const searchVal = (document.getElementById('globalFilterSearch') ? document.getElementById('globalFilterSearch').value : '').trim().toLowerCase();
 
+      // Sync table toolbar filterStatus with globalFilterStatus
+      const tableFilterStatus = document.getElementById('filterStatus');
+      if (tableFilterStatus && tableFilterStatus.value !== statusVal) {
+        tableFilterStatus.value = statusVal;
+      }
+
       // Sync sidebar branch selector styling
       selectedBranch = branchVal;
       document.querySelectorAll('.branch-btn').forEach(btn => {
@@ -47178,6 +47193,12 @@
 
       window.globalMemberStatusMap = memberStatusMap;
 
+      // Check secondary table toolbar filters if present
+      const cTypeEl = document.getElementById('filterCustomerType');
+      const cTypeVal = cTypeEl ? cTypeEl.value : 'ALL';
+      const transferFilterEl = document.getElementById('filterTransfer');
+      const transferFilterVal = transferFilterEl ? transferFilterEl.value : 'ALL';
+
       filteredItems = allItems.filter(item => {
         // 1. Date filter
         if (dateVal !== 'ALL') {
@@ -47197,17 +47218,50 @@
           if (item.truck !== truckVal) return false;
         }
 
-        // 4. Status filter
+        // 4. สถานะประเมิน filter (Evaluation Status)
         if (statusVal !== 'ALL') {
           const mId = item.memberId || item.id;
           const memStatus = memberStatusMap.get(mId) || {};
-          if (statusVal === 'SUCCESS' && !memStatus.isAccessible) return false;
-          if (statusVal === 'AUTO_JOB30' && !memStatus.isAuto) return false;
-          if (statusVal === 'FAIL' && !memStatus.isPending) return false;
-          if (statusVal === 'TRANSFER' && !memStatus.hadTransfer) return false;
+          const itemStatus = checkOrderDeliveryStatus(item);
+
+          if (statusVal === 'SUCCESS') {
+            if (!memStatus.isAccessible) return false;
+          } else if (statusVal === 'AUTO_JOB30') {
+            if (!memStatus.isAuto) return false;
+          } else if (statusVal === 'FAIL') {
+            // ยังไม่สำเร็จทั้งหมด (น้ำท่วม หรือ โอนงานค้างส่ง)
+            if (!memStatus.isPending) return false;
+          } else if (statusVal === 'FAIL_FLOOD' || statusVal === 'FLOOD') {
+            // ยังไม่สำเร็จ: น้ำท่วมสูงในพื้นที่ (รอน้ำลด)
+            if (!memStatus.isPendingFlood && !itemStatus.isFlood) return false;
+          } else if (statusVal === 'FAIL_TRANSFER' || statusVal === 'PENDING_TRANSFER') {
+            // ยังไม่สำเร็จ: โอนงานค้างส่ง (รอดำเนินการ)
+            if (!memStatus.isPendingTransfer) return false;
+          } else if (statusVal === 'RESOLVED_TRANSFER') {
+            // ปลดล็อกโอนงานสำเร็จ (มีประวัติโอนงาน และรอบส่งสำเร็จ)
+            if (!memStatus.hadTransfer || !memStatus.isAccessible) return false;
+          } else if (statusVal === 'TRANSFER') {
+            // มีประวัติโอนงานทั้งหมด (ทั้งค้างส่ง และส่งสำเร็จ)
+            if (!memStatus.hadTransfer && !itemStatus.isTransfer) return false;
+          } else if (statusVal === 'FAIL_ERROR') {
+            const isError = item.reason && (item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง'));
+            if (!isError) return false;
+          }
         }
 
-        // 5. Search filter
+        // 5. Customer Type filter
+        if (cTypeVal !== 'ALL' && item.customerType !== cTypeVal) {
+          return false;
+        }
+
+        // 6. Transfer type filter
+        if (transferFilterVal !== 'ALL') {
+          const isTransfer = item.isTransferred || item.round === 'โอนงานสิ้นวัน' || (item.transferRaw && (item.transferRaw.includes('ผู้ทำรายการ') || item.transferRaw.includes('โอนงาน')));
+          if (transferFilterVal === 'TRANSFERRED' && !isTransfer) return false;
+          if (transferFilterVal === 'NORMAL' && isTransfer) return false;
+        }
+
+        // 7. Search filter
         if (searchVal) {
           const mId = (item.memberId || '').toLowerCase();
           const name = (item.name || '').toLowerCase();
@@ -47254,6 +47308,12 @@
       if (t) t.value = 'ALL';
       const s = document.getElementById('globalFilterStatus');
       if (s) s.value = 'ALL';
+      const ts = document.getElementById('filterStatus');
+      if (ts) ts.value = 'ALL';
+      const ct = document.getElementById('filterCustomerType');
+      if (ct) ct.value = 'ALL';
+      const tr = document.getElementById('filterTransfer');
+      if (tr) tr.value = 'ALL';
       const q = document.getElementById('globalFilterSearch');
       if (q) q.value = '';
       const tSearch = document.getElementById('tableSearch');
@@ -50323,52 +50383,12 @@
     }
 
     function applyTableFilters() {
-      const q = document.getElementById('tableSearch').value.toLowerCase().trim();
-      const cType = document.getElementById('filterCustomerType').value;
-      const status = document.getElementById('filterStatus').value;
-      const filterTransferEl = document.getElementById('filterTransfer');
-      const transferFilter = filterTransferEl ? filterTransferEl.value : 'ALL';
-
-      let list = allItems.filter(item => {
-        if (selectedBranch !== 'ALL' && item.branch !== selectedBranch) return false;
-        if (selectedTrucks.size > 0 && !selectedTrucks.has(item.truck)) return false;
-        if (cType !== 'ALL' && item.customerType !== cType) return false;
-        if (status !== 'ALL') {
-          const mId = item.memberId || item.id;
-          const memStatus = (window.globalMemberStatusMap && window.globalMemberStatusMap.get(mId)) || evaluateMemberLifecycle([item]);
-          const itemStatus = checkOrderDeliveryStatus(item);
-
-          if (status === 'SUCCESS') {
-            if (!memStatus.isAccessible) return false;
-          } else if (status === 'FAIL') {
-            if (memStatus.isAccessible) return false;
-          } else if (status === 'FAIL_FLOOD') {
-            if (!memStatus.isPendingFlood && !itemStatus.isFlood) return false;
-          } else if (status === 'FAIL_ERROR') {
-            const isError = item.reason && (item.reason.includes('เกิดข้อผิดพลาด') || item.reason.includes('เลื่อนวันที่ส่ง'));
-            if (!isError) return false;
-          } else if ((item.status || '') !== status) {
-            return false;
-          }
-        }
-
-        const isTransfer = item.isTransferred || item.round === 'โอนงานสิ้นวัน' || (item.transferRaw && (item.transferRaw.includes('ผู้ทำรายการ') || item.transferRaw.includes('โอนงาน')));
-        if (transferFilter === 'TRANSFERRED' && !isTransfer) return false;
-        if (transferFilter === 'NORMAL' && isTransfer) return false;
-
-        if (q) {
-          const transferInfo = (item.transferDate || '') + ' ' + (item.transferOperator || '') + ' ' + (item.transferRaw || '');
-          const text = (item.memberId + ' ' + item.name + ' ' + item.truck + ' ' + item.address + ' ' + item.district + ' ' + transferInfo).toLowerCase();
-          if (!text.includes(q)) return false;
-        }
-        return true;
-      });
-
-      filteredItems = list;
-      currentPage = 1;
-      renderTable();
-      updateMapPins();
-      if (typeof updateTableCharts === 'function') updateTableCharts();
+      const tableFilterStatus = document.getElementById('filterStatus');
+      const globalStatus = document.getElementById('globalFilterStatus');
+      if (tableFilterStatus && globalStatus && globalStatus.value !== tableFilterStatus.value) {
+        globalStatus.value = tableFilterStatus.value;
+      }
+      applyGlobalFilters();
     }
 
     function changePageSize() {
