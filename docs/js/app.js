@@ -251,7 +251,7 @@ function switchPage(pageId) {
   } else if (pageId === 'page-cctv') {
     const iframe = document.getElementById('cctvPortalIframe');
     if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-      iframe.src = iframe.getAttribute('data-src') || 'https://trafficvision.in.th/';
+      iframe.src = iframe.getAttribute('data-src') || 'https://traffic.longdo.com/';
     }
   } else if (pageId === 'page-admin') {
     updateAdminAuthUI();
@@ -910,8 +910,8 @@ const CCTV_SOURCES = {
   },
   DOH: {
     name: 'DOH Highway CCTV (กรมทางหลวง & M-Flow / มอเตอร์เวย์ สตรีมสด)',
-    url: 'https://www.doh-cctv.com/',
-    embedUrl: 'https://www.doh-cctv.com/',
+    url: 'https://highwaytraffic.go.th/',
+    embedUrl: 'https://highwaytraffic.go.th/',
     isWater: false
   },
   WATER: {
