@@ -624,6 +624,18 @@ function applyMapFilters() {
   let floodCount = 0;
   let transferCount = 0;
 
+  const floodIcon = L.divIcon({
+    className: 'custom-pin-pending',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+
+  const transferIcon = L.divIcon({
+    className: 'custom-pin-transfer',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7]
+  });
+
   pendingList.forEach(item => {
     // 1. Branch Filter
     if (branch !== 'ALL' && item.branch !== branch) return;
@@ -658,16 +670,13 @@ function applyMapFilters() {
       floodCount++;
     }
 
-    const pinClass = isTransfer ? 'custom-pin-transfer' : 'custom-pin-pending';
-    const icon = L.divIcon({
-      className: pinClass,
-      iconSize: [16, 16],
-      iconAnchor: [8, 8]
+    const marker = L.marker([item.lat, item.lng], {
+      icon: isTransfer ? transferIcon : floodIcon,
+      riseOnHover: true
     });
 
-    const marker = L.marker([item.lat, item.lng], { icon: icon });
-
-    const popupHtml = `
+    // Lazy on-demand popup generation for maximum performance
+    marker.bindPopup(() => `
       <div style="font-family: 'Prompt', sans-serif; font-size: 13px; line-height: 1.4; min-width: 240px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
           <span style="font-weight: 800; color: #1e3a8a;">#${item.memberId}</span>
@@ -687,9 +696,8 @@ function applyMapFilters() {
           <strong>ที่อยู่:</strong> ${item.address || 'กรุงเทพมหานคร'}
         </div>
       </div>
-    `;
+    `);
 
-    marker.bindPopup(popupHtml);
     AppState.mapMarkersGroup.addLayer(marker);
   });
 
