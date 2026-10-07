@@ -85,42 +85,42 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col lg:flex-row antialiased font-sans">
+<body class="bg-blue-50/20 text-slate-800 min-h-screen flex flex-col lg:flex-row antialiased font-sans">
 
   <!-- Mobile Sidebar Backdrop Overlay -->
-  <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-950/70 z-30 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
+  <div id="mobileSidebarBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-blue-950/40 z-30 hidden lg:hidden backdrop-blur-xs transition-opacity"></div>
 
   <!-- ========================================================================= -->
-  <!-- LEFT SIDEBAR NAVIGATION (ปรับแท็บไปซ้ายมือ) -->
+  <!-- LEFT SIDEBAR NAVIGATION (ธีม ฟ้าขาว สไตล์ Modern Executive) -->
   <!-- ========================================================================= -->
-  <aside id="appSidebar" class="w-full lg:w-72 bg-slate-900 text-white shrink-0 border-r border-slate-800 flex flex-col justify-between z-40 shadow-2xl fixed inset-y-0 left-0 -translate-x-full lg:translate-x-0 lg:static lg:min-h-screen lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto transition-transform duration-300">
+  <aside id="appSidebar" class="w-full lg:w-72 bg-white text-slate-800 shrink-0 border-r border-blue-100 flex flex-col justify-between z-40 shadow-xl shadow-blue-900/5 fixed inset-y-0 left-0 -translate-x-full lg:translate-x-0 lg:static lg:min-h-screen lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto transition-transform duration-300">
     
     <!-- Sidebar Top: Brand & Menu -->
-    <div class="p-4 sm:p-5 space-y-5">
+    <div class="p-4 sm:p-5 space-y-4">
       <!-- Brand Logo & Title -->
-      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+      <div class="flex items-center justify-between pb-4 border-b border-blue-100">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/30 shrink-0">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
             <i data-lucide="droplets" class="w-6 h-6 text-white"></i>
           </div>
           <div>
-            <h1 class="text-sm font-bold tracking-tight text-white leading-tight">ศูนย์ติดตามการจัดส่งน้ำท่วม</h1>
+            <h1 class="text-sm font-bold tracking-tight text-slate-900 leading-tight">ศูนย์ติดตามการจัดส่งน้ำท่วม</h1>
             <div class="flex items-center space-x-1.5 mt-0.5">
-              <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30">4 สาขา</span>
-              <span class="text-[10px] text-slate-400">BCP Fleet Crisis</span>
+              <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-blue-50 text-blue-700 border border-blue-200">4 สาขา</span>
+              <span class="text-[10px] text-slate-500 font-medium">BCP Fleet Command</span>
             </div>
           </div>
         </div>
-        <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition" title="ปิดเมนู">
+        <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-1.5 text-slate-500 hover:text-slate-900 rounded-lg hover:bg-blue-50 transition" title="ปิดเมนู">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <!-- Navigation Tabs (Vertical List) -->
       <div class="space-y-1">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 py-1 flex items-center justify-between">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-blue-900/70 px-3 py-1 flex items-center justify-between">
           <span>เมนูหลักระดับผู้บริหาร</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-semibold">4 หน้าหลัก</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-semibold">4 หน้าหลัก</span>
         </div>
         
         <!-- 1. Executive Crisis Backlog & Attempts Tracker (PRIMARY EXECUTIVE ACTIVE DEFAULT) -->
@@ -130,106 +130,106 @@
         </button>
 
         <!-- 2. Flooded Routes Map & Weather/Forecast Intel -->
-        <button onclick="switchTab('routes')" id="tabBtn-routes" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-          <span class="flex items-center"><i data-lucide="route" class="w-4 h-4 mr-2.5 text-amber-400"></i> 2. เส้นทางเดินรถ & สภาพอากาศ</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-500/20 text-amber-300">8 สายทาง</span>
+        <button onclick="switchTab('routes')" id="tabBtn-routes" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+          <span class="flex items-center"><i data-lucide="route" class="w-4 h-4 mr-2.5 text-amber-500"></i> 2. เส้นทางเดินรถ & สภาพอากาศ</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200">8 สายทาง</span>
         </button>
 
         <!-- 3. Water Monitoring & Live CCTV -->
-        <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-          <span class="flex items-center"><i data-lucide="waves" class="w-4 h-4 mr-2.5 text-cyan-400"></i> 3. ระดับน้ำ & ข่าวสารน้ำท่วม</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-cyan-500/20 text-cyan-300">โทรมาตร</span>
+        <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+          <span class="flex items-center"><i data-lucide="waves" class="w-4 h-4 mr-2.5 text-cyan-600"></i> 3. ระดับน้ำ & ข่าวสารน้ำท่วม</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">โทรมาตร</span>
         </button>
 
         <!-- 4. Dedicated Live CCTV Surveillance Portal (1,800+ Live Cams) -->
-        <button onclick="switchTab('cctv')" id="tabBtn-cctv" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-          <span class="flex items-center"><i data-lucide="video" class="w-4 h-4 mr-2.5 text-emerald-400"></i> 4. พอร์ทัลกล้องสดออนไลน์</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-300 animate-pulse">1,800+ จุด LIVE</span>
+        <button onclick="switchTab('cctv')" id="tabBtn-cctv" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+          <span class="flex items-center"><i data-lucide="video" class="w-4 h-4 mr-2.5 text-blue-600"></i> 4. พอร์ทัลกล้องสดออนไลน์</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 animate-pulse">1,800+ จุด LIVE</span>
         </button>
       </div>
 
       <!-- Collapsible Secondary Operational Tools Menu -->
-      <div class="pt-2 border-t border-slate-800 space-y-1">
-        <button type="button" onclick="toggleSecondaryMenu()" id="btnToggleSecondaryMenu" class="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:text-slate-200 transition rounded-lg hover:bg-slate-800/60">
-          <span class="flex items-center"><i data-lucide="layers" class="w-3.5 h-3.5 mr-1.5 text-slate-400"></i> เครื่องมือปฏิบัติการเพิ่มเติม</span>
+      <div class="pt-2 border-t border-blue-100 space-y-1">
+        <button type="button" onclick="toggleSecondaryMenu()" id="btnToggleSecondaryMenu" class="w-full flex items-center justify-between px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-blue-900/70 hover:text-blue-900 transition rounded-lg hover:bg-blue-50/60">
+          <span class="flex items-center"><i data-lucide="layers" class="w-3.5 h-3.5 mr-1.5 text-blue-500"></i> เครื่องมือปฏิบัติการเพิ่มเติม</span>
           <i data-lucide="chevron-down" id="secondaryMenuChevron" class="w-3.5 h-3.5 transition-transform duration-200"></i>
         </button>
 
         <div id="secondaryMenuContainer" class="space-y-1">
           <!-- Table -->
-          <button onclick="switchTab('table')" id="tabBtn-table" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-            <span class="flex items-center"><i data-lucide="table" class="w-3.5 h-3.5 mr-2 text-slate-400"></i> ตารางข้อมูล & เคสจริง</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">ตาราง</span>
+          <button onclick="switchTab('table')" id="tabBtn-table" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+            <span class="flex items-center"><i data-lucide="table" class="w-3.5 h-3.5 mr-2 text-blue-500"></i> ตารางข้อมูล & เคสจริง</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-medium">ตาราง</span>
           </button>
 
           <!-- Map -->
-          <button onclick="switchTab('map')" id="tabBtn-map" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-            <span class="flex items-center"><i data-lucide="map-pin" class="w-3.5 h-3.5 mr-2 text-slate-400"></i> แผนที่พิกัดจัดส่ง</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">พิกัด</span>
+          <button onclick="switchTab('map')" id="tabBtn-map" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+            <span class="flex items-center"><i data-lucide="map-pin" class="w-3.5 h-3.5 mr-2 text-blue-500"></i> แผนที่พิกัดจัดส่ง</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-medium">พิกัด</span>
           </button>
 
           <!-- Analytics Dashboard -->
-          <button onclick="switchTab('analytics')" id="tabBtn-analytics" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-            <span class="flex items-center"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5 mr-2 text-slate-400"></i> แดชบอร์ดสถิติ & กราฟ</span>
+          <button onclick="switchTab('analytics')" id="tabBtn-analytics" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+            <span class="flex items-center"><i data-lucide="bar-chart-3" class="w-3.5 h-3.5 mr-2 text-indigo-500"></i> แดชบอร์ดสถิติ & กราฟ</span>
           </button>
 
           <!-- Trucks Fleet -->
-          <button onclick="switchTab('trucks')" id="tabBtn-trucks" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-            <span class="flex items-center"><i data-lucide="truck" class="w-3.5 h-3.5 mr-2 text-blue-400"></i> สรุปแยกรายคัน</span>
+          <button onclick="switchTab('trucks')" id="tabBtn-trucks" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+            <span class="flex items-center"><i data-lucide="truck" class="w-3.5 h-3.5 mr-2 text-blue-600"></i> สรุปแยกรายคัน</span>
           </button>
 
           <!-- Transfers & Postponed -->
-          <button onclick="switchTab('transfers')" id="tabBtn-transfers" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-300 hover:bg-slate-800 hover:text-white">
-            <span class="flex items-center"><i data-lucide="repeat" class="w-3.5 h-3.5 mr-2 text-purple-400"></i> สรุปงานโอน & เลื่อนส่ง</span>
-            <span id="tabBadgeTransfers" class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-purple-500/20 text-purple-300">619</span>
+          <button onclick="switchTab('transfers')" id="tabBtn-transfers" class="tab-btn w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+            <span class="flex items-center"><i data-lucide="repeat" class="w-3.5 h-3.5 mr-2 text-purple-600"></i> สรุปงานโอน & เลื่อนส่ง</span>
+            <span id="tabBadgeTransfers" class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-purple-50 text-purple-700 border border-purple-200">619</span>
           </button>
         </div>
       </div>
 
       <!-- Quick Branch Selector in Sidebar -->
-      <div class="pt-3 border-t border-slate-800 space-y-1.5">
-        <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3">กรองพื้นที่ 4 สาขา</div>
+      <div class="pt-3 border-t border-blue-100 space-y-1.5">
+        <div class="text-[11px] font-bold uppercase tracking-wider text-blue-900/70 px-3">กรองพื้นที่ 4 สาขา</div>
         <div class="grid grid-cols-1 gap-1">
-          <button onclick="setBranchFilter('ALL')" id="btnBranch-ALL" class="branch-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between bg-slate-800 border border-blue-500 text-blue-300 transition">
+          <button onclick="setBranchFilter('ALL')" id="btnBranch-ALL" class="branch-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between bg-blue-50 border border-blue-300 text-blue-800 transition">
             <span>ภาพรวมทุกสาขา</span>
-            <span id="badge-ALL" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300">...</span>
+            <span id="badge-ALL" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">...</span>
           </button>
-          <button onclick="setBranchFilter('สาขากรุงเทพกรีฑา')" id="btnBranch-สาขากรุงเทพกรีฑา" class="branch-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <button onclick="setBranchFilter('สาขากรุงเทพกรีฑา')" id="btnBranch-สาขากรุงเทพกรีฑา" class="branch-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition">
             <span>สาขากรุงเทพกรีฑา</span>
-            <span id="badge-krungthep" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-500/20 text-red-300">...</span>
+            <span id="badge-krungthep" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-red-100 text-red-700">...</span>
           </button>
-          <button onclick="setBranchFilter('สาขารามอินทรา')" id="btnBranch-สาขารามอินทรา" class="branch-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <button onclick="setBranchFilter('สาขารามอินทรา')" id="btnBranch-สาขารามอินทรา" class="branch-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition">
             <span>สาขารามอินทรา</span>
-            <span id="badge-ramindra" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">...</span>
+            <span id="badge-ramindra" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">...</span>
           </button>
-          <button onclick="setBranchFilter('สาขาสุขุมวิท 50')" id="btnBranch-สาขาสุขุมวิท 50" class="branch-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <button onclick="setBranchFilter('สาขาสุขุมวิท 50')" id="btnBranch-สาขาสุขุมวิท 50" class="branch-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition">
             <span>สาขาสุขุมวิท 50</span>
-            <span id="badge-sukhumvit" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">...</span>
+            <span id="badge-sukhumvit" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">...</span>
           </button>
-          <button onclick="setBranchFilter('สาขาพระราม 3')" id="btnBranch-สาขาพระราม 3" class="branch-btn w-full text-left px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-between text-slate-400 hover:bg-slate-800 hover:text-white transition">
+          <button onclick="setBranchFilter('สาขาพระราม 3')" id="btnBranch-สาขาพระราม 3" class="branch-btn w-full text-left px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition">
             <span>สาขาพระราม 3</span>
-            <span id="badge-rama3" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">...</span>
+            <span id="badge-rama3" class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">...</span>
           </button>
         </div>
       </div>
     </div>
 
     <!-- Quick Action: Supabase Uploader -->
-    <div class="px-4 py-2.5 border-t border-slate-800">
-      <button type="button" onclick="openSupabaseUploadModal()" class="w-full py-2 px-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-600 border border-emerald-500/30 hover:border-emerald-500 text-emerald-300 hover:text-white text-xs font-semibold flex items-center justify-center space-x-2 transition shadow-xs group">
-        <i data-lucide="upload-cloud" class="w-4 h-4 text-emerald-400 group-hover:text-white transition"></i>
+    <div class="px-4 py-2.5 border-t border-blue-100">
+      <button type="button" onclick="openSupabaseUploadModal()" class="w-full py-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-600 border border-blue-200 hover:border-blue-600 text-blue-700 hover:text-white text-xs font-semibold flex items-center justify-center space-x-2 transition shadow-xs group">
+        <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-600 group-hover:text-white transition"></i>
         <span>นำเข้าข้อมูล Supabase</span>
       </button>
     </div>
 
     <!-- Sidebar Bottom: System Info & Credit -->
-    <div class="p-4 border-t border-slate-800 space-y-2 bg-slate-950/50">
-      <div class="text-[11px] text-slate-400 flex items-center">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 mr-2 animate-pulse"></span>
-        <span>Supabase Realtime Cloud</span>
+    <div class="p-4 border-t border-blue-100 space-y-2 bg-blue-50/40">
+      <div class="text-[11px] text-slate-500 flex items-center">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+        <span class="font-medium">Supabase Realtime Cloud</span>
       </div>
-      <div class="text-[11px] text-slate-400 pt-1.5 border-t border-slate-800/80">
-        พัฒนาและดูแลระบบโดย: <strong class="text-white font-bold">คุณวุฒิชัย (Wuttichai)</strong>
+      <div class="text-[11px] text-slate-500 pt-1.5 border-t border-blue-100">
+        พัฒนาและดูแลระบบโดย: <strong class="text-blue-900 font-bold">คุณวุฒิชัย (Wuttichai)</strong>
       </div>
     </div>
   </aside>
@@ -239,12 +239,12 @@
   <!-- ========================================================================= -->
   <div class="flex-1 min-w-0 flex flex-col min-h-screen">
     
-    <!-- Top Action Bar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-20 px-4 sm:px-6 py-3 shadow-xs">
+    <!-- Top Action Bar (ธีม ฟ้าขาว Executive Blue & White) -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-blue-100 sticky top-0 z-20 px-4 sm:px-6 py-3 shadow-sm shadow-blue-900/5">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <!-- Left: Mobile Menu Button + System Status -->
         <div class="flex items-center space-x-3">
-          <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition" title="เปิดเมนูนำทาง">
+          <button type="button" onclick="toggleMobileSidebar()" class="lg:hidden p-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition" title="เปิดเมนูนำทาง">
             <i data-lucide="menu" class="w-5 h-5"></i>
           </button>
           <div class="flex items-center space-x-2">
@@ -255,17 +255,17 @@
         </div>
 
         <!-- Center: Executive 4 Core Tabs Pills (Desktop & Tablet Quick Navigation) -->
-        <div class="hidden xl:flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/90 shadow-2xs space-x-1">
-          <button type="button" onclick="switchTab('summary')" id="headerTab-summary" class="header-tab-pill active px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center bg-white text-blue-700 shadow-xs border border-blue-100">
-            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1.5 text-red-500"></i> 1. ผู้ยังไม่ได้รับน้ำ (26 ก.ย.)
+        <div class="hidden xl:flex items-center bg-blue-50/70 p-1 rounded-2xl border border-blue-200/80 shadow-2xs space-x-1">
+          <button type="button" onclick="switchTab('summary')" id="headerTab-summary" class="header-tab-pill active px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center bg-blue-600 text-white shadow-xs">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1.5 text-red-200"></i> 1. ผู้ยังไม่ได้รับน้ำ (26 ก.ย.)
           </button>
-          <button type="button" onclick="switchTab('routes')" id="headerTab-routes" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center">
+          <button type="button" onclick="switchTab('routes')" id="headerTab-routes" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-blue-700 hover:bg-white/80 transition flex items-center">
             <i data-lucide="route" class="w-3.5 h-3.5 mr-1.5 text-amber-500"></i> 2. เส้นทางเดินรถ & สภาพอากาศ
           </button>
-          <button type="button" onclick="switchTab('water')" id="headerTab-water" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center">
+          <button type="button" onclick="switchTab('water')" id="headerTab-water" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-blue-700 hover:bg-white/80 transition flex items-center">
             <i data-lucide="waves" class="w-3.5 h-3.5 mr-1.5 text-cyan-600"></i> 3. ระดับน้ำ & ข่าวสาร
           </button>
-          <button type="button" onclick="switchTab('cctv')" id="headerTab-cctv" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center">
+          <button type="button" onclick="switchTab('cctv')" id="headerTab-cctv" class="header-tab-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-blue-700 hover:bg-white/80 transition flex items-center">
             <i data-lucide="video" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i> 4. กล้องสดออนไลน์ (1,800+ จุด)
           </button>
         </div>
@@ -274,7 +274,7 @@
         <div class="flex items-center flex-wrap gap-2 sm:gap-2.5">
           <!-- Truck Multi-Select Dropdown with Search -->
           <div class="relative" id="truckDropdownWrapper">
-            <button type="button" onclick="toggleTruckDropdown(event)" id="truckDropdownBtn" class="inline-flex items-center justify-between px-3 py-1.5 bg-slate-50 border border-slate-300 hover:border-blue-500 rounded-xl text-xs font-semibold text-slate-700 shadow-2xs transition min-w-[170px] sm:min-w-[200px]">
+            <button type="button" onclick="toggleTruckDropdown(event)" id="truckDropdownBtn" class="inline-flex items-center justify-between px-3 py-1.5 bg-blue-50/40 border border-blue-200 hover:border-blue-400 hover:bg-white rounded-xl text-xs font-semibold text-slate-700 shadow-2xs transition min-w-[170px] sm:min-w-[200px]">
               <span class="flex items-center truncate" id="truckDropdownLabel">
                 <i data-lucide="truck" class="w-3.5 h-3.5 mr-1.5 text-blue-600 shrink-0"></i>
                 <span class="truncate">เบอร์รถ: ทุกคัน</span>
@@ -283,14 +283,14 @@
             </button>
 
             <!-- Dropdown Menu Popover -->
-            <div id="truckDropdownMenu" class="hidden absolute right-0 mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-slate-200 z-50 p-3 space-y-2 text-xs">
+            <div id="truckDropdownMenu" class="hidden absolute right-0 mt-1.5 w-80 bg-white rounded-xl shadow-xl border border-blue-100 z-50 p-3 space-y-2 text-xs">
               <div class="relative">
                 <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                <input type="text" id="truckSearchInput" oninput="filterTruckCheckboxes()" placeholder="ค้นหาเบอร์รถ หรือ เขต..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <input type="text" id="truckSearchInput" oninput="filterTruckCheckboxes()" placeholder="ค้นหาเบอร์รถ หรือ เขต..." class="w-full pl-8 pr-3 py-1.5 bg-blue-50/30 border border-blue-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
               </div>
-              <div class="flex items-center justify-between text-[11px] px-1 text-slate-500 border-b border-slate-100 pb-1.5">
+              <div class="flex items-center justify-between text-[11px] px-1 text-slate-500 border-b border-blue-100 pb-1.5">
                 <button type="button" onclick="selectAllTrucksInBranch()" class="text-blue-600 hover:underline font-semibold">✓ เลือกทั้งหมด</button>
-                <span id="truckFilterBranchNote" class="text-slate-500 text-[10px] font-medium bg-slate-100 px-2 py-0.5 rounded-full">สาขา: ทั้งหมด</span>
+                <span id="truckFilterBranchNote" class="text-blue-700 text-[10px] font-medium bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">สาขา: ทั้งหมด</span>
                 <button type="button" onclick="clearTruckSelection()" class="text-slate-500 hover:text-red-500 hover:underline font-semibold">✗ ล้างค่า</button>
               </div>
               <div id="truckCheckboxList" class="max-h-56 overflow-y-auto custom-scrollbar space-y-1 pr-1">
@@ -300,7 +300,7 @@
           </div>
 
           <!-- Font Size Controls (Global Accessibility Zoom for Visually Impaired) -->
-          <div class="flex items-center bg-slate-100 border border-slate-300 rounded-xl p-0.5" title="ปรับขนาดตัวอักษรสำหรับผู้ที่มองไม่ชัด">
+          <div class="flex items-center bg-blue-50/60 border border-blue-200 rounded-xl p-0.5" title="ปรับขนาดตัวอักษรสำหรับผู้ที่มองไม่ชัด">
             <button onclick="cycleFontScale(-1)" class="w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold text-slate-700 hover:text-blue-600 hover:bg-white transition" title="ย่อตัวอักษร (ก-)">
               ก-
             </button>
@@ -312,58 +312,58 @@
             </button>
           </div>
 
-          <button onclick="reloadData()" id="btnRefresh" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl border border-slate-300 transition shadow-2xs active:scale-95">
+          <button onclick="reloadData()" id="btnRefresh" class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-slate-700 bg-white hover:bg-blue-50 rounded-xl border border-blue-200 transition shadow-2xs active:scale-95">
             <i data-lucide="refresh-cw" id="refreshIcon" class="w-3.5 h-3.5 mr-1.5"></i>
             รีเฟรช
           </button>
 
-          <button onclick="openSupabaseUploadModal()" id="btnOpenUploadModal" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition shadow-xs shadow-emerald-600/30 active:scale-95" title="อัปโหลดและนำเข้าข้อมูลเข้าสู่ Supabase Cloud">
+          <button onclick="openSupabaseUploadModal()" id="btnOpenUploadModal" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs shadow-blue-600/30 active:scale-95" title="อัปโหลดและนำเข้าข้อมูลเข้าสู่ Supabase Cloud">
             <i data-lucide="upload-cloud" class="w-3.5 h-3.5 mr-1.5"></i>
             อัปโหลดเข้า Supabase
           </button>
 
-          <button onclick="exportCSV()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs shadow-blue-600/30 active:scale-95">
+          <button onclick="exportCSV()" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-700 rounded-xl transition shadow-xs shadow-sky-600/30 active:scale-95">
             <i data-lucide="download" class="w-3.5 h-3.5 mr-1.5"></i>
             ส่งออก CSV
           </button>
 
-          <a href="https://github.com/armty554-design/flood-delivery-tracking" target="_blank" class="p-1.5 text-slate-500 hover:text-slate-900 rounded-xl hover:bg-slate-100 transition" title="ดู GitHub Repository">
+          <a href="https://github.com/armty554-design/flood-delivery-tracking" target="_blank" class="p-1.5 text-slate-500 hover:text-blue-700 rounded-xl hover:bg-blue-50 transition" title="ดู GitHub Repository">
             <i data-lucide="github" class="w-4 h-4"></i>
           </a>
         </div>
       </div>
     </header>
 
-    <!-- Main Content Container -->
+    <!-- Main Content Container (ธีม ฟ้าขาว ผืนหลังนุ่มนวล) -->
     <main class="flex-1 w-full p-4 sm:p-6 lg:p-7 space-y-6">
 
       <!-- Mobile Horizontal Navigation Tabs (Pill Buttons for quick mobile navigation) -->
       <div class="lg:hidden flex items-center space-x-1.5 overflow-x-auto pb-1 px-1 custom-scrollbar text-xs">
         <button type="button" onclick="switchTab('summary')" id="mobileTab-summary" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-bold bg-blue-600 text-white whitespace-nowrap shadow-xs flex items-center">
-          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1 text-red-300"></i> 1. ผู้ยังไม่ได้รับน้ำ (343)
+          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1 text-red-200"></i> 1. ผู้ยังไม่ได้รับน้ำ (343)
         </button>
-        <button type="button" onclick="switchTab('routes')" id="mobileTab-routes" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('routes')" id="mobileTab-routes" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="route" class="w-3.5 h-3.5 mr-1 text-amber-600"></i> 2. เส้นทาง & น้ำท่วม
         </button>
-        <button type="button" onclick="switchTab('water')" id="mobileTab-water" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('water')" id="mobileTab-water" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-cyan-600"></i> 3. ระดับน้ำ & ข่าวสาร
         </button>
-        <button type="button" onclick="switchTab('cctv')" id="mobileTab-cctv" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('cctv')" id="mobileTab-cctv" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> 4. กล้องสด (1,800+)
         </button>
-        <button type="button" onclick="switchTab('table')" id="mobileTab-table" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('table')" id="mobileTab-table" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="table" class="w-3.5 h-3.5 mr-1 text-slate-500"></i> ตาราง & เคส
         </button>
-        <button type="button" onclick="switchTab('analytics')" id="mobileTab-analytics" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
-          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 mr-1 text-indigo-600"></i> แดชบอร์ด
+        <button type="button" onclick="switchTab('analytics')" id="mobileTab-analytics" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
+          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> แดชบอร์ด
         </button>
-        <button type="button" onclick="switchTab('map')" id="mobileTab-map" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('map')" id="mobileTab-map" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="map" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> แผนที่
         </button>
-        <button type="button" onclick="switchTab('transfers')" id="mobileTab-transfers" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('transfers')" id="mobileTab-transfers" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="repeat" class="w-3.5 h-3.5 mr-1 text-purple-600"></i> งานโอน
         </button>
-        <button type="button" onclick="switchTab('trucks')" id="mobileTab-trucks" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-slate-200 whitespace-nowrap flex items-center">
+        <button type="button" onclick="switchTab('trucks')" id="mobileTab-trucks" class="mobile-tab-btn px-3 py-1.5 rounded-xl font-semibold bg-white text-slate-700 border border-blue-100 hover:bg-blue-50 whitespace-nowrap flex items-center">
           <i data-lucide="truck" class="w-3.5 h-3.5 mr-1 text-amber-600"></i> รายคัน
         </button>
       </div>
@@ -373,86 +373,90 @@
     <!-- ========================================================================= -->
     <section id="tabContent-summary" class="space-y-6">
       
-      <!-- 1.1 Executive Crisis Hero Banner -->
-      <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white rounded-3xl p-5 sm:p-6 shadow-xl border border-slate-800 relative overflow-hidden">
-        <div class="absolute -right-12 -top-12 w-64 h-64 bg-red-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <!-- 1.1 Executive Crisis Hero Banner (ธีม ฟ้าขาว Royal Blue & Pristine White) -->
+      <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 text-white rounded-3xl p-5 sm:p-6 shadow-xl shadow-blue-600/15 border border-blue-400/30 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
           <div>
-            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/30 mb-2.5">
-              <span class="w-2 h-2 rounded-full bg-red-400 mr-2 animate-pulse"></span>
+            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30 backdrop-blur-xs mb-2.5">
+              <span class="w-2 h-2 rounded-full bg-white mr-2 animate-pulse"></span>
               ศูนย์ติดตามผู้ยังไม่ได้รับน้ำ • วิกฤตน้ำท่วมตั้งแต่วันที่ 26 ก.ย. ถึงปัจจุบัน
             </div>
             <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">
               ติดตามสมาชิกที่ยังไม่ได้รับน้ำ & ความพยายามเข้าจัดส่ง (Crisis Attempts Tracker)
             </h2>
-            <p class="text-xs sm:text-sm text-slate-300 mt-1.5 max-w-3xl leading-relaxed">
+            <p class="text-xs sm:text-sm text-blue-50 mt-1.5 max-w-3xl leading-relaxed">
               วิเคราะห์สถานะสมาชิกที่เกิดปัญหาน้ำท่วมและโอนงานตั้งแต่วันที่ 26 ก.ย. ทั้งหมด <strong>2,687 รายการ</strong> คัดกรอง <strong>สมาชิกที่ยังไม่ได้รับน้ำเลยจริง ๆ 343 ราย (12.8%)</strong> พร้อมตรวจสอบจำนวนครั้งที่ทีมรถเข้าส่งซ้ำในแต่ละราย เพื่อวางแผนจัดส่งชดเชยเร่งด่วน
             </p>
           </div>
           <div class="flex items-center gap-2.5 shrink-0 self-start lg:self-center">
-            <button onclick="exportCrisisReportCSV()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center shadow-sm shadow-emerald-600/30 transition active:scale-95">
-              <i data-lucide="download" class="w-4 h-4 mr-2"></i> ส่งออกรายงานวิกฤต CSV
+            <button onclick="exportCrisisReportCSV()" class="px-4 py-2.5 bg-white hover:bg-blue-50 text-blue-700 font-bold rounded-xl text-xs flex items-center shadow-md shadow-blue-900/10 transition active:scale-95">
+              <i data-lucide="download" class="w-4 h-4 mr-2 text-blue-600"></i> ส่งออกรายงานวิกฤต CSV
             </button>
-            <button onclick="renderSummaryTab()" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold rounded-xl text-xs flex items-center border border-slate-700 transition active:scale-95" title="รีเฟรชข้อมูล">
+            <button onclick="renderSummaryTab()" class="px-3 py-2.5 bg-blue-800/60 hover:bg-blue-800 text-white font-semibold rounded-xl text-xs flex items-center border border-blue-400/30 transition active:scale-95" title="รีเฟรชข้อมูล">
               <i data-lucide="refresh-cw" class="w-4 h-4"></i>
             </button>
           </div>
         </div>
 
-        <!-- 1.2 Crisis 4 Core KPI Stat Metric Tiles -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5 pt-5 border-t border-slate-800/80">
+        <!-- 1.2 Crisis 4 Core KPI Stat Metric Tiles (ธีม ฟ้าขาว การ์ดพื้นขาวตัดขอบคมชัด) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5 pt-5 border-t border-white/20">
           <!-- Tile 1: ยังไม่ได้รับน้ำ -->
-          <div class="bg-red-950/40 border border-red-500/30 rounded-2xl p-4 backdrop-blur-xs relative overflow-hidden">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-red-200 text-slate-800">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-red-300 font-bold uppercase tracking-wider flex items-center">
+              <span class="text-xs text-red-600 font-bold uppercase tracking-wider flex items-center">
                 <span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-2 animate-pulse"></span> ยังไม่ได้รับน้ำเลย
               </span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">12.8%</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200">12.8%</span>
             </div>
             <div class="flex items-baseline space-x-2 mt-2">
-              <span class="text-3xl sm:text-4xl font-black text-red-400 font-mono">343</span>
-              <span class="text-xs font-semibold text-red-200">ราย</span>
+              <span class="text-3xl sm:text-4xl font-black text-red-600 font-mono">343</span>
+              <span class="text-xs font-semibold text-slate-500">ราย</span>
             </div>
-            <span class="text-[11px] text-red-300/80 mt-1 block">น้ำท่วมสูง 341 • เลื่อนส่ง 2</span>
+            <span class="text-[11px] text-red-600/90 mt-1 block font-medium">น้ำท่วมสูง 341 • เลื่อนส่ง 2</span>
           </div>
 
           <!-- Tile 2: ส่งสำเร็จตามเงื่อนไข -->
-          <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 backdrop-blur-xs">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-emerald-200 text-slate-800">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-emerald-300 font-bold uppercase tracking-wider flex items-center">
+              <span class="text-xs text-emerald-700 font-bold uppercase tracking-wider flex items-center">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span> สำเร็จตามเงื่อนไข
               </span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">87.2%</span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">87.2%</span>
             </div>
             <div class="flex items-baseline space-x-2 mt-2">
-              <span class="text-3xl sm:text-4xl font-black text-emerald-400 font-mono">2,344</span>
-              <span class="text-xs font-semibold text-emerald-200">ราย</span>
+              <span class="text-3xl sm:text-4xl font-black text-emerald-600 font-mono">2,344</span>
+              <span class="text-xs font-semibold text-slate-500">ราย</span>
             </div>
-            <span class="text-[11px] text-emerald-300/80 mt-1 block">ส่งสำเร็จ 2,230 • ขาดส่งเหตุอื่น 114</span>
+            <span class="text-[11px] text-emerald-700/90 mt-1 block font-medium">ส่งสำเร็จ 2,230 • ขาดส่งเหตุอื่น 114</span>
           </div>
 
           <!-- Tile 3: ยอดติดปัญหาตั้งต้น -->
-          <div class="bg-slate-900/60 border border-slate-700/60 rounded-2xl p-4 backdrop-blur-xs">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-blue-200 text-slate-800">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">ยอดตั้งต้น 26 ก.ย.</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300">รวมทุกรอบ</span>
+              <span class="text-xs text-blue-700 font-bold uppercase tracking-wider flex items-center">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500 mr-2"></span> ยอดตั้งต้น 26 ก.ย.
+              </span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">รวมทุกรอบ</span>
             </div>
             <div class="flex items-baseline space-x-2 mt-2">
-              <span class="text-3xl sm:text-4xl font-black text-slate-100 font-mono">2,687</span>
-              <span class="text-xs font-semibold text-slate-400">รายการ</span>
+              <span class="text-3xl sm:text-4xl font-black text-blue-900 font-mono">2,687</span>
+              <span class="text-xs font-semibold text-slate-500">รายการ</span>
             </div>
-            <span class="text-[11px] text-slate-400 mt-1 block">ออเดอร์ที่ติดปัญหาวันเริ่มวิกฤต</span>
+            <span class="text-[11px] text-slate-500 mt-1 block">ออเดอร์ที่ติดปัญหาวันเริ่มวิกฤต</span>
           </div>
 
           <!-- Tile 4: สาขาที่ต้องส่งชดเชย -->
-          <div class="bg-purple-950/40 border border-purple-500/30 rounded-2xl p-4 backdrop-blur-xs">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-purple-200 text-slate-800">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-purple-300 font-bold uppercase tracking-wider">สาขาค้างส่ง (343 ราย)</span>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">2 สาขา</span>
+              <span class="text-xs text-purple-700 font-bold uppercase tracking-wider flex items-center">
+                <span class="w-2.5 h-2.5 rounded-full bg-purple-500 mr-2"></span> สาขาค้างส่ง (343 ราย)
+              </span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">2 สาขา</span>
             </div>
-            <div class="text-xs text-purple-200 font-semibold mt-2.5 space-y-1">
-              <div class="flex justify-between"><span>รามอินทรา:</span> <strong class="text-amber-400 font-mono font-bold text-sm">251 ราย (73.2%)</strong></div>
-              <div class="flex justify-between"><span>กรุงเทพกรีฑา:</span> <strong class="text-red-400 font-mono font-bold text-sm">92 ราย (26.8%)</strong></div>
+            <div class="text-xs text-slate-700 font-medium mt-2.5 space-y-1">
+              <div class="flex justify-between"><span>รามอินทรา:</span> <strong class="text-amber-700 font-mono font-bold text-sm">251 ราย (73.2%)</strong></div>
+              <div class="flex justify-between"><span>กรุงเทพกรีฑา:</span> <strong class="text-red-600 font-mono font-bold text-sm">92 ราย (26.8%)</strong></div>
             </div>
           </div>
         </div>
@@ -579,24 +583,24 @@
           </div>
         </div>
 
-        <!-- Crisis Search & Multi-Filters -->
+        <!-- Crisis Search & Multi-Filters (ธีม ฟ้าขาว คมชัด สบายตา) -->
         <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 text-xs pt-2">
           <div class="flex flex-wrap items-center gap-2">
             <!-- Mode Buttons Group -->
-            <div class="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 gap-1">
+            <div class="inline-flex rounded-xl border border-blue-200 bg-blue-50/60 p-1 gap-1">
               <button onclick="setCrisisFilterMode('PENDING')" id="btnCrisisMode-PENDING" class="px-3 py-1 rounded-lg font-bold transition bg-red-600 text-white shadow-xs">
                 🔴 ยังไม่ได้รับน้ำเลย (343)
               </button>
-              <button onclick="setCrisisFilterMode('RESOLVED')" id="btnCrisisMode-RESOLVED" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-emerald-700 transition">
+              <button onclick="setCrisisFilterMode('RESOLVED')" id="btnCrisisMode-RESOLVED" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-emerald-700 hover:bg-white transition">
                 🟢 สำเร็จตามเงื่อนไข (2,344)
               </button>
-              <button onclick="setCrisisFilterMode('ALL')" id="btnCrisisMode-ALL" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-slate-900 transition">
+              <button onclick="setCrisisFilterMode('ALL')" id="btnCrisisMode-ALL" class="px-3 py-1 rounded-lg font-semibold text-slate-600 hover:text-blue-900 hover:bg-white transition">
                 ทั้งหมด (2,687)
               </button>
             </div>
 
             <!-- Branch Select -->
-            <select id="crisisBranchSelect" onchange="renderCrisisTable()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-xs focus:ring-1 focus:ring-blue-500">
+            <select id="crisisBranchSelect" onchange="renderCrisisTable()" class="px-3 py-1.5 bg-white border border-blue-200 rounded-xl font-medium text-xs focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition">
               <option value="ALL">🏢 ทุกสาขา (4 สาขา)</option>
               <option value="สาขารามอินทรา">สาขารามอินทรา (251)</option>
               <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา (92)</option>
@@ -605,7 +609,7 @@
             </select>
 
             <!-- Category Filter Select -->
-            <select id="crisisCategorySelect" onchange="renderCrisisTable()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl font-medium text-xs focus:ring-1 focus:ring-blue-500">
+            <select id="crisisCategorySelect" onchange="renderCrisisTable()" class="px-3 py-1.5 bg-white border border-blue-200 rounded-xl font-medium text-xs focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition">
               <option value="ALL">ทุกสาเหตุ / สถานะ</option>
               <option value="FLOOD">🌊 น้ำท่วมสูงไม่สามารถส่งได้ (341)</option>
               <option value="POSTPONED">⏳ เลื่อนวันที่ส่ง (2)</option>
@@ -616,14 +620,14 @@
 
           <div class="relative w-full sm:w-72">
             <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
-            <input type="text" id="crisisSearchInput" oninput="renderCrisisTable()" placeholder="ค้นหารหัสสมาชิก, ชื่อ, สายรถ, ที่อยู่..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
+            <input type="text" id="crisisSearchInput" oninput="renderCrisisTable()" placeholder="ค้นหารหัสสมาชิก, ชื่อ, สายรถ, ที่อยู่..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-blue-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 hover:border-blue-400 transition">
           </div>
         </div>
 
         <!-- Crisis Data Table -->
-        <div class="overflow-x-auto rounded-2xl border border-slate-200">
+        <div class="overflow-x-auto rounded-2xl border border-blue-100 shadow-2xs">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+            <thead class="bg-blue-50/80 text-blue-900 font-bold border-b border-blue-200">
               <tr>
                 <th class="py-2.5 px-3">รหัสสมาชิก</th>
                 <th class="py-2.5 px-3">ชื่อสมาชิก / ที่อยู่</th>
@@ -715,17 +719,17 @@
           </div>
         </div>
 
-        <!-- 4-Branch Comparison Pivot Table -->
-        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-5 space-y-3">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-            <h3 class="text-sm font-bold text-slate-800 flex items-center">
+        <!-- 4-Branch Comparison Pivot Table (ธีม ฟ้าขาว) -->
+        <div class="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-blue-100 pb-3">
+            <h3 class="text-sm font-bold text-slate-900 flex items-center">
               <i data-lucide="layers" class="w-4 h-4 mr-2 text-blue-600"></i> ตารางเปรียบเทียบผลการจัดส่ง 4 สาขา (Branch Breakdown Matrix)
             </h3>
-            <span class="text-xs text-slate-500">คำนวณตามรหัสสมาชิก (คิดสถิติ 1 รหัสต่อสมาชิก) จากฐานข้อมูล Supabase</span>
+            <span class="text-xs text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">คำนวณ 1 รหัสต่อสมาชิก จากฐานข้อมูล Supabase</span>
           </div>
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto rounded-xl border border-blue-100">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+              <thead class="bg-blue-50/80 text-blue-900 font-bold border-b border-blue-200">
                 <tr>
                   <th class="py-2.5 px-3">สาขา</th>
                   <th class="py-2.5 px-3 text-right">รหัสสมาชิกทั้งหมด</th>
@@ -2084,64 +2088,87 @@
           </div>
         </div>
 
-        <!-- In-App Live CCTV Command Console (ศูนย์ควบคุมและรับชมกล้องสดภายในแอป) -->
-        <div id="cctvInAppConsole" class="bg-slate-950 text-white rounded-2xl p-4 sm:p-5 border border-slate-800 shadow-xl space-y-3.5">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
+        <!-- In-App Live CCTV Command Console (ธีม ฟ้าขาว ศูนย์ควบคุมกล้องสดอัจฉริยะ) -->
+        <div id="cctvInAppConsole" class="bg-white rounded-3xl p-5 sm:p-6 border border-blue-200 shadow-lg shadow-blue-900/5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-blue-100 pb-3">
             <div class="flex items-center space-x-2.5 truncate mr-2">
-              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-red-600 text-white animate-pulse">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-600 text-white animate-pulse">
                 <span class="w-1.5 h-1.5 rounded-full bg-white mr-1"></span> LIVE MONITOR
               </span>
-              <h4 id="inlineCctvTitle" class="text-sm sm:text-base font-bold text-slate-100 truncate">
+              <h4 id="inlineCctvTitle" class="text-sm sm:text-base font-bold text-slate-900 truncate">
                 CAM-BKK-01 • กล้องแยกกรุงเทพกรีฑา - ศรีนครินทร์
               </h4>
-              <span id="inlineCctvBranchBadge" class="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-900/60 text-blue-300 border border-blue-700/50">
+              <span id="inlineCctvBranchBadge" class="hidden md:inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">
                 สาขากรุงเทพกรีฑา
               </span>
             </div>
 
             <!-- View Modes & Controls -->
             <div class="flex items-center space-x-1.5 sm:space-x-2 shrink-0 flex-wrap gap-y-1">
-              <button type="button" onclick="setInlineCctvViewMode('liveportal')" id="btnInlineModePortal" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white transition flex items-center shadow-xs ring-1 ring-emerald-400">
-                <i data-lucide="globe" class="w-3.5 h-3.5 mr-1 text-emerald-200 animate-pulse"></i> 🌐 พอร์ทัลกล้องสดออนไลน์
-              </button>
-              <button type="button" onclick="setInlineCctvViewMode('single')" id="btnInlineModeSingle" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
+              <button type="button" onclick="setInlineCctvViewMode('single')" id="btnInlineModeSingle" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs">
                 <i data-lucide="tv" class="w-3.5 h-3.5 mr-1"></i> จอเดี่ยว (Snapshot)
               </button>
-              <button type="button" onclick="setInlineCctvViewMode('quad')" id="btnInlineModeQuad" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
+              <button type="button" onclick="setInlineCctvViewMode('quad')" id="btnInlineModeQuad" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center">
                 <i data-lucide="layout-grid" class="w-3.5 h-3.5 mr-1"></i> 4 จอแยก 4 สาขา
               </button>
-              <button type="button" onclick="toggleAutoPatrolCctv()" id="btnAutoPatrolCctv" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
-                <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-amber-400"></i> <span id="autoPatrolBtnLabel">ลาดตระเวนอัตโนมัติ</span>
+              <button type="button" onclick="setInlineCctvViewMode('liveportal')" id="btnInlineModePortal" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center">
+                <i data-lucide="globe" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> พอร์ทัลสตรีมออนไลน์
               </button>
-              <button type="button" onclick="openActiveCctvInModal()" title="ขยายหน้าต่างขนาดใหญ่" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center">
+              <button type="button" onclick="toggleAutoPatrolCctv()" id="btnAutoPatrolCctv" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center">
+                <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-amber-500"></i> <span id="autoPatrolBtnLabel">ลาดตระเวนอัตโนมัติ</span>
+              </button>
+              <button type="button" onclick="openActiveCctvInModal()" title="ขยายหน้าต่างขนาดใหญ่" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center">
                 <i data-lucide="maximize-2" class="w-3.5 h-3.5 mr-1"></i> เต็มจอ
               </button>
             </div>
           </div>
 
           <!-- Explanation & dedicated page link banner -->
-          <div class="p-2.5 bg-gradient-to-r from-blue-950/80 via-indigo-950/80 to-emerald-950/80 rounded-xl border border-blue-800/60 text-xs text-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-100 text-xs text-blue-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div class="flex items-center space-x-2">
-              <i data-lucide="info" class="w-4 h-4 text-cyan-400 shrink-0"></i>
-              <span><strong>สถานะกล้อง:</strong> โหมด <strong>"พอร์ทัลกล้องสดออนไลน์"</strong> แสดงสตรีมสดจริงแบบเรียลไทม์ (เห็นรถวิ่งจริง) • โหมด <strong>"Snapshot"</strong> คือภาพบันทึกสภาพน้ำท่วมขังเพื่อการตรวจสอบ</span>
+              <i data-lucide="shield-check" class="w-4 h-4 text-blue-600 shrink-0"></i>
+              <span><strong>ศูนย์ตรวจการณ์กล้องสด:</strong> แสดงจุดตรวจการณ์น้ำท่วมและสภาพจราจร 14 จุดหลักรอบ 4 สาขา (ไม่มีโฆษณากวนใจ) • อัปเดตสดจาก สจส. กทม. และ DDS</span>
             </div>
             <div class="flex items-center space-x-2 self-start sm:self-auto shrink-0">
-              <button type="button" onclick="setInlineCctvViewMode('liveportal')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-[11px] transition shadow-xs">
-                ดูสตรีมที่นี่
-              </button>
-              <button type="button" onclick="switchTab('cctv')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] transition shadow-xs flex items-center">
-                <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-emerald-200"></i> เปิดหน้ากล้องสดเต็มจอ ↗
+              <button type="button" onclick="switchTab('cctv')" class="px-3 py-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] transition shadow-xs flex items-center">
+                <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-blue-200"></i> เปิดหน้ากล้องสดเต็มจอ ↗
               </button>
             </div>
           </div>
 
           <!-- Auto-Patrol Progress Bar (Active in Auto-Patrol mode) -->
-          <div id="inlineCctvAutoPatrolBarContainer" class="hidden w-full bg-slate-850 rounded-full h-1 overflow-hidden">
-            <div id="inlineCctvAutoPatrolBar" class="bg-gradient-to-r from-emerald-400 to-teal-400 h-full w-0 transition-all duration-100"></div>
+          <div id="inlineCctvAutoPatrolBarContainer" class="hidden w-full bg-blue-100 rounded-full h-1.5 overflow-hidden">
+            <div id="inlineCctvAutoPatrolBar" class="bg-gradient-to-r from-blue-600 to-sky-500 h-full w-0 transition-all duration-100"></div>
           </div>
 
-          <!-- 1. Embedded Live Camera Portal Viewport (Interactive Live Stream) -->
-          <div id="inlineCctvPortalViewport" class="relative w-full aspect-video sm:aspect-[21/9] min-h-[460px] max-h-[620px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 flex flex-col">
+          <!-- 1. Video Monitor Screen (Single View Snapshot - DEFAULT ACTIVE) -->
+          <div id="inlineCctvSingleViewport" class="relative aspect-video sm:aspect-[21/9] max-h-[460px] w-full bg-slate-950 rounded-2xl overflow-hidden border-2 border-blue-200 shadow-md flex items-center justify-center">
+            <div id="inlineCctvPlayerScreen" class="w-full h-full">
+              <!-- Rendered via JS -->
+            </div>
+            <!-- In-App Camera HUD Overlay -->
+            <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded text-xs font-mono text-emerald-400 border border-emerald-500/30 flex items-center space-x-2 pointer-events-none">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span class="text-emerald-300 font-bold">● LIVE FEED</span>
+              <span class="text-slate-500">|</span>
+              <span id="inlineCctvLiveClock">2026-10-07 14:00:00 น.</span>
+            </div>
+            <div class="absolute top-3 right-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded text-xs font-mono text-slate-300 border border-slate-700/50 pointer-events-none flex items-center space-x-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              <span id="inlineCctvSourceTag">BMA TRAFFIC CCTV / LATEST SNAPSHOT</span>
+              <span id="inlineCctvBitrateHud" class="text-slate-400 hidden sm:inline">• ภาพบันทึกความเสียหาย</span>
+            </div>
+            <div class="absolute bottom-3 left-3 bg-black/85 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700/70 pointer-events-none space-y-0.5">
+              <div id="inlineCctvWaterDepthHud" class="text-xs font-bold text-amber-400">ระดับน้ำผิวจราจร: 15 ซม. (ชะลอตัวเลนซ้าย)</div>
+              <div id="inlineCctvWeatherHud" class="text-[10px] text-slate-300 font-mono">💨 ลม 12 กม./ชม. • 🌧️ ฝนสะสม 65 มม. • ระบายน้ำ 10 ลบ.ม./วิ</div>
+            </div>
+            <div class="absolute bottom-3 right-3 bg-black/85 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-700/70 pointer-events-none text-[11px] text-slate-300 font-mono">
+              <span id="inlineCctvFpsBadge">📸 ภาพบันทึกจุดน้ำท่วม</span>
+            </div>
+          </div>
+
+          <!-- 2. Embedded Live Camera Portal Viewport (Interactive Live Stream) -->
+          <div id="inlineCctvPortalViewport" class="hidden relative w-full aspect-video sm:aspect-[21/9] min-h-[460px] max-h-[620px] bg-slate-950 rounded-2xl overflow-hidden border-2 border-blue-200 flex flex-col">
             <!-- Top Controls Bar for Live Portal -->
             <div class="px-3 py-2 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
               <div class="flex items-center space-x-2">
@@ -2153,7 +2180,7 @@
               </div>
               <div class="flex items-center space-x-2">
                 <span class="text-[11px] text-slate-400 hidden md:inline">เลือกพอร์ทัล:</span>
-                <select id="livePortalSelect" onchange="switchLivePortalSource(this.value)" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+                <select id="livePortalSelect" onchange="switchLivePortalSource(this.value)" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
                   <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
                   <option value="https://world.tehx.dyndns.info/flood">JK World Flood Surveillance</option>
                 </select>
@@ -2172,35 +2199,7 @@
             </div>
           </div>
 
-          <!-- 2. Video Monitor Screen (Single View Snapshot) -->
-          <div id="inlineCctvSingleViewport" class="hidden relative aspect-video sm:aspect-[21/9] max-h-[460px] w-full bg-black rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center">
-            <div id="inlineCctvPlayerScreen" class="w-full h-full">
-              <!-- Rendered via JS -->
-            </div>
-            <!-- In-App Camera HUD Overlay -->
-            <div class="absolute top-3 left-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded text-xs font-mono text-emerald-400 border border-emerald-500/30 flex items-center space-x-2 pointer-events-none">
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span class="text-amber-300 font-bold">📸 SNAPSHOT</span>
-              <span class="text-slate-500">|</span>
-              <span class="text-[10px] text-emerald-400 font-mono">● REC LIVE FEED</span>
-              <span class="text-slate-500">|</span>
-              <span id="inlineCctvLiveClock">2026-10-06 14:00:00 น.</span>
-            </div>
-            <div class="absolute top-3 right-3 bg-black/80 backdrop-blur px-2.5 py-1 rounded text-xs font-mono text-slate-300 border border-slate-700/50 pointer-events-none flex items-center space-x-1.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-              <span id="inlineCctvSourceTag">BMA TRAFFIC CCTV / LATEST SNAPSHOT</span>
-              <span id="inlineCctvBitrateHud" class="text-slate-400 hidden sm:inline">• ภาพบันทึกความเสียหาย</span>
-            </div>
-            <div class="absolute bottom-3 left-3 bg-black/85 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-700/70 pointer-events-none space-y-0.5">
-              <div id="inlineCctvWaterDepthHud" class="text-xs font-bold text-amber-400">ระดับน้ำผิวจราจร: 15 ซม. (ชะลอตัวเลนซ้าย)</div>
-              <div id="inlineCctvWeatherHud" class="text-[10px] text-slate-300 font-mono">💨 ลม 12 กม./ชม. • 🌧️ ฝนสะสม 65 มม. • ระบายน้ำ 10 ลบ.ม./วิ</div>
-            </div>
-            <div class="absolute bottom-3 right-3 bg-black/85 backdrop-blur px-2.5 py-1 rounded-lg border border-slate-700/70 pointer-events-none text-[11px] text-slate-300 font-mono">
-              <span id="inlineCctvFpsBadge">📸 ภาพบันทึกจุดน้ำท่วม</span>
-            </div>
-          </div>
-
-          <!-- Quad Screen Multi-View (4 Branches Simultaneously) -->
+          <!-- 3. Quad Screen Multi-View (4 Branches Simultaneously) -->
           <div id="inlineCctvQuadViewport" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
             <!-- 4 Live Panels: Krungthep Kreetha, Ramindra, Sukhumvit 50, Rama 3 -->
           </div>
@@ -2211,39 +2210,40 @@
               <!-- Rendered via JS -->
             </div>
             <div class="flex items-center space-x-2 shrink-0 self-end sm:self-auto">
-              <button type="button" onclick="navigateInlineCctv(-1)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center">
+              <button type="button" onclick="navigateInlineCctv(-1)" class="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition flex items-center font-semibold">
                 <i data-lucide="chevron-left" class="w-3.5 h-3.5 mr-0.5"></i> กล้องก่อน
               </button>
-              <button type="button" onclick="navigateInlineCctv(1)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 transition flex items-center">
+              <button type="button" onclick="navigateInlineCctv(1)" class="px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition flex items-center font-semibold">
                 กล้องถัดไป <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-0.5"></i>
               </button>
-              <button type="button" onclick="captureCctvSnapshot()" class="px-3 py-1 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-semibold transition flex items-center">
+              <button type="button" onclick="captureCctvSnapshot()" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition flex items-center shadow-xs">
                 <i data-lucide="camera" class="w-3.5 h-3.5 mr-1"></i> บันทึกภาพ
               </button>
             </div>
           </div>
 
           <!-- Official Direct CCTV Streaming Portals Links Bar -->
-          <div class="mt-3 p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-xs text-slate-300 flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center space-x-2 text-slate-400">
-              <i data-lucide="external-link" class="w-3.5 h-3.5 text-cyan-400"></i>
-              <span class="font-semibold text-slate-200">เปิดดูสตรีมสดทางการจากต้นทาง:</span>
+          <div class="mt-3 p-3.5 bg-blue-50/70 rounded-2xl border border-blue-100 text-xs text-slate-700 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center space-x-2 text-slate-600">
+              <i data-lucide="external-link" class="w-4 h-4 text-blue-600"></i>
+              <span class="font-bold text-slate-800">เปิดดูสตรีมสดทางการจากต้นทาง (0% โฆษณา):</span>
             </div>
-            <div class="flex flex-wrap items-center gap-2 font-medium">
-              <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-300 transition flex items-center">
+            <div class="flex flex-wrap items-center gap-2 font-semibold">
+              <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white text-blue-700 border border-blue-200 transition flex items-center shadow-2xs">
                 <span>สจส. BMA Traffic Live ↗</span>
               </a>
-              <a href="https://floodbangkok.bangkok.go.th/" target="_blank" rel="noopener" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-teal-300 transition flex items-center">
+              <a href="https://floodbangkok.bangkok.go.th/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white text-teal-700 border border-blue-200 transition flex items-center shadow-2xs">
                 <span>สำนักการระบายน้ำ BMA Flood ↗</span>
               </a>
-              <a href="https://traffic.longdo.com/" target="_blank" rel="noopener" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 transition flex items-center">
+              <a href="https://traffic.longdo.com/" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white text-amber-700 border border-blue-200 transition flex items-center shadow-2xs">
                 <span>Longdo Traffic Live Cams ↗</span>
               </a>
-              <a href="https://world.tehx.dyndns.info/flood" target="_blank" rel="noopener" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 transition flex items-center">
+              <a href="https://world.tehx.dyndns.info/flood" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white text-indigo-700 border border-blue-200 transition flex items-center shadow-2xs">
                 <span>JK World Surveillance ↗</span>
               </a>
             </div>
           </div>
+        </div>
         </div>
 
         <!-- Cameras Grid Container -->
@@ -2447,103 +2447,109 @@
     </section>
 
     <!-- ========================================================================= -->
-    <!-- TAB 4: DEDICATED LIVE CCTV SURVEILLANCE & TRAFFIC PORTAL (ศูนย์รวมพอร์ทัลกล้องสดออนไลน์ 24/7) -->
     <!-- ========================================================================= -->
-    <section id="tabContent-cctv" class="hidden space-y-4">
+    <!-- TAB 4: SMART IN-HOUSE CCTV SURVEILLANCE & TRAFFIC PORTAL (ศูนย์ควบคุมกล้องสดอัจฉริยะ ธีม ฟ้าขาว) -->
+    <!-- ========================================================================= -->
+    <section id="tabContent-cctv" class="hidden space-y-6">
       
-      <!-- 4.1 Header Bar & Accessibility Toolbar -->
-      <div class="bg-white rounded-2xl border border-emerald-200/80 shadow-xs p-4 sm:p-5 space-y-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-emerald-100 pb-4">
+      <!-- 4.1 Executive CCTV Hero Banner (ธีม ฟ้าขาว) -->
+      <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 text-white rounded-3xl p-5 sm:p-6 shadow-xl shadow-blue-700/15 border border-blue-400/30 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
           <div>
-            <div class="flex items-center space-x-2">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
-                <i data-lucide="video" class="w-4 h-4 mr-1.5 text-emerald-600"></i> ศูนย์รวมพอร์ทัลกล้องสดออนไลน์
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30 backdrop-blur-xs">
+                <i data-lucide="video" class="w-4 h-4 mr-1.5 text-sky-200"></i> ศูนย์ควบคุมกล้องสดอัจฉริยะ (CCTV Command Center)
               </span>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-red-100 text-red-800 animate-pulse">
-                <span class="w-2 h-2 rounded-full bg-red-600 mr-1.5"></span> ● LIVE 24/7
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500 text-white shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-white mr-1.5 animate-ping"></span> LIVE 24/7
               </span>
-              <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                🌐 ครอบคลุม 1,800+ จุด กทม. & ทั่วไทย
+              <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
+                🛡️ ปลอดโฆษณา 100% (Ad-Free In-House Surveillance)
               </span>
             </div>
-            <h2 class="text-base sm:text-xl font-bold text-slate-900 mt-1">พอร์ทัลกล้องจราจรสด & สภาพน้ำท่วมผิวทาง (Interactive Live Traffic Cams)</h2>
-            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
-              หน้าต่างตรวจการณ์กล้องสดเต็มรูปแบบสำหรับค้นหา แพน ซูม และมอนิเตอร์ภาพรถวิ่งสดแบบเรียลไทม์ 24 ชม. ทั้งถนนสายหลัก ทางด่วน และจุดเสี่ยงน้ำท่วม 4 สาขา
+            <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">
+              พอร์ทัลตรวจการณ์กล้องสด & ระดับน้ำผิวจราจร 4 สาขาหลัก
+            </h2>
+            <p class="text-xs sm:text-sm text-blue-50 mt-1 max-w-3xl leading-relaxed">
+              มอนิเตอร์ภาพสด 14 จุดตรวจการณ์รอบสาขากรุงเทพกรีฑา, รามอินทรา, สุขุมวิท 50 และพระราม 3 พร้อมเชื่อมโยงสตรีมสดทางการจาก สจส. กทม., สำนักการระบายน้ำ (DDS) และทางพิเศษ (EXAT)
             </p>
           </div>
 
           <!-- Top Action Buttons & Controls -->
-          <div class="flex flex-wrap items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2 shrink-0 self-start lg:self-center">
             <!-- Portal Select -->
-            <div class="flex items-center space-x-1.5 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1 text-xs">
-              <span class="text-slate-500 text-[11px] font-medium hidden sm:inline">เลือกพอร์ทัล:</span>
-              <select id="dedicatedPortalSelect" onchange="switchDedicatedPortalSource(this.value)" class="bg-transparent font-semibold text-slate-800 text-xs focus:outline-none cursor-pointer">
-                <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
+            <div class="flex items-center space-x-1.5 bg-white rounded-xl px-3 py-2 text-xs border border-blue-200 shadow-sm text-slate-800">
+              <span class="text-blue-900 text-[11px] font-bold hidden sm:inline">สัญญาณ:</span>
+              <select id="dedicatedPortalSelect" onchange="switchDedicatedPortalSource(this.value)" class="bg-transparent font-bold text-blue-900 text-xs focus:outline-none cursor-pointer">
+                <option value="https://cpudapp.bangkok.go.th/bmatraffic/">สจส. กทม. (BMA Traffic Live - สตรีมสดทางการ)</option>
                 <option value="https://world.tehx.dyndns.info/flood">JK World Flood Watch Surveillance</option>
+                <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
               </select>
             </div>
 
             <!-- Refresh Frame -->
-            <button type="button" onclick="refreshDedicatedPortalFrame()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center transition shadow-2xs" title="รีเฟรชสัญญาณสตรีม">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1 text-slate-600"></i> รีเฟรช
+            <button type="button" onclick="refreshDedicatedPortalFrame()" class="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-200" title="รีเฟรชสัญญาณสตรีม">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> รีเฟรช
             </button>
 
             <!-- Fullscreen -->
-            <button type="button" onclick="toggleDedicatedPortalFullscreen()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center transition shadow-2xs" title="ขยายหน้าต่างแบบเต็มจอ">
-              <i data-lucide="maximize" class="w-3.5 h-3.5 mr-1 text-slate-600"></i> เต็มจอ
+            <button type="button" onclick="toggleDedicatedPortalFullscreen()" class="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-200" title="ขยายหน้าต่างแบบเต็มจอ">
+              <i data-lucide="maximize" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> เต็มจอ
             </button>
 
             <!-- External Link -->
-            <a id="btnDedicatedExternalLink" href="https://trafficvision.live/country/thailand" target="_blank" rel="noopener" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center transition shadow-xs">
+            <a id="btnDedicatedExternalLink" href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="px-3.5 py-2 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-400/30">
               <span>เปิดแท็บใหม่ ↗</span>
             </a>
           </div>
         </div>
 
-        <!-- 4.2 Quick Corridor / Branch Filter Chips (ทางลัดค้นหาด่วน) -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-1">
-          <span class="text-slate-500 font-bold flex items-center mr-1 text-[11px]">
-            <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i> แนะนำจุดค้นหา:
+        <!-- 4.2 Quick Corridor / Branch Filter Chips (ทางลัดเจาะจง 4 สาขา) -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-4 mt-4 border-t border-white/20">
+          <span class="text-blue-100 font-bold flex items-center mr-1 text-[11px]">
+            <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-white"></i> เจาะจงสาขา:
           </span>
-          <button type="button" onclick="switchDedicatedPortalSource('https://trafficvision.live/country/thailand')" class="px-2.5 py-1 rounded-lg font-bold bg-emerald-600 text-white shadow-2xs transition">
-            🌐 กล้อง กทม. ทั้งหมด (1,800+ จุด)
+          <button type="button" onclick="switchDedicatedPortalSource('https://cpudapp.bangkok.go.th/bmatraffic/')" class="px-3 py-1 rounded-xl font-bold bg-white text-blue-700 shadow-2xs hover:bg-blue-50 transition">
+            🏢 สจส. BMA Live ทั้งหมด (1,800+ จุด)
           </button>
-          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
             🏢 สาขากรุงเทพกรีฑา (ศรีนครินทร์/มอเตอร์เวย์) ↗
           </a>
-          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
             🏢 สาขารามอินทรา (กม.1-8/มีนบุรี) ↗
           </a>
-          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
             🏢 สาขาสุขุมวิท 50 (ทางด่วน/พระโขนง) ↗
           </a>
-          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
             🏢 สาขาพระราม 3 (สะพานพระราม 9/คลองเตย) ↗
           </a>
-          <a href="https://trafficvision.live/country/thailand" target="_blank" class="px-2.5 py-1 rounded-lg font-medium bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition">
-            🛣️ ทางด่วนเฉลิมมหานคร & ฉลองรัช ↗
-          </a>
-          <button type="button" onclick="switchDedicatedPortalSource('https://world.tehx.dyndns.info/flood')" class="px-2.5 py-1 rounded-lg font-medium bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 transition">
+          <button type="button" onclick="switchDedicatedPortalSource('https://world.tehx.dyndns.info/flood')" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
             🌊 JK World Flood Map
           </button>
         </div>
+      </div>
 
+      <!-- Main Container Card (ธีม ฟ้าขาว) -->
+      <div class="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100 shadow-sm space-y-5">
+        
         <!-- 4.3 Main Spacious Interactive Live Portal Viewport -->
-        <div id="dedicatedPortalContainer" class="relative w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-950 shadow-2xl flex flex-col h-[78vh] min-h-[640px] max-h-[1000px]">
+        <div id="dedicatedPortalContainer" class="relative w-full rounded-2xl overflow-hidden border-2 border-blue-200 bg-slate-950 shadow-xl flex flex-col h-[75vh] min-h-[600px] max-h-[960px]">
           <!-- Surveillance Top HUD Bar -->
-          <div class="px-4 py-2 bg-slate-900 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="px-4 py-2.5 bg-blue-950 border-b border-blue-900 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
               <span class="font-bold text-white font-mono flex items-center">
                 <i data-lucide="radio" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i> LIVE SURVEILLANCE FEED
               </span>
-              <span class="text-slate-500">|</span>
-              <span class="text-[11px] text-emerald-400 font-mono">BMA & EXAT STREAMING ACTIVE</span>
+              <span class="text-blue-400">|</span>
+              <span class="text-[11px] text-emerald-400 font-mono">BMA & EXAT OFFICIAL STREAMING</span>
             </div>
-            <div class="flex items-center space-x-3 text-slate-400 text-[11px] font-mono">
-              <span class="hidden md:inline">คุณภาพ: Full HD 1080p Real-time</span>
-              <span class="text-slate-600">|</span>
-              <span id="dedicatedPortalClock" class="text-slate-300">--:--:-- น.</span>
+            <div class="flex items-center space-x-3 text-blue-200 text-[11px] font-mono">
+              <span class="hidden md:inline">คุณภาพสัญญาณ: Full HD 1080p Real-time</span>
+              <span class="text-blue-700">|</span>
+              <span id="dedicatedPortalClock" class="text-white font-bold">--:--:-- น.</span>
             </div>
           </div>
 
@@ -2554,34 +2560,34 @@
         </div>
 
         <!-- 4.4 4 Branches Quick Cross-Reference Snapshot Cards -->
-        <div class="space-y-3 pt-3 border-t border-slate-200">
+        <div class="space-y-3 pt-3 border-t border-blue-100">
           <div class="flex items-center justify-between">
             <div class="flex items-center space-x-2">
-              <div class="w-6 h-6 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
-                <i data-lucide="camera" class="w-3.5 h-3.5"></i>
+              <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                <i data-lucide="camera" class="w-4 h-4"></i>
               </div>
-              <h3 class="text-sm font-bold text-slate-900">ภาพบันทึกระดับน้ำผิวทาง 4 สาขาหลัก (Snapshot Cross-Check)</h3>
+              <h3 class="text-sm font-bold text-slate-900">ตรวจการณ์กล้อง 4 สาขาหลัก (4-Branch Live Surveillance Cross-Check)</h3>
             </div>
-            <button type="button" onclick="switchTab('water')" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center">
+            <button type="button" onclick="switchTab('water')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center">
               <span>ดูข้อมูลโทรมาตรคลองในหน้า 3 ↗</span>
             </button>
           </div>
 
-          <div id="dedicatedCctvQuadGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div id="dedicatedCctvQuadGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
             <!-- Rendered via JS -->
           </div>
         </div>
 
-        <!-- 4.5 Official Streaming Citations -->
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <!-- 4.5 Official Direct Streaming Citations (0% Ads) -->
+        <div class="p-4 bg-blue-50/70 rounded-2xl border border-blue-100 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-2">
-            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-            <span><strong>แหล่งข้อมูลเชื่อมต่อ:</strong> สำนักการจราจรและขนส่ง (สจส. กทม.), การทางพิเศษแห่งประเทศไทย (EXAT), กรมทางหลวง (DOH) และศูนย์สั่งการจราจร</span>
+            <i data-lucide="shield-check" class="w-4 h-4 text-blue-600 shrink-0"></i>
+            <span><strong>แหล่งข้อมูลเชื่อมต่อตรงทางการ (ปลอดโฆษณา 100%):</strong> สำนักการจราจรและขนส่ง (สจส. กทม.), การทางพิเศษแห่งประเทศไทย (EXAT), กรมทางหลวง (DOH) และศูนย์สั่งการระบายน้ำ DDS</span>
           </div>
-          <div class="flex items-center space-x-3 shrink-0">
-            <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="text-blue-600 hover:underline">BMA Traffic ↗</a>
-            <a href="https://traffic.longdo.com/" target="_blank" rel="noopener" class="text-blue-600 hover:underline">Longdo Traffic ↗</a>
-            <a href="https://floodbangkok.bangkok.go.th/" target="_blank" rel="noopener" class="text-blue-600 hover:underline">DDS BKK ↗</a>
+          <div class="flex items-center space-x-2 shrink-0 font-bold">
+            <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="px-2.5 py-1 bg-white hover:bg-blue-600 hover:text-white text-blue-700 rounded-lg border border-blue-200 transition shadow-2xs">BMA Traffic ↗</a>
+            <a href="https://floodbangkok.bangkok.go.th/" target="_blank" rel="noopener" class="px-2.5 py-1 bg-white hover:bg-blue-600 hover:text-white text-teal-700 rounded-lg border border-blue-200 transition shadow-2xs">DDS BKK ↗</a>
+            <a href="https://traffic.longdo.com/" target="_blank" rel="noopener" class="px-2.5 py-1 bg-white hover:bg-blue-600 hover:text-white text-amber-700 rounded-lg border border-blue-200 transition shadow-2xs">Longdo Traffic ↗</a>
           </div>
         </div>
 
@@ -2656,65 +2662,65 @@
         </div>
       </div>
 
-      <!-- 6.2-B Web-Wide Flood Intelligence & Deep Water Volume Analyzer (ศูนย์ค้นหาข้อมูลน้ำท่วมเส้นทางทั่วอินเทอร์เน็ต & วิเคราะห์ปริมาณน้ำ) -->
-      <div id="webFloodIntelSection" class="bg-gradient-to-br from-slate-900 via-slate-850 to-blue-950 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-700/80 space-y-4">
+      <!-- 6.2-B Web-Wide Flood Intelligence & Deep Water Volume Analyzer (ธีม ฟ้าขาว Royal Blue & White) -->
+      <div id="webFloodIntelSection" class="bg-gradient-to-br from-blue-700 via-blue-600 to-sky-700 text-white rounded-3xl p-5 sm:p-6 shadow-xl shadow-blue-700/15 border border-blue-400/30 space-y-4">
         <!-- Header & Live Online Agencies Status -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-white/20 pb-3">
           <div class="space-y-1">
             <div class="flex items-center space-x-2">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-600 text-white">
-                <span class="w-1.5 h-1.5 rounded-full bg-white mr-1 animate-ping"></span> WEB INTEL CRAWLER
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-blue-700 shadow-2xs">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 mr-1 animate-ping"></span> WEB INTEL CRAWLER
               </span>
               <h3 class="text-sm sm:text-base font-bold text-white flex items-center">
-                <i data-lucide="globe-2" class="w-4 h-4 mr-1.5 text-cyan-400"></i> ศูนย์ค้นหาข้อมูลน้ำท่วมเส้นทางทั่วอินเทอร์เน็ต & วิเคราะห์ปริมาณน้ำเชิงลึก
+                <i data-lucide="globe-2" class="w-4 h-4 mr-1.5 text-sky-200"></i> ศูนย์ค้นหาข้อมูลน้ำท่วมเส้นทางทั่วอินเทอร์เน็ต & วิเคราะห์ปริมาณน้ำเชิงลึก
               </h3>
             </div>
-            <p class="text-xs text-slate-300">
+            <p class="text-xs text-blue-100">
               ดึงและประมวลผลข้อมูลน้ำท่วม สภาพการจราจร และโทรมาตรวัดน้ำแบบ Multi-source ทั่วทั้งอินเทอร์เน็ต (8 หน่วยงานทางการ)
             </p>
           </div>
 
           <!-- Active Agency Crawler Badges -->
           <div class="flex flex-wrap items-center gap-1.5 text-[10px] font-mono">
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="กทม. Real-time Telemetry (now.bangkok.go.th)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> now.bkk</span>
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="สำนักการระบายน้ำ กทม. (dds.bangkok.go.th)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> dds.bkk</span>
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="สสน. คลังน้ำแห่งชาติ (thaiwater.net)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> thaiwater</span>
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="กรมอุตุนิยมวิทยา (weather.tmd.go.th)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> tmd.radar</span>
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="Traffy Fondue"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> traffy</span>
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="กรมทางหลวง & ทางหลวงชนบท"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> doh/drr</span>
-            <span class="px-2 py-0.5 rounded-md bg-emerald-950/80 text-emerald-300 border border-emerald-800 flex items-center" title="จส.100 & สวพ.91"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> js100</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="กทม. Real-time Telemetry (now.bangkok.go.th)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> now.bkk</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="สำนักการระบายน้ำ กทม. (dds.bangkok.go.th)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> dds.bkk</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="สสน. คลังน้ำแห่งชาติ (thaiwater.net)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> thaiwater</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="กรมอุตุนิยมวิทยา (weather.tmd.go.th)"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> tmd.radar</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="Traffy Fondue"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> traffy</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="กรมทางหลวง & ทางหลวงชนบท"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> doh/drr</span>
+            <span class="px-2 py-0.5 rounded-md bg-white/20 text-white border border-white/30 flex items-center" title="จส.100 & สวพ.91"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> js100</span>
           </div>
         </div>
 
         <!-- Search Input Bar & Quick Corridor Chips -->
         <div class="space-y-2.5">
           <div class="relative flex items-center">
-            <i data-lucide="search" class="w-4 h-4 text-cyan-400 absolute left-3.5 pointer-events-none"></i>
-            <input type="text" id="webFloodSearchInput" oninput="searchWebFloodIntel(this.value)" onkeydown="if(event.key==='Enter') searchWebFloodIntel(this.value)" placeholder="🔍 พิมพ์ชื่อถนน, สี่แยก, ซอย, เขต หรือจุดขนส่ง (เช่น ศรีนครินทร์, รามอินทรา, กรุงเทพกรีฑา, สุขุมวิท 50, พระราม 3, ลาดกระบัง, เสรีไทย)..." class="w-full pl-10 pr-24 py-2.5 bg-slate-900/90 border border-slate-700 focus:border-cyan-500 rounded-xl text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-500 transition">
-            <button type="button" onclick="searchWebFloodIntel(document.getElementById('webFloodSearchInput').value)" class="absolute right-2 px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition shadow-xs">
+            <i data-lucide="search" class="w-4 h-4 text-sky-200 absolute left-3.5 pointer-events-none"></i>
+            <input type="text" id="webFloodSearchInput" oninput="searchWebFloodIntel(this.value)" onkeydown="if(event.key==='Enter') searchWebFloodIntel(this.value)" placeholder="🔍 พิมพ์ชื่อถนน, สี่แยก, ซอย, เขต หรือจุดขนส่ง (เช่น ศรีนครินทร์, รามอินทรา, กรุงเทพกรีฑา, สุขุมวิท 50, พระราม 3, ลาดกระบัง, เสรีไทย)..." class="w-full pl-10 pr-24 py-2.5 bg-white/10 border border-white/30 focus:border-white rounded-xl text-xs sm:text-sm text-white placeholder-blue-100/70 focus:outline-none focus:ring-1 focus:ring-white transition">
+            <button type="button" onclick="searchWebFloodIntel(document.getElementById('webFloodSearchInput').value)" class="absolute right-2 px-3 py-1.5 rounded-lg bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold transition shadow-xs">
               ค้นหาเน็ต
             </button>
           </div>
 
           <!-- Quick Corridor Chips -->
           <div class="flex items-center space-x-1.5 overflow-x-auto custom-scrollbar pb-1 text-xs">
-            <span class="text-slate-400 text-[11px] shrink-0 font-medium mr-1">ทางด่วน/ถนนสายหลัก:</span>
-            <button type="button" onclick="triggerWebFloodChip('ศรีนครินทร์')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">ศรีนครินทร์</button>
-            <button type="button" onclick="triggerWebFloodChip('รามอินทรา')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">รามอินทรา</button>
-            <button type="button" onclick="triggerWebFloodChip('กรุงเทพกรีฑา')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">กรุงเทพกรีฑา</button>
-            <button type="button" onclick="triggerWebFloodChip('สุขุมวิท 50')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">สุขุมวิท 50</button>
-            <button type="button" onclick="triggerWebFloodChip('พระราม 3')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">พระราม 3</button>
-            <button type="button" onclick="triggerWebFloodChip('เสรีไทย')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">เสรีไทย</button>
-            <button type="button" onclick="triggerWebFloodChip('ลาดกระบัง')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">ลาดกระบัง</button>
-            <button type="button" onclick="triggerWebFloodChip('คลองสามวา')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">คลองสามวา</button>
-            <button type="button" onclick="triggerWebFloodChip('สุคนธสวัสดิ์')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">สุคนธสวัสดิ์</button>
-            <button type="button" onclick="triggerWebFloodChip('มอเตอร์เวย์')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">มอเตอร์เวย์</button>
-            <button type="button" onclick="triggerWebFloodChip('พัฒนาการ')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-cyan-400 transition shrink-0 active:scale-95">พัฒนาการ</button>
+            <span class="text-blue-100 text-[11px] shrink-0 font-medium mr-1">ทางด่วน/ถนนสายหลัก:</span>
+            <button type="button" onclick="triggerWebFloodChip('ศรีนครินทร์')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">ศรีนครินทร์</button>
+            <button type="button" onclick="triggerWebFloodChip('รามอินทรา')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">รามอินทรา</button>
+            <button type="button" onclick="triggerWebFloodChip('กรุงเทพกรีฑา')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">กรุงเทพกรีฑา</button>
+            <button type="button" onclick="triggerWebFloodChip('สุขุมวิท 50')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">สุขุมวิท 50</button>
+            <button type="button" onclick="triggerWebFloodChip('พระราม 3')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">พระราม 3</button>
+            <button type="button" onclick="triggerWebFloodChip('เสรีไทย')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">เสรีไทย</button>
+            <button type="button" onclick="triggerWebFloodChip('ลาดกระบัง')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">ลาดกระบัง</button>
+            <button type="button" onclick="triggerWebFloodChip('คลองสามวา')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">คลองสามวา</button>
+            <button type="button" onclick="triggerWebFloodChip('สุคนธสวัสดิ์')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">สุคนธสวัสดิ์</button>
+            <button type="button" onclick="triggerWebFloodChip('มอเตอร์เวย์')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">มอเตอร์เวย์</button>
+            <button type="button" onclick="triggerWebFloodChip('พัฒนาการ')" class="web-flood-chip px-2.5 py-1 rounded-lg bg-white/15 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition shrink-0 active:scale-95">พัฒนาการ</button>
           </div>
         </div>
 
         <!-- Result Container for Deep Water Volume Analysis -->
-        <div id="webFloodIntelResultContainer" class="bg-slate-900/90 rounded-xl p-4 border border-slate-800">
+        <div id="webFloodIntelResultContainer" class="bg-white text-slate-800 rounded-2xl p-4 border border-blue-100 shadow-sm">
           <!-- Rendered dynamically by JS -->
         </div>
       </div>
@@ -48293,27 +48299,27 @@
         tabContentCctv.classList.toggle('hidden', tabId !== 'cctv');
       }
 
-      // Update Tab Buttons (Dark Sidebar Theme)
+      // Update Tab Buttons (Blue & White Theme)
       document.querySelectorAll('.tab-btn').forEach(b => {
         b.classList.remove('bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-600/30');
-        b.classList.add('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+        b.classList.add('text-slate-700', 'hover:bg-blue-50', 'hover:text-blue-700');
       });
 
       const activeBtn = document.getElementById('tabBtn-' + tabId);
       if (activeBtn) {
-        activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+        activeBtn.classList.remove('text-slate-700', 'hover:bg-blue-50', 'hover:text-blue-700', 'text-slate-300', 'hover:bg-slate-800');
         activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm', 'shadow-blue-600/30');
       }
 
       // Update Center Header Tab Pills
       document.querySelectorAll('.header-tab-pill').forEach(b => {
-        b.classList.remove('active', 'bg-white', 'text-blue-700', 'shadow-xs', 'border', 'border-blue-100');
+        b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-xs', 'bg-white', 'text-blue-700', 'border-blue-100');
         b.classList.add('text-slate-600');
       });
       const activeHeaderBtn = document.getElementById('headerTab-' + tabId);
       if (activeHeaderBtn) {
         activeHeaderBtn.classList.remove('text-slate-600');
-        activeHeaderBtn.classList.add('active', 'bg-white', 'text-blue-700', 'shadow-xs', 'border', 'border-blue-100');
+        activeHeaderBtn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-xs');
       }
 
       // Auto-open secondary menu if user switches to a secondary tool
@@ -55009,7 +55015,7 @@
     // =========================================================================
     let activeInlineCctvId = 'CAM-BKK-01';
     let inlineCctvLiveTimer = null;
-    let inlineCctvViewMode = 'liveportal';
+    let inlineCctvViewMode = 'single';
 
     function initInlineCctvConsole() {
       const data = floodTelemetryData || INITIAL_FLOOD_TELEMETRY;
@@ -55079,7 +55085,7 @@
       const allCams = data.cctvCameras || INITIAL_FLOOD_TELEMETRY.cctvCameras || [];
       container.innerHTML = allCams.map((c, idx) => {
         const isActive = c.id === activeInlineCctvId;
-        const bgClass = isActive ? 'bg-blue-600 text-white font-bold shadow-xs' : 'bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700';
+        const bgClass = isActive ? 'bg-blue-600 text-white font-bold shadow-xs border border-blue-600' : 'bg-blue-50 text-blue-800 hover:bg-blue-600 hover:text-white border border-blue-200';
         const cleanName = c.name.replace(/กล้อง|แยก/g, '').trim().substring(0, 14);
         return '<button type="button" onclick="switchInlineCctv(\'' + c.id + '\')" class="px-2.5 py-1 rounded-lg text-xs transition shrink-0 ' + bgClass + '">' +
           'CH ' + (idx + 1) + ': ' + cleanName +
@@ -55109,22 +55115,22 @@
         if (portalVp) portalVp.classList.remove('hidden');
         if (singleVp) singleVp.classList.add('hidden');
         if (quadVp) quadVp.classList.add('hidden');
-        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 text-white transition flex items-center shadow-xs ring-1 ring-emerald-400';
-        if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
-        if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
+        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs';
+        if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center';
+        if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center';
       } else if (mode === 'single') {
         if (portalVp) portalVp.classList.add('hidden');
         if (singleVp) singleVp.classList.remove('hidden');
         if (quadVp) quadVp.classList.add('hidden');
-        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
+        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center';
         if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs';
-        if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
+        if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center';
       } else {
         if (portalVp) portalVp.classList.add('hidden');
         if (singleVp) singleVp.classList.add('hidden');
         if (quadVp) quadVp.classList.remove('hidden');
-        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
-        if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition flex items-center';
+        if (btnPortal) btnPortal.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center';
+        if (btnSingle) btnSingle.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition flex items-center';
         if (btnQuad) btnQuad.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white transition flex items-center shadow-xs';
 
         // Render Quad 4 Branches
