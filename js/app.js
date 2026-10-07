@@ -35,7 +35,8 @@ window.AppState = {
   adminSearchQuery: '',
   adminBranchFilter: 'ALL',
   adminStatusFilter: 'ALL',
-  isDeletingAdminOrders: false
+  isDeletingAdminOrders: false,
+  isAdminAuthenticated: (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('admin_auth') === '171938')
 };
 
 // ==========================================
@@ -160,6 +161,8 @@ function switchPage(pageId) {
     if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
       iframe.src = iframe.getAttribute('data-src') || 'https://trafficvision.in.th/';
     }
+  } else if (pageId === 'page-admin') {
+    updateAdminAuthUI();
   }
 }
 window.switchPage = switchPage;
@@ -955,6 +958,9 @@ function initAdmin() {
     });
   }
 
+  // Admin PIN Auth Gate & Session Management
+  updateAdminAuthUI();
+
   // Fetch initial data for Admin table
   loadAdminOrders();
 }
@@ -1137,9 +1143,14 @@ function renderAdminTable() {
         </td>
         <td class="text-xs text-slate-500 whitespace-nowrap">${dateFormatted}</td>
         <td class="text-center">
-          <button type="button" onclick="openSingleDeleteModal(${item.id})" title="ลบรายการนี้ออกจาก Supabase" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition inline-flex items-center justify-center">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          </button>
+          <div class="flex items-center justify-center gap-1.5">
+            <button type="button" onclick="openAdminEditModal(${item.id})" title="แก้ไขข้อมูลออเดอร์นี้" class="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold transition inline-flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+            <button type="button" onclick="openSingleDeleteModal(${item.id})" title="ลบรายการนี้ออกจาก Supabase" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition inline-flex items-center justify-center">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -1350,4 +1361,182 @@ async function executeSupabaseDelete() {
   }
 }
 window.executeSupabaseDelete = executeSupabaseDelete;
+
+// ==========================================
+// 9. Admin PIN Security & Session Gate (PIN 171938)
+// ==========================================
+function verifyAdminPin() {
+  const pinInput = document.getElementById('adminPinInput');
+  const errorEl = document.getElementById('adminLoginError');
+  const entered = pinInput ? pinInput.value.trim() : '';
+
+  if (entered === '171938') {
+    AppState.isAdminAuthenticated = true;
+    try { sessionStorage.setItem('admin_auth', '171938'); } catch (e) {}
+    if (errorEl) errorEl.classList.add('hidden');
+    if (pinInput) pinInput.value = '';
+    updateAdminAuthUI();
+  } else {
+    if (errorEl) {
+      errorEl.classList.remove('hidden');
+      errorEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง กรุณากรอกรหัสผ่านที่ถูกต้อง';
+    }
+    if (pinInput) {
+      pinInput.focus();
+      pinInput.select();
+    }
+  }
+}
+window.verifyAdminPin = verifyAdminPin;
+
+function logoutAdmin() {
+  AppState.isAdminAuthenticated = false;
+  try { sessionStorage.removeItem('admin_auth'); } catch (e) {}
+  updateAdminAuthUI();
+}
+window.logoutAdmin = logoutAdmin;
+
+function updateAdminAuthUI() {
+  const gate = document.getElementById('adminAuthGate');
+  const content = document.getElementById('adminAuthenticatedContent');
+  const isAuth = AppState.isAdminAuthenticated || (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('admin_auth') === '171938');
+
+  if (isAuth) {
+    AppState.isAdminAuthenticated = true;
+    if (gate) gate.classList.add('hidden');
+    if (content) content.classList.remove('hidden');
+  } else {
+    AppState.isAdminAuthenticated = false;
+    if (gate) gate.classList.remove('hidden');
+    if (content) content.classList.add('hidden');
+    const pinInput = document.getElementById('adminPinInput');
+    if (pinInput) setTimeout(() => pinInput.focus(), 150);
+  }
+}
+window.updateAdminAuthUI = updateAdminAuthUI;
+
+// ==========================================
+// 10. Admin Order Edit (PATCH to Supabase Cloud)
+// ==========================================
+function openAdminEditModal(id) {
+  const order = AppState.adminOrders.find(o => o.id === id);
+  if (!order) {
+    alert('ไม่พบข้อมูลออเดอร์ #' + id);
+    return;
+  }
+
+  const modal = document.getElementById('adminEditOrderModal');
+  const idInput = document.getElementById('editOrderId');
+  const memberInput = document.getElementById('editMemberId');
+  const nameInput = document.getElementById('editCustomerName');
+  const branchSelect = document.getElementById('editBranch');
+  const truckInput = document.getElementById('editTruckNumber');
+  const statusSelect = document.getElementById('editStatus');
+  const reasonInput = document.getElementById('editReason');
+  const addressInput = document.getElementById('editAddress');
+
+  if (idInput) idInput.value = order.id;
+  if (memberInput) memberInput.value = order.member_id || '';
+  if (nameInput) nameInput.value = order.customer_name || '';
+  if (branchSelect) branchSelect.value = order.branch || 'สาขารามอินทรา';
+  if (truckInput) truckInput.value = order.truck_number || '';
+
+  if (statusSelect) {
+    const s = (order.status || '') + ' ' + (order.reason || '');
+    if (s.includes('น้ำท่วม')) statusSelect.value = 'น้ำท่วมสูงไม่สามารถส่งได้';
+    else if (s.includes('โอนงาน')) statusSelect.value = 'โอนงานสิ้นวัน';
+    else if (s.includes('ติดตาม')) statusSelect.value = 'ติดตามปัญหา';
+    else statusSelect.value = 'ส่งสำเร็จ';
+  }
+
+  if (reasonInput) reasonInput.value = order.reason || '';
+  if (addressInput) addressInput.value = order.address || '';
+
+  if (modal) modal.classList.add('active');
+}
+window.openAdminEditModal = openAdminEditModal;
+
+async function saveAdminOrderEdit() {
+  const idInput = document.getElementById('editOrderId');
+  const memberInput = document.getElementById('editMemberId');
+  const nameInput = document.getElementById('editCustomerName');
+  const branchSelect = document.getElementById('editBranch');
+  const truckInput = document.getElementById('editTruckNumber');
+  const statusSelect = document.getElementById('editStatus');
+  const reasonInput = document.getElementById('editReason');
+  const addressInput = document.getElementById('editAddress');
+  const btnSave = document.getElementById('btnSaveEditOrder');
+
+  const orderId = idInput ? parseInt(idInput.value, 10) : null;
+  if (!orderId) return;
+
+  const payload = {
+    member_id: memberInput ? memberInput.value.trim() : '',
+    customer_name: nameInput ? nameInput.value.trim() : '',
+    branch: branchSelect ? branchSelect.value : '',
+    truck_number: truckInput ? truckInput.value.trim() : '',
+    status: statusSelect ? statusSelect.value : '',
+    reason: reasonInput ? reasonInput.value.trim() : '',
+    address: addressInput ? addressInput.value.trim() : ''
+  };
+
+  const originalBtnText = btnSave ? btnSave.innerHTML : '';
+  if (btnSave) {
+    btnSave.disabled = true;
+    btnSave.innerHTML = `<span class="live-pulse mr-1"></span> กำลังบันทึกข้อมูลเข้าสู่ Supabase...`;
+  }
+
+  try {
+    const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?id=eq.${orderId}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Supabase PATCH failed: ${response.status} ${errText}`);
+    }
+
+    // Update locally in AppState.adminOrders
+    const targetIdx = AppState.adminOrders.findIndex(o => o.id === orderId);
+    if (targetIdx !== -1) {
+      AppState.adminOrders[targetIdx] = {
+        ...AppState.adminOrders[targetIdx],
+        ...payload
+      };
+    }
+
+    closeModal();
+    applyAdminFilters();
+    alert(`✅ บันทึกการแก้ไขข้อมูลออเดอร์ #${orderId} ลงใน Supabase Cloud เรียบร้อยแล้ว`);
+  } catch (err) {
+    console.error('Error saving order edit to Supabase:', err);
+    // If synthetic/offline, update locally anyway
+    const targetIdx = AppState.adminOrders.findIndex(o => o.id === orderId);
+    if (targetIdx !== -1) {
+      AppState.adminOrders[targetIdx] = {
+        ...AppState.adminOrders[targetIdx],
+        ...payload
+      };
+      closeModal();
+      applyAdminFilters();
+      alert(`⚠️ บันทึกข้อมูลในระบบเรียบร้อย (Supabase Cloud แจ้งเตือน: ${err.message})`);
+    } else {
+      alert(`❌ เกิดข้อผิดพลาดในการบันทึก: ${err.message}`);
+    }
+  } finally {
+    if (btnSave) {
+      btnSave.disabled = false;
+      btnSave.innerHTML = originalBtnText;
+    }
+  }
+}
+window.saveAdminOrderEdit = saveAdminOrderEdit;
+
 
