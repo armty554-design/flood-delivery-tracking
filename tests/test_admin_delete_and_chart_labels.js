@@ -45,8 +45,7 @@ console.log('✔ PASS: All Admin PIN 171938, Edit PATCH, and Delete logic verifi
 assert(appJs.includes('customDataLabelsPlugin'), 'customDataLabelsPlugin defined and registered');
 assert(appJs.includes("datalabelColor: '#dc2626'"), 'Pending line has custom datalabelColor');
 assert(appJs.includes("datalabelColor: '#059669'"), 'Resolved line has custom datalabelColor');
-assert(appJs.includes("datalabelColor: '#1d4ed8'"), 'Daily solved bar has custom datalabelColor');
-assert(appJs.includes("datalabelSuffix: ' น.'"), 'Duration trend has custom datalabelSuffix');
+assert(appJs.includes("datalabelSuffix: '%'"), 'Success trend chart has % custom datalabelSuffix');
 console.log('✔ PASS: Chart datasets configured with datalabel options');
 
 console.log('\nALL ADMIN PIN 171938, EDIT, DELETE & CHART TESTS PASSED! 🎯');

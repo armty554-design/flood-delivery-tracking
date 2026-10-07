@@ -57,10 +57,10 @@ pages.forEach(p => {
 
 // 4. Page 1 Content Verification
 console.log('\n[4. Page 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา & กราฟเปรียบเทียบวัน]');
-assert(html.includes('35') && html.includes('สาขาพระราม 3'), 'Rama 3 duration metric (35 min) present');
-assert(html.includes('42') && html.includes('สาขาสุขุมวิท 50'), 'Sukhumvit 50 duration metric (42 min) present');
-assert(html.includes('54') && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha duration metric (54 min) present');
-assert(html.includes('68') && html.includes('สาขารามอินทรา'), 'Ram Intra duration metric (68 min) present');
+assert(html.includes('100%') && html.includes('สาขาพระราม 3'), 'Rama 3 success metric (100%) present');
+assert(html.includes('98.4%') && html.includes('สาขาสุขุมวิท 50'), 'Sukhumvit 50 success metric (98.4%) present');
+assert(html.includes('74.5%') && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha success metric (74.5%) present');
+assert(html.includes('58.2%') && html.includes('สาขารามอินทรา'), 'Ram Intra success metric (58.2%) present');
 assert(html.includes('id="chartDailyComparison"'), 'Day-by-Day comparison chart canvas #chartDailyComparison exists');
 assert(html.includes('id="chartBranchCompare"'), 'Comparison bar chart canvas #chartBranchCompare exists');
 assert(html.includes('id="chartDurationTrend"'), 'Duration trend chart canvas #chartDurationTrend exists');

@@ -378,7 +378,7 @@ function initCharts() {
     });
   }
 
-  // 3. Duration Trend Chart (Cycle Time)
+  // 3. Daily Success Rate Trend Chart (แนวโน้มอัตราการจัดส่งสำเร็จรายวัน %)
   const durationCtx = document.getElementById('chartDurationTrend');
   if (durationCtx) {
     AppState.durationChart = new Chart(durationCtx, {
@@ -387,57 +387,65 @@ function initCharts() {
         labels: ['26 ก.ย.', '28 ก.ย.', '30 ก.ย.', '2 ต.ค.', '4 ต.ค.', '6 ต.ค.', '7 ต.ค.'],
         datasets: [
           {
-            label: 'รามอินทรา (นาที/จุด)',
-            data: [78, 75, 72, 70, 69, 68, 68],
-            borderColor: '#ef4444',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            fill: true,
-            tension: 0.3,
-            datalabelColor: '#dc2626',
-            datalabelSuffix: ' น.'
-          },
-          {
-            label: 'กรุงเทพกรีฑา (นาที/จุด)',
-            data: [65, 62, 59, 57, 55, 54, 54],
-            borderColor: '#f59e0b',
+            label: 'พระราม 3 (สำเร็จ %)',
+            data: [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+            borderColor: '#10b981',
             backgroundColor: 'transparent',
             tension: 0.3,
-            datalabelColor: '#b45309',
-            datalabelSuffix: ' น.'
+            datalabelColor: '#047857',
+            datalabelSuffix: '%'
           },
           {
-            label: 'สุขุมวิท 50 (นาที/จุด)',
-            data: [45, 44, 43, 42, 42, 42, 42],
+            label: 'สุขุมวิท 50 (สำเร็จ %)',
+            data: [96.8, 97.2, 97.8, 98.0, 98.2, 98.4, 98.4],
             borderColor: '#3b82f6',
             backgroundColor: 'transparent',
             tension: 0.3,
             datalabelColor: '#1d4ed8',
-            datalabelSuffix: ' น.'
+            datalabelSuffix: '%'
           },
           {
-            label: 'พระราม 3 (นาที/จุด)',
-            data: [38, 36, 35, 35, 35, 35, 35],
-            borderColor: '#10b981',
+            label: 'กรุงเทพกรีฑา (สำเร็จ %)',
+            data: [48.5, 52.0, 58.6, 64.2, 69.8, 74.5, 74.5],
+            borderColor: '#f59e0b',
             backgroundColor: 'transparent',
             tension: 0.3,
-            datalabelColor: '#059669',
-            datalabelSuffix: ' น.'
+            datalabelColor: '#b45309',
+            datalabelSuffix: '%'
+          },
+          {
+            label: 'รามอินทรา (สำเร็จ %)',
+            data: [32.1, 36.4, 42.0, 48.5, 53.2, 58.2, 58.2],
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.08)',
+            fill: true,
+            tension: 0.3,
+            datalabelColor: '#dc2626',
+            datalabelSuffix: '%'
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { top: 18 } },
+        layout: { padding: { top: 20 } },
         plugins: {
-          legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } }
+          legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw}%`
+            }
+          }
         },
         scales: {
           y: {
-            min: 25,
-            max: 92,
+            min: 20,
+            max: 108,
             grid: { color: '#f1f5f9' },
-            ticks: { font: { family: 'Prompt' } }
+            ticks: {
+              font: { family: 'Prompt' },
+              callback: (val) => val + '%'
+            }
           },
           x: {
             grid: { display: false },
