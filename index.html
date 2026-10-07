@@ -24,6 +24,9 @@
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- Longdo Map JS API v3 -->
+  <script src="https://api.longdo.com/map3/?key=82d0b7e65c1ab3653f61021e9733f7d9"></script>
+
   <!-- Clean Stylesheet -->
   <link rel="stylesheet" href="css/app.css?v=20261007_v4">
 </head>
@@ -899,9 +902,52 @@
         </div>
 
         <!-- Embedded Frame & Dashboard Container -->
-        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 540px;">
+        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 560px;">
           <!-- Video / Portal Iframe (Works 100% for Windy Radar & RainViewer) -->
-          <iframe id="cctvPortalIframe" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" data-src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" class="w-full h-full border-0" style="min-height: 540px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+          <iframe id="cctvPortalIframe" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" data-src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" class="w-full h-full border-0" style="min-height: 560px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+
+          <!-- Interactive Longdo Traffic & CCTV Map (Native API v3 - Active when LONGDO is clicked) -->
+          <div id="longdoTrafficMapContainer" class="hidden w-full h-full relative" style="min-height: 560px;">
+            <div id="longdoMapDiv" class="w-full h-full" style="min-height: 560px;"></div>
+            
+            <!-- Longdo Map Controls & Quick Zone Jump Bar -->
+            <div class="absolute top-3 left-3 right-3 z-20 flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-900/90 backdrop-blur-md border border-slate-700/80 shadow-lg text-white">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5 mr-1">
+                  <span class="live-pulse"></span>
+                  <span>Longdo Live Traffic & CCTV:</span>
+                </span>
+                <button id="btnToggleLongdoTraffic" onclick="toggleLongdoLayer('traffic')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-xs cursor-pointer">
+                  🚦 การจราจรสด
+                </button>
+                <button id="btnToggleLongdoCameras" onclick="toggleLongdoLayer('cameras')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs cursor-pointer">
+                  📹 กล้อง CCTV
+                </button>
+                <button id="btnToggleLongdoEvents" onclick="toggleLongdoLayer('events')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-xs cursor-pointer">
+                  ⚠️ เหตุการณ์ & น้ำท่วม
+                </button>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-[11px] font-bold text-slate-400 mr-1">ซูมโซนสาขา:</span>
+                <button onclick="zoomLongdoMap(13.8400, 100.6650, 14)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold transition cursor-pointer">
+                  📍 รามอินทรา
+                </button>
+                <button onclick="zoomLongdoMap(13.7485, 100.6650, 14)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold transition cursor-pointer">
+                  📍 กรุงเทพกรีฑา
+                </button>
+                <button onclick="zoomLongdoMap(13.7080, 100.5980, 14)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold transition cursor-pointer">
+                  📍 สุขุมวิท 50
+                </button>
+                <button onclick="zoomLongdoMap(13.6820, 100.5400, 14)" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold transition cursor-pointer">
+                  📍 พระราม 3
+                </button>
+                <button onclick="zoomLongdoMap(13.7800, 100.6400, 11)" class="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold transition cursor-pointer">
+                  🧭 กทม. รวม
+                </button>
+              </div>
+            </div>
+          </div>
 
           <!-- Executive Live CCTV Hub Launcher (Active when CCTV portals with iframe restrictions are selected) -->
           <div id="cctvPortalHubContainer" class="hidden p-6 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950 text-white w-full h-full overflow-y-auto space-y-6">

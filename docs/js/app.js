@@ -881,24 +881,109 @@ function syncLiveFromSupabase() {
 window.syncLiveFromSupabase = syncLiveFromSupabase;
 
 // ==========================================
-// 5. Page 3: Live CCTV Surveillance Hub
+// 5. Page 3: Live CCTV & Traffic Surveillance Hub
 // ==========================================
+let longdoMapInstance = null;
+let longdoCamerasEnabled = true;
+let longdoTrafficEnabled = true;
+let longdoEventsEnabled = true;
+
+function initLongdoTrafficMap() {
+  if (longdoMapInstance || typeof longdo === 'undefined') return;
+  const mapDiv = document.getElementById('longdoMapDiv');
+  if (!mapDiv) return;
+
+  try {
+    longdoMapInstance = new longdo.Map({
+      placeholder: mapDiv,
+      language: 'th'
+    });
+
+    longdoMapInstance.Event.bind('ready', function() {
+      longdoMapInstance.location({ lon: 100.6400, lat: 13.7900 }, true);
+      longdoMapInstance.zoom(12, true);
+
+      // Add live traffic flow layer (green/yellow/red congestion lines)
+      if (longdo.Layers && longdo.Layers.TRAFFIC) {
+        longdoMapInstance.Layers.add(longdo.Layers.TRAFFIC);
+      }
+      // Load CCTV cameras overlay
+      if (longdo.Overlays && longdo.Overlays.cameras) {
+        longdoMapInstance.Overlays.load(longdo.Overlays.cameras);
+      }
+      // Load incident events overlay (accidents, road work, floods)
+      if (longdo.Overlays && longdo.Overlays.events) {
+        longdoMapInstance.Overlays.load(longdo.Overlays.events);
+      }
+    });
+  } catch (err) {
+    console.warn('Longdo Map init warning:', err);
+  }
+}
+window.initLongdoTrafficMap = initLongdoTrafficMap;
+
+function zoomLongdoMap(lat, lon, zoomLevel = 14) {
+  if (longdoMapInstance) {
+    longdoMapInstance.location({ lon: lon, lat: lat }, true);
+    longdoMapInstance.zoom(zoomLevel, true);
+  } else {
+    initLongdoTrafficMap();
+    setTimeout(() => {
+      if (longdoMapInstance) {
+        longdoMapInstance.location({ lon: lon, lat: lat }, true);
+        longdoMapInstance.zoom(zoomLevel, true);
+      }
+    }, 500);
+  }
+}
+window.zoomLongdoMap = zoomLongdoMap;
+
+function toggleLongdoLayer(layerType) {
+  if (!longdoMapInstance || typeof longdo === 'undefined') return;
+  if (layerType === 'traffic') {
+    longdoTrafficEnabled = !longdoTrafficEnabled;
+    if (longdoTrafficEnabled) {
+      longdoMapInstance.Layers.add(longdo.Layers.TRAFFIC);
+    } else {
+      longdoMapInstance.Layers.remove(longdo.Layers.TRAFFIC);
+    }
+    const btn = document.getElementById('btnToggleLongdoTraffic');
+    if (btn) btn.className = longdoTrafficEnabled ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-xs cursor-pointer' : 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-400 hover:text-white cursor-pointer';
+  } else if (layerType === 'cameras') {
+    longdoCamerasEnabled = !longdoCamerasEnabled;
+    if (longdoCamerasEnabled) {
+      longdoMapInstance.Overlays.load(longdo.Overlays.cameras);
+    } else {
+      longdoMapInstance.Overlays.unload(longdo.Overlays.cameras);
+    }
+    const btn = document.getElementById('btnToggleLongdoCameras');
+    if (btn) btn.className = longdoCamerasEnabled ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs cursor-pointer' : 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-400 hover:text-white cursor-pointer';
+  } else if (layerType === 'events') {
+    longdoEventsEnabled = !longdoEventsEnabled;
+    if (longdoEventsEnabled) {
+      longdoMapInstance.Overlays.load(longdo.Overlays.events);
+    } else {
+      longdoMapInstance.Overlays.unload(longdo.Overlays.events);
+    }
+    const btn = document.getElementById('btnToggleLongdoEvents');
+    if (btn) btn.className = longdoEventsEnabled ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-xs cursor-pointer' : 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-400 hover:text-white cursor-pointer';
+  }
+}
+window.toggleLongdoLayer = toggleLongdoLayer;
+
 const CCTV_SOURCES = {
+  LONGDO: {
+    name: 'Longdo Map Live Traffic & CCTV (กล้อง กทม. ทางด่วน & สภาพจราจรสด API)',
+    url: 'https://traffic.longdo.com/',
+    embedUrl: 'https://traffic.longdo.com/',
+    type: 'longdo_map',
+    isWater: false
+  },
   RADAR: {
     name: 'เรดาร์ตรวจสภาพอากาศและกลุ่มฝนสด (Windy Live Doppler Weather & Rain Radar HD)',
     url: 'https://www.windy.com/-Weather-radar-radar?radar,13.756,100.502,9',
     embedUrl: 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true',
     type: 'iframe',
-    isWater: false
-  },
-  LONGDO: {
-    name: 'Longdo Traffic CCTV Hub (กล้อง กทม. ทางด่วน และสายหลัก 1,500+ จุด สตรีมสด)',
-    url: 'https://traffic.longdo.com/',
-    embedUrl: 'https://traffic.longdo.com/',
-    type: 'portal_hub',
-    portalTitle: 'ศูนย์กล้องวงจรปิด Longdo Traffic CCTV Hub',
-    portalDesc: 'เชื่อมโยงสัญญาณสดจากกล้อง กทม. (BMA), การทางพิเศษ (EXAT), กรมทางหลวง (DOH) และศูนย์ควบคุมจราจรแบบเรียลไทม์',
-    portalBadge: '1,500+ Live Cameras',
     isWater: false
   },
   RAINVIEWER: {
@@ -958,10 +1043,11 @@ const CCTV_SOURCES = {
 };
 
 function switchCctvPortal(srcKey) {
-  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.RADAR;
+  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.LONGDO;
   const iframe = document.getElementById('cctvPortalIframe');
   const waterContainer = document.getElementById('cctvWaterDashboardContainer');
   const hubContainer = document.getElementById('cctvPortalHubContainer');
+  const longdoContainer = document.getElementById('longdoTrafficMapContainer');
   const directLinkBtn = document.getElementById('cctvDirectLinkBtn');
   const statusText = document.getElementById('cctvPortalStatusText');
 
@@ -978,9 +1064,18 @@ function switchCctvPortal(srcKey) {
   if (iframe) iframe.classList.add('hidden');
   if (waterContainer) waterContainer.classList.add('hidden');
   if (hubContainer) hubContainer.classList.add('hidden');
+  if (longdoContainer) longdoContainer.classList.add('hidden');
 
   if (info.isWater) {
     if (waterContainer) waterContainer.classList.remove('hidden');
+  } else if (info.type === 'longdo_map') {
+    if (longdoContainer) {
+      longdoContainer.classList.remove('hidden');
+      initLongdoTrafficMap();
+      if (longdoMapInstance && longdoMapInstance.resize) {
+        setTimeout(() => longdoMapInstance.resize(), 150);
+      }
+    }
   } else if (info.type === 'iframe') {
     if (iframe) {
       iframe.classList.remove('hidden');
@@ -989,7 +1084,7 @@ function switchCctvPortal(srcKey) {
       }
     }
   } else {
-    // Portal Hub Mode (Longdo, BMA, DOH, TMD, TrafficVision)
+    // Portal Hub Mode (BMA, DOH, TMD, TrafficVision)
     if (hubContainer) {
       hubContainer.classList.remove('hidden');
       const badge = document.getElementById('hubPortalBadge');
@@ -1014,10 +1109,7 @@ function switchCctvPortal(srcKey) {
 window.switchCctvPortal = switchCctvPortal;
 
 function initCCTV() {
-  const iframe = document.getElementById('cctvPortalIframe');
-  if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-    iframe.src = 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true';
-  }
+  initLongdoTrafficMap();
 }
 
 // ==========================================
