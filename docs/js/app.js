@@ -253,7 +253,7 @@ function initCharts() {
           {
             type: 'line',
             label: 'ยังไม่ได้รับน้ำเลย (คงค้างประสานงาน)',
-            data: [2598, 2180, 1680, 1390, 1150, 1040, 990, 977],
+            data: [5048, 4120, 3180, 2450, 1850, 1380, 1020, 893],
             borderColor: '#ef4444',
             backgroundColor: '#ef4444',
             borderWidth: 3,
@@ -267,7 +267,7 @@ function initCharts() {
           {
             type: 'line',
             label: 'สำเร็จตามเงื่อนไขสะสม (Delivered / Non-Flood)',
-            data: [0, 418, 918, 1208, 1448, 1558, 1608, 1621],
+            data: [0, 928, 1868, 2598, 3198, 3668, 4028, 4155],
             borderColor: '#10b981',
             backgroundColor: '#10b981',
             borderWidth: 3,
@@ -281,7 +281,7 @@ function initCharts() {
           {
             type: 'bar',
             label: 'ยอดส่งเสริมสำเร็จรายวัน (Daily Solved)',
-            data: [0, 418, 500, 290, 240, 110, 50, 13],
+            data: [0, 928, 940, 730, 600, 470, 360, 127],
             backgroundColor: 'rgba(59, 130, 246, 0.75)',
             borderRadius: 6,
             yAxisID: 'y',
@@ -306,7 +306,7 @@ function initCharts() {
         scales: {
           y: {
             beginAtZero: true,
-            max: 2950,
+            max: 5600,
             grid: { color: '#f1f5f9' },
             ticks: { font: { family: 'Prompt' } }
           },
@@ -336,14 +336,14 @@ function initCharts() {
           },
           {
             label: 'ค้างส่งน้ำท่วม (Flood Pending)',
-            data: [539, 397, 0, 0],
+            data: [332, 186, 0, 0],
             backgroundColor: '#ef4444',
             borderRadius: 6,
             datalabelColor: '#dc2626'
           },
           {
             label: 'โอนงานสิ้นวัน (Transfer EOD)',
-            data: [17, 0, 24, 0],
+            data: [180, 82, 113, 0],
             backgroundColor: '#8b5cf6',
             borderRadius: 6,
             datalabelColor: '#7c3aed'
@@ -564,7 +564,7 @@ function syncLiveFromSupabase() {
     }
     renderMapMarkers();
     if (typeof renderTable === 'function') renderTable();
-    showToast(`✅ ซิงค์ข้อมูลล่าสุดเรียบร้อย (${AppState.dataStore.pending ? AppState.dataStore.pending.length : 977} รายที่ยังไม่ได้รับน้ำ)`);
+    showToast(`✅ ซิงค์ข้อมูลล่าสุดเรียบร้อย (${AppState.dataStore.pending ? AppState.dataStore.pending.length : 893} รายที่ยังไม่ได้รับน้ำ)`);
   } catch (err) {
     console.error('Sync failed:', err);
     showToast('⚠️ ไม่สามารถซิงค์ข้อมูลได้: ' + err.message);
