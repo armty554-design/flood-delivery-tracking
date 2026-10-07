@@ -102,18 +102,11 @@ async function syncAndEvaluate() {
   let idx = 0;
   memberHistoryMap.forEach((attempts, mId) => {
     idx++;
-    // Helper ตรวจสอบความสำเร็จของการเข้าส่ง
-    function checkAttemptSuccess(att) {
+    // Helper ตรวจสอบว่าสมาชิกเคยมีรอบใดจัดส่งสำเร็จจริงหรือไม่
+    const hasAnySuccessAttempt = attempts.some(att => {
       const dg = (att.delivery_group || '').trim();
       const r = (att.reason || '').trim();
       const s = (att.status || '').trim();
-      const isFailed = dg === 'ยังส่งไม่ได้' ||
-                       r.includes('ไม่สามารถเข้าส่งได้') ||
-                       r.includes('เลื่อนวันที่ส่ง') ||
-                       r.includes('น้ำท่วม') ||
-                       r.includes('เกิดข้อผิดพลาด') ||
-                       s.includes('น้ำท่วม') ||
-                       s.includes('รอน้ำลด');
       const isSuccess = dg === 'เข้าส่งได้' ||
                         r.includes('ตั้งถัง') ||
                         r.includes('พบลูกค้า') ||
@@ -121,11 +114,9 @@ async function syncAndEvaluate() {
                         r.includes('ส่งสำเร็จ') ||
                         s === 'เข้าส่งได้' ||
                         s === 'สำเร็จ';
+      const isFailed = r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('น้ำท่วม') || r.includes('เกิดข้อผิดพลาด');
       return isSuccess && !isFailed;
-    }
-
-    // ตรวจสอบว่าในประวัติรอบ 26 ก.ย. เป็นต้นมา สมาชิกเคยได้รับการเข้าส่งสำเร็จหรือไม่
-    const hasAnySuccessAttempt = attempts.some(att => checkAttemptSuccess(att));
+    });
 
     // เรียงตาม delivery_date จากอดีตไปปัจจุบัน
     attempts.sort((a, b) => new Date(a.delivery_date || '1970-01-01') - new Date(b.delivery_date || '1970-01-01'));
@@ -136,20 +127,20 @@ async function syncAndEvaluate() {
     const round = (latestAttempt.round || '').trim();
     const isTr = latestAttempt.is_transferred === true;
 
-    // ตรวจสอบสถานะการเข้าส่งในรอบล่าสุด
-    const latestSuccess = checkAttemptSuccess(latestAttempt);
+    // ตรวจสอบสถานะรอบล่าสุด
+    // สถานะวิกฤตน้ำท่วม: ต้องมีคำว่าน้ำท่วม
+    const isLatestFlood = r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด');
+    // สถานะโอนงาน/ข้อผิดพลาดค้างส่ง: ต้องเป็นข้อผิดพลาดจริง ไม่ใช่การขาดส่งปกติ (เช่น ไม่รับน้ำ ไม่พบถัง)
+    const isNormalReason = r.includes('ไม่รับน้ำ') || r.includes('ไม่พบถัง') || r.includes('ตั้งถัง') || r.includes('พบลูกค้า') || r.includes('อยู่บ้าน') || r.includes('ส่งสำเร็จ');
+    const isLatestTransferError = !isNormalReason && (r.includes('เกิดข้อผิดพลาด') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || r.includes('โอนงาน'));
 
-    // ตรวจสอบกรณีที่เป็นวิกฤตน้ำท่วมสูง หรือ โอนงานสิ้นวัน
-    const isFloodLast = r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด');
-    const isTransferLast = isTr || round.includes('โอนงาน') || r.includes('โอนงาน') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || s.includes('โอนงาน');
-
-    // สรุปสถานะ: สมาชิกจะ "ยังไม่ได้รับน้ำ (Pending)" ก็ต่อเมื่อ:
-    // 1. ไม่เคยมีรอบที่ส่งสำเร็จเลย (hasAnySuccessAttempt = false) และ
-    // 2. สถานะล่าสุดยังคงเป็นน้ำท่วมสูงหรือโอนงานสิ้นวัน
-    const isPendingCrisis = !hasAnySuccessAttempt && (isFloodLast || isTransferLast);
-    const isDelivered = hasAnySuccessAttempt || latestSuccess;
-    const isFlood = isPendingCrisis && isFloodLast;
-    const isTransfer = isPendingCrisis && !isFloodLast && isTransferLast;
+    // สมาชิกจะเป็น "ยังไม่ได้รับน้ำ (Pending)" ก็ต่อเมื่อ:
+    // 1. ไม่เคยมีรอบใดจัดส่งสำเร็จเลย (hasAnySuccessAttempt = false) และ
+    // 2. สถานะล่าสุดยังคงติดปัญหาน้ำท่วมสูง หรือ ติดปัญหาโอนงาน/เกิดข้อผิดพลาด
+    const isPendingCrisis = !hasAnySuccessAttempt && (isLatestFlood || isLatestTransferError);
+    const isDelivered = !isPendingCrisis;
+    const isFlood = isPendingCrisis && isLatestFlood;
+    const isTransfer = isPendingCrisis && !isLatestFlood && isLatestTransferError;
 
     // สร้างประวัติ history
     const historyParts = attempts.map(att => {
