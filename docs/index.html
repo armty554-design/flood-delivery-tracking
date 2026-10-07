@@ -2038,87 +2038,78 @@
             </a>
           </div>
 
-        <!-- Metric KPI Cards Bar (Expanded to 6 columns) -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-4 pt-4 border-t border-slate-100">
-          <div class="bg-slate-50/80 p-3 rounded-xl border border-slate-100">
-            <span class="text-[11px] text-slate-500 font-medium block">สถานีตรวจวัดทั้งหมด</span>
-            <div class="flex items-baseline space-x-1.5 mt-0.5">
-              <span class="text-lg font-bold text-slate-800" id="kpiTotalStations">12</span>
-              <span class="text-[11px] text-slate-400">จุดสำคัญ</span>
+        <!-- Metric KPI Cards Bar (4 Clean Hydrology Columns - ธีม ฟ้าขาว) -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-slate-100">
+          <div class="bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <span class="text-xs text-slate-500 font-semibold block">สถานีตรวจวัดทั้งหมด</span>
+            <div class="flex items-baseline space-x-1.5 mt-1">
+              <span class="text-2xl font-black text-slate-800" id="kpiTotalStations">12</span>
+              <span class="text-xs text-slate-400 font-medium">จุดสำคัญ</span>
             </div>
+            <span class="text-[11px] text-slate-400 mt-0.5 block truncate">4 ลำน้ำหลักรอบ กทม.</span>
           </div>
-          <div class="bg-red-50/60 p-3 rounded-xl border border-red-100">
-            <span class="text-[11px] text-red-600 font-medium block">วิกฤตล้นตลิ่ง (🔴)</span>
-            <div class="flex items-baseline space-x-1.5 mt-0.5">
-              <span class="text-lg font-bold text-red-700" id="kpiCriticalStations">2</span>
-              <span class="text-[11px] text-red-500">สถานี</span>
+          <div class="bg-red-50/70 p-3.5 rounded-2xl border border-red-200/80 shadow-2xs">
+            <span class="text-xs text-red-600 font-semibold block">วิกฤตล้นตลิ่ง (🔴)</span>
+            <div class="flex items-baseline space-x-1.5 mt-1">
+              <span class="text-2xl font-black text-red-700" id="kpiCriticalStations">2</span>
+              <span class="text-xs text-red-500 font-medium">สถานี</span>
             </div>
+            <span class="text-[11px] text-red-500 mt-0.5 block truncate">ระดับน้ำสูงเกินตลิ่ง</span>
           </div>
-          <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-100">
-            <span class="text-[11px] text-amber-600 font-medium block">เฝ้าระวังน้ำสูง (🟡)</span>
-            <div class="flex items-baseline space-x-1.5 mt-0.5">
-              <span class="text-lg font-bold text-amber-700" id="kpiWarningStations">5</span>
-              <span class="text-[11px] text-amber-500">สถานี</span>
+          <div class="bg-amber-50/70 p-3.5 rounded-2xl border border-amber-200/80 shadow-2xs">
+            <span class="text-xs text-amber-700 font-semibold block">เฝ้าระวังน้ำสูง (🟡)</span>
+            <div class="flex items-baseline space-x-1.5 mt-1">
+              <span class="text-2xl font-black text-amber-800" id="kpiWarningStations">5</span>
+              <span class="text-xs text-amber-600 font-medium">สถานี</span>
             </div>
+            <span class="text-[11px] text-amber-600 mt-0.5 block truncate">ใกล้ระดับเตือนภัย</span>
           </div>
-          <div class="bg-blue-50/60 p-3 rounded-xl border border-blue-100">
-            <span class="text-[11px] text-blue-600 font-medium block">สายรถเสี่ยงน้ำท่วม</span>
-            <div class="flex items-baseline space-x-1.5 mt-0.5">
-              <span class="text-lg font-bold text-blue-700" id="kpiImpactedTrucks">13</span>
-              <span class="text-[11px] text-blue-500">คันจัดส่ง</span>
+          <div class="bg-blue-50/70 p-3.5 rounded-2xl border border-blue-200/80 shadow-2xs">
+            <span class="text-xs text-blue-700 font-semibold block">สายรถเสี่ยงน้ำท่วม</span>
+            <div class="flex items-baseline space-x-1.5 mt-1">
+              <span class="text-2xl font-black text-blue-800" id="kpiImpactedTrucks">13</span>
+              <span class="text-xs text-blue-500 font-medium">คันจัดส่ง</span>
             </div>
+            <span class="text-[11px] text-blue-600 mt-0.5 block truncate">วิ่งผ่านพื้นที่น้ำหนุน</span>
           </div>
-          <!-- CCTV Cameras KPI -->
-          <div class="bg-cyan-50/60 p-3 rounded-xl border border-cyan-100">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] text-cyan-700 font-medium block">กล้อง CCTV สด (📹)</span>
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            </div>
-            <div class="flex items-baseline space-x-1.5 mt-0.5">
-              <span class="text-lg font-bold text-cyan-800" id="kpiTotalCameras">14</span>
-              <span class="text-[11px] text-cyan-600">จุดตรวจ</span>
-            </div>
-          </div>
-          <!-- Road Floods KPI -->
-          <div class="bg-rose-50/60 p-3 rounded-xl border border-rose-100">
-            <span class="text-[11px] text-rose-600 font-medium block">ถนนน้ำท่วม DDS (🛣️)</span>
-            <div class="flex items-baseline space-x-1.5 mt-0.5">
-              <span class="text-lg font-bold text-rose-700" id="kpiTotalRoadFloods">8</span>
-              <span class="text-[11px] text-rose-500">สายทาง</span>
-            </div>
-          </div>
+          <!-- Hidden fallback IDs for dynamic JS updates -->
+          <span id="kpiTotalCameras" class="hidden">14</span>
+          <span id="kpiTotalRoadFloods" class="hidden">8</span>
         </div>
       </div>
 
-      <!-- 5.1-B Sub-Navigation Jump Bar inside Tab 5 -->
-      <div class="bg-white/90 backdrop-blur rounded-xl p-2 border border-slate-200/80 flex flex-wrap items-center gap-1.5 text-xs shadow-xs">
-        <span class="text-slate-400 font-semibold px-2 py-1 flex items-center">
-          <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-slate-400"></i> ลัดไปยัง:
-        </span>
-        <a href="#cctvCamerasSection" class="inline-flex items-center px-3 py-1.5 rounded-lg font-semibold bg-blue-50 text-blue-700 hover:bg-blue-100 transition">
-          <i data-lucide="video" class="w-3.5 h-3.5 mr-1 text-blue-600"></i>
-          <span>กล้อง CCTV สด (<span id="jumpCctvCount">14</span>)</span>
-        </a>
-        <a href="#roadFloodReportsSection" class="inline-flex items-center px-3 py-1.5 rounded-lg font-semibold bg-red-50 text-red-700 hover:bg-red-100 transition">
-          <i data-lucide="alert-triangle" class="w-3.5 h-3.5 mr-1 text-red-600"></i>
-          <span>รายงานถนนน้ำท่วม DDS (<span id="jumpRoadFloodCount">8</span>)</span>
-        </a>
-        <a href="#waterStationsContainer" class="inline-flex items-center px-3 py-1.5 rounded-lg font-semibold bg-sky-50 text-sky-700 hover:bg-sky-100 transition">
-          <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-sky-600"></i>
-          <span>ระดับน้ำในคลอง (12)</span>
-        </a>
-        <a href="#fleetImpactList" class="inline-flex items-center px-3 py-1.5 rounded-lg font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 transition">
-          <i data-lucide="truck" class="w-3.5 h-3.5 mr-1 text-amber-600"></i>
-          <span>ผลกระทบสายรถ 4 สาขา</span>
-        </a>
-        <a href="#floodNewsContainer" class="inline-flex items-center px-3 py-1.5 rounded-lg font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition">
-          <i data-lucide="radio" class="w-3.5 h-3.5 mr-1 text-indigo-600"></i>
-          <span>ฟีดข่าวแจ้งเตือน Real-time</span>
-        </a>
-        <a href="#rainRadarSection" class="inline-flex items-center px-3 py-1.5 rounded-lg font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition">
-          <i data-lucide="cloud-rain" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i>
-          <span>เรดาร์ตรวจฝน & สภาพอากาศ</span>
-        </a>
+      <!-- 5.1-B Sub-Navigation Jump Bar inside Tab 3 (Deduplicated Pure Hydrology) -->
+      <div class="bg-white rounded-2xl p-2.5 border border-slate-200/80 flex flex-wrap items-center justify-between gap-2 text-xs shadow-2xs">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="text-slate-400 font-semibold px-2 py-1 flex items-center">
+            <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> ลัดไปยัง:
+          </span>
+          <a href="#waterStationsContainer" class="inline-flex items-center px-3 py-1.5 rounded-xl font-semibold bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-100 transition">
+            <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-sky-600"></i>
+            <span>ระดับน้ำในคลอง (12 จุด)</span>
+          </a>
+          <a href="#fleetImpactList" class="inline-flex items-center px-3 py-1.5 rounded-xl font-semibold bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-100 transition">
+            <i data-lucide="truck" class="w-3.5 h-3.5 mr-1 text-amber-600"></i>
+            <span>ผลกระทบสายรถ 4 สาขา</span>
+          </a>
+          <a href="#floodNewsContainer" class="inline-flex items-center px-3 py-1.5 rounded-xl font-semibold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-100 transition">
+            <i data-lucide="radio" class="w-3.5 h-3.5 mr-1 text-indigo-600"></i>
+            <span>ฟีดข่าวแจ้งเตือน Real-time</span>
+          </a>
+          <a href="#dataSourcesSection" class="inline-flex items-center px-3 py-1.5 rounded-xl font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-100 transition">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i>
+            <span>แหล่งข้อมูลอ้างอิงทางการ (6 องค์กร)</span>
+          </a>
+          <!-- Fallback jump count spans for JS safety -->
+          <span id="jumpCctvCount" class="hidden">14</span>
+          <span id="jumpRoadFloodCount" class="hidden">8</span>
+        </div>
+
+        <!-- Quick Jump to Tab 4 Dedicated Live CCTV Portal -->
+        <button type="button" onclick="switchTab('cctv')" class="inline-flex items-center px-3.5 py-1.5 rounded-xl font-bold bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white border border-blue-200 transition shadow-2xs">
+          <i data-lucide="video" class="w-3.5 h-3.5 mr-1.5"></i>
+          <span>เปิดหน้ากล้องสดเต็มจอ ↗</span>
+        </button>
       </div>
 
       <!-- 5.2 Delivery Fleet Impact Mapping (การเชื่อมโยงผลกระทบต่อสาขาและสายรถ) -->
@@ -2143,7 +2134,257 @@
         </div>
       </div>
 
-      <!-- 5.3-B Live CCTV Cameras Section (กล้องตรวจจับสถานการณ์น้ำท่วม & สภาพจราจร Real-time) -->
+      <!-- 5.3 Water Level Gauges Section (แผงการ์ดมาตรวัดระดับน้ำ ม.รทก.) -->
+      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
+                <i data-lucide="gauge" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-800">มาตรวัดระดับน้ำในลำคลองหลักรอบ 4 สาขา (Water Level Gauges)</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">คลองประเวศบุรีรมย์ (สาขากรุงเทพกรีฑา), คลองแสนแสบ (สาขารามอินทรา), คลองลาดพร้าว (สาขารามอินทรา), แม่น้ำเจ้าพระยา / พระราม 3 (สาขาพระราม 3 / สุขุมวิท 50) (หน่วย: ม.รทก.)</p>
+          </div>
+          <div class="flex items-center space-x-3 text-xs">
+            <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5"></span>ปกติ (🟢)</span>
+            <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 mr-1.5"></span>เฝ้าระวัง (🟡)</span>
+            <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5 animate-ping"></span>วิกฤตล้นตลิ่ง (🔴)</span>
+          </div>
+        </div>
+
+        <!-- Filter by canal within water tab -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-slate-500 font-medium">กรองลำน้ำ:</span>
+          <button type="button" onclick="filterWaterCanal('ALL')" id="btnWaterCanal-ALL" class="water-canal-btn active px-3 py-1 rounded-lg font-semibold bg-blue-600 text-white transition shadow-2xs">ทุกลำน้ำ (12 จุด)</button>
+          <button type="button" onclick="filterWaterCanal('คลองประเวศบุรีรมย์')" id="btnWaterCanal-prawet" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">คลองประเวศบุรีรมย์ (กรุงเทพกรีฑา)</button>
+          <button type="button" onclick="filterWaterCanal('คลองแสนแสบ')" id="btnWaterCanal-saensaep" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">คลองแสนแสบ (รามอินทรา/มีนบุรี)</button>
+          <button type="button" onclick="filterWaterCanal('คลองลาดพร้าว')" id="btnWaterCanal-latphrao" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">คลองลาดพร้าว (รามอินทรา/สายไหม)</button>
+          <button type="button" onclick="filterWaterCanal('แม่น้ำเจ้าพระยา')" id="btnWaterCanal-chaophraya" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">แม่น้ำเจ้าพระยา (พระราม 3 / สุขุมวิท 50)</button>
+        </div>
+
+        <div id="waterStationsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Dynamic Water Station Cards -->
+        </div>
+      </div>
+
+      <!-- 5.4 Live Incident & Flood News Feed (ฟีดแจ้งเตือนน้ำท่วมและการจราจร) -->
+      <div id="floodNewsContainer" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
+                <i data-lucide="radio" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-base font-bold text-slate-800">ฟีดข่าวแจ้งเตือนน้ำท่วม & สภาพจราจร Real-time</h3>
+            </div>
+            <p class="text-xs text-slate-500 mt-0.5">รายงานจุดน้ำท่วมขังบนผิวถนน, จุดปิดเบี่ยงการจราจร, และการสูบระบายน้ำ แยกตามพื้นที่เขต</p>
+          </div>
+          <span id="incidentCountBadge" class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full self-start sm:self-auto">
+            แสดง 6 เหตุการณ์
+          </span>
+        </div>
+
+        <!-- News Feed Filter Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs">
+          <!-- Search box -->
+          <div class="sm:col-span-5 relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="waterIncidentSearch" oninput="filterAndRenderIncidents()" placeholder="ค้นหาถนน, ซอย, เขต หรือสถานการณ์..." class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+
+          <!-- District Filter -->
+          <div class="sm:col-span-3">
+            <select id="waterDistrictFilter" onchange="filterAndRenderIncidents()" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <option value="ALL">📍 ทุกเขตพื้นที่</option>
+              <option value="บึงกุ่ม">เขตบึงกุ่ม</option>
+              <option value="สะพานสูง">เขตสะพานสูง</option>
+              <option value="คันนายาว">เขตคันนายาว</option>
+              <option value="สวนหลวง">เขตสวนหลวง</option>
+              <option value="คลองเตย">เขตคลองเตย</option>
+              <option value="ยานนาวา">เขตยานนาวา</option>
+              <option value="บางกะปิ">เขตบางกะปิ</option>
+              <option value="ประเวศ">เขตประเวศ</option>
+              <option value="ลาดพร้าว">เขตลาดพร้าว</option>
+              <option value="มีนบุรี">เขตมีนบุรี</option>
+            </select>
+          </div>
+
+          <!-- Severity Filter -->
+          <div class="sm:col-span-4 flex items-center space-x-1">
+            <button type="button" onclick="setSeverityFilter('ALL')" id="btnSev-ALL" class="sev-filter-btn active flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-slate-800 text-white transition text-center">ทั้งหมด</button>
+            <button type="button" onclick="setSeverityFilter('CRITICAL')" id="btnSev-CRITICAL" class="sev-filter-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-red-600 border border-slate-200 hover:bg-red-50 transition text-center">🔴 วิกฤต</button>
+            <button type="button" onclick="setSeverityFilter('WARNING')" id="btnSev-WARNING" class="sev-filter-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-amber-600 border border-slate-200 hover:bg-amber-50 transition text-center">🟡 เฝ้าระวัง</button>
+            <button type="button" onclick="setSeverityFilter('NORMAL')" id="btnSev-NORMAL" class="sev-filter-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-emerald-600 border border-slate-200 hover:bg-emerald-50 transition text-center">🟢 ปกติ</button>
+          </div>
+        </div>
+
+        <!-- Incidents List Container -->
+        <div id="incidentFeedList" class="space-y-3">
+          <!-- Dynamic Incidents Cards -->
+        </div>
+      </div>
+
+      <!-- 5.5 แหล่งข้อมูลอ้างอิงทางการ & หน่วยงานภาครัฐ (Official Data Sources & Citations) -->
+      <div id="dataSourcesSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center">
+                แหล่งข้อมูลอ้างอิงทางการ & หน่วยงานภาครัฐ
+                <span class="ml-2 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 flex items-center">
+                  <i data-lucide="check-circle" class="w-3 h-3 mr-1 text-emerald-600"></i> 6 องค์กรตรวจสอบแล้ว
+                </span>
+              </h3>
+              <p class="text-xs text-slate-500 mt-0.5">ข้อมูลระดับน้ำ โทรมาตรคลอง และรายงานจุดน้ำท่วมขัง รวบรวมและอ้างอิงจากหน่วยงานหลักของรัฐและศูนย์สั่งการจราจร</p>
+            </div>
+          </div>
+          <span class="text-xs text-slate-400">ข้อมูลเชื่อมโยงอัตโนมัติ Real-time</span>
+        </div>
+
+        <div id="officialSourcesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+          <!-- Dynamic Official Sources Cards -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- ========================================================================= -->
+    <!-- TAB 4: SMART IN-HOUSE CCTV SURVEILLANCE & TRAFFIC PORTAL (ศูนย์ควบคุมกล้องสดอัจฉริยะ ธีม ฟ้าขาว) -->
+    <!-- ========================================================================= -->
+    <section id="tabContent-cctv" class="hidden space-y-6">
+      
+      <!-- 4.1 Executive CCTV Hero Banner (ธีม ฟ้าขาว) -->
+      <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 text-white rounded-3xl p-5 sm:p-6 shadow-xl shadow-blue-700/15 border border-blue-400/30 relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30 backdrop-blur-xs">
+                <i data-lucide="video" class="w-4 h-4 mr-1.5 text-sky-200"></i> ศูนย์ควบคุมกล้องสดอัจฉริยะ (CCTV Command Center)
+              </span>
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500 text-white shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-white mr-1.5 animate-ping"></span> LIVE 24/7
+              </span>
+              <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
+                🛡️ ปลอดโฆษณา 100% (Ad-Free In-House Surveillance)
+              </span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">
+              พอร์ทัลตรวจการณ์กล้องสด & ระดับน้ำผิวจราจร 4 สาขาหลัก
+            </h2>
+            <p class="text-xs sm:text-sm text-blue-50 mt-1 max-w-3xl leading-relaxed">
+              มอนิเตอร์ภาพสด 14 จุดตรวจการณ์รอบสาขากรุงเทพกรีฑา, รามอินทรา, สุขุมวิท 50 และพระราม 3 พร้อมเชื่อมโยงสตรีมสดทางการจาก สจส. กทม., สำนักการระบายน้ำ (DDS) และทางพิเศษ (EXAT)
+            </p>
+          </div>
+
+          <!-- Top Action Buttons & Controls -->
+          <div class="flex flex-wrap items-center gap-2 shrink-0 self-start lg:self-center">
+            <!-- Portal Select -->
+            <div class="flex items-center space-x-1.5 bg-white rounded-xl px-3 py-2 text-xs border border-blue-200 shadow-sm text-slate-800">
+              <span class="text-blue-900 text-[11px] font-bold hidden sm:inline">สัญญาณ:</span>
+              <select id="dedicatedPortalSelect" onchange="switchDedicatedPortalSource(this.value)" class="bg-transparent font-bold text-blue-900 text-xs focus:outline-none cursor-pointer">
+                <option value="https://cpudapp.bangkok.go.th/bmatraffic/">สจส. กทม. (BMA Traffic Live - สตรีมสดทางการ)</option>
+                <option value="https://world.tehx.dyndns.info/flood">JK World Flood Watch Surveillance</option>
+                <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
+              </select>
+            </div>
+
+            <!-- Refresh Frame -->
+            <button type="button" onclick="refreshDedicatedPortalFrame()" class="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-200" title="รีเฟรชสัญญาณสตรีม">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> รีเฟรช
+            </button>
+
+            <!-- Fullscreen -->
+            <button type="button" onclick="toggleDedicatedPortalFullscreen()" class="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-200" title="ขยายหน้าต่างแบบเต็มจอ">
+              <i data-lucide="maximize" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> เต็มจอ
+            </button>
+
+            <!-- External Link -->
+            <a id="btnDedicatedExternalLink" href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="px-3.5 py-2 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-400/30">
+              <span>เปิดแท็บใหม่ ↗</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4.2 Quick Corridor / Branch Filter Chips (ทางลัดเจาะจง 4 สาขา) -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-4 mt-4 border-t border-white/20">
+          <span class="text-blue-100 font-bold flex items-center mr-1 text-[11px]">
+            <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-white"></i> เจาะจงสาขา:
+          </span>
+          <button type="button" onclick="switchDedicatedPortalSource('https://cpudapp.bangkok.go.th/bmatraffic/')" class="px-3 py-1 rounded-xl font-bold bg-white text-blue-700 shadow-2xs hover:bg-blue-50 transition">
+            🏢 สจส. BMA Live ทั้งหมด (1,800+ จุด)
+          </button>
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
+            🏢 สาขากรุงเทพกรีฑา (ศรีนครินทร์/มอเตอร์เวย์) ↗
+          </a>
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
+            🏢 สาขารามอินทรา (กม.1-8/มีนบุรี) ↗
+          </a>
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
+            🏢 สาขาสุขุมวิท 50 (ทางด่วน/พระโขนง) ↗
+          </a>
+          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
+            🏢 สาขาพระราม 3 (สะพานพระราม 9/คลองเตย) ↗
+          </a>
+          <button type="button" onclick="switchDedicatedPortalSource('https://world.tehx.dyndns.info/flood')" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
+            🌊 JK World Flood Map
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Container Card (ธีม ฟ้าขาว) -->
+      <div class="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100 shadow-sm space-y-5">
+        
+        <!-- 4.3 Main Spacious Interactive Live Portal Viewport -->
+        <div id="dedicatedPortalContainer" class="relative w-full rounded-2xl overflow-hidden border-2 border-blue-200 bg-slate-950 shadow-xl flex flex-col h-[75vh] min-h-[600px] max-h-[960px]">
+          <!-- Surveillance Top HUD Bar -->
+          <div class="px-4 py-2.5 bg-blue-950 border-b border-blue-900 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center space-x-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="font-bold text-white font-mono flex items-center">
+                <i data-lucide="radio" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i> LIVE SURVEILLANCE FEED
+              </span>
+              <span class="text-blue-400">|</span>
+              <span class="text-[11px] text-emerald-400 font-mono">BMA & EXAT OFFICIAL STREAMING</span>
+            </div>
+            <div class="flex items-center space-x-3 text-blue-200 text-[11px] font-mono">
+              <span class="hidden md:inline">คุณภาพสัญญาณ: Full HD 1080p Real-time</span>
+              <span class="text-blue-700">|</span>
+              <span id="dedicatedPortalClock" class="text-white font-bold">--:--:-- น.</span>
+            </div>
+          </div>
+
+          <!-- The Live Interactive Iframe -->
+          <div class="relative flex-1 w-full h-full bg-black">
+            <iframe id="dedicatedCctvPortalFrame" src="https://trafficvision.live/country/thailand" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- 4.4 4 Branches Quick Cross-Reference Snapshot Cards -->
+        <div class="space-y-3 pt-3 border-t border-blue-100">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
+                <i data-lucide="camera" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900">ตรวจการณ์กล้อง 4 สาขาหลัก (4-Branch Live Surveillance Cross-Check)</h3>
+            </div>
+            <button type="button" onclick="switchTab('water')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center">
+              <span>ดูข้อมูลโทรมาตรคลองในหน้า 3 ↗</span>
+            </button>
+          </div>
+
+          <div id="dedicatedCctvQuadGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- 4.4-B Full In-App Live CCTV Surveillance Command Center (14 จุดตรวจการณ์รอบ 4 สาขา) -->
+<!-- 5.3-B Live CCTV Cameras Section (กล้องตรวจจับสถานการณ์น้ำท่วม & สภาพจราจร Real-time) -->
       <div id="cctvCamerasSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-2.5">
@@ -2358,332 +2599,6 @@
           <!-- Dynamic CCTV Cards -->
         </div>
       </div>
-
-      <!-- 5.3-C Road Flooding & Drainage Status Reports (รายงานสถานะน้ำท่วมขังบนผิวจราจรและการระบายน้ำ) -->
-      <div id="roadFloodReportsSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold">
-              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <div class="flex items-center space-x-2">
-                <h3 class="text-base font-bold text-slate-800">รายงานสถานะน้ำท่วมขังบนผิวถนน & การระบายน้ำ (Road Flood Watch - DDS Standard)</h3>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
-                  <i data-lucide="shield-check" class="w-3 h-3 mr-1 text-blue-600"></i> DDS BMA Verified
-                </span>
-              </div>
-              <p class="text-xs text-slate-500 mt-0.5">รายงานจุดน้ำท่วมขังบนผิวถนนสายหลัก, ความลึก (ซม.), การปิดช่องทางจราจร, สถานะการเดินเครื่องสูบน้ำ และการเชื่อมโยงสายรถจัดส่ง (มาตรฐานสำนักการระบายน้ำ กทม.)</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <a href="https://dds.bangkok.go.th/flood_report.php" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-              <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1 text-slate-500"></i> รายงานทางการ DDS ↗
-            </a>
-            <span id="roadFloodCountBadge" class="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">
-              แสดง 8 รายงาน
-            </span>
-          </div>
-        </div>
-
-        <!-- Road Flood Filter Controls -->
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs">
-          <!-- Search box -->
-          <div class="sm:col-span-7 relative">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
-            <input type="text" id="roadFloodSearchInput" oninput="filterRoadFloodReports()" placeholder="ค้นหาถนน, ซอย, บริเวณ, เขต หรือสถานะการระบายน้ำ..." class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-          </div>
-
-          <!-- Severity Filter Buttons -->
-          <div class="sm:col-span-5 flex items-center space-x-1">
-            <button type="button" onclick="setRoadFloodSeverity('ALL')" id="btnRoadSev-ALL" class="road-sev-btn active flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-slate-800 text-white text-center transition">ทั้งหมด</button>
-            <button type="button" onclick="setRoadFloodSeverity('CRITICAL')" id="btnRoadSev-CRITICAL" class="road-sev-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-red-600 border border-slate-200 hover:bg-red-50 text-center transition">🔴 วิกฤต (>20 ซม.)</button>
-            <button type="button" onclick="setRoadFloodSeverity('WARNING')" id="btnRoadSev-WARNING" class="road-sev-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-amber-600 border border-slate-200 hover:bg-amber-50 text-center transition">🟡 เฝ้าระวัง (10-20 ซม.)</button>
-            <button type="button" onclick="setRoadFloodSeverity('NORMAL')" id="btnRoadSev-NORMAL" class="road-sev-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-emerald-600 border border-slate-200 hover:bg-emerald-50 text-center transition">🟢 ปกติ (แห้งแล้ว)</button>
-          </div>
-        </div>
-
-        <!-- Road Flood Reports Cards / Table List -->
-        <div id="roadFloodReportsList" class="space-y-3">
-          <!-- Dynamic Road Flood Cards -->
-        </div>
-      </div>
-
-      <!-- 5.3 Water Level Gauges Section (แผงการ์ดมาตรวัดระดับน้ำ ม.รทก.) -->
-      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <div class="flex items-center space-x-2">
-              <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
-                <i data-lucide="gauge" class="w-4 h-4"></i>
-              </div>
-              <h3 class="text-base font-bold text-slate-800">มาตรวัดระดับน้ำในลำคลองหลักรอบ 4 สาขา (Water Level Gauges)</h3>
-            </div>
-            <p class="text-xs text-slate-500 mt-0.5">คลองประเวศบุรีรมย์ (สาขากรุงเทพกรีฑา), คลองแสนแสบ (สาขารามอินทรา), คลองลาดพร้าว (สาขารามอินทรา), แม่น้ำเจ้าพระยา / พระราม 3 (สาขาพระราม 3 / สุขุมวิท 50) (หน่วย: ม.รทก.)</p>
-          </div>
-          <div class="flex items-center space-x-3 text-xs">
-            <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1.5"></span>ปกติ (🟢)</span>
-            <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 mr-1.5"></span>เฝ้าระวัง (🟡)</span>
-            <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5 animate-ping"></span>วิกฤตล้นตลิ่ง (🔴)</span>
-          </div>
-        </div>
-
-        <!-- Filter by canal within water tab -->
-        <div class="flex flex-wrap items-center gap-2 text-xs">
-          <span class="text-slate-500 font-medium">กรองลำน้ำ:</span>
-          <button type="button" onclick="filterWaterCanal('ALL')" id="btnWaterCanal-ALL" class="water-canal-btn active px-3 py-1 rounded-lg font-semibold bg-blue-600 text-white transition shadow-2xs">ทุกลำน้ำ (12 จุด)</button>
-          <button type="button" onclick="filterWaterCanal('คลองประเวศบุรีรมย์')" id="btnWaterCanal-prawet" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">คลองประเวศบุรีรมย์ (กรุงเทพกรีฑา)</button>
-          <button type="button" onclick="filterWaterCanal('คลองแสนแสบ')" id="btnWaterCanal-saensaep" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">คลองแสนแสบ (รามอินทรา/มีนบุรี)</button>
-          <button type="button" onclick="filterWaterCanal('คลองลาดพร้าว')" id="btnWaterCanal-latphrao" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">คลองลาดพร้าว (รามอินทรา/สายไหม)</button>
-          <button type="button" onclick="filterWaterCanal('แม่น้ำเจ้าพระยา')" id="btnWaterCanal-chaophraya" class="water-canal-btn px-3 py-1 rounded-lg font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">แม่น้ำเจ้าพระยา (พระราม 3 / สุขุมวิท 50)</button>
-        </div>
-
-        <div id="waterStationsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Dynamic Water Station Cards -->
-        </div>
-      </div>
-
-      <!-- 5.4 Live Incident & Flood News Feed (ฟีดแจ้งเตือนน้ำท่วมและการจราจร) -->
-      <div id="floodNewsContainer" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div>
-            <div class="flex items-center space-x-2">
-              <div class="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center">
-                <i data-lucide="radio" class="w-4 h-4"></i>
-              </div>
-              <h3 class="text-base font-bold text-slate-800">ฟีดข่าวแจ้งเตือนน้ำท่วม & สภาพจราจร Real-time</h3>
-            </div>
-            <p class="text-xs text-slate-500 mt-0.5">รายงานจุดน้ำท่วมขังบนผิวถนน, จุดปิดเบี่ยงการจราจร, และการสูบระบายน้ำ แยกตามพื้นที่เขต</p>
-          </div>
-          <span id="incidentCountBadge" class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full self-start sm:self-auto">
-            แสดง 6 เหตุการณ์
-          </span>
-        </div>
-
-        <!-- News Feed Filter Controls -->
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs">
-          <!-- Search box -->
-          <div class="sm:col-span-5 relative">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
-            <input type="text" id="waterIncidentSearch" oninput="filterAndRenderIncidents()" placeholder="ค้นหาถนน, ซอย, เขต หรือสถานการณ์..." class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-          </div>
-
-          <!-- District Filter -->
-          <div class="sm:col-span-3">
-            <select id="waterDistrictFilter" onchange="filterAndRenderIncidents()" class="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
-              <option value="ALL">📍 ทุกเขตพื้นที่</option>
-              <option value="บึงกุ่ม">เขตบึงกุ่ม</option>
-              <option value="สะพานสูง">เขตสะพานสูง</option>
-              <option value="คันนายาว">เขตคันนายาว</option>
-              <option value="สวนหลวง">เขตสวนหลวง</option>
-              <option value="คลองเตย">เขตคลองเตย</option>
-              <option value="ยานนาวา">เขตยานนาวา</option>
-              <option value="บางกะปิ">เขตบางกะปิ</option>
-              <option value="ประเวศ">เขตประเวศ</option>
-              <option value="ลาดพร้าว">เขตลาดพร้าว</option>
-              <option value="มีนบุรี">เขตมีนบุรี</option>
-            </select>
-          </div>
-
-          <!-- Severity Filter -->
-          <div class="sm:col-span-4 flex items-center space-x-1">
-            <button type="button" onclick="setSeverityFilter('ALL')" id="btnSev-ALL" class="sev-filter-btn active flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-slate-800 text-white transition text-center">ทั้งหมด</button>
-            <button type="button" onclick="setSeverityFilter('CRITICAL')" id="btnSev-CRITICAL" class="sev-filter-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-red-600 border border-slate-200 hover:bg-red-50 transition text-center">🔴 วิกฤต</button>
-            <button type="button" onclick="setSeverityFilter('WARNING')" id="btnSev-WARNING" class="sev-filter-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-amber-600 border border-slate-200 hover:bg-amber-50 transition text-center">🟡 เฝ้าระวัง</button>
-            <button type="button" onclick="setSeverityFilter('NORMAL')" id="btnSev-NORMAL" class="sev-filter-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-emerald-600 border border-slate-200 hover:bg-emerald-50 transition text-center">🟢 ปกติ</button>
-          </div>
-        </div>
-
-        <!-- Incidents List Container -->
-        <div id="incidentFeedList" class="space-y-3">
-          <!-- Dynamic Incidents Cards -->
-        </div>
-      </div>
-
-      <!-- 5.7 Rain Radar & Weather Watch Section (เรดาร์ตรวจจับกลุ่มฝน & สภาพอากาศ Real-time) -->
-      <div id="rainRadarSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
-              <i data-lucide="cloud-rain" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <h3 class="text-base font-bold text-slate-800">เรดาร์ตรวจจับกลุ่มฝน & ข้อมูลสภาพอากาศ Real-time (Rain Radar)</h3>
-              <p class="text-xs text-slate-500 mt-0.5">ภาพเรดาร์ตรวจจับกลุ่มฝนของกรุงเทพมหานครและปริมณฑล (สถานีหนองจอก และสถานีบางนา) พร้อมพยากรณ์ล่วงหน้า 3 ชั่วโมง แยกตาม 4 สาขา</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <a href="https://weather.tmd.go.th" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
-              <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1 text-slate-500"></i> เรดาร์ TMD ↗
-            </a>
-            <a href="https://world.tehx.dyndns.info/flood#tab=rain" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 transition">
-              <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> เรดาร์ RainViewer ↗
-            </a>
-          </div>
-        </div>
-
-        <div id="rainRadarContainer" class="space-y-4">
-          <!-- Dynamic Rain Radar Component -->
-        </div>
-      </div>
-
-      <!-- 5.5 แหล่งข้อมูลอ้างอิงทางการ & หน่วยงานภาครัฐ (Official Data Sources & Citations) -->
-      <div id="dataSourcesSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-              <i data-lucide="shield-check" class="w-4 h-4"></i>
-            </div>
-            <div>
-              <h3 class="text-base font-bold text-slate-900 flex items-center">
-                แหล่งข้อมูลอ้างอิงทางการ & หน่วยงานภาครัฐ
-                <span class="ml-2 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 flex items-center">
-                  <i data-lucide="check-circle" class="w-3 h-3 mr-1 text-emerald-600"></i> 6 องค์กรตรวจสอบแล้ว
-                </span>
-              </h3>
-              <p class="text-xs text-slate-500 mt-0.5">ข้อมูลระดับน้ำ โทรมาตรคลอง และรายงานจุดน้ำท่วมขัง รวบรวมและอ้างอิงจากหน่วยงานหลักของรัฐและศูนย์สั่งการจราจร</p>
-            </div>
-          </div>
-          <span class="text-xs text-slate-400">ข้อมูลเชื่อมโยงอัตโนมัติ Real-time</span>
-        </div>
-
-        <div id="officialSourcesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          <!-- Dynamic Official Sources Cards -->
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================================= -->
-    <!-- ========================================================================= -->
-    <!-- TAB 4: SMART IN-HOUSE CCTV SURVEILLANCE & TRAFFIC PORTAL (ศูนย์ควบคุมกล้องสดอัจฉริยะ ธีม ฟ้าขาว) -->
-    <!-- ========================================================================= -->
-    <section id="tabContent-cctv" class="hidden space-y-6">
-      
-      <!-- 4.1 Executive CCTV Hero Banner (ธีม ฟ้าขาว) -->
-      <div class="bg-gradient-to-r from-blue-700 via-blue-600 to-sky-600 text-white rounded-3xl p-5 sm:p-6 shadow-xl shadow-blue-700/15 border border-blue-400/30 relative overflow-hidden">
-        <div class="absolute -right-12 -top-12 w-64 h-64 bg-white/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
-          <div>
-            <div class="flex flex-wrap items-center gap-2 mb-2">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-white border border-white/30 backdrop-blur-xs">
-                <i data-lucide="video" class="w-4 h-4 mr-1.5 text-sky-200"></i> ศูนย์ควบคุมกล้องสดอัจฉริยะ (CCTV Command Center)
-              </span>
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-mono font-bold bg-emerald-500 text-white shadow-2xs">
-                <span class="w-2 h-2 rounded-full bg-white mr-1.5 animate-ping"></span> LIVE 24/7
-              </span>
-              <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-white/20 text-white border border-white/30">
-                🛡️ ปลอดโฆษณา 100% (Ad-Free In-House Surveillance)
-              </span>
-            </div>
-            <h2 class="text-xl sm:text-2xl font-black tracking-tight text-white">
-              พอร์ทัลตรวจการณ์กล้องสด & ระดับน้ำผิวจราจร 4 สาขาหลัก
-            </h2>
-            <p class="text-xs sm:text-sm text-blue-50 mt-1 max-w-3xl leading-relaxed">
-              มอนิเตอร์ภาพสด 14 จุดตรวจการณ์รอบสาขากรุงเทพกรีฑา, รามอินทรา, สุขุมวิท 50 และพระราม 3 พร้อมเชื่อมโยงสตรีมสดทางการจาก สจส. กทม., สำนักการระบายน้ำ (DDS) และทางพิเศษ (EXAT)
-            </p>
-          </div>
-
-          <!-- Top Action Buttons & Controls -->
-          <div class="flex flex-wrap items-center gap-2 shrink-0 self-start lg:self-center">
-            <!-- Portal Select -->
-            <div class="flex items-center space-x-1.5 bg-white rounded-xl px-3 py-2 text-xs border border-blue-200 shadow-sm text-slate-800">
-              <span class="text-blue-900 text-[11px] font-bold hidden sm:inline">สัญญาณ:</span>
-              <select id="dedicatedPortalSelect" onchange="switchDedicatedPortalSource(this.value)" class="bg-transparent font-bold text-blue-900 text-xs focus:outline-none cursor-pointer">
-                <option value="https://cpudapp.bangkok.go.th/bmatraffic/">สจส. กทม. (BMA Traffic Live - สตรีมสดทางการ)</option>
-                <option value="https://world.tehx.dyndns.info/flood">JK World Flood Watch Surveillance</option>
-                <option value="https://trafficvision.live/country/thailand">TrafficVision (กล้องสด BMA & ทางด่วน 1,800+ จุด)</option>
-              </select>
-            </div>
-
-            <!-- Refresh Frame -->
-            <button type="button" onclick="refreshDedicatedPortalFrame()" class="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-200" title="รีเฟรชสัญญาณสตรีม">
-              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> รีเฟรช
-            </button>
-
-            <!-- Fullscreen -->
-            <button type="button" onclick="toggleDedicatedPortalFullscreen()" class="px-3 py-2 bg-white hover:bg-blue-50 text-blue-700 rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-200" title="ขยายหน้าต่างแบบเต็มจอ">
-              <i data-lucide="maximize" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> เต็มจอ
-            </button>
-
-            <!-- External Link -->
-            <a id="btnDedicatedExternalLink" href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" rel="noopener" class="px-3.5 py-2 bg-blue-800 hover:bg-blue-900 text-white rounded-xl text-xs font-bold flex items-center transition shadow-sm border border-blue-400/30">
-              <span>เปิดแท็บใหม่ ↗</span>
-            </a>
-          </div>
-        </div>
-
-        <!-- 4.2 Quick Corridor / Branch Filter Chips (ทางลัดเจาะจง 4 สาขา) -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs pt-4 mt-4 border-t border-white/20">
-          <span class="text-blue-100 font-bold flex items-center mr-1 text-[11px]">
-            <i data-lucide="compass" class="w-3.5 h-3.5 mr-1 text-white"></i> เจาะจงสาขา:
-          </span>
-          <button type="button" onclick="switchDedicatedPortalSource('https://cpudapp.bangkok.go.th/bmatraffic/')" class="px-3 py-1 rounded-xl font-bold bg-white text-blue-700 shadow-2xs hover:bg-blue-50 transition">
-            🏢 สจส. BMA Live ทั้งหมด (1,800+ จุด)
-          </button>
-          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
-            🏢 สาขากรุงเทพกรีฑา (ศรีนครินทร์/มอเตอร์เวย์) ↗
-          </a>
-          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
-            🏢 สาขารามอินทรา (กม.1-8/มีนบุรี) ↗
-          </a>
-          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
-            🏢 สาขาสุขุมวิท 50 (ทางด่วน/พระโขนง) ↗
-          </a>
-          <a href="https://cpudapp.bangkok.go.th/bmatraffic/" target="_blank" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
-            🏢 สาขาพระราม 3 (สะพานพระราม 9/คลองเตย) ↗
-          </a>
-          <button type="button" onclick="switchDedicatedPortalSource('https://world.tehx.dyndns.info/flood')" class="px-2.5 py-1 rounded-xl font-medium bg-white/20 hover:bg-white text-white hover:text-blue-900 border border-white/30 transition">
-            🌊 JK World Flood Map
-          </button>
-        </div>
-      </div>
-
-      <!-- Main Container Card (ธีม ฟ้าขาว) -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 border border-blue-100 shadow-sm space-y-5">
-        
-        <!-- 4.3 Main Spacious Interactive Live Portal Viewport -->
-        <div id="dedicatedPortalContainer" class="relative w-full rounded-2xl overflow-hidden border-2 border-blue-200 bg-slate-950 shadow-xl flex flex-col h-[75vh] min-h-[600px] max-h-[960px]">
-          <!-- Surveillance Top HUD Bar -->
-          <div class="px-4 py-2.5 bg-blue-950 border-b border-blue-900 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div class="flex items-center space-x-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-              <span class="font-bold text-white font-mono flex items-center">
-                <i data-lucide="radio" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i> LIVE SURVEILLANCE FEED
-              </span>
-              <span class="text-blue-400">|</span>
-              <span class="text-[11px] text-emerald-400 font-mono">BMA & EXAT OFFICIAL STREAMING</span>
-            </div>
-            <div class="flex items-center space-x-3 text-blue-200 text-[11px] font-mono">
-              <span class="hidden md:inline">คุณภาพสัญญาณ: Full HD 1080p Real-time</span>
-              <span class="text-blue-700">|</span>
-              <span id="dedicatedPortalClock" class="text-white font-bold">--:--:-- น.</span>
-            </div>
-          </div>
-
-          <!-- The Live Interactive Iframe -->
-          <div class="relative flex-1 w-full h-full bg-black">
-            <iframe id="dedicatedCctvPortalFrame" src="https://trafficvision.live/country/thailand" class="w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-          </div>
-        </div>
-
-        <!-- 4.4 4 Branches Quick Cross-Reference Snapshot Cards -->
-        <div class="space-y-3 pt-3 border-t border-blue-100">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-              <div class="w-7 h-7 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs">
-                <i data-lucide="camera" class="w-4 h-4"></i>
-              </div>
-              <h3 class="text-sm font-bold text-slate-900">ตรวจการณ์กล้อง 4 สาขาหลัก (4-Branch Live Surveillance Cross-Check)</h3>
-            </div>
-            <button type="button" onclick="switchTab('water')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center">
-              <span>ดูข้อมูลโทรมาตรคลองในหน้า 3 ↗</span>
-            </button>
-          </div>
-
-          <div id="dedicatedCctvQuadGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            <!-- Rendered via JS -->
-          </div>
-        </div>
 
         <!-- 4.5 Official Direct Streaming Citations (0% Ads) -->
         <div class="p-4 bg-blue-50/70 rounded-2xl border border-blue-100 text-xs text-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -2919,15 +2834,16 @@
       </div>
 
       <!-- 6.5 Real-time Weather Forecast & Rain Radar Watch for Fleet Routes -->
-      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
+<!-- 5.7 Rain Radar & Weather Watch Section (เรดาร์ตรวจจับกลุ่มฝน & สภาพอากาศ Real-time) -->
+      <div id="rainRadarSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-2.5">
             <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
               <i data-lucide="cloud-rain" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="text-base font-bold text-slate-800">พยากรณ์อากาศ & เรดาร์กลุ่มฝน Real-time (Weather & Rain Radar)</h3>
-              <p class="text-xs text-slate-500 mt-0.5">ภาพเรดาร์ตรวจจับกลุ่มฝน BMA / TMD (สถานีหนองจอก และสถานีบางนา) พร้อมพยากรณ์ล่วงหน้า 3 ชั่วโมง แยกตาม 4 สาขาจัดส่ง</p>
+              <h3 class="text-base font-bold text-slate-800">เรดาร์ตรวจจับกลุ่มฝน & ข้อมูลสภาพอากาศ Real-time (Rain Radar)</h3>
+              <p class="text-xs text-slate-500 mt-0.5">ภาพเรดาร์ตรวจจับกลุ่มฝนของกรุงเทพมหานครและปริมณฑล (สถานีหนองจอก และสถานีบางนา) พร้อมพยากรณ์ล่วงหน้า 3 ชั่วโมง แยกตาม 4 สาขา</p>
             </div>
           </div>
           <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
@@ -2940,28 +2856,59 @@
           </div>
         </div>
 
-        <div id="routesRainRadarContainer" class="space-y-4">
-          <!-- Dynamic Weather & Rain Radar Component Rendered via JS -->
+        <div id="rainRadarContainer" class="space-y-4"></div>\n        <div id="routesRainRadarContainer" class="hidden">
+          <!-- Dynamic Rain Radar Component -->
         </div>
       </div>
 
-      <!-- 6.6 Road Flooding & Drainage Telemetry (ข้อมูลระดับน้ำท่วมขังบนผิวถนน & การระบายน้ำ) -->
-      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+      <!-- 6.6 Road Flooding & Drainage Status Reports (รายงานสถานะน้ำท่วมขังบนผิวจราจรและการระบายน้ำ DDS Standard) -->
+<!-- 5.3-C Road Flooding & Drainage Status Reports (รายงานสถานะน้ำท่วมขังบนผิวจราจรและการระบายน้ำ) -->
+      <div id="roadFloodReportsSection" class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
           <div class="flex items-center space-x-2.5">
             <div class="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold">
-              <i data-lucide="waves" class="w-4 h-4"></i>
+              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="text-base font-bold text-slate-800">โทรมาตรระดับน้ำท่วมผิวจราจร 8 จุดเสี่ยง & การระบายน้ำ (Road Depth Telemetry)</h3>
-              <p class="text-xs text-slate-500 mt-0.5">รายงานระดับความสูงของน้ำท่วมขังบนผิวถนน (ซม.), ขีดจำกัดยานพาหนะ และสถานะเครื่องสูบน้ำ DDS กทม.</p>
+              <div class="flex items-center space-x-2">
+                <h3 class="text-base font-bold text-slate-800">รายงานสถานะน้ำท่วมขังบนผิวถนน & การระบายน้ำ (Road Flood Watch - DDS Standard)</h3>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700">
+                  <i data-lucide="shield-check" class="w-3 h-3 mr-1 text-blue-600"></i> DDS BMA Verified
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">รายงานจุดน้ำท่วมขังบนผิวถนนสายหลัก, ความลึก (ซม.), การปิดช่องทางจราจร, สถานะการเดินเครื่องสูบน้ำ และการเชื่อมโยงสายรถจัดส่ง (มาตรฐานสำนักการระบายน้ำ กทม.)</p>
             </div>
           </div>
-          <span class="text-xs text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full font-medium">8 สายทางวิกฤต</span>
+          <div class="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <a href="https://dds.bangkok.go.th/flood_report.php" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+              <i data-lucide="external-link" class="w-3.5 h-3.5 mr-1 text-slate-500"></i> รายงานทางการ DDS ↗
+            </a>
+            <span id="roadFloodCountBadge" class="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">
+              แสดง 8 รายงาน
+            </span>
+          </div>
         </div>
 
-        <div id="routesRoadFloodContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          <!-- Dynamic Road Flood Cards Rendered via JS -->
+        <!-- Road Flood Filter Controls -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs">
+          <!-- Search box -->
+          <div class="sm:col-span-7 relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="roadFloodSearchInput" oninput="filterRoadFloodReports()" placeholder="ค้นหาถนน, ซอย, บริเวณ, เขต หรือสถานะการระบายน้ำ..." class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+
+          <!-- Severity Filter Buttons -->
+          <div class="sm:col-span-5 flex items-center space-x-1">
+            <button type="button" onclick="setRoadFloodSeverity('ALL')" id="btnRoadSev-ALL" class="road-sev-btn active flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-slate-800 text-white text-center transition">ทั้งหมด</button>
+            <button type="button" onclick="setRoadFloodSeverity('CRITICAL')" id="btnRoadSev-CRITICAL" class="road-sev-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-red-600 border border-slate-200 hover:bg-red-50 text-center transition">🔴 วิกฤต (>20 ซม.)</button>
+            <button type="button" onclick="setRoadFloodSeverity('WARNING')" id="btnRoadSev-WARNING" class="road-sev-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-amber-600 border border-slate-200 hover:bg-amber-50 text-center transition">🟡 เฝ้าระวัง (10-20 ซม.)</button>
+            <button type="button" onclick="setRoadFloodSeverity('NORMAL')" id="btnRoadSev-NORMAL" class="road-sev-btn flex-1 py-1.5 rounded-lg text-[11px] font-bold bg-white text-emerald-600 border border-slate-200 hover:bg-emerald-50 text-center transition">🟢 ปกติ (แห้งแล้ว)</button>
+          </div>
+        </div>
+
+        <!-- Road Flood Reports Cards / Table List -->
+        <div id="roadFloodReportsList" class="space-y-3"></div>\n        <div id="routesRoadFloodContainer" class="hidden">
+          <!-- Dynamic Road Flood Cards -->
         </div>
       </div>
     </section>
