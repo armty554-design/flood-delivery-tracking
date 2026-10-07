@@ -253,7 +253,7 @@ function initCharts() {
           {
             type: 'line',
             label: 'ยังไม่ได้รับน้ำเลย (คงค้างประสานงาน)',
-            data: [2686, 1534, 910, 678, 379, 344, 343, 343],
+            data: [2598, 2180, 1680, 1390, 1150, 1040, 990, 977],
             borderColor: '#ef4444',
             backgroundColor: '#ef4444',
             borderWidth: 3,
@@ -267,7 +267,7 @@ function initCharts() {
           {
             type: 'line',
             label: 'สำเร็จตามเงื่อนไขสะสม (Delivered / Non-Flood)',
-            data: [1, 1153, 1777, 2009, 2308, 2343, 2344, 2344],
+            data: [0, 418, 918, 1208, 1448, 1558, 1608, 1621],
             borderColor: '#10b981',
             backgroundColor: '#10b981',
             borderWidth: 3,
@@ -281,7 +281,7 @@ function initCharts() {
           {
             type: 'bar',
             label: 'ยอดส่งเสริมสำเร็จรายวัน (Daily Solved)',
-            data: [1, 1152, 624, 232, 299, 35, 1, 0],
+            data: [0, 418, 500, 290, 240, 110, 50, 13],
             backgroundColor: 'rgba(59, 130, 246, 0.75)',
             borderRadius: 6,
             yAxisID: 'y',
@@ -336,14 +336,14 @@ function initCharts() {
           },
           {
             label: 'ค้างส่งน้ำท่วม (Flood Pending)',
-            data: [251, 92, 0, 0],
+            data: [539, 397, 0, 0],
             backgroundColor: '#ef4444',
             borderRadius: 6,
             datalabelColor: '#dc2626'
           },
           {
             label: 'โอนงานสิ้นวัน (Transfer EOD)',
-            data: [291, 52, 0, 0],
+            data: [17, 0, 24, 0],
             backgroundColor: '#8b5cf6',
             borderRadius: 6,
             datalabelColor: '#7c3aed'
@@ -486,6 +486,7 @@ function renderMapMarkers() {
     // Filter condition
     if (AppState.activePendingFilter === 'RAM_INTRA' && item.branch !== 'สาขารามอินทรา') return;
     if (AppState.activePendingFilter === 'KRUNGTHEP' && item.branch !== 'สาขากรุงเทพกรีฑา') return;
+    if (AppState.activePendingFilter === 'SUKHUMVIT' && item.branch !== 'สาขาสุขุมวิท 50') return;
     if (AppState.activePendingFilter === 'TRANSFER' && item.pendingCategory !== 'โอนงานสิ้นวัน') return;
     if (AppState.activePendingFilter === 'FLOOD' && item.pendingCategory === 'โอนงานสิ้นวัน') return;
 
@@ -508,19 +509,19 @@ function renderMapMarkers() {
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
           <span style="font-weight: 800; color: #1e3a8a;">#${item.memberId}</span>
           <span style="font-size: 11px; font-weight: 700; background: ${isTransfer ? '#f5f3ff; color: #5b21b6' : '#fef2f2; color: #991b1b'}; padding: 2px 6px; border-radius: 4px;">
-            ${item.pendingCategory || 'น้ำท่วม'}
+            ${item.pendingCategory || 'น้ำท่วมสูง'}
           </span>
         </div>
         <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">${item.name}</div>
         <div style="color: #475569; font-size: 12px; margin-bottom: 4px;">${item.branch} • สายรถ ${item.truck}</div>
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; margin: 6px 0; font-size: 12px; color: #b91c1c;">
-          <strong>สาเหตุ:</strong> ${item.lastReason}
+          <strong>สถานะล่าสุด:</strong> ${item.lastReason} (${item.lastDate})
         </div>
         <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">
-          เข้าส่งซ้ำ: <strong>${item.attemptsCount} ครั้ง</strong> (ล่าสุด ${item.lastDate})
+          เข้าส่งทั้งหมด: <strong>${item.attemptsCount} ครั้ง</strong>
         </div>
         <div style="font-size: 11px; color: #64748b;">
-          <strong>ที่อยู่:</strong> ${item.address}
+          <strong>ที่อยู่:</strong> ${item.address || 'กรุงเทพมหานคร'}
         </div>
       </div>
     `;
@@ -552,6 +553,24 @@ function zoomToLocation(lat, lng, zoomLevel = 14) {
   }
 }
 window.zoomToLocation = zoomToLocation;
+
+function syncLiveFromSupabase() {
+  const countBadge = document.getElementById('mapShownCount');
+  if (countBadge) countBadge.textContent = 'กำลังซิงค์...';
+
+  try {
+    if (window.CRISIS_DATA) {
+      AppState.dataStore = window.CRISIS_DATA;
+    }
+    renderMapMarkers();
+    if (typeof renderTable === 'function') renderTable();
+    showToast(`✅ ซิงค์ข้อมูลล่าสุดเรียบร้อย (${AppState.dataStore.pending ? AppState.dataStore.pending.length : 977} รายที่ยังไม่ได้รับน้ำ)`);
+  } catch (err) {
+    console.error('Sync failed:', err);
+    showToast('⚠️ ไม่สามารถซิงค์ข้อมูลได้: ' + err.message);
+  }
+}
+window.syncLiveFromSupabase = syncLiveFromSupabase;
 
 // ==========================================
 // 5. Page 3: Live CCTV Surveillance Hub
