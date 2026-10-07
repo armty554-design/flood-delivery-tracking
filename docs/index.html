@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ระบบติดตามสถานะการจัดส่งช่วงน้ำท่วม - 4 สาขา</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>ระบบติดตามสถานะการจัดส่งช่วงน้ำท่วม - 4 สาขา (BCP Flood Command)</title>
   
   <!-- Google Fonts: Kanit & Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,10 +60,10 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- Real CCTV Camera Snapshots Data -->
-  <script src="cctv_snapshots.js"></script>
+  <script src="cctv_snapshots.js?v=20261007_v5"></script>
 
   <!-- Verified Crisis Lifecycle Tracking Data (26 Sept incidents: 818 pending + 1,868 resolved) -->
-  <script src="crisis_26_data.js"></script>
+  <script src="crisis_26_data.js?v=20261007_v5"></script>
 
   <style>
     body { font-family: 'Kanit', sans-serif; }
@@ -79,9 +82,32 @@
       animation: pulse 1.8s infinite;
     }
     @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .pulse-dot-red {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #ef4444;
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      animation: pulse-red 1.8s infinite;
+    }
+    @keyframes pulse-red {
       0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
       70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .executive-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s ease-in-out;
+    }
+    .executive-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
