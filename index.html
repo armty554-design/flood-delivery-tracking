@@ -836,11 +836,11 @@
       <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
         <div class="flex items-center gap-2 mb-2">
           <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30">PAGE 3</span>
-          <span class="text-xs text-blue-300 font-semibold">ระบบตรวจการณ์สภาพการจราจรและน้ำท่วม</span>
+          <span class="text-xs text-blue-300 font-semibold">ระบบตรวจการณ์สภาพการจราจรและระดับน้ำท่วมแบบเรียลไทม์</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">CCtv (ระบบกล้องวงจรปิดตรวจการณ์สด)</h1>
-        <p class="mt-2 text-sm text-blue-200 max-w-2xl">
-          เชื่อมโยงสัญญาณสตรีมสด 1,800+ จุดทั่วกรุงเทพฯ และปริมณฑล ผ่าน TrafficVision และ BMA Traffic พร้อม 14 กล้องเฉพาะประจำ 4 สาขาและจุดเสี่ยงน้ำท่วม
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">CCtv & ระบบโทรมาตรตรวจวัดระดับน้ำ</h1>
+        <p class="mt-2 text-sm text-blue-200 max-w-3xl leading-relaxed">
+          เชื่อมโยงสัญญาณสตรีมสดทางการจาก BMA Traffic (สจส. กทม.), DOH CCTV ทางหลวง & มอเตอร์เวย์, เรดาร์ตรวจฝน กทม. และแดชบอร์ดระดับน้ำคลอง 12 สถานีหลัก พร้อม 14 กล้องเฉพาะประจำ 4 สาขาและจุดคอขวดวิกฤต
         </p>
       </div>
 
@@ -851,22 +851,25 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-bold text-slate-500 uppercase mr-1">เลือกพอร์ทัลตรวจการณ์:</span>
-            <button data-source="TRAFFICVISION" onclick="switchCctvPortal('TRAFFICVISION')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
-              TrafficVision CCTV Hub (1,800+ จุด)
+            <button data-source="BMA" onclick="switchCctvPortal('BMA')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
+              📹 BMA Traffic (สจส. กทม.)
             </button>
-            <button data-source="BMA" onclick="switchCctvPortal('BMA')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
-              BMA Traffic (สจส. กทม.)
+            <button data-source="DOH" onclick="switchCctvPortal('DOH')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+              🛣️ DOH กล้องทางหลวง & มอเตอร์เวย์
             </button>
             <button data-source="RADAR" onclick="switchCctvPortal('RADAR')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
               🌧️ เรดาร์ฝน & น้ำท่วม กทม.
             </button>
             <button data-source="WATER" onclick="switchCctvPortal('WATER')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
-              🌊 ระดับน้ำคลอง กทม.
+              🌊 ระดับน้ำคลอง 12 สถานีหลัก กทม.
+            </button>
+            <button data-source="TRAFFICVISION" onclick="switchCctvPortal('TRAFFICVISION')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+              TrafficVision CCTV Hub (1,800+ จุด)
             </button>
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <a id="cctvDirectLinkBtn" href="https://trafficvision.in.th/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
+            <a id="cctvDirectLinkBtn" href="https://bmatraffic.com/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
               <span>🚀 เปิดพอร์ทัลเต็มจอ (แท็บใหม่)</span>
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -878,17 +881,335 @@
           <div class="flex items-center gap-2">
             <span class="live-pulse shrink-0"></span>
             <span id="cctvPortalStatusText" class="text-slate-700 font-medium">
-              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">TrafficVision Thailand (1,800+ กล้อง)</strong>
+              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">BMA Traffic (สจส. กรุงเทพมหานคร)</strong>
             </span>
           </div>
           <div class="flex items-center gap-2 text-slate-500 text-[11px]">
-            <span>💡 หากระบบเบราว์เซอร์บล็อก iframe ให้คลิกปุ่ม "เปิดพอร์ทัลเต็มจอ" ด้านบน</span>
+            <span>💡 หากระบบเบราว์เซอร์บล็อก iframe สามารถคลิก "เปิดพอร์ทัลเต็มจอ" เพื่อดูสตรีมโดยตรง</span>
           </div>
         </div>
 
-        <!-- Embedded Frame Container -->
-        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 480px; height: 550px;">
-          <iframe id="cctvPortalIframe" src="about:blank" data-src="https://trafficvision.in.th/" class="w-full h-full border-0" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+        <!-- Embedded Frame & Dashboard Container -->
+        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 520px;">
+          <!-- Video / Portal Iframe -->
+          <iframe id="cctvPortalIframe" src="https://bmatraffic.com/" data-src="https://bmatraffic.com/" class="w-full h-full border-0" style="min-height: 520px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+
+          <!-- Native Canal Water Level Dashboard (Active when WATER tab is clicked) -->
+          <div id="cctvWaterDashboardContainer" class="hidden p-5 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950 text-white w-full h-full overflow-y-auto space-y-4">
+            
+            <!-- Dashboard Header & Status Highlights -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-700/60">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="live-pulse"></span>
+                  <h3 class="font-extrabold text-base text-cyan-300">🌊 ระดับน้ำคลอง 12 สถานีหลัก & สถานีสูบน้ำ กทม. (DDS Live Telemetry)</h3>
+                </div>
+                <p class="text-xs text-slate-400 mt-0.5">เทียบเกณฑ์วิกฤต ม.รทก. (Crisis Threshold) ครอบคลุม 4 โซนปฏิบัติการจัดส่ง</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-xs">
+                <span class="px-2.5 py-1 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold">🔴 2 จุดวิกฤต</span>
+                <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 font-bold">🟡 2 จุดเฝ้าระวัง</span>
+                <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold">🟢 8 จุดปกติ</span>
+                <a href="https://dds.bangkok.go.th/" target="_blank" class="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition inline-flex items-center gap-1 shadow-sm">
+                  <span>🚀 เปิด DDS ทางการ</span>
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <!-- 12 Telemetric Canal Water Level Gauges Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              
+              <!-- 1. คลองสามวา -->
+              <div class="p-3.5 rounded-xl border border-rose-500/40 bg-rose-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">1. คลองสามวา (วัดสามวา)</span>
+                      <div class="text-[11px] text-rose-300 font-medium">จุดวิกฤตสาขารามอินทรา</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500 text-white shadow-xs">+0.52 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-rose-900/40">
+                    <div class="bg-gradient-to-r from-amber-500 to-rose-500 h-2.5 rounded-full" style="width: 96%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.50 ม.</span>
+                    <span class="font-bold text-rose-400">🔴 เกินเกณฑ์ +2 ซม.</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-rose-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: ล้นตลิ่ง 15cm (กระทบสาย 13205)</span>
+                  <button onclick="zoomToLocation(13.8650, 100.7200); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/40 text-rose-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 2. คลองแสนแสบ -->
+              <div class="p-3.5 rounded-xl border border-rose-500/40 bg-rose-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">2. คลองแสนแสบ (บางกะปิ)</span>
+                      <div class="text-[11px] text-rose-300 font-medium">จุดเชื่อมต่อสาขากรุงเทพกรีฑา</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500 text-white shadow-xs">+0.48 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-rose-900/40">
+                    <div class="bg-gradient-to-r from-amber-500 to-rose-500 h-2.5 rounded-full" style="width: 90%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.50 ม.</span>
+                    <span class="font-bold text-rose-400">🔴 เฝ้าระวังสูงสุด</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-rose-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: น้ำล้นตลิ่งบางจุด (กระทบสาย 16304)</span>
+                  <button onclick="zoomToLocation(13.7650, 100.6500); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/40 text-rose-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 3. คลองประเวศบุรีรมย์ -->
+              <div class="p-3.5 rounded-xl border border-amber-500/40 bg-amber-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">3. คลองประเวศฯ (ทับช้าง-ลาดกระบัง)</span>
+                      <div class="text-[11px] text-amber-300 font-medium">เส้นทางเชื่อมกรุงเทพกรีฑา</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500 text-slate-950 shadow-xs">+0.32 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-amber-900/40">
+                    <div class="bg-gradient-to-r from-emerald-500 to-amber-500 h-2.5 rounded-full" style="width: 74%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.40 ม.</span>
+                    <span class="font-bold text-amber-400">🟡 เฝ้าระวัง</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-amber-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: สูงกว่าเกณฑ์ปกติ (เร่งสูบออกบางปะกง)</span>
+                  <button onclick="zoomToLocation(13.7380, 100.6850); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 4. คลองสองสายใต้ -->
+              <div class="p-3.5 rounded-xl border border-amber-500/40 bg-amber-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">4. คลองสองสายใต้ (สายไหม-ลำลูกกา)</span>
+                      <div class="text-[11px] text-amber-300 font-medium">รับน้ำตอนบนสาขารามอินทรา</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-500 text-slate-950 shadow-xs">+0.38 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-amber-900/40">
+                    <div class="bg-gradient-to-r from-emerald-500 to-amber-500 h-2.5 rounded-full" style="width: 80%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.45 ม.</span>
+                    <span class="font-bold text-amber-400">🟡 เฝ้าระวัง</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-amber-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: ปริมาณน้ำเหนือไหลสมทบ</span>
+                  <button onclick="zoomToLocation(13.9100, 100.6500); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/40 text-amber-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 5. คลองพระโขนง -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">5. คลองพระโขนง (สถานีสูบน้ำหลัก)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">จุดคุ้มครองสาขาสุขุมวิท 50</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">-0.10 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 35%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.30 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ (สูบเต็มพิกัด)</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: เดินเครื่องสูบน้ำอุโมงค์ยักษ์ 100%</span>
+                  <button onclick="zoomToLocation(13.7080, 100.5980); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 6. คลองช่องนนทรี -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">6. คลองช่องนนทรี (สถานีสูบน้ำ)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">จุดระบายน้ำสาขาพระราม 3</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">-0.18 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 25%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.25 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: ปริมาณน้ำต่ำ ระบายเร็ว แห้งปกติ</span>
+                  <button onclick="zoomToLocation(13.7020, 100.5420); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 7. แม่น้ำเจ้าพระยา -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">7. แม่น้ำเจ้าพระยา (ปากคลองตลาด)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">ควบคุมโดยประตูระบายน้ำหลัก</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">+0.05 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 45%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>แนวคันกั้น: +2.80 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ (ต่ำกว่าคันกั้น)</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: น้ำทะเลหนุนต่ำ ระบายได้ต่อเนื่อง</span>
+                  <button onclick="zoomToLocation(13.7430, 100.4950); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 8. คลองลาดพร้าว -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">8. คลองลาดพร้าว (วัดลาดพร้าว)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">โซนลาดพร้าว-วังหิน</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">+0.28 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 60%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.45 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: ระบายน้ำลงอุโมงค์พระราม 9</span>
+                  <button onclick="zoomToLocation(13.8040, 100.5950); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 9. คลองบางเขน -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">9. คลองบางเขน (วิภาวดีรังสิต)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">โซนหลักสี่-บางเขน</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">+0.15 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 40%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.40 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: การไหลคล่องตัวดี</span>
+                  <button onclick="zoomToLocation(13.8450, 100.5600); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 10. คลองตัน -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">10. คลองตัน (สุขุมวิท 71)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">โซนคลองตัน-พระโขนง</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">-0.02 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 30%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.35 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: ระบายน้ำลงคลองพระโขนงได้เร็ว</span>
+                  <button onclick="zoomToLocation(13.7350, 100.5980); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 11. คลองเปรมประชากร -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">11. คลองเปรมประชากร (ดอนเมือง)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">โซนดอนเมือง-หลักสี่</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">+0.22 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 50%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.45 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: เปิด ปตร.หลักสี่ ระบายสม่ำเสมอ</span>
+                  <button onclick="zoomToLocation(13.8900, 100.5900); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+              <!-- 12. คลองทวีวัฒนา -->
+              <div class="p-3.5 rounded-xl border border-emerald-500/40 bg-emerald-950/30 backdrop-blur-xs flex flex-col justify-between">
+                <div>
+                  <div class="flex justify-between items-start">
+                    <div>
+                      <span class="font-bold text-sm text-white">12. คลองทวีวัฒนา (ปตร.ทวีวัฒนา)</span>
+                      <div class="text-[11px] text-emerald-300 font-medium">โซนฝั่งธนบุรี</div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 shadow-xs">-0.05 ม.รทก.</span>
+                  </div>
+                  <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2.5 overflow-hidden border border-emerald-900/40">
+                    <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 30%"></div>
+                  </div>
+                  <div class="mt-1.5 flex justify-between text-[11px] text-slate-300">
+                    <span>เกณฑ์วิกฤต: +0.40 ม.</span>
+                    <span class="font-bold text-emerald-400">🟢 ปกติ</span>
+                  </div>
+                </div>
+                <div class="mt-3 pt-2 border-t border-emerald-900/40 flex justify-between items-center text-[11px]">
+                  <span class="text-slate-400">สถานะ: ระบายน้ำลงคลองภาษีเจริญได้ดี</span>
+                  <button onclick="zoomToLocation(13.7850, 100.3500); switchPage('page-pending-map')" class="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/40 text-emerald-200 transition font-bold">🗺️ ซูมแผนที่</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
       </div>
 
@@ -896,15 +1217,15 @@
       <div class="exec-card p-5 space-y-4">
         <div class="exec-card-header">
           <div>
-            <h3 class="font-bold text-base text-slate-900">14 จุดตรวจการณ์กล้องวงจรปิดประจำ 4 สาขาและเส้นทางคอขวดน้ำท่วม</h3>
-            <p class="text-xs text-slate-500">คลิก "ดูสด" หรือ "ซูมบนแผนที่" เพื่อมอนิเตอร์สภาพน้ำท่วมรายจุดทันที</p>
+            <h3 class="font-bold text-base text-slate-900">14 กล้องเฉพาะประจำ 4 สาขาและจุดเสี่ยงน้ำท่วม (Live Streaming & Traffic Flow)</h3>
+            <p class="text-xs text-slate-500">เชื่อมโยงสัญญาณสตรีมสด BMA Traffic & กรมทางหลวง พร้อมซูมจุดคอขวดบนแผนที่ทันที</p>
           </div>
-          <span class="badge badge-success">Live Camera Feeds</span>
+          <span class="badge badge-success">14 Live Cameras</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           
-          <!-- กล้อง 1: กม.8 -->
+          <!-- กล้อง 1: รามอินทรา กม.8 -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-danger text-[10px] font-bold">🔴 น้ำท่วม 20cm</span>
@@ -913,7 +1234,7 @@
             <div class="font-bold text-xs text-slate-900">1. แยกรามอินทรา กม.8 (ถ.นวมินทร์)</div>
             <p class="text-[11px] text-slate-500 leading-tight">จุดตัดสายส่งหลัก น้ำท่วมผิวจราจร 1-2 เลนซ้าย</p>
             <div class="flex items-center gap-1.5 pt-1">
-              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 สตรีมสด
               </a>
               <button onclick="zoomToLocation(13.8400, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
@@ -931,7 +1252,7 @@
             <div class="font-bold text-xs text-slate-900">2. ซอยรามอินทรา 34 (อยู่เย็น)</div>
             <p class="text-[11px] text-slate-500 leading-tight">ซอยลึกระบายน้ำช้า รถกระบะยกสูงเข้าได้</p>
             <div class="flex items-center gap-1.5 pt-1">
-              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 สตรีมสด
               </a>
               <button onclick="zoomToLocation(13.8480, 100.6350); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
@@ -940,16 +1261,52 @@
             </div>
           </div>
 
-          <!-- กล้อง 3: อุโมงค์กรุงเทพกรีฑา -->
+          <!-- กล้อง 3: แยกมีนบุรี -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-danger text-[10px] font-bold">🔴 น้ำท่วม 15-20cm</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขารามอินทรา</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">3. แยกมีนบุรี (สุวินทวงศ์ - รามอินทรา)</div>
+            <p class="text-[11px] text-slate-500 leading-tight">พื้นที่หนองจอก-มีนบุรี น้ำเอ่อขังผิวทางบางช่วง</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.8140, 100.7310); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 4: ถ.คู้บอน -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-warning text-[10px] font-bold">🟡 เฝ้าระวัง</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขารามอินทรา</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">4. ถ.คู้บอน - แยกคลองสามวา</div>
+            <p class="text-[11px] text-slate-500 leading-tight">เส้นทางส่งน้ำสาย 13205 น้ำลดระดับลงเรื่อยๆ</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.8560, 100.6720); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 5: อุโมงค์กรุงเทพกรีฑา -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-warning text-[10px] font-bold">🟡 เฝ้าระวังน้ำขัง</span>
               <span class="text-[11px] font-bold text-slate-500">สาขากรุงเทพกรีฑา</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">3. อุโมงค์ทางลอดกรุงเทพกรีฑา</div>
+            <div class="font-bold text-xs text-slate-900">5. อุโมงค์ทางลอดกรุงเทพกรีฑา</div>
             <p class="text-[11px] text-slate-500 leading-tight">เครื่องสูบน้ำทำงานปกติ สัญจรได้ชะลอตัว</p>
             <div class="flex items-center gap-1.5 pt-1">
-              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 สตรีมสด
               </a>
               <button onclick="zoomToLocation(13.7485, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
@@ -958,16 +1315,16 @@
             </div>
           </div>
 
-          <!-- กล้อง 4: กรุงเทพกรีฑาตัดใหม่ -->
+          <!-- กล้อง 6: กรุงเทพกรีฑาตัดใหม่ -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-success text-[10px] font-bold">🟢 ปกติ</span>
               <span class="text-[11px] font-bold text-slate-500">สาขากรุงเทพกรีฑา</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">4. ถ.กรุงเทพกรีฑาตัดใหม่ - ร่มเกล้า</div>
+            <div class="font-bold text-xs text-slate-900">6. ถ.กรุงเทพกรีฑาตัดใหม่ - ร่มเกล้า</div>
             <p class="text-[11px] text-slate-500 leading-tight">เส้นทางหลักสัญจรได้คล่องตัว ผิวจราจรแห้ง</p>
             <div class="flex items-center gap-1.5 pt-1">
-              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 สตรีมสด
               </a>
               <button onclick="zoomToLocation(13.7440, 100.6920); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
@@ -976,13 +1333,49 @@
             </div>
           </div>
 
-          <!-- กล้อง 5: ปตร.พระโขนง -->
+          <!-- กล้อง 7: ต่างระดับทับช้าง (มอเตอร์เวย์) -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 ทางหลวงเปิดปกติ</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขากรุงเทพกรีฑา</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">7. ต่างระดับทับช้าง (มอเตอร์เวย์ ทล.7)</div>
+            <p class="text-[11px] text-slate-500 leading-tight">เชื่อม ถ.ศรีนครินทร์ - ร่มเกล้า การจราจรคล่องตัว</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://www.doh-cctv.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 กล้อง DOH
+              </a>
+              <button onclick="zoomToLocation(13.7380, 100.6850); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 8: แยกเสรีไทย -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-warning text-[10px] font-bold">🟡 น้ำขัง 10cm</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขากรุงเทพกรีฑา</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">8. แยกเสรีไทย - นิคมฯ บางชัน</div>
+            <p class="text-[11px] text-slate-500 leading-tight">พื้นที่ลุ่มต่ำระบายน้ำช้า สาย 16304 วิ่งผ่านได้</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7820, 100.6780); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 9: ปตร.พระโขนง -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-success text-[10px] font-bold">🟢 เดินเครื่องสูบน้ำ</span>
               <span class="text-[11px] font-bold text-slate-500">สาขาสุขุมวิท 50</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">5. ปตร.พระโขนง (สุขุมวิท 50)</div>
+            <div class="font-bold text-xs text-slate-900">9. ปตร.พระโขนง (สุขุมวิท 50)</div>
             <p class="text-[11px] text-slate-500 leading-tight">สถานีสูบน้ำหลักเร่งระบายลงแม่น้ำเจ้าพระยา</p>
             <div class="flex items-center gap-1.5 pt-1">
               <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
@@ -994,13 +1387,13 @@
             </div>
           </div>
 
-          <!-- กล้อง 6: แยกคลองเตย -->
+          <!-- กล้อง 10: แยกคลองเตย -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-success text-[10px] font-bold">🟢 คล่องตัว</span>
               <span class="text-[11px] font-bold text-slate-500">สาขาสุขุมวิท 50</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">6. แยกคลองเตย - ถ.พระราม 4</div>
+            <div class="font-bold text-xs text-slate-900">10. แยกคลองเตย - ถ.พระราม 4</div>
             <p class="text-[11px] text-slate-500 leading-tight">ไม่มีน้ำท่วมขัง การจราจรเคลื่อนตัวได้ดี</p>
             <div class="flex items-center gap-1.5 pt-1">
               <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
@@ -1012,13 +1405,49 @@
             </div>
           </div>
 
-          <!-- กล้อง 7: สะพานภูมิพล -->
+          <!-- กล้อง 11: แยกบางนา -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 คล่องตัว</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขาสุขุมวิท 50</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">11. แยกบางนา - ถ.สุขุมวิท</div>
+            <p class="text-[11px] text-slate-500 leading-tight">เส้นทางหลักสาย 12401 สัญจรได้ปกติ ไม่มีน้ำขัง</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.6680, 100.6050); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 12: แยกอ่อนนุช -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 ปกติ</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขาสุขุมวิท 50</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">12. แยกอ่อนนุช (สุขุมวิท 77)</div>
+            <p class="text-[11px] text-slate-500 leading-tight">เชื่อมต่อศรีนครินทร์ การจราจรเคลื่อนตัวได้ดี</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7060, 100.6020); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 13: สะพานภูมิพล -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-success text-[10px] font-bold">🟢 คล่องตัว 100%</span>
               <span class="text-[11px] font-bold text-slate-500">สาขาพระราม 3</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">7. สะพานภูมิพล - พระราม 3</div>
+            <div class="font-bold text-xs text-slate-900">13. สะพานภูมิพล - พระราม 3</div>
             <p class="text-[11px] text-slate-500 leading-tight">เส้นทางขนส่งหลักเชื่อมพระราม 3 - สุขสวัสดิ์ แห้งปกติ</p>
             <div class="flex items-center gap-1.5 pt-1">
               <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
@@ -1030,13 +1459,13 @@
             </div>
           </div>
 
-          <!-- กล้อง 8: แยกนางลิ้นจี่ -->
+          <!-- กล้อง 14: แยกนางลิ้นจี่ -->
           <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="badge badge-success text-[10px] font-bold">🟢 ปกติ</span>
               <span class="text-[11px] font-bold text-slate-500">สาขาพระราม 3</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">8. แยกนางลิ้นจี่ - ถ.พระราม 3</div>
+            <div class="font-bold text-xs text-slate-900">14. แยกนางลิ้นจี่ - ถ.พระราม 3</div>
             <p class="text-[11px] text-slate-500 leading-tight">ไม่มีน้ำขัง การส่งน้ำ 18,420 จุดสำเร็จครบ 100%</p>
             <div class="flex items-center gap-1.5 pt-1">
               <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">

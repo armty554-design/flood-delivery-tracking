@@ -884,31 +884,42 @@ window.syncLiveFromSupabase = syncLiveFromSupabase;
 // 5. Page 3: Live CCTV Surveillance Hub
 // ==========================================
 const CCTV_SOURCES = {
-  TRAFFICVISION: {
-    name: 'TrafficVision Thailand (1,800+ กล้อง)',
-    url: 'https://trafficvision.in.th/',
-    embedUrl: 'https://trafficvision.in.th/'
-  },
   BMA: {
-    name: 'BMA Traffic (สจส. กรุงเทพมหานคร)',
+    name: 'BMA Traffic (สจส. กรุงเทพมหานคร - สตรีมสดตามแยก)',
     url: 'https://bmatraffic.com/',
-    embedUrl: 'https://bmatraffic.com/'
+    embedUrl: 'https://bmatraffic.com/',
+    isWater: false
+  },
+  DOH: {
+    name: 'DOH Highway CCTV (กรมทางหลวง & M-Flow / มอเตอร์เวย์ สตรีมสด)',
+    url: 'https://www.doh-cctv.com/',
+    embedUrl: 'https://www.doh-cctv.com/',
+    isWater: false
   },
   RADAR: {
-    name: 'เรดาร์ตรวจน้ำท่วม & กลุ่มฝน กทม. (Live Radar)',
+    name: 'เรดาร์ตรวจน้ำท่วม & กลุ่มฝน กทม. (Live Radar Animation)',
     url: 'https://weather.bangkok.go.th/radar/',
-    embedUrl: 'https://weather.bangkok.go.th/radar/RadarAnimation.aspx'
+    embedUrl: 'https://weather.bangkok.go.th/radar/RadarAnimation.aspx',
+    isWater: false
   },
   WATER: {
-    name: 'ระบบตรวจวัดระดับน้ำคลองสายหลัก กทม. (DDS Water Info)',
+    name: '🌊 แดชบอร์ดระดับน้ำคลอง 12 สถานีหลัก & สถานีสูบน้ำ กทม. (DDS Live Telemetry)',
     url: 'https://dds.bangkok.go.th/',
-    embedUrl: 'https://dds.bangkok.go.th/'
+    embedUrl: 'https://dds.bangkok.go.th/',
+    isWater: true
+  },
+  TRAFFICVISION: {
+    name: 'TrafficVision CCTV Hub (สำรองเชื่อมโยงผ่าน BMA Traffic & DOH 1,800+ จุด)',
+    url: 'https://bmatraffic.com/',
+    embedUrl: 'https://bmatraffic.com/',
+    isWater: false
   }
 };
 
 function switchCctvPortal(srcKey) {
-  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.TRAFFICVISION;
+  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.BMA;
   const iframe = document.getElementById('cctvPortalIframe');
+  const waterContainer = document.getElementById('cctvWaterDashboardContainer');
   const directLinkBtn = document.getElementById('cctvDirectLinkBtn');
   const statusText = document.getElementById('cctvPortalStatusText');
 
@@ -921,9 +932,19 @@ function switchCctvPortal(srcKey) {
     }
   });
 
-  if (iframe) {
-    iframe.src = info.embedUrl;
+  if (info.isWater) {
+    if (iframe) iframe.classList.add('hidden');
+    if (waterContainer) waterContainer.classList.remove('hidden');
+  } else {
+    if (waterContainer) waterContainer.classList.add('hidden');
+    if (iframe) {
+      iframe.classList.remove('hidden');
+      if (iframe.src !== info.embedUrl && info.embedUrl) {
+        iframe.src = info.embedUrl;
+      }
+    }
   }
+
   if (directLinkBtn) {
     directLinkBtn.href = info.url;
   }
@@ -936,7 +957,7 @@ window.switchCctvPortal = switchCctvPortal;
 function initCCTV() {
   const iframe = document.getElementById('cctvPortalIframe');
   if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-    iframe.src = 'https://trafficvision.in.th/';
+    iframe.src = 'https://bmatraffic.com/';
   }
 }
 
