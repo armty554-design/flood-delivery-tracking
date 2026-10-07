@@ -251,7 +251,7 @@ function switchPage(pageId) {
   } else if (pageId === 'page-cctv') {
     const iframe = document.getElementById('cctvPortalIframe');
     if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-      iframe.src = iframe.getAttribute('data-src') || 'https://traffic.longdo.com/';
+      iframe.src = iframe.getAttribute('data-src') || 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true';
     }
   } else if (pageId === 'page-admin') {
     updateAdminAuthUI();
@@ -884,60 +884,84 @@ window.syncLiveFromSupabase = syncLiveFromSupabase;
 // 5. Page 3: Live CCTV Surveillance Hub
 // ==========================================
 const CCTV_SOURCES = {
-  LONGDO: {
-    name: 'Longdo Traffic CCTV Hub (กล้อง กทม. ทางด่วน และสายหลัก 1,500+ จุด สตรีมสด)',
-    url: 'https://traffic.longdo.com/',
-    embedUrl: 'https://traffic.longdo.com/',
-    isWater: false
-  },
   RADAR: {
     name: 'เรดาร์ตรวจสภาพอากาศและกลุ่มฝนสด (Windy Live Doppler Weather & Rain Radar HD)',
     url: 'https://www.windy.com/-Weather-radar-radar?radar,13.756,100.502,9',
     embedUrl: 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true',
+    type: 'iframe',
+    isWater: false
+  },
+  LONGDO: {
+    name: 'Longdo Traffic CCTV Hub (กล้อง กทม. ทางด่วน และสายหลัก 1,500+ จุด สตรีมสด)',
+    url: 'https://traffic.longdo.com/',
+    embedUrl: 'https://traffic.longdo.com/',
+    type: 'portal_hub',
+    portalTitle: 'ศูนย์กล้องวงจรปิด Longdo Traffic CCTV Hub',
+    portalDesc: 'เชื่อมโยงสัญญาณสดจากกล้อง กทม. (BMA), การทางพิเศษ (EXAT), กรมทางหลวง (DOH) และศูนย์ควบคุมจราจรแบบเรียลไทม์',
+    portalBadge: '1,500+ Live Cameras',
     isWater: false
   },
   RAINVIEWER: {
     name: 'RainViewer Live Radar (เรดาร์ตรวจจับกลุ่มฝนดาวเทียม HD เรียลไทม์)',
     url: 'https://www.rainviewer.com/weather-radar-map-live.html',
     embedUrl: 'https://www.rainviewer.com/map.html?loc=13.7563,100.5018,9&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=90&lm=1&layer=radar&sm=1&sn=1',
+    type: 'iframe',
     isWater: false
   },
   TMD: {
     name: 'เรดาร์ตรวจอากาศกรมอุตุนิยมวิทยา (TMD Weather Radar สุวรรณภูมิ / กทม.)',
     url: 'https://weather.tmd.go.th/bkkLoop.php',
     embedUrl: 'https://weather.tmd.go.th/bkkLoop.php',
+    type: 'portal_hub',
+    portalTitle: 'เรดาร์ตรวจอากาศ กรมอุตุนิยมวิทยา (TMD Weather Radar)',
+    portalDesc: 'ภาพสแกนเรดาร์ตรวจจับกลุ่มฝนและพายุจากสถานีเรดาร์สุวรรณภูมิและหนองจอก กรมอุตุนิยมวิทยา',
+    portalBadge: 'TMD Radar',
     isWater: false
   },
   DOH: {
     name: 'DOH Highway CCTV (กรมทางหลวง & M-Flow / มอเตอร์เวย์ สตรีมสด)',
     url: 'https://highwaytraffic.go.th/',
     embedUrl: 'https://highwaytraffic.go.th/',
+    type: 'portal_hub',
+    portalTitle: 'ศูนย์ตรวจการณ์กล้องทางหลวง (Highway Traffic & M-Flow CCTV)',
+    portalDesc: 'ระบบติดตามสภาพจราจรและกล้องสตรีมสดบนทางหลวงแผ่นดิน มอเตอร์เวย์สาย 7, 9 และทางหลวงพิเศษทั่วประเทศ',
+    portalBadge: 'DOH Official Portal',
     isWater: false
   },
   WATER: {
     name: '🌊 แดชบอร์ดระดับน้ำคลอง 12 สถานีหลัก & สถานีสูบน้ำ กทม. (DDS Live Telemetry)',
     url: 'https://dds.bangkok.go.th/',
     embedUrl: 'https://dds.bangkok.go.th/',
+    type: 'water',
     isWater: true
   },
   BMA: {
     name: 'BMA CCTV & Traffic (ศูนย์กล้องวงจรปิดและจราจร กรุงเทพมหานคร)',
     url: 'https://cctv.bangkok.go.th/',
     embedUrl: 'https://cctv.bangkok.go.th/',
+    type: 'portal_hub',
+    portalTitle: 'ศูนย์กล้องวงจรปิด กรุงเทพมหานคร (BMA CCTV Official Portal)',
+    portalDesc: 'ระบบสตรีมสดกล้องวงจรปิดตรวจการณ์ตามทางแยกและจุดเสี่ยง 50 เขต กทม. โดยสำนักการจราจรและขนส่ง (สจส.)',
+    portalBadge: 'BMA Official Portal',
     isWater: false
   },
   TRAFFICVISION: {
     name: 'TrafficVision CCTV Hub (สำรองเชื่อมโยงผ่าน Longdo & BMA 1,800+ จุด)',
     url: 'https://traffic.longdo.com/',
     embedUrl: 'https://traffic.longdo.com/',
+    type: 'portal_hub',
+    portalTitle: 'TrafficVision CCTV Hub (สำรองเชื่อมโยงผ่าน Longdo & BMA 1,800+ จุด)',
+    portalDesc: 'ศูนย์รวมลิงก์กล้องตรวจการณ์และรายงานสภาพจราจรสดทางเลือกสำหรับผู้บริหาร',
+    portalBadge: '1,800+ จุด',
     isWater: false
   }
 };
 
 function switchCctvPortal(srcKey) {
-  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.LONGDO;
+  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.RADAR;
   const iframe = document.getElementById('cctvPortalIframe');
   const waterContainer = document.getElementById('cctvWaterDashboardContainer');
+  const hubContainer = document.getElementById('cctvPortalHubContainer');
   const directLinkBtn = document.getElementById('cctvDirectLinkBtn');
   const statusText = document.getElementById('cctvPortalStatusText');
 
@@ -950,16 +974,33 @@ function switchCctvPortal(srcKey) {
     }
   });
 
+  // Hide all view containers first
+  if (iframe) iframe.classList.add('hidden');
+  if (waterContainer) waterContainer.classList.add('hidden');
+  if (hubContainer) hubContainer.classList.add('hidden');
+
   if (info.isWater) {
-    if (iframe) iframe.classList.add('hidden');
     if (waterContainer) waterContainer.classList.remove('hidden');
-  } else {
-    if (waterContainer) waterContainer.classList.add('hidden');
+  } else if (info.type === 'iframe') {
     if (iframe) {
       iframe.classList.remove('hidden');
       if (iframe.src !== info.embedUrl && info.embedUrl) {
         iframe.src = info.embedUrl;
       }
+    }
+  } else {
+    // Portal Hub Mode (Longdo, BMA, DOH, TMD, TrafficVision)
+    if (hubContainer) {
+      hubContainer.classList.remove('hidden');
+      const badge = document.getElementById('hubPortalBadge');
+      const title = document.getElementById('hubPortalTitle');
+      const desc = document.getElementById('hubPortalDesc');
+      const launchBtn = document.getElementById('hubLaunchPrimaryBtn');
+
+      if (badge) badge.textContent = info.portalBadge || 'Live Stream';
+      if (title) title.textContent = info.portalTitle || info.name;
+      if (desc) desc.textContent = info.portalDesc || '';
+      if (launchBtn) launchBtn.href = info.url;
     }
   }
 
@@ -975,7 +1016,7 @@ window.switchCctvPortal = switchCctvPortal;
 function initCCTV() {
   const iframe = document.getElementById('cctvPortalIframe');
   if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-    iframe.src = 'https://traffic.longdo.com/';
+    iframe.src = 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true';
   }
 }
 

@@ -851,11 +851,11 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-bold text-slate-500 uppercase mr-1">เลือกพอร์ทัลตรวจการณ์:</span>
-            <button data-source="LONGDO" onclick="switchCctvPortal('LONGDO')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
-              📹 Longdo Traffic CCTV (กล้อง กทม. & ทางด่วน สด)
-            </button>
-            <button data-source="RADAR" onclick="switchCctvPortal('RADAR')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+            <button data-source="RADAR" onclick="switchCctvPortal('RADAR')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
               🌧️ เรดาร์ฝนสด Windy Radar (HD)
+            </button>
+            <button data-source="LONGDO" onclick="switchCctvPortal('LONGDO')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+              📹 Longdo Traffic CCTV (กล้อง กทม. & ทางด่วน สด)
             </button>
             <button data-source="RAINVIEWER" onclick="switchCctvPortal('RAINVIEWER')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
               🌦️ RainViewer เรดาร์ตรวจฝน
@@ -878,7 +878,7 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <a id="cctvDirectLinkBtn" href="https://traffic.longdo.com/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
+            <a id="cctvDirectLinkBtn" href="https://www.windy.com/-Weather-radar-radar?radar,13.756,100.502,9" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
               <span>🚀 เปิดพอร์ทัลเต็มจอ (แท็บใหม่)</span>
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -890,18 +890,146 @@
           <div class="flex items-center gap-2">
             <span class="live-pulse shrink-0"></span>
             <span id="cctvPortalStatusText" class="text-slate-700 font-medium">
-              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">Longdo Traffic CCTV Hub (กล้อง กทม. ทางด่วน และสายหลัก 1,500+ จุด สตรีมสด)</strong>
+              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">เรดาร์ตรวจสภาพอากาศและกลุ่มฝนสด (Windy Live Doppler Weather & Rain Radar HD)</strong>
             </span>
           </div>
           <div class="flex items-center gap-2 text-slate-500 text-[11px]">
-            <span>💡 หากระบบเบราว์เซอร์บล็อก iframe สามารถคลิก "เปิดพอร์ทัลเต็มจอ" เพื่อดูสตรีมโดยตรง</span>
+            <span>💡 สตรีมสดความละเอียดสูงพร้อม Interactive Animation คมชัด 100%</span>
           </div>
         </div>
 
         <!-- Embedded Frame & Dashboard Container -->
-        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 520px;">
-          <!-- Video / Portal Iframe -->
-          <iframe id="cctvPortalIframe" src="https://traffic.longdo.com/" data-src="https://traffic.longdo.com/" class="w-full h-full border-0" style="min-height: 520px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 540px;">
+          <!-- Video / Portal Iframe (Works 100% for Windy Radar & RainViewer) -->
+          <iframe id="cctvPortalIframe" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" data-src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" class="w-full h-full border-0" style="min-height: 540px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+
+          <!-- Executive Live CCTV Hub Launcher (Active when CCTV portals with iframe restrictions are selected) -->
+          <div id="cctvPortalHubContainer" class="hidden p-6 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950 text-white w-full h-full overflow-y-auto space-y-6">
+            
+            <!-- Top Banner with Launch Button -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-blue-900/60 via-indigo-900/40 to-slate-800/80 border border-blue-500/30 backdrop-blur-md">
+              <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                  <span class="live-pulse"></span>
+                  <span id="hubPortalBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30">1,500+ Live Cameras</span>
+                </div>
+                <h3 id="hubPortalTitle" class="text-xl font-extrabold text-white">ศูนย์กล้องวงจรปิด Longdo Traffic CCTV Hub</h3>
+                <p id="hubPortalDesc" class="text-xs text-blue-200 max-w-2xl">เชื่อมโยงสัญญาณสดจากกล้อง กทม. (BMA), การทางพิเศษ (EXAT), กรมทางหลวง (DOH) และศูนย์ควบคุมจราจรแบบเรียลไทม์</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <a id="hubLaunchPrimaryBtn" href="https://traffic.longdo.com/" target="_blank" rel="noopener noreferrer" class="px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-500/30 transition flex items-center gap-2 cursor-pointer">
+                  <span>🚀 เปิดสตรีมสดพอร์ทัลเต็มจอ</span>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </a>
+                <button onclick="switchCctvPortal('RADAR')" class="px-4 py-3 bg-slate-800/80 hover:bg-slate-700 text-cyan-300 rounded-xl text-xs font-bold border border-cyan-500/30 transition flex items-center gap-1.5 cursor-pointer">
+                  <span>🌧️ ดูเรดาร์ฝนสด Windy (HD)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Security & Browser Compatibility Note -->
+            <div class="p-3.5 bg-blue-950/40 border border-blue-800/40 rounded-xl text-xs text-blue-300 flex items-start gap-2.5">
+              <span class="text-base shrink-0">🔒</span>
+              <div>
+                <strong class="font-bold text-white">มาตรฐานความปลอดภัยเบราว์เซอร์ (Browser Cross-Origin Protection):</strong>
+                <p class="text-[11px] text-blue-200/90 mt-0.5">เนื่องจากเว็บหน่วยงานภาครัฐ (กทม. / กรมทางหลวง / Longdo) ป้องกันการฝังหน้าเว็บข้ามโดเมน (X-Frame-Options) ระบบจึงอำนวยความสะดวกด้วยปุ่มลัด <strong>1-Click Direct Stream Launch</strong> เพื่อเปิดสตรีมสดความเร็วสูงผ่านแท็บใหม่ได้ 100% โดยไม่ถูกบล็อก</p>
+              </div>
+            </div>
+
+            <!-- Critical Traffic Corridors Grid -->
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <h4 class="font-bold text-sm text-slate-200">ทางเลือกจุดสตรีมสดกล้องสายหลัก 4 โซนปฏิบัติการ</h4>
+                <span class="text-xs text-slate-400">คลิกเพื่อดูสตรีมสดหรือซูมพิกัด</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div class="p-3.5 rounded-xl bg-slate-800/70 border border-slate-700/60 flex flex-col justify-between space-y-2.5 hover:border-blue-500/60 transition">
+                  <div>
+                    <div class="flex justify-between items-start">
+                      <span class="font-bold text-xs text-white">1. ทางด่วนฉลองรัช & วงแหวนรามอินทรา</span>
+                      <span class="badge badge-danger text-[10px]">วิกฤตน้ำท่วม</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">ครอบคลุมเส้นทางส่งน้ำสาขารามอินทรา</p>
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 border-t border-slate-700/40">
+                    <a href="https://traffic.longdo.com/loc/13.8400,100.6650" target="_blank" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold text-center transition">📹 สตรีมสด</a>
+                    <button onclick="zoomToLocation(13.8400, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition">🗺️ แผนที่</button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-800/70 border border-slate-700/60 flex flex-col justify-between space-y-2.5 hover:border-blue-500/60 transition">
+                  <div>
+                    <div class="flex justify-between items-start">
+                      <span class="font-bold text-xs text-white">2. ต่างระดับทับช้าง (มอเตอร์เวย์ ทล.7)</span>
+                      <span class="badge badge-warning text-[10px]">เฝ้าระวัง</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">เชื่อมศรีนครินทร์ - กรุงเทพกรีฑา - ร่มเกล้า</p>
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 border-t border-slate-700/40">
+                    <a href="https://highwaytraffic.go.th/" target="_blank" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold text-center transition">📹 สตรีมสด DOH</a>
+                    <button onclick="zoomToLocation(13.7380, 100.6850); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition">🗺️ แผนที่</button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-800/70 border border-slate-700/60 flex flex-col justify-between space-y-2.5 hover:border-blue-500/60 transition">
+                  <div>
+                    <div class="flex justify-between items-start">
+                      <span class="font-bold text-xs text-white">3. อุโมงค์ทางลอดกรุงเทพกรีฑา</span>
+                      <span class="badge badge-warning text-[10px]">เฝ้าระวังน้ำขัง</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">เส้นทางหลักสาขากรุงเทพกรีฑา</p>
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 border-t border-slate-700/40">
+                    <a href="https://traffic.longdo.com/loc/13.7485,100.6650" target="_blank" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold text-center transition">📹 สตรีมสด</a>
+                    <button onclick="zoomToLocation(13.7485, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition">🗺️ แผนที่</button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-800/70 border border-slate-700/60 flex flex-col justify-between space-y-2.5 hover:border-blue-500/60 transition">
+                  <div>
+                    <div class="flex justify-between items-start">
+                      <span class="font-bold text-xs text-white">4. ทางด่วนเฉลิมมหานคร (สุขุมวิท 50)</span>
+                      <span class="badge badge-success text-[10px]">เปิดปกติ</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">จุดเชื่อมต่อส่งน้ำสาขาสุขุมวิท 50</p>
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 border-t border-slate-700/40">
+                    <a href="https://traffic.longdo.com/loc/13.7080,100.5980" target="_blank" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold text-center transition">📹 สตรีมสด</a>
+                    <button onclick="zoomToLocation(13.7080, 100.5980); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition">🗺️ แผนที่</button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-800/70 border border-slate-700/60 flex flex-col justify-between space-y-2.5 hover:border-blue-500/60 transition">
+                  <div>
+                    <div class="flex justify-between items-start">
+                      <span class="font-bold text-xs text-white">5. สะพานพระราม 3 - ถนนพระราม 3</span>
+                      <span class="badge badge-success text-[10px]">เปิดปกติ</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">พื้นที่จัดส่งสาขาพระราม 3 (สำเร็จ 100%)</p>
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 border-t border-slate-700/40">
+                    <a href="https://traffic.longdo.com/loc/13.6820,100.5400" target="_blank" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold text-center transition">📹 สตรีมสด</a>
+                    <button onclick="zoomToLocation(13.6820, 100.5400); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition">🗺️ แผนที่</button>
+                  </div>
+                </div>
+
+                <div class="p-3.5 rounded-xl bg-slate-800/70 border border-slate-700/60 flex flex-col justify-between space-y-2.5 hover:border-blue-500/60 transition">
+                  <div>
+                    <div class="flex justify-between items-start">
+                      <span class="font-bold text-xs text-white">6. ศูนย์ CCTV กทม. ทางการ (50 เขต)</span>
+                      <span class="badge badge-blue text-[10px]">กทม. ทางการ</span>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-1">ระบบกล้องวงจรปิดครอบคลุมทุกทางแยก</p>
+                  </div>
+                  <div class="flex items-center gap-2 pt-1 border-t border-slate-700/40">
+                    <a href="https://cctv.bangkok.go.th/" target="_blank" class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold text-center transition">📹 สตรีมสด BMA</a>
+                    <button onclick="zoomToLocation(13.7563, 100.5018); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-bold transition">🗺️ แผนที่</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
 
           <!-- Native Canal Water Level Dashboard (Active when WATER tab is clicked) -->
           <div id="cctvWaterDashboardContainer" class="hidden p-5 bg-gradient-to-b from-slate-900 via-slate-900 to-indigo-950 text-white w-full h-full overflow-y-auto space-y-4">
