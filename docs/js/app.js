@@ -884,10 +884,16 @@ window.syncLiveFromSupabase = syncLiveFromSupabase;
 // 5. Page 3: Live CCTV Surveillance Hub
 // ==========================================
 const CCTV_SOURCES = {
+  LONGDO: {
+    name: 'Longdo Traffic CCTV Hub (กล้อง กทม. ทางด่วน และสายหลัก 1,500+ จุด สตรีมสด)',
+    url: 'https://traffic.longdo.com/',
+    embedUrl: 'https://traffic.longdo.com/',
+    isWater: false
+  },
   BMA: {
-    name: 'BMA Traffic (สจส. กรุงเทพมหานคร - สตรีมสดตามแยก)',
-    url: 'https://bmatraffic.com/',
-    embedUrl: 'https://bmatraffic.com/',
+    name: 'BMA CCTV & Traffic (ศูนย์กล้องวงจรปิดและจราจร กรุงเทพมหานคร)',
+    url: 'https://cctv.bangkok.go.th/',
+    embedUrl: 'https://cctv.bangkok.go.th/',
     isWater: false
   },
   DOH: {
@@ -909,15 +915,15 @@ const CCTV_SOURCES = {
     isWater: true
   },
   TRAFFICVISION: {
-    name: 'TrafficVision CCTV Hub (สำรองเชื่อมโยงผ่าน BMA Traffic & DOH 1,800+ จุด)',
-    url: 'https://bmatraffic.com/',
-    embedUrl: 'https://bmatraffic.com/',
+    name: 'TrafficVision CCTV Hub (สำรองเชื่อมโยงผ่าน Longdo & BMA 1,800+ จุด)',
+    url: 'https://traffic.longdo.com/',
+    embedUrl: 'https://traffic.longdo.com/',
     isWater: false
   }
 };
 
 function switchCctvPortal(srcKey) {
-  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.BMA;
+  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.LONGDO;
   const iframe = document.getElementById('cctvPortalIframe');
   const waterContainer = document.getElementById('cctvWaterDashboardContainer');
   const directLinkBtn = document.getElementById('cctvDirectLinkBtn');
@@ -957,7 +963,7 @@ window.switchCctvPortal = switchCctvPortal;
 function initCCTV() {
   const iframe = document.getElementById('cctvPortalIframe');
   if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-    iframe.src = 'https://bmatraffic.com/';
+    iframe.src = 'https://traffic.longdo.com/';
   }
 }
 
