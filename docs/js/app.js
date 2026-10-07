@@ -25,7 +25,17 @@ window.AppState = {
   leafletMap: null,
   mapMarkersGroup: null,
   branchChart: null,
-  durationChart: null
+  durationChart: null,
+  // Admin Data Management State
+  adminOrders: [],
+  adminFilteredOrders: [],
+  adminSelectedIds: new Set(),
+  adminCurrentPage: 1,
+  adminPageSize: 20,
+  adminSearchQuery: '',
+  adminBranchFilter: 'ALL',
+  adminStatusFilter: 'ALL',
+  isDeletingAdminOrders: false
 };
 
 // ==========================================
@@ -155,6 +165,77 @@ function switchPage(pageId) {
 window.switchPage = switchPage;
 
 // ==========================================
+// Chart.js Data Labels Plugin (Displays Numbers Directly on Canvas)
+// ==========================================
+const customDataLabelsPlugin = {
+  id: 'customDataLabels',
+  afterDatasetsDraw(chart) {
+    if (chart.options.plugins && chart.options.plugins.datalabels === false) return;
+    const { ctx } = chart;
+    ctx.save();
+
+    chart.data.datasets.forEach((dataset, datasetIdx) => {
+      if (!chart.isDatasetVisible(datasetIdx)) return;
+      const meta = chart.getDatasetMeta(datasetIdx);
+      if (!meta || meta.hidden) return;
+
+      const isBar = meta.type === 'bar';
+      const isLine = meta.type === 'line';
+
+      meta.data.forEach((element, index) => {
+        const val = dataset.data[index];
+        if (val === null || val === undefined) return;
+        // Skip 0 for bars to avoid visual clutter on zero baseline
+        if (isBar && val === 0) return;
+
+        let labelText = typeof val === 'number' ? val.toLocaleString() : String(val);
+        if (dataset.datalabelSuffix) {
+          labelText += dataset.datalabelSuffix;
+        }
+
+        ctx.font = 'bold 10.5px Prompt, "Segoe UI", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        let x = element.x;
+        let y = element.y;
+
+        if (isBar) {
+          const barHeight = Math.abs(element.base - element.y);
+          if (barHeight > 45 && dataset.datalabelInside) {
+            // Render inside tall bar
+            y = element.y + 12;
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+            ctx.shadowBlur = 3;
+          } else {
+            // Render above bar
+            y = element.y - 9;
+            ctx.fillStyle = dataset.datalabelColor || '#1e293b';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+            ctx.shadowBlur = 4;
+          }
+        } else if (isLine) {
+          const offset = dataset.datalabelYOffset !== undefined ? dataset.datalabelYOffset : -10;
+          y = element.y + offset;
+          ctx.fillStyle = dataset.datalabelColor || dataset.borderColor || '#0f172a';
+          ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+          ctx.shadowBlur = 4;
+        }
+
+        ctx.fillText(labelText, x, y);
+      });
+    });
+
+    ctx.restore();
+  }
+};
+
+if (typeof Chart !== 'undefined' && Chart.register) {
+  Chart.register(customDataLabelsPlugin);
+}
+
+// ==========================================
 // 3. Page 1: Delivery Duration & Charts
 // ==========================================
 function initCharts() {
@@ -176,7 +257,9 @@ function initCharts() {
             pointRadius: 5,
             pointHoverRadius: 7,
             tension: 0.25,
-            yAxisID: 'y'
+            yAxisID: 'y',
+            datalabelColor: '#dc2626',
+            datalabelYOffset: -12
           },
           {
             type: 'line',
@@ -188,7 +271,9 @@ function initCharts() {
             pointRadius: 5,
             pointHoverRadius: 7,
             tension: 0.25,
-            yAxisID: 'y'
+            yAxisID: 'y',
+            datalabelColor: '#059669',
+            datalabelYOffset: -12
           },
           {
             type: 'bar',
@@ -196,13 +281,16 @@ function initCharts() {
             data: [1, 1152, 624, 232, 299, 35, 1, 0],
             backgroundColor: 'rgba(59, 130, 246, 0.75)',
             borderRadius: 6,
-            yAxisID: 'y'
+            yAxisID: 'y',
+            datalabelColor: '#1d4ed8',
+            datalabelInside: true
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 18 } },
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } },
@@ -215,7 +303,7 @@ function initCharts() {
         scales: {
           y: {
             beginAtZero: true,
-            max: 2800,
+            max: 2950,
             grid: { color: '#f1f5f9' },
             ticks: { font: { family: 'Prompt' } }
           },
@@ -240,25 +328,29 @@ function initCharts() {
             label: 'ส่งสำเร็จ (Delivered)',
             data: [7974, 11816, 23803, 18420],
             backgroundColor: '#10b981',
-            borderRadius: 6
+            borderRadius: 6,
+            datalabelColor: '#047857'
           },
           {
             label: 'ค้างส่งน้ำท่วม (Flood Pending)',
             data: [251, 92, 0, 0],
             backgroundColor: '#ef4444',
-            borderRadius: 6
+            borderRadius: 6,
+            datalabelColor: '#dc2626'
           },
           {
             label: 'โอนงานสิ้นวัน (Transfer EOD)',
             data: [291, 52, 0, 0],
             backgroundColor: '#8b5cf6',
-            borderRadius: 6
+            borderRadius: 6,
+            datalabelColor: '#7c3aed'
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 18 } },
         plugins: {
           legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } },
           tooltip: {
@@ -270,6 +362,7 @@ function initCharts() {
         scales: {
           y: {
             beginAtZero: true,
+            suggestedMax: 26000,
             grid: { color: '#f1f5f9' },
             ticks: { font: { family: 'Prompt' } }
           },
@@ -296,41 +389,50 @@ function initCharts() {
             borderColor: '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
             fill: true,
-            tension: 0.3
+            tension: 0.3,
+            datalabelColor: '#dc2626',
+            datalabelSuffix: ' น.'
           },
           {
             label: 'กรุงเทพกรีฑา (นาที/จุด)',
             data: [65, 62, 59, 57, 55, 54, 54],
             borderColor: '#f59e0b',
             backgroundColor: 'transparent',
-            tension: 0.3
+            tension: 0.3,
+            datalabelColor: '#b45309',
+            datalabelSuffix: ' น.'
           },
           {
             label: 'สุขุมวิท 50 (นาที/จุด)',
             data: [45, 44, 43, 42, 42, 42, 42],
             borderColor: '#3b82f6',
             backgroundColor: 'transparent',
-            tension: 0.3
+            tension: 0.3,
+            datalabelColor: '#1d4ed8',
+            datalabelSuffix: ' น.'
           },
           {
             label: 'พระราม 3 (นาที/จุด)',
             data: [38, 36, 35, 35, 35, 35, 35],
             borderColor: '#10b981',
             backgroundColor: 'transparent',
-            tension: 0.3
+            tension: 0.3,
+            datalabelColor: '#059669',
+            datalabelSuffix: ' น.'
           }
         ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 18 } },
         plugins: {
           legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } }
         },
         scales: {
           y: {
-            min: 20,
-            max: 90,
+            min: 25,
+            max: 92,
             grid: { color: '#f1f5f9' },
             ticks: { font: { family: 'Prompt' } }
           },
@@ -755,7 +857,7 @@ function exportTableToCsv() {
 }
 
 // ==========================================
-// 8. Page 6: Admin Management & Sync
+// 8. Page 6: Admin Management & Supabase Selection Delete
 // ==========================================
 function initAdmin() {
   const fileInput = document.getElementById('adminFileInput');
@@ -791,6 +893,70 @@ function initAdmin() {
       alert('ฟังก์ชันเชื่อมต่อ Supabase พร้อมประมวลผลไฟล์และบันทึกเข้าสู่ตาราง delivery_orders ทันที');
     });
   }
+
+  // --- Admin Data Table Controls ---
+  const searchInput = document.getElementById('adminSearchInput');
+  const branchSelect = document.getElementById('adminBranchSelect');
+  const statusSelect = document.getElementById('adminStatusSelect');
+  const masterCheckbox = document.getElementById('adminMasterCheckbox');
+  const btnSelectAll = document.getElementById('btnAdminSelectAll');
+  const btnDeselectAll = document.getElementById('btnAdminDeselectAll');
+  const btnDeleteSelected = document.getElementById('btnAdminDeleteSelected');
+  const btnConfirmDelete = document.getElementById('btnConfirmDeleteSupabase');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      AppState.adminSearchQuery = e.target.value.trim().toLowerCase();
+      applyAdminFilters();
+    });
+  }
+
+  if (branchSelect) {
+    branchSelect.addEventListener('change', (e) => {
+      AppState.adminBranchFilter = e.target.value;
+      applyAdminFilters();
+    });
+  }
+
+  if (statusSelect) {
+    statusSelect.addEventListener('change', (e) => {
+      AppState.adminStatusFilter = e.target.value;
+      applyAdminFilters();
+    });
+  }
+
+  if (masterCheckbox) {
+    masterCheckbox.addEventListener('change', (e) => {
+      toggleAdminSelectAllOnPage(e.target.checked);
+    });
+  }
+
+  if (btnSelectAll) {
+    btnSelectAll.addEventListener('click', () => {
+      toggleAdminSelectAllOnPage(true);
+    });
+  }
+
+  if (btnDeselectAll) {
+    btnDeselectAll.addEventListener('click', () => {
+      clearAdminSelection();
+    });
+  }
+
+  if (btnDeleteSelected) {
+    btnDeleteSelected.addEventListener('click', () => {
+      openAdminDeleteModal();
+    });
+  }
+
+  if (btnConfirmDelete) {
+    btnConfirmDelete.addEventListener('click', () => {
+      executeSupabaseDelete();
+    });
+  }
+
+  // Fetch initial data for Admin table
+  loadAdminOrders();
 }
 
 function handleAdminFile(file) {
@@ -800,3 +966,388 @@ function handleAdminFile(file) {
     label.classList.remove('hidden');
   }
 }
+
+// Fetch orders for Admin Table from Supabase Cloud (with fallback)
+async function loadAdminOrders() {
+  const tbody = document.getElementById('adminOrdersTableBody');
+  if (tbody) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400 font-semibold"><span class="live-pulse inline-block mr-2"></span>กำลังโหลดข้อมูลจาก Supabase Cloud...</td></tr>`;
+  }
+
+  try {
+    const resp = await fetch(
+      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=id,order_code,member_id,customer_name,branch,truck_number,status,reason,delivery_date,address&order=id.desc&limit=300`,
+      {
+        headers: {
+          'apikey': SUPABASE_CONFIG.anonKey,
+          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+        }
+      }
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      if (Array.isArray(data) && data.length > 0) {
+        AppState.adminOrders = data;
+        applyAdminFilters();
+        return;
+      }
+    }
+  } catch (err) {
+    console.warn('Supabase fetch failed, falling back to local dataset:', err);
+  }
+
+  // Fallback: Populate from local data store if cloud fetch is restricted or offline
+  const fallback = [];
+  let synthId = 10001;
+  (AppState.dataStore.pending || []).forEach(p => {
+    fallback.push({
+      id: p.id || synthId++,
+      order_code: p.order_code || synthId,
+      member_id: p.memberId || 'N/A',
+      customer_name: p.name || 'สมาชิกทั่วไป',
+      branch: p.branch || 'สาขารามอินทรา',
+      truck_number: p.truck || '-',
+      status: p.pendingCategory || 'ค้างส่งน้ำท่วม',
+      reason: p.lastReason || 'น้ำท่วมสูงไม่สามารถส่งได้',
+      delivery_date: '2026-09-26',
+      address: p.address || '-'
+    });
+  });
+  (AppState.dataStore.resolved || []).slice(0, 100).forEach(r => {
+    fallback.push({
+      id: r.id || synthId++,
+      order_code: r.order_code || synthId,
+      member_id: r.memberId || 'N/A',
+      customer_name: r.name || 'สมาชิกทั่วไป',
+      branch: r.branch || 'สาขากรุงเทพกรีฑา',
+      truck_number: r.truck || '-',
+      status: 'ส่งสำเร็จ',
+      reason: r.resolvedReason || 'ส่งสำเร็จตรงรอบ',
+      delivery_date: '2026-10-02',
+      address: r.address || '-'
+    });
+  });
+
+  AppState.adminOrders = fallback;
+  applyAdminFilters();
+}
+
+function applyAdminFilters() {
+  const q = AppState.adminSearchQuery || '';
+  const branch = AppState.adminBranchFilter || 'ALL';
+  const status = AppState.adminStatusFilter || 'ALL';
+
+  AppState.adminFilteredOrders = (AppState.adminOrders || []).filter(item => {
+    // Search query matching
+    if (q) {
+      const matchMember = (item.member_id || '').toLowerCase().includes(q);
+      const matchName = (item.customer_name || '').toLowerCase().includes(q);
+      const matchTruck = (item.truck_number || '').toLowerCase().includes(q);
+      const matchAddr = (item.address || '').toLowerCase().includes(q);
+      const matchReason = (item.reason || '').toLowerCase().includes(q);
+      if (!matchMember && !matchName && !matchTruck && !matchAddr && !matchReason) {
+        return false;
+      }
+    }
+
+    // Branch filter
+    if (branch !== 'ALL' && item.branch !== branch) {
+      return false;
+    }
+
+    // Status filter
+    if (status !== 'ALL') {
+      const itemStatus = (item.status || '') + ' ' + (item.reason || '');
+      if (status === 'โอนงานสิ้นวัน' && !itemStatus.includes('โอนงาน')) return false;
+      if (status === 'น้ำท่วม' && !itemStatus.includes('น้ำท่วม')) return false;
+      if (status === 'ส่งสำเร็จ' && !itemStatus.includes('สำเร็จ') && !itemStatus.includes('ปกติ') && !itemStatus.includes('ตั้งถัง')) return false;
+    }
+
+    return true;
+  });
+
+  AppState.adminCurrentPage = 1;
+  const countEl = document.getElementById('adminFilteredCount');
+  if (countEl) countEl.textContent = AppState.adminFilteredOrders.length.toLocaleString();
+
+  renderAdminTable();
+}
+
+function renderAdminTable() {
+  const tbody = document.getElementById('adminOrdersTableBody');
+  if (!tbody) return;
+
+  const total = AppState.adminFilteredOrders.length;
+  const pageSize = AppState.adminPageSize || 20;
+  const totalPages = Math.ceil(total / pageSize) || 1;
+  AppState.adminCurrentPage = Math.min(Math.max(1, AppState.adminCurrentPage), totalPages);
+
+  const startIdx = (AppState.adminCurrentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const pageItems = AppState.adminFilteredOrders.slice(startIdx, endIdx);
+
+  if (pageItems.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="8" class="text-center py-10 text-slate-400">
+          <div class="text-2xl mb-1">🔍</div>
+          <div class="font-semibold text-sm">ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา</div>
+          <p class="text-xs text-slate-400 mt-1">ลองปรับเปลี่ยนคำค้นหาหรือตัวกรองสาขา/สถานะ</p>
+        </td>
+      </tr>
+    `;
+    renderAdminPagination(0, 1);
+    updateAdminSelectionUI();
+    return;
+  }
+
+  let html = '';
+  pageItems.forEach(item => {
+    const isChecked = AppState.adminSelectedIds.has(item.id);
+    const dateFormatted = item.delivery_date ? (item.delivery_date.substring(0, 10)) : '-';
+
+    // Status Badge determination
+    let statusBadge = '<span class="badge badge-success">ส่งสำเร็จ</span>';
+    const statusText = (item.status || '') + ' ' + (item.reason || '');
+    if (statusText.includes('น้ำท่วม')) {
+      statusBadge = '<span class="badge badge-danger">น้ำท่วมสูง</span>';
+    } else if (statusText.includes('โอนงาน')) {
+      statusBadge = '<span class="badge badge-purple">โอนงานสิ้นวัน</span>';
+    } else if (statusText.includes('ติดตาม')) {
+      statusBadge = '<span class="badge badge-warning">ติดตามปัญหา</span>';
+    }
+
+    html += `
+      <tr class="${isChecked ? 'bg-blue-50/60' : 'hover:bg-slate-50/80'} transition-colors">
+        <td class="text-center">
+          <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleAdminRowSelect(${item.id}, this.checked)" class="admin-row-chk w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+        </td>
+        <td class="font-mono text-xs font-bold text-blue-700">${item.member_id || '-'}</td>
+        <td>
+          <div class="font-bold text-slate-900 text-xs">${item.customer_name || 'ไม่ระบุชื่อ'}</div>
+          <div class="text-[11px] text-slate-400 truncate max-w-xs" title="${item.address || ''}">${item.address || '-'}</div>
+        </td>
+        <td><span class="text-xs text-slate-700 font-semibold">${item.branch || '-'}</span></td>
+        <td><span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">${item.truck_number || '-'}</span></td>
+        <td>
+          <div class="flex flex-col gap-0.5">
+            <div>${statusBadge}</div>
+            <div class="text-[11px] text-slate-500 truncate max-w-[180px]" title="${item.reason || ''}">${item.reason || '-'}</div>
+          </div>
+        </td>
+        <td class="text-xs text-slate-500 whitespace-nowrap">${dateFormatted}</td>
+        <td class="text-center">
+          <button type="button" onclick="openSingleDeleteModal(${item.id})" title="ลบรายการนี้ออกจาก Supabase" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold transition inline-flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+  renderAdminPagination(total, totalPages);
+  updateAdminSelectionUI();
+}
+
+function toggleAdminRowSelect(id, checked) {
+  if (checked) {
+    AppState.adminSelectedIds.add(id);
+  } else {
+    AppState.adminSelectedIds.delete(id);
+  }
+  updateAdminSelectionUI();
+}
+window.toggleAdminRowSelect = toggleAdminRowSelect;
+
+function toggleAdminSelectAllOnPage(checked) {
+  const pageSize = AppState.adminPageSize || 20;
+  const startIdx = (AppState.adminCurrentPage - 1) * pageSize;
+  const endIdx = startIdx + pageSize;
+  const pageItems = AppState.adminFilteredOrders.slice(startIdx, endIdx);
+
+  pageItems.forEach(item => {
+    if (checked) {
+      AppState.adminSelectedIds.add(item.id);
+    } else {
+      AppState.adminSelectedIds.delete(item.id);
+    }
+  });
+
+  renderAdminTable();
+}
+window.toggleAdminSelectAllOnPage = toggleAdminSelectAllOnPage;
+
+function clearAdminSelection() {
+  AppState.adminSelectedIds.clear();
+  renderAdminTable();
+}
+window.clearAdminSelection = clearAdminSelection;
+
+function updateAdminSelectionUI() {
+  const count = AppState.adminSelectedIds.size;
+  const badge = document.getElementById('adminSelectedCountBadge');
+  const btnCount = document.getElementById('btnDeleteCount');
+  const btnDelete = document.getElementById('btnAdminDeleteSelected');
+  const masterBox = document.getElementById('adminMasterCheckbox');
+
+  if (badge) badge.textContent = `${count.toLocaleString()} รายการ`;
+  if (btnCount) btnCount.textContent = count.toLocaleString();
+  if (btnDelete) {
+    btnDelete.disabled = count === 0;
+  }
+
+  // Update master checkbox state
+  if (masterBox) {
+    const pageSize = AppState.adminPageSize || 20;
+    const startIdx = (AppState.adminCurrentPage - 1) * pageSize;
+    const endIdx = startIdx + pageSize;
+    const pageItems = AppState.adminFilteredOrders.slice(startIdx, endIdx);
+
+    if (pageItems.length === 0) {
+      masterBox.checked = false;
+      masterBox.indeterminate = false;
+    } else {
+      const allSelected = pageItems.every(item => AppState.adminSelectedIds.has(item.id));
+      const someSelected = pageItems.some(item => AppState.adminSelectedIds.has(item.id));
+      masterBox.checked = allSelected;
+      masterBox.indeterminate = !allSelected && someSelected;
+    }
+  }
+}
+
+function renderAdminPagination(totalItems, totalPages) {
+  const container = document.getElementById('adminTablePagination');
+  if (!container) return;
+
+  if (totalItems === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const cur = AppState.adminCurrentPage;
+  const startItem = (cur - 1) * AppState.adminPageSize + 1;
+  const endItem = Math.min(cur * AppState.adminPageSize, totalItems);
+
+  container.innerHTML = `
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 py-3 text-xs text-slate-500">
+      <div>
+        แสดงรายการที่ <strong class="text-slate-700">${startItem.toLocaleString()}</strong> ถึง <strong class="text-slate-700">${endItem.toLocaleString()}</strong> จากทั้งหมด <strong class="text-slate-700">${totalItems.toLocaleString()}</strong> รายการ
+      </div>
+      <div class="flex items-center gap-1">
+        <button onclick="setAdminPage(1)" ${cur === 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2.5 py-1 rounded bg-slate-100 font-semibold text-slate-700 transition">⇤ แรกสุด</button>
+        <button onclick="setAdminPage(${cur - 1})" ${cur === 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2.5 py-1 rounded bg-slate-100 font-semibold text-slate-700 transition">◀ ก่อนหน้า</button>
+        <span class="px-3 py-1 font-bold text-blue-700 bg-blue-50 rounded border border-blue-200">หน้า ${cur} / ${totalPages}</span>
+        <button onclick="setAdminPage(${cur + 1})" ${cur === totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2.5 py-1 rounded bg-slate-100 font-semibold text-slate-700 transition">ถัดไป ▶</button>
+        <button onclick="setAdminPage(${totalPages})" ${cur === totalPages ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2.5 py-1 rounded bg-slate-100 font-semibold text-slate-700 transition">ท้ายสุด ⇥</button>
+      </div>
+    </div>
+  `;
+}
+
+function setAdminPage(pageNum) {
+  const total = AppState.adminFilteredOrders.length;
+  const totalPages = Math.ceil(total / AppState.adminPageSize) || 1;
+  if (pageNum < 1 || pageNum > totalPages) return;
+  AppState.adminCurrentPage = pageNum;
+  renderAdminTable();
+}
+window.setAdminPage = setAdminPage;
+
+function openAdminDeleteModal() {
+  if (AppState.adminSelectedIds.size === 0) {
+    alert('กรุณาเลือกรายการที่ต้องการลบอย่างน้อย 1 รายการ');
+    return;
+  }
+
+  const modal = document.getElementById('adminConfirmDeleteModal');
+  const countEl = document.getElementById('deleteModalCount');
+  const listEl = document.getElementById('deleteModalItemList');
+
+  if (countEl) countEl.textContent = AppState.adminSelectedIds.size.toLocaleString();
+
+  if (listEl) {
+    const selectedList = AppState.adminOrders.filter(o => AppState.adminSelectedIds.has(o.id));
+    let itemsHtml = '';
+    selectedList.slice(0, 10).forEach(item => {
+      itemsHtml += `<div class="truncate">• ID: <strong>#${item.id}</strong> | รหัสสมาชิก: <strong>${item.member_id}</strong> - ${item.customer_name} (${item.branch})</div>`;
+    });
+    if (selectedList.length > 10) {
+      itemsHtml += `<div class="text-slate-400 italic">... และอีก ${(selectedList.length - 10).toLocaleString()} รายการ</div>`;
+    }
+    listEl.innerHTML = itemsHtml || '<div class="text-slate-400">รายการที่เลือก</div>';
+  }
+
+  if (modal) modal.classList.add('active');
+}
+window.openAdminDeleteModal = openAdminDeleteModal;
+
+function openSingleDeleteModal(id) {
+  AppState.adminSelectedIds.clear();
+  AppState.adminSelectedIds.add(id);
+  openAdminDeleteModal();
+}
+window.openSingleDeleteModal = openSingleDeleteModal;
+
+async function executeSupabaseDelete() {
+  if (AppState.adminSelectedIds.size === 0 || AppState.isDeletingAdminOrders) return;
+  AppState.isDeletingAdminOrders = true;
+
+  const btnConfirm = document.getElementById('btnConfirmDeleteSupabase');
+  const originalBtnText = btnConfirm ? btnConfirm.innerHTML : '';
+  if (btnConfirm) {
+    btnConfirm.disabled = true;
+    btnConfirm.innerHTML = `<span class="live-pulse mr-1"></span> กำลังลบข้อมูลจาก Supabase Cloud...`;
+  }
+
+  const idsArray = Array.from(AppState.adminSelectedIds);
+  const idsParam = idsArray.join(',');
+
+  try {
+    const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?id=in.(${idsParam})`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+        'Prefer': 'return=minimal'
+      }
+    });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Supabase API response: ${response.status} ${errText}`);
+    }
+
+    // Success! Update local state
+    const deletedCount = idsArray.length;
+    AppState.adminOrders = AppState.adminOrders.filter(o => !AppState.adminSelectedIds.has(o.id));
+    AppState.adminSelectedIds.clear();
+    AppState.supabaseRowCount = Math.max(0, AppState.supabaseRowCount - deletedCount);
+
+    // Update Row Count Display
+    const adminCountEl = document.getElementById('adminTotalRowCount');
+    if (adminCountEl) adminCountEl.textContent = AppState.supabaseRowCount.toLocaleString();
+
+    const badgeEl = document.getElementById('supabaseStatusBadge');
+    if (badgeEl) {
+      badgeEl.innerHTML = `<span class="live-pulse mr-1.5"></span> Supabase Cloud: เชื่อมต่อสด (${AppState.supabaseRowCount.toLocaleString()} รายการ)`;
+    }
+
+    closeModal();
+    applyAdminFilters();
+
+    // Show feedback toast or alert
+    alert(`✅ ลบข้อมูลสำเร็จจำนวน ${deletedCount.toLocaleString()} รายการ ออกจากฐานข้อมูล Supabase Cloud เรียบร้อยแล้ว`);
+  } catch (err) {
+    console.error('Delete operation error:', err);
+    alert(`❌ เกิดข้อผิดพลาดในการลบข้อมูลจาก Supabase: ${err.message}`);
+  } finally {
+    AppState.isDeletingAdminOrders = false;
+    if (btnConfirm) {
+      btnConfirm.disabled = false;
+      btnConfirm.innerHTML = originalBtnText;
+    }
+  }
+}
+window.executeSupabaseDelete = executeSupabaseDelete;
+

@@ -1020,6 +1020,92 @@
         </div>
       </div>
 
+      <!-- Admin Data Management & Selection Deletion Section -->
+      <div class="exec-card">
+        <div class="exec-card-header">
+          <div>
+            <h3 class="font-bold text-base text-slate-900">จัดการตารางข้อมูลในระบบ (Data Management & Selection Delete)</h3>
+            <p class="text-xs text-slate-500">ค้นหา เลือกรายการที่ต้องการ และลบข้อมูลออกจากฐานข้อมูล Supabase Cloud โดยตรง</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-semibold">เลือกแล้ว:</span>
+            <span id="adminSelectedCountBadge" class="badge badge-purple font-bold">0 รายการ</span>
+          </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4">
+          <div class="sm:col-span-5">
+            <input type="text" id="adminSearchInput" placeholder="ค้นหารหัสสมาชิก, ชื่อลูกค้า, สายรถ, ที่อยู่..." class="exec-input">
+          </div>
+          <div class="sm:col-span-4">
+            <select id="adminBranchSelect" class="exec-input">
+              <option value="ALL">ทุกลำดับสาขา</option>
+              <option value="สาขารามอินทรา">สาขารามอินทรา</option>
+              <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
+              <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
+              <option value="สาขาพระราม 3">สาขาพระราม 3</option>
+            </select>
+          </div>
+          <div class="sm:col-span-3">
+            <select id="adminStatusSelect" class="exec-input">
+              <option value="ALL">ทุกสถานะ</option>
+              <option value="โอนงานสิ้นวัน">เฉพาะโอนงานสิ้นวัน</option>
+              <option value="น้ำท่วม">เฉพาะน้ำท่วม</option>
+              <option value="ส่งสำเร็จ">เฉพาะส่งสำเร็จ</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Action Buttons Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-4">
+          <div class="flex items-center gap-2">
+            <button id="btnAdminSelectAll" type="button" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition">
+              ☑️ เลือกทั้งหมดในหน้านี้
+            </button>
+            <button id="btnAdminDeselectAll" type="button" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition">
+              ⬜ ยกเลิกการเลือก
+            </button>
+            <span class="text-xs text-slate-500 hidden sm:inline">|</span>
+            <span class="text-xs text-slate-600 font-medium">พบข้อมูล: <strong id="adminFilteredCount" class="text-blue-700">0</strong> รายการ</span>
+          </div>
+
+          <div>
+            <button id="btnAdminDeleteSelected" type="button" disabled class="px-4 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 disabled:opacity-40 disabled:hover:bg-rose-600 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span>ลบรายการที่เลือก (<span id="btnDeleteCount">0</span>)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Interactive Orders Table -->
+        <div class="overflow-hidden border border-slate-200 rounded-xl">
+          <div class="overflow-x-auto">
+            <table class="exec-table">
+              <thead>
+                <tr>
+                  <th style="width: 44px;" class="text-center">
+                    <input type="checkbox" id="adminMasterCheckbox" class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                  </th>
+                  <th style="width: 100px;">รหัสสมาชิก</th>
+                  <th>ชื่อลูกค้า / ที่อยู่</th>
+                  <th>สาขา</th>
+                  <th style="width: 85px;">สายรถ</th>
+                  <th>สถานะ / เหตุผล</th>
+                  <th>วันที่</th>
+                  <th style="width: 80px;" class="text-center">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersTableBody">
+                <!-- Dynamically populated by js/app.js -->
+              </tbody>
+            </table>
+          </div>
+          <div id="adminTablePagination" class="px-4 border-t border-slate-100 bg-slate-50"></div>
+        </div>
+
+      </div>
+
       <!-- Drag & Drop Uploader -->
       <div class="exec-card">
         <div class="exec-card-header">
@@ -1138,6 +1224,44 @@
       </div>
       <div class="mt-6 pt-3 border-t border-slate-100 flex justify-end">
         <button onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       ADMIN DELETE CONFIRMATION MODAL
+       ========================================================================= -->
+  <div id="adminConfirmDeleteModal" class="modal-backdrop">
+    <div class="modal-dialog p-6 border-t-4 border-t-rose-600">
+      <div class="flex items-start gap-3 pb-3 mb-4 border-b border-slate-100">
+        <div class="w-10 h-10 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        </div>
+        <div class="flex-1">
+          <h3 class="font-extrabold text-base text-slate-900">ยืนยันการลบข้อมูลออกจาก Supabase Cloud</h3>
+          <p class="text-xs text-slate-500 mt-0.5">การดำเนินการนี้จะลบข้อมูลออกจากตาราง <strong class="text-blue-700">delivery_orders</strong> อย่างถาวร</p>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold transition">✕</button>
+      </div>
+
+      <div class="py-2">
+        <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 text-xs mb-3">
+          ⚠️ คุณกำลังจะลบรายการที่เลือกจำนวน <strong id="deleteModalCount" class="text-rose-700 font-extrabold text-sm">0</strong> รายการ
+          <div class="mt-1 text-[11px] text-rose-600">โปรดตรวจสอบให้แน่ใจก่อนดำเนินการ ข้อมูลที่ลบแล้วจะไม่สามารถกู้คืนได้</div>
+        </div>
+        <div class="text-xs font-semibold text-slate-600 mb-1">รายการที่จะถูกลบ:</div>
+        <div id="deleteModalItemList" class="max-h-40 overflow-y-auto p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1 font-mono text-slate-700">
+          <!-- Populated by js/app.js -->
+        </div>
+      </div>
+
+      <div class="mt-6 pt-3 border-t border-slate-100 flex items-center justify-end gap-2">
+        <button onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition">
+          ยกเลิก
+        </button>
+        <button id="btnConfirmDeleteSupabase" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1.5 shadow-sm">
+          <span>🗑️ ยืนยันลบออกจาก Supabase ทันที</span>
+        </button>
       </div>
     </div>
   </div>
