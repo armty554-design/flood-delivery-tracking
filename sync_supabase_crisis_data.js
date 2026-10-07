@@ -106,21 +106,33 @@ async function syncAndEvaluate() {
     attempts.sort((a, b) => new Date(a.delivery_date || '1970-01-01') - new Date(b.delivery_date || '1970-01-01'));
     const latestAttempt = attempts[attempts.length - 1];
 
-    const r = latestAttempt.reason || '';
-    const s = latestAttempt.status || '';
-    const dg = latestAttempt.delivery_group || '';
-    const round = latestAttempt.round || '';
+    // ตรวจสอบอย่างแม่นยำว่า "การเข้าส่งในวันล่าสุดสำเร็จหรือไม่"
+    const dg = (latestAttempt.delivery_group || '').trim();
+    const r = (latestAttempt.reason || '').trim();
+    const s = (latestAttempt.status || '').trim();
+    const round = (latestAttempt.round || '').trim();
     const isTr = latestAttempt.is_transferred === true;
 
-    // ตรวจสอบอย่างแม่นยำว่า "การเข้าส่งในวันล่าสุดสำเร็จหรือไม่"
-    const isDelivered = dg === 'เข้าส่งได้' ||
-                        r.includes('ลูกค้าตั้งถัง') ||
-                        r.includes('ลูกค้าอยู่บ้าน') ||
-                        r.includes('พบลูกค้า') ||
-                        r.includes('ตั้งถัง') ||
-                        r.includes('ส่งสำเร็จ') ||
-                        s === 'สำเร็จ' ||
-                        s === 'เข้าส่งได้';
+    // ตรวจสอบความสำเร็จของการเข้าส่งรอบล่าสุด
+    const isFailedReason = dg === 'ยังส่งไม่ได้' ||
+                           r.includes('ไม่สามารถเข้าส่งได้') ||
+                           r.includes('เลื่อนวันที่ส่ง') ||
+                           r.includes('น้ำท่วม') ||
+                           r.includes('เกิดข้อผิดพลาด') ||
+                           r.includes('ไม่พบถัง') ||
+                           r.includes('ติดต่อไม่ได้') ||
+                           s.includes('น้ำท่วม') ||
+                           s.includes('รอน้ำลด');
+
+    const isSuccessReason = dg === 'เข้าส่งได้' ||
+                            r.includes('ตั้งถัง') ||
+                            r.includes('พบลูกค้า') ||
+                            r.includes('ลูกค้าอยู่บ้าน') ||
+                            r.includes('ส่งสำเร็จ') ||
+                            s === 'เข้าส่งได้' ||
+                            s === 'สำเร็จ';
+
+    const isDelivered = isSuccessReason && !isFailedReason;
 
     // ตรวจสอบกรณีไม่สำเร็จ
     const isFlood = !isDelivered && (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด'));
@@ -171,7 +183,6 @@ async function syncAndEvaluate() {
     // กรณีไม่มีพิกัดในฐานข้อมูลเลย ให้ใช้จุดกึ่งกลางสาขา + jitter สุ่มกระจายเล็กน้อย
     if (!lat || !lng) {
       const bCenter = BRANCH_CENTERS[latestAttempt.branch] || [13.7800, 100.6700];
-      // Random jitter 0.01 - 0.03 deg (~1-3 km) around branch
       const seed = parseInt(mId.replace(/\D/g, '').slice(-4) || `${idx}`, 10);
       const angle = (seed % 360) * (Math.PI / 180);
       const dist = 0.008 + ((seed % 20) * 0.001);
@@ -266,11 +277,9 @@ async function syncAndEvaluate() {
   // บันทึก data/pending_latest.json และ data/resolved_latest.json
   fs.writeFileSync('data/pending_latest.json', JSON.stringify(pendingMembers, null, 2), 'utf8');
   fs.writeFileSync('data/resolved_latest.json', JSON.stringify(resolvedMembers, null, 2), 'utf8');
-
-  // บันทึก data/pending_343.json เพื่อ backward-compatibility หรือแทนที่ด้วย 977
   fs.writeFileSync('data/pending_977.json', JSON.stringify(pendingMembers, null, 2), 'utf8');
 
-  // บันทึก js/data_store.js และ docs/js/data_store.js
+  // บันทึก js/data_store.js และ docs/js/data_store.js แบบกระชับและโหลดเร็ว
   const dataStoreContent = `/**
  * Clean Executive Data Store (Live Evaluated from Supabase Cloud)
  * Rule: ดูวันที่ส่งล่าสุดของแต่ละสมาชิก หากเป็นโอนงานหรือน้ำท่วมสูง ➔ ยังไม่ได้รับน้ำ

@@ -56,8 +56,20 @@ window.AppState = {
   adminStatusFilter: 'ALL',
   adminTotalFilteredCount: 72170,
   isDeletingAdminOrders: false,
-  isAdminAuthenticated: (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('admin_auth') === '171938')
 };
+
+// Performance Debounce Utility
+function debounce(func, wait = 150) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
 
 // ==========================================
 // 1. Initialization
@@ -734,11 +746,11 @@ function initTable() {
   const exportBtn = document.getElementById('btnExportCsv');
 
   if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
+    searchInput.addEventListener('input', debounce((e) => {
       AppState.tableSearchQuery = e.target.value.trim().toLowerCase();
       AppState.tableCurrentPage = 1;
       renderTable();
-    });
+    }, 120));
   }
 
   if (branchSelect) {
@@ -749,11 +761,11 @@ function initTable() {
   }
 
   if (truckInput) {
-    truckInput.addEventListener('input', (e) => {
+    truckInput.addEventListener('input', debounce((e) => {
       AppState.tableTruckFilter = e.target.value.trim().toLowerCase();
       AppState.tableCurrentPage = 1;
       renderTable();
-    });
+    }, 120));
   }
 
   if (dateInput) {
