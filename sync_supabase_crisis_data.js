@@ -102,41 +102,54 @@ async function syncAndEvaluate() {
   let idx = 0;
   memberHistoryMap.forEach((attempts, mId) => {
     idx++;
+    // Helper ตรวจสอบความสำเร็จของการเข้าส่ง
+    function checkAttemptSuccess(att) {
+      const dg = (att.delivery_group || '').trim();
+      const r = (att.reason || '').trim();
+      const s = (att.status || '').trim();
+      const isFailed = dg === 'ยังส่งไม่ได้' ||
+                       r.includes('ไม่สามารถเข้าส่งได้') ||
+                       r.includes('เลื่อนวันที่ส่ง') ||
+                       r.includes('น้ำท่วม') ||
+                       r.includes('เกิดข้อผิดพลาด') ||
+                       s.includes('น้ำท่วม') ||
+                       s.includes('รอน้ำลด');
+      const isSuccess = dg === 'เข้าส่งได้' ||
+                        r.includes('ตั้งถัง') ||
+                        r.includes('พบลูกค้า') ||
+                        r.includes('ลูกค้าอยู่บ้าน') ||
+                        r.includes('ส่งสำเร็จ') ||
+                        s === 'เข้าส่งได้' ||
+                        s === 'สำเร็จ';
+      return isSuccess && !isFailed;
+    }
+
+    // ตรวจสอบว่าในประวัติรอบ 26 ก.ย. เป็นต้นมา สมาชิกเคยได้รับการเข้าส่งสำเร็จหรือไม่
+    const hasAnySuccessAttempt = attempts.some(att => checkAttemptSuccess(att));
+
     // เรียงตาม delivery_date จากอดีตไปปัจจุบัน
     attempts.sort((a, b) => new Date(a.delivery_date || '1970-01-01') - new Date(b.delivery_date || '1970-01-01'));
     const latestAttempt = attempts[attempts.length - 1];
-
-    // ตรวจสอบอย่างแม่นยำว่า "การเข้าส่งในวันล่าสุดสำเร็จหรือไม่"
     const dg = (latestAttempt.delivery_group || '').trim();
     const r = (latestAttempt.reason || '').trim();
     const s = (latestAttempt.status || '').trim();
     const round = (latestAttempt.round || '').trim();
     const isTr = latestAttempt.is_transferred === true;
 
-    // ตรวจสอบความสำเร็จของการเข้าส่งรอบล่าสุด
-    const isFailedReason = dg === 'ยังส่งไม่ได้' ||
-                           r.includes('ไม่สามารถเข้าส่งได้') ||
-                           r.includes('เลื่อนวันที่ส่ง') ||
-                           r.includes('น้ำท่วม') ||
-                           r.includes('เกิดข้อผิดพลาด') ||
-                           r.includes('ไม่พบถัง') ||
-                           r.includes('ติดต่อไม่ได้') ||
-                           s.includes('น้ำท่วม') ||
-                           s.includes('รอน้ำลด');
+    // ตรวจสอบสถานะการเข้าส่งในรอบล่าสุด
+    const latestSuccess = checkAttemptSuccess(latestAttempt);
 
-    const isSuccessReason = dg === 'เข้าส่งได้' ||
-                            r.includes('ตั้งถัง') ||
-                            r.includes('พบลูกค้า') ||
-                            r.includes('ลูกค้าอยู่บ้าน') ||
-                            r.includes('ส่งสำเร็จ') ||
-                            s === 'เข้าส่งได้' ||
-                            s === 'สำเร็จ';
+    // ตรวจสอบกรณีที่เป็นวิกฤตน้ำท่วมสูง หรือ โอนงานสิ้นวัน
+    const isFloodLast = r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด');
+    const isTransferLast = isTr || round.includes('โอนงาน') || r.includes('โอนงาน') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || s.includes('โอนงาน');
 
-    const isDelivered = isSuccessReason && !isFailedReason;
-
-    // ตรวจสอบกรณีไม่สำเร็จ
-    const isFlood = !isDelivered && (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด'));
-    const isTransfer = !isDelivered && (isTr || round.includes('โอนงาน') || r.includes('โอนงาน') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || s.includes('โอนงาน'));
+    // สรุปสถานะ: สมาชิกจะ "ยังไม่ได้รับน้ำ (Pending)" ก็ต่อเมื่อ:
+    // 1. ไม่เคยมีรอบที่ส่งสำเร็จเลย (hasAnySuccessAttempt = false) และ
+    // 2. สถานะล่าสุดยังคงเป็นน้ำท่วมสูงหรือโอนงานสิ้นวัน
+    const isPendingCrisis = !hasAnySuccessAttempt && (isFloodLast || isTransferLast);
+    const isDelivered = hasAnySuccessAttempt || latestSuccess;
+    const isFlood = isPendingCrisis && isFloodLast;
+    const isTransfer = isPendingCrisis && !isFloodLast && isTransferLast;
 
     // สร้างประวัติ history
     const historyParts = attempts.map(att => {

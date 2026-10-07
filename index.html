@@ -168,13 +168,13 @@
             <span class="badge badge-danger">สถานะล่าสุด</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span id="page1KpiPending" class="kpi-value text-rose-600">592</span>
-            <span id="page1KpiPendingRate" class="text-sm font-semibold text-slate-500">ราย (11.7%)</span>
+            <span id="page1KpiPending" class="kpi-value text-rose-600">579</span>
+            <span id="page1KpiPendingRate" class="text-sm font-semibold text-slate-500">ราย (11.5%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2" id="page1KpiPendingBreakdown">
-            <span>รามอินทรา: <strong class="text-rose-600">375</strong></span>
-            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">193</strong></span>
-            <span>สุขุมวิท 50: <strong class="text-purple-600">24</strong></span>
+            <span>รามอินทรา: <strong class="text-rose-600">366</strong></span>
+            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">191</strong></span>
+            <span>สุขุมวิท 50: <strong class="text-purple-600">22</strong></span>
           </div>
         </div>
 
@@ -185,8 +185,8 @@
             <span class="badge badge-success">ปลดล็อคสำเร็จ</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span id="page1KpiResolved" class="kpi-value text-emerald-600">4,456</span>
-            <span id="page1KpiResolvedRate" class="text-sm font-semibold text-slate-500">ราย (88.3%)</span>
+            <span id="page1KpiResolved" class="kpi-value text-emerald-600">4,469</span>
+            <span id="page1KpiResolvedRate" class="text-sm font-semibold text-slate-500">ราย (88.5%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
             <span>ส่งสำเร็จแล้ว (Delivered) / เข้าถึงพื้นที่ได้แล้ว</span>
@@ -204,8 +204,8 @@
             <span class="text-sm font-semibold text-slate-500">ราย (100%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2" id="page1KpiTotalBreakdown">
-            <span>น้ำท่วมสูง: <strong>534</strong></span>
-            <span>โอนงานสิ้นวัน: <strong>58</strong></span>
+            <span>น้ำท่วมสูง: <strong>527</strong></span>
+            <span>โอนงานสิ้นวัน: <strong>52</strong></span>
           </div>
         </div>
 
@@ -216,11 +216,11 @@
             <span class="badge badge-purple">คลี่คลายแล้ว</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span id="page1KpiProgressRate" class="kpi-value text-indigo-600">88.3%</span>
+            <span id="page1KpiProgressRate" class="kpi-value text-indigo-600">88.5%</span>
             <span class="text-sm font-semibold text-slate-500">ของกลุ่มวิกฤต</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
-            <span id="page1KpiRemainingText">คงเหลือค้างจริง: <strong>11.7% (592 ราย)</strong></span>
+            <span id="page1KpiRemainingText">คงเหลือค้างจริง: <strong>11.5% (579 ราย)</strong></span>
           </div>
         </div>
 
@@ -662,9 +662,9 @@
         <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-slate-500 font-semibold">แสดงผลบนแผนที่:</span>
-            <span id="mapShownCount" class="badge badge-danger font-bold text-xs">592 จุด</span>
+            <span id="mapShownCount" class="badge badge-danger font-bold text-xs">579 จุด</span>
             <span class="text-slate-400">|</span>
-            <span class="text-[11px] text-slate-500" id="mapBreakdownText">น้ำท่วมสูง: 534 จุด • โอนงานสิ้นวัน: 58 จุด</span>
+            <span class="text-[11px] text-slate-500" id="mapBreakdownText">น้ำท่วมสูง: 527 จุด • โอนงานสิ้นวัน: 52 จุด</span>
           </div>
           <button onclick="syncLiveFromSupabase()" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 flex items-center gap-1.5 cursor-pointer shadow-2xs" title="ดึงข้อมูลอัปเดตล่าสุดจาก Supabase Cloud">
             <span>🔄 ซิงค์สด Supabase</span>
@@ -1025,10 +1025,10 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <button onclick="setTableTab('PENDING')" data-tab="PENDING" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white shadow-xs">
-            ⚠️ ยังไม่ได้รับน้ำ (<span id="tableTabPendingBadge">592 ราย</span>)
+            ⚠️ ยังไม่ได้รับน้ำ (<span id="tableTabPendingBadge">579 ราย</span>)
           </button>
           <button onclick="setTableTab('RESOLVED')" data-tab="RESOLVED" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-            ✅ สำเร็จตามเงื่อนไข (<span id="tableTabResolvedBadge">4,456 ราย</span>)
+            ✅ สำเร็จตามเงื่อนไข (<span id="tableTabResolvedBadge">4,469 ราย</span>)
           </button>
           <button onclick="setTableTab('ALL')" data-tab="ALL" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
             📊 รวมกลุ่มวิกฤต (<span id="tableTabAllBadge">5,048 ราย</span>)
