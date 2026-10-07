@@ -56,13 +56,19 @@ pages.forEach(p => {
 });
 
 // 4. Page 1 Content Verification
-console.log('\n[4. Page 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา]');
+console.log('\n[4. Page 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา & กราฟเปรียบเทียบวัน]');
 assert(html.includes('35') && html.includes('สาขาพระราม 3'), 'Rama 3 duration metric (35 min) present');
 assert(html.includes('42') && html.includes('สาขาสุขุมวิท 50'), 'Sukhumvit 50 duration metric (42 min) present');
 assert(html.includes('54') && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha duration metric (54 min) present');
 assert(html.includes('68') && html.includes('สาขารามอินทรา'), 'Ram Intra duration metric (68 min) present');
+assert(html.includes('id="chartDailyComparison"'), 'Day-by-Day comparison chart canvas #chartDailyComparison exists');
 assert(html.includes('id="chartBranchCompare"'), 'Comparison bar chart canvas #chartBranchCompare exists');
 assert(html.includes('id="chartDurationTrend"'), 'Duration trend chart canvas #chartDurationTrend exists');
+assert(html.includes('น้ำท่วมสูงไม่สามารถส่งได้'), 'Logic mentions "น้ำท่วมสูงไม่สามารถส่งได้"');
+assert(html.includes('โอนงานสิ้นวัน'), 'Logic mentions "โอนงานสิ้นวัน"');
+assert(html.includes('28/9 - 3/10'), 'Logic mentions round 28/9 - 3/10');
+assert(html.includes('สถานะการประสานงาน'), 'Logic clarifies "สถานะการประสานงาน"');
+assert(html.includes('ตารางเปรียบเทียบความคืบหน้ารายวัน'), 'Daily resolution breakdown table present');
 assert(html.includes('ไทม์ไลน์บันทึกการเข้าอัปเดตทุกวัน'), 'Daily operations timeline present');
 
 // 5. Page 2 Content Verification

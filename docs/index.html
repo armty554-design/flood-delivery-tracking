@@ -103,23 +103,175 @@
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
 
     <!-- =======================================================================
-         หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา
+         หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา (เปรียบเทียบวัน & สมาชิกที่ยังไม่ได้รับน้ำ)
          ======================================================================= -->
     <section id="page-duration" class="page-view space-y-6">
       
-      <!-- Executive Banner -->
+      <!-- Executive Banner with Calculation Logic -->
       <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div class="relative z-10">
           <div class="flex items-center gap-2 mb-2">
             <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30">PAGE 1</span>
-            <span class="text-xs text-blue-300 font-semibold">รอบเวลาจัดส่งและประสิทธิภาพ 4 สาขา</span>
+            <span class="text-xs text-blue-300 font-semibold">กราฟเปรียบเทียบวัน & ตรรกะติดตามสมาชิกที่ยังไม่ได้รับน้ำ</span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา</h1>
-          <p class="mt-2 text-sm text-blue-200 max-w-2xl">
-            วิเคราะห์รอบเวลาจัดส่งเฉลี่ย (Delivery Cycle Time) ต่อออเดอร์, อัตราส่งตรงเวลา (On-Time Performance) และความคืบหน้ารายวันเปรียบเทียบระหว่างสาขาปกติและสาขาประสบภัย
+          <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">กราฟเปรียบเทียบวัน และตรรกะการติดตามสมาชิกที่ยังไม่ได้รับน้ำ</h1>
+          <p class="mt-2 text-sm text-blue-200 max-w-4xl leading-relaxed">
+            ตั้งแต่รอบ<strong>วันเสาร์ที่ 26 ก.ย.</strong> เป็นต้นมา กรณีทำเหตุขาดส่งว่า <strong>"น้ำท่วมสูงไม่สามารถส่งได้"</strong> และ <strong>"โอนงานสิ้นวัน"</strong> ไปวันที่ <strong>28/9 - 3/10</strong> หากมีการส่งแล้วหรือทำขาดส่งที่ไม่เกี่ยวกับน้ำท่วมสูง/โอนงานสิ้นวัน <strong>ก็ถือว่าสำเร็จตามเงื่อนไข (ไม่ควรอยู่ในสถานะการประสานงาน)</strong> เพื่อให้ทราบชัดเจนว่าต้องไปส่งสมาชิกที่ยังไม่ได้รับน้ำเลยอีกกี่ราย (343 ราย) และเหลือส่งเสริมไม่สำเร็จอีกกี่ราย
           </p>
         </div>
         <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      </div>
+
+      <!-- Executive Key Insight Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- 1. สมาชิกที่ยังไม่ได้รับน้ำเลย -->
+        <div class="exec-card border-l-4 border-l-rose-500">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">ต้องไปส่ง (ยังไม่ได้รับน้ำเลย)</span>
+            <span class="badge badge-danger">ต้องติดตาม</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="kpi-value text-rose-600">343</span>
+            <span class="text-sm font-semibold text-slate-500">ราย (12.8%)</span>
+          </div>
+          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
+            <span>รามอินทรา: <strong class="text-rose-600">251</strong></span>
+            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">92</strong></span>
+            <span>2 สาขาอื่น: <strong class="text-emerald-600">0</strong></span>
+          </div>
+        </div>
+
+        <!-- 2. สมาชิกที่สำเร็จตามเงื่อนไขแล้ว -->
+        <div class="exec-card border-l-4 border-l-emerald-500">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">สำเร็จตามเงื่อนไขแล้ว</span>
+            <span class="badge badge-success">ปลดล็อคสำเร็จ</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="kpi-value text-emerald-600">2,344</span>
+            <span class="text-sm font-semibold text-slate-500">ราย (87.2%)</span>
+          </div>
+          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
+            <span>ส่งสำเร็จ: <strong>2,230</strong></span>
+            <span>เข้าถึงได้ เหตุอื่น: <strong>114</strong></span>
+          </div>
+        </div>
+
+        <!-- 3. กลุ่มวิกฤตตั้งต้น (เสาร์ 26 ก.ย.) -->
+        <div class="exec-card border-l-4 border-l-blue-500">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">กลุ่มวิกฤตตั้งต้น (26 ก.ย.)</span>
+            <span class="badge badge-blue">ฐานวิกฤต</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="kpi-value text-blue-600">2,687</span>
+            <span class="text-sm font-semibold text-slate-500">ราย (100%)</span>
+          </div>
+          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
+            <span>น้ำท่วมสูง: <strong>2,396</strong></span>
+            <span>โอนงานสิ้นวัน: <strong>291</strong></span>
+          </div>
+        </div>
+
+        <!-- 4. อัตราความคืบหน้าการส่งเสริม -->
+        <div class="exec-card border-l-4 border-l-indigo-500">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">ความคืบหน้าการแก้ปัญหา</span>
+            <span class="badge badge-purple">คลี่คลายแล้ว</span>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="kpi-value text-indigo-600">87.2%</span>
+            <span class="text-sm font-semibold text-slate-500">ของกลุ่มวิกฤต</span>
+          </div>
+          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
+            <span>คงเหลือค้างจริง: <strong>12.8%</strong></span>
+            <span>รอบเวลาเฉลี่ย: <strong>48 นาที</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Business Logic Explainer Box -->
+      <div class="exec-card bg-gradient-to-br from-blue-50/60 via-white to-slate-50 border-2 border-blue-200/80 shadow-md">
+        <div class="flex items-center gap-2 mb-3 pb-2 border-b border-blue-100">
+          <span class="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm">💡</span>
+          <div>
+            <h3 class="font-extrabold text-base text-blue-950">ตรรกะการคิดและคัดแยกสถานะ (Crisis Resolution Logic)</h3>
+            <p class="text-xs text-slate-500">เกณฑ์คัดกรองตั้งแต่รอบวันเสาร์ที่ 26 ก.ย. ถึงปัจจุบัน (28/9 - 3/10)</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          
+          <!-- Step 1 -->
+          <div class="p-3.5 rounded-xl bg-white border border-blue-200 shadow-xs">
+            <div class="flex items-center gap-2 mb-2 font-bold text-blue-900">
+              <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[11px]">1</span>
+              <span>จุดเริ่มต้น (รอบเสาร์ที่ 26 ก.ย.)</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              คัดเลือกสมาชิกทั้งหมดที่ทำเหตุขาดส่งว่า <strong>"น้ำท่วมสูงไม่สามารถส่งได้"</strong> หรือ <strong>"โอนงานสิ้นวัน"</strong> ซึ่งเป็นกลุ่มที่ได้รับผลกระทบจากอุทกภัย รวมตั้งต้น <strong>2,687 ราย</strong>
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-200 shadow-xs">
+            <div class="flex items-center gap-2 mb-2 font-bold text-emerald-900">
+              <span class="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px]">2</span>
+              <span>ส่งเสริมในรอบ 28/9 - 3/10 ➔ สำเร็จ</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              • <strong>กรณีส่งแล้ว:</strong> สมาชิกได้รับน้ำดื่มเรียบร้อย (<strong>2,230 ราย</strong>)<br>
+              • <strong>กรณีขาดส่งเหตุอื่นที่ไม่เกี่ยวกับน้ำท่วม:</strong> เช่น สมาชิกไม่อยู่, ยังไม่รับน้ำ, อาคารไม่อนุญาต (<strong>114 ราย</strong>) ถือว่า <em>"รถเข้าถึงพื้นที่ได้แล้ว"</em> ➔ <strong>ถือว่าสำเร็จตามเงื่อนไข (ไม่ควรอยู่ในสถานะการประสานงาน)</strong>
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="p-3.5 rounded-xl bg-rose-50/60 border border-rose-200 shadow-xs">
+            <div class="flex items-center gap-2 mb-2 font-bold text-rose-900">
+              <span class="w-5 h-5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[11px]">3</span>
+              <span>คงค้างต้องประสานงาน (ยังไม่ได้รับน้ำ)</span>
+            </div>
+            <p class="text-slate-600 leading-relaxed">
+              คงเหลือเฉพาะสมาชิกที่สถานะล่าสุด <strong>ยังคงเป็นน้ำท่วมสูงหรือโอนงานสิ้นวันจริง ๆ เท่านั้น</strong> รวม <strong>343 ราย</strong> ทำให้สายส่งรู้ชัดเจนว่า <strong>ต้องไปส่งสมาชิกที่ยังไม่ได้รับน้ำเลยอีก 343 ราย</strong> และเหลือส่งเสริมไม่สำเร็จอีกกี่ราย
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Charts Row 1: Day-by-Day Comparison & 4 Branches Compare -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Day-by-Day Comparison Chart -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <div>
+              <h3 class="font-bold text-base text-slate-900">กราฟเปรียบเทียบวัน: ความคืบหน้าการคลี่คลายวิกฤต (26 ก.ย. - 7 ต.ค.)</h3>
+              <p class="text-xs text-slate-500">คงค้างยังไม่ได้รับน้ำ (เส้นแดง) ลดลง vs สำเร็จสะสม (เส้นเขียว) เพิ่มขึ้น</p>
+            </div>
+            <span class="badge badge-danger">343 คงเหลือ</span>
+          </div>
+          <div class="h-72 w-full">
+            <canvas id="chartDailyComparison"></canvas>
+          </div>
+        </div>
+
+        <!-- 4 Branches Comparison Bar Chart -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <div>
+              <h3 class="font-bold text-base text-slate-900">เปรียบเทียบผลการจัดส่ง 4 สาขา (Bar Comparison)</h3>
+              <p class="text-xs text-slate-500">ส่งสำเร็จ (เขียว) vs ค้างส่งน้ำท่วม (แดง) vs โอนงานสิ้นวัน (ม่วง)</p>
+            </div>
+            <span class="badge badge-blue">4 สาขา</span>
+          </div>
+          <div class="h-72 w-full">
+            <canvas id="chartBranchCompare"></canvas>
+          </div>
+        </div>
+
       </div>
 
       <!-- 4 Branch Duration KPI Grid -->
@@ -191,23 +343,9 @@
 
       </div>
 
-      <!-- Charts Row -->
+      <!-- Charts Row 2: Duration Trend & Daily Resolution Breakdown Table -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Comparison Bar Chart -->
-        <div class="exec-card">
-          <div class="exec-card-header">
-            <div>
-              <h3 class="font-bold text-base text-slate-900">เปรียบเทียบผลการจัดส่ง 4 สาขา (Bar Comparison)</h3>
-              <p class="text-xs text-slate-500">ส่งสำเร็จ (เขียว) vs ค้างส่งน้ำท่วม (แดง) vs โอนงานสิ้นวัน (ม่วง)</p>
-            </div>
-            <span class="badge badge-blue">อัปเดตสด</span>
-          </div>
-          <div class="h-72 w-full">
-            <canvas id="chartBranchCompare"></canvas>
-          </div>
-        </div>
-
         <!-- Duration Trend Chart -->
         <div class="exec-card">
           <div class="exec-card-header">
@@ -219,6 +357,81 @@
           </div>
           <div class="h-72 w-full">
             <canvas id="chartDurationTrend"></canvas>
+          </div>
+        </div>
+
+        <!-- Daily Resolution Breakdown Table -->
+        <div class="exec-card">
+          <div class="exec-card-header">
+            <div>
+              <h3 class="font-bold text-base text-slate-900">ตารางเปรียบเทียบความคืบหน้ารายวัน (26 ก.ย. - 3 ต.ค. ถึงปัจจุบัน)</h3>
+              <p class="text-xs text-slate-500">แสดงการลดลงของยอดที่ยังไม่ได้รับน้ำจนถึง 343 ราย</p>
+            </div>
+            <span class="badge badge-success">ความคืบหน้า 87.2%</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="exec-table text-xs">
+              <thead>
+                <tr>
+                  <th>วันที่</th>
+                  <th>ส่งสำเร็จรายวัน</th>
+                  <th>สำเร็จสะสม</th>
+                  <th>ยังไม่ได้รับน้ำ (คงค้าง)</th>
+                  <th>ความคืบหน้า</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-bold text-slate-700">26 ก.ย. (เสาร์)</td>
+                  <td>1 ราย</td>
+                  <td>1 ราย</td>
+                  <td><span class="font-bold text-rose-600">2,686 ราย</span></td>
+                  <td>0.1% (วันวิกฤต)</td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-slate-700">28 ก.ย. (จันทร์)</td>
+                  <td><span class="font-bold text-blue-600">+1,152 ราย</span></td>
+                  <td>1,153 ราย</td>
+                  <td><span class="font-bold text-rose-600">1,534 ราย</span></td>
+                  <td><span class="badge badge-warning">42.9%</span></td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-slate-700">29 ก.ย. (อังคาร)</td>
+                  <td><span class="font-bold text-blue-600">+624 ราย</span></td>
+                  <td>1,777 ราย</td>
+                  <td><span class="font-bold text-rose-600">910 ราย</span></td>
+                  <td><span class="badge badge-blue">66.1%</span></td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-slate-700">30 ก.ย. (พุธ)</td>
+                  <td><span class="font-bold text-blue-600">+232 ราย</span></td>
+                  <td>2,009 ราย</td>
+                  <td><span class="font-bold text-amber-600">678 ราย</span></td>
+                  <td><span class="badge badge-blue">74.8%</span></td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-slate-700">1 ต.ค. (พฤหัส)</td>
+                  <td><span class="font-bold text-blue-600">+299 ราย</span></td>
+                  <td>2,308 ราย</td>
+                  <td><span class="font-bold text-amber-600">379 ราย</span></td>
+                  <td><span class="badge badge-blue">85.9%</span></td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-slate-700">2 - 3 ต.ค. (ศุกร์-ส.)</td>
+                  <td><span class="font-bold text-blue-600">+36 ราย</span></td>
+                  <td>2,344 ราย</td>
+                  <td><span class="font-bold text-rose-600">343 ราย</span></td>
+                  <td><span class="badge badge-success">87.2%</span></td>
+                </tr>
+                <tr class="bg-blue-50/70 font-semibold">
+                  <td class="font-bold text-blue-900">7 ต.ค. (ปัจจุบัน)</td>
+                  <td class="text-slate-600">-</td>
+                  <td class="text-emerald-700 font-bold">2,344 ราย</td>
+                  <td><span class="font-extrabold text-rose-700">343 ราย</span></td>
+                  <td><span class="badge badge-success">87.2%</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 

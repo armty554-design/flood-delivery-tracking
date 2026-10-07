@@ -158,6 +158,77 @@ window.switchPage = switchPage;
 // 3. Page 1: Delivery Duration & Charts
 // ==========================================
 function initCharts() {
+  // 1. Day-by-Day Comparison Chart (26 ก.ย. ถึง 3 ต.ค. - 7 ต.ค.)
+  const dailyCtx = document.getElementById('chartDailyComparison');
+  if (dailyCtx) {
+    new Chart(dailyCtx, {
+      type: 'bar',
+      data: {
+        labels: ['26 ก.ย. (เสาร์)', '28 ก.ย. (จันทร์)', '29 ก.ย. (อังคาร)', '30 ก.ย. (พุธ)', '1 ต.ค. (พฤหัส)', '2 ต.ค. (ศุกร์)', '3 ต.ค. (เสาร์)', '7 ต.ค. (ปัจจุบัน)'],
+        datasets: [
+          {
+            type: 'line',
+            label: 'ยังไม่ได้รับน้ำเลย (คงค้างประสานงาน)',
+            data: [2686, 1534, 910, 678, 379, 344, 343, 343],
+            borderColor: '#ef4444',
+            backgroundColor: '#ef4444',
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            tension: 0.25,
+            yAxisID: 'y'
+          },
+          {
+            type: 'line',
+            label: 'สำเร็จตามเงื่อนไขสะสม (Delivered / Non-Flood)',
+            data: [1, 1153, 1777, 2009, 2308, 2343, 2344, 2344],
+            borderColor: '#10b981',
+            backgroundColor: '#10b981',
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            tension: 0.25,
+            yAxisID: 'y'
+          },
+          {
+            type: 'bar',
+            label: 'ยอดส่งเสริมสำเร็จรายวัน (Daily Solved)',
+            data: [1, 1152, 624, 232, 299, 35, 1, 0],
+            backgroundColor: 'rgba(59, 130, 246, 0.75)',
+            borderRadius: 6,
+            yAxisID: 'y'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} ราย`
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 2800,
+            grid: { color: '#f1f5f9' },
+            ticks: { font: { family: 'Prompt' } }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { font: { family: 'Prompt', size: 11 } }
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Comparison Bar Chart (4 Branches)
   const branchCtx = document.getElementById('chartBranchCompare');
   if (branchCtx) {
     AppState.branchChart = new Chart(branchCtx, {
@@ -211,6 +282,7 @@ function initCharts() {
     });
   }
 
+  // 3. Duration Trend Chart (Cycle Time)
   const durationCtx = document.getElementById('chartDurationTrend');
   if (durationCtx) {
     AppState.durationChart = new Chart(durationCtx, {
