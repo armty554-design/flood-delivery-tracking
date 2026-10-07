@@ -72,10 +72,12 @@ function debounce(func, wait = 150) {
 }
 
 // ==========================================
+// ==========================================
 // 1. Initialization
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
   initClock();
+  initSidebar();
   initSupabase();
   initNavigation();
   initCharts();
@@ -94,19 +96,55 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Update live clock
+// Update live clocks
 function initClock() {
   const clockEl = document.getElementById('liveClockText');
+  const topClockEl = document.getElementById('topBarClockText');
   function update() {
     const now = new Date();
     const opts = { timeZone: 'Asia/Bangkok', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    if (clockEl) clockEl.textContent = `${now.toLocaleTimeString('th-TH', opts)} น.`;
+    const timeStr = `${now.toLocaleTimeString('th-TH', opts)} น.`;
+    if (clockEl) clockEl.textContent = timeStr;
+    if (topClockEl) topClockEl.textContent = timeStr;
   }
   update();
   if (!navigator.webdriver) {
     setInterval(update, 1000);
   }
 }
+
+// ==========================================
+// Sidebar & Collapsible System
+// ==========================================
+function initSidebar() {
+  const savedState = localStorage.getItem('water_intel_sidebar_collapsed');
+  if (savedState === 'true') {
+    document.body.classList.add('sidebar-collapsed');
+  }
+}
+
+function toggleSidebar() {
+  const isCollapsed = document.body.classList.toggle('sidebar-collapsed');
+  localStorage.setItem('water_intel_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+
+  // Trigger leaflet resize if map is initialized
+  if (AppState.leafletMap) {
+    setTimeout(() => {
+      AppState.leafletMap.invalidateSize();
+    }, 320);
+  }
+}
+window.toggleSidebar = toggleSidebar;
+
+function openMobileSidebar() {
+  document.body.classList.add('mobile-sidebar-open');
+}
+window.openMobileSidebar = openMobileSidebar;
+
+function closeMobileSidebar() {
+  document.body.classList.remove('mobile-sidebar-open');
+}
+window.closeMobileSidebar = closeMobileSidebar;
 
 // Initialize Supabase Client
 function initSupabase() {
@@ -134,8 +172,8 @@ function initSupabase() {
       if (!isNaN(count)) {
         AppState.supabaseRowCount = count;
         if (badgeEl) {
-          badgeEl.innerHTML = `<span class="live-pulse mr-1.5"></span> Supabase Cloud: เชื่อมต่อสด (${count.toLocaleString()} รายการ)`;
-          badgeEl.className = 'badge badge-success';
+          badgeEl.innerHTML = `<span class="live-pulse bg-blue-600 shrink-0"></span> <span class="sidebar-text truncate">Supabase Cloud: เชื่อมต่อสด (${count.toLocaleString()} รายการ)</span>`;
+          badgeEl.className = 'flex items-center gap-2 p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-bold shadow-2xs';
         }
         const adminCountEl = document.getElementById('adminTotalRowCount');
         if (adminCountEl) adminCountEl.textContent = count.toLocaleString();
@@ -149,6 +187,16 @@ function initSupabase() {
 // ==========================================
 // 2. Navigation & Page Switching
 // ==========================================
+const PAGE_TITLES = {
+  'page-duration': { icon: '📊', title: 'หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา' },
+  'page-truck-summary': { icon: '🚚', title: 'หน้าสรุปแยกสาขาและเบอร์รถ' },
+  'page-pending-map': { icon: '🗺️', title: 'หน้า 2: แผนที่โชว์จุดสมาชิกที่ยังจัดส่งไม่ได้' },
+  'page-cctv': { icon: '📹', title: 'หน้า 3: CCtv (ระบบกล้องวงจรปิดตรวจการณ์สด)' },
+  'page-gistda-flood': { icon: '🛰️', title: 'หน้า 4: แผนที่น้ำท่วม ดึงจาก GISTDA Open API' },
+  'page-details': { icon: '📋', title: 'หน้า 5: รายละเอียดข้อมูลการจัดส่งรายสมาชิก' },
+  'page-admin': { icon: '⚙️', title: 'หน้า 6: จัดการข้อมูล Admin (Supabase Cloud)' }
+};
+
 function initNavigation() {
   const navBtns = document.querySelectorAll('.nav-tab-btn');
   navBtns.forEach(btn => {
@@ -166,6 +214,16 @@ function switchPage(pageId) {
   AppState.currentPage = pageId;
   const hash = pageId.replace('page-', '');
   history.replaceState(null, null, `#${hash}`);
+
+  // Close mobile sidebar on navigation
+  closeMobileSidebar();
+
+  // Update top bar title & icon
+  const meta = PAGE_TITLES[pageId] || { icon: '📌', title: 'ศูนย์ติดตามการจัดส่ง' };
+  const topIconEl = document.getElementById('topBarActivePageIcon');
+  const topTitleEl = document.getElementById('topBarActivePageTitle');
+  if (topIconEl) topIconEl.textContent = meta.icon;
+  if (topTitleEl) topTitleEl.textContent = meta.title;
 
   // Update nav buttons
   document.querySelectorAll('.nav-tab-btn').forEach(btn => {
@@ -189,7 +247,7 @@ function switchPage(pageId) {
   if (pageId === 'page-pending-map' && AppState.leafletMap) {
     setTimeout(() => {
       AppState.leafletMap.invalidateSize();
-    }, 200);
+    }, 250);
   } else if (pageId === 'page-cctv') {
     const iframe = document.getElementById('cctvPortalIframe');
     if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
