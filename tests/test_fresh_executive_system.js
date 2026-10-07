@@ -75,9 +75,9 @@ assert(html.includes('ไทม์ไลน์บันทึกการเข�
 // 5. Page 2 Content Verification
 console.log('\n[5. Page 2: หน้าแผนที่โชว์จุดของสมาชิกที่ยังจัดส่งไม่ได้]');
 assert(html.includes('id="pendingMapContainer"'), 'Leaflet map container #pendingMapContainer exists');
-assert(html.includes('343 ราย'), '343 pending members mentioned in banner');
+assert(html.includes('id="mapBranchSelect"') || html.includes('filterMapPins'), 'Map branch filter or map pin controls exist');
+assert(html.includes('id="mapStatusSelect"'), 'Map status filter control exists');
 assert(html.includes('zoomToLocation'), 'Choke point quick zoom buttons exist');
-assert(html.includes('filterMapPins'), 'Map pin filter buttons exist');
 
 // 6. Page 3 Content Verification
 console.log('\n[6. Page 3: CCtv]');
@@ -96,9 +96,9 @@ assert(html.includes('12 สถานีโทรมาตรตรวจวั�
 
 // 8. Page 5 Content Verification
 console.log('\n[8. Page 5: รายละเอียดข้อมูล]');
-assert(html.includes('26 ก.ย. ถึงปัจจุบัน'), '26 Sept to Present date rule highlighted');
-assert(html.includes('ต้องติดตาม (343 ราย)'), 'Fast tab for 343 pending members exists');
-assert(html.includes('สำเร็จตามเงื่อนไข (2,344 ราย)'), 'Fast tab for 2,344 resolved members exists');
+assert(html.includes('26 ก.ย. ถึงปัจจุบัน') || html.includes('26 ก.ย. - ปัจจุบัน'), '26 Sept to Present date rule highlighted');
+assert(html.includes('id="tableTabPendingBadge"') || html.includes('ยังไม่ได้รับน้ำ'), 'Fast tab for pending members exists');
+assert(html.includes('id="tableTabResolvedBadge"') || html.includes('สำเร็จตามเงื่อนไข'), 'Fast tab for resolved members exists');
 assert(html.includes('id="detailsTableBody"'), 'Details table body #detailsTableBody exists');
 assert(html.includes('id="memberHistoryModal"'), 'Member history timeline modal exists');
 

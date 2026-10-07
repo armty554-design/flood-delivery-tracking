@@ -125,8 +125,41 @@
         <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
       </div>
 
+      <!-- Page 1 Filter Toolbar: Branch & Status -->
+      <div class="exec-card p-4 border border-slate-200 shadow-sm">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-3 flex-1">
+            <div class="flex-1 min-w-[180px]">
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🏢 สาขา</label>
+              <select id="durationBranchFilter" onchange="renderPage1FilteredView()" class="exec-input text-xs py-1.5">
+                <option value="ALL">ทุกสาขา (4 สาขา)</option>
+                <option value="สาขารามอินทรา">สาขารามอินทรา</option>
+                <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
+                <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
+                <option value="สาขาพระราม 3">สาขาพระราม 3</option>
+              </select>
+            </div>
+            <div class="flex-1 min-w-[200px]">
+              <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">📌 สถานะ</label>
+              <select id="durationStatusFilter" onchange="renderPage1FilteredView()" class="exec-input text-xs py-1.5">
+                <option value="ALL">ทุกสถานะ (กลุ่มวิกฤตทั้งหมด)</option>
+                <option value="PENDING">⚠️ ต้องติดตาม (ยังไม่ได้รับน้ำ)</option>
+                <option value="FLOOD">🔴 น้ำท่วมสูงไม่สามารถส่งได้</option>
+                <option value="TRANSFER">🟣 โอนงานสิ้นวัน</option>
+                <option value="RESOLVED">✅ สำเร็จตามเงื่อนไข (ส่งสำเร็จ/เข้าถึงพื้นที่)</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 self-end md:self-end pt-2 md:pt-0">
+            <button type="button" onclick="resetPage1Filters()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition shrink-0">
+              🔄 ล้างตัวกรอง
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Executive Key Insight Cards -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="page1KpiContainer">
         
         <!-- 1. สมาชิกที่ยังไม่ได้รับน้ำเลย -->
         <div class="exec-card border-l-4 border-l-rose-500">
@@ -135,13 +168,13 @@
             <span class="badge badge-danger">สถานะล่าสุด</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span class="kpi-value text-rose-600">893</span>
-            <span class="text-sm font-semibold text-slate-500">ราย (17.7%)</span>
+            <span id="page1KpiPending" class="kpi-value text-rose-600">592</span>
+            <span id="page1KpiPendingRate" class="text-sm font-semibold text-slate-500">ราย (11.7%)</span>
           </div>
-          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
-            <span>รามอินทรา: <strong class="text-rose-600">512</strong></span>
-            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">268</strong></span>
-            <span>สุขุมวิท 50: <strong class="text-purple-600">113</strong></span>
+          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2" id="page1KpiPendingBreakdown">
+            <span>รามอินทรา: <strong class="text-rose-600">375</strong></span>
+            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">193</strong></span>
+            <span>สุขุมวิท 50: <strong class="text-purple-600">24</strong></span>
           </div>
         </div>
 
@@ -152,8 +185,8 @@
             <span class="badge badge-success">ปลดล็อคสำเร็จ</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span class="kpi-value text-emerald-600">4,155</span>
-            <span class="text-sm font-semibold text-slate-500">ราย (82.3%)</span>
+            <span id="page1KpiResolved" class="kpi-value text-emerald-600">4,456</span>
+            <span id="page1KpiResolvedRate" class="text-sm font-semibold text-slate-500">ราย (88.3%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
             <span>ส่งสำเร็จแล้ว (Delivered) / เข้าถึงพื้นที่ได้แล้ว</span>
@@ -167,12 +200,12 @@
             <span class="badge badge-blue">ฐานข้อมูลรวม</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span class="kpi-value text-blue-600">5,048</span>
+            <span id="page1KpiTotal" class="kpi-value text-blue-600">5,048</span>
             <span class="text-sm font-semibold text-slate-500">ราย (100%)</span>
           </div>
-          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
-            <span>น้ำท่วมสูง: <strong>518</strong></span>
-            <span>โอนงานสิ้นวัน: <strong>375</strong></span>
+          <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2" id="page1KpiTotalBreakdown">
+            <span>น้ำท่วมสูง: <strong>534</strong></span>
+            <span>โอนงานสิ้นวัน: <strong>58</strong></span>
           </div>
         </div>
 
@@ -183,11 +216,11 @@
             <span class="badge badge-purple">คลี่คลายแล้ว</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span class="kpi-value text-indigo-600">82.3%</span>
+            <span id="page1KpiProgressRate" class="kpi-value text-indigo-600">88.3%</span>
             <span class="text-sm font-semibold text-slate-500">ของกลุ่มวิกฤต</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
-            <span>คงเหลือค้างจริง: <strong>17.7% (893 ราย)</strong></span>
+            <span id="page1KpiRemainingText">คงเหลือค้างจริง: <strong>11.7% (592 ราย)</strong></span>
           </div>
         </div>
 
@@ -585,25 +618,57 @@
         </p>
       </div>
 
-      <!-- Map Toolbar & Filters -->
-      <div class="exec-card flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-bold text-slate-500 uppercase mr-1">ตัวกรองพิกัด:</span>
-          <button onclick="filterMapPins('ALL')" data-filter="ALL" class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold transition bg-blue-600 text-white shadow-xs">ทั้งหมด (893 จุด)</button>
-          <button onclick="filterMapPins('RAM_INTRA')" data-filter="RAM_INTRA" class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">รามอินทรา (512 จุด)</button>
-          <button onclick="filterMapPins('KRUNGTHEP')" data-filter="KRUNGTHEP" class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">กรุงเทพกรีฑา (268 จุด)</button>
-          <button onclick="filterMapPins('SUKHUMVIT')" data-filter="SUKHUMVIT" class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">สุขุมวิท 50 (113 จุด)</button>
-          <button onclick="filterMapPins('FLOOD')" data-filter="FLOOD" class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">🔴 น้ำท่วมสูง (518 จุด)</button>
-          <button onclick="filterMapPins('TRANSFER')" data-filter="TRANSFER" class="map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">🟣 โอนงานสิ้นวัน (375 จุด)</button>
+      <!-- Map Toolbar & Filters: Branch & Status -->
+      <div class="exec-card p-4 space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+          
+          <!-- Branch Selector -->
+          <div class="sm:col-span-4">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🏢 ฟิลเตอร์สาขา</label>
+            <select id="mapBranchSelect" onchange="applyMapFilters()" class="exec-input text-xs py-1.5">
+              <option value="ALL">ทุกสาขา (4 สาขา)</option>
+              <option value="สาขารามอินทรา">สาขารามอินทรา</option>
+              <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
+              <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
+              <option value="สาขาพระราม 3">สาขาพระราม 3</option>
+            </select>
+          </div>
+
+          <!-- Status Selector -->
+          <div class="sm:col-span-4">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">📌 ฟิลเตอร์สถานะการตกค้าง</label>
+            <select id="mapStatusSelect" onchange="applyMapFilters()" class="exec-input text-xs py-1.5">
+              <option value="ALL">จุดตกค้างทั้งหมด (น้ำท่วม + โอนงาน)</option>
+              <option value="FLOOD">🔴 เฉพาะน้ำท่วมสูงไม่สามารถส่งได้</option>
+              <option value="TRANSFER">🟣 เฉพาะโอนงานสิ้นวัน</option>
+            </select>
+          </div>
+
+          <!-- Truck Search -->
+          <div class="sm:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🚚 เบอร์รถ / สายรถ</label>
+            <input type="text" id="mapTruckInput" oninput="applyMapFilters()" placeholder="เช่น 13205, 16304..." class="exec-input text-xs py-1.5">
+          </div>
+
+          <!-- Reset -->
+          <div class="sm:col-span-1 flex items-end">
+            <button type="button" onclick="resetMapFilters()" class="w-full px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition text-center" title="ล้างค่าตัวกรอง">
+              🔄 ล้าง
+            </button>
+          </div>
         </div>
-        <div class="flex items-center gap-3">
-          <button onclick="syncLiveFromSupabase()" class="px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 flex items-center gap-1.5 cursor-pointer shadow-xs" title="ดึงข้อมูลอัปเดตล่าสุดจาก Supabase Cloud">
+
+        <!-- Quick Summary & Sync Button -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-slate-500 font-semibold">แสดงผลบนแผนที่:</span>
+            <span id="mapShownCount" class="badge badge-danger font-bold text-xs">592 จุด</span>
+            <span class="text-slate-400">|</span>
+            <span class="text-[11px] text-slate-500" id="mapBreakdownText">น้ำท่วมสูง: 534 จุด • โอนงานสิ้นวัน: 58 จุด</span>
+          </div>
+          <button onclick="syncLiveFromSupabase()" class="px-2.5 py-1 rounded-lg text-xs font-bold transition bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 flex items-center gap-1.5 cursor-pointer shadow-2xs" title="ดึงข้อมูลอัปเดตล่าสุดจาก Supabase Cloud">
             <span>🔄 ซิงค์สด Supabase</span>
           </button>
-          <div class="flex items-center gap-2">
-            <span class="text-xs text-slate-500 font-semibold">แสดงผลบนแผนที่:</span>
-            <span id="mapShownCount" class="badge badge-danger font-bold text-xs">893 จุด</span>
-          </div>
         </div>
       </div>
 
@@ -960,13 +1025,13 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <button onclick="setTableTab('PENDING')" data-tab="PENDING" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white shadow-xs">
-            ⚠️ ยังไม่ได้รับน้ำ (893 ราย) <span class="text-[11px] opacity-75">[รอบตั้งต้น: ต้องติดตาม (343 ราย)]</span>
+            ⚠️ ยังไม่ได้รับน้ำ (<span id="tableTabPendingBadge">592 ราย</span>)
           </button>
           <button onclick="setTableTab('RESOLVED')" data-tab="RESOLVED" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-            ✅ สำเร็จตามเงื่อนไข (4,155 ราย) <span class="text-[11px] opacity-75">[เดิม สำเร็จตามเงื่อนไข (2,344 ราย)]</span>
+            ✅ สำเร็จตามเงื่อนไข (<span id="tableTabResolvedBadge">4,456 ราย</span>)
           </button>
           <button onclick="setTableTab('ALL')" data-tab="ALL" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-            📊 รวมกลุ่มวิกฤต (5,048 ราย) <span class="text-[11px] opacity-75">[ตั้งต้น 2,687 ราย]</span>
+            📊 รวมกลุ่มวิกฤต (<span id="tableTabAllBadge">5,048 ราย</span>)
           </button>
         </div>
 
@@ -977,15 +1042,15 @@
 
       <!-- Search & Filters Toolbar -->
       <div class="exec-card p-4 space-y-3">
-        <!-- Row 1: Search, Branch, Truck -->
+        <!-- Row 1: Search, Branch, Status, Truck -->
         <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-          <div class="sm:col-span-5">
-            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🔍 ค้นหาคำสำคัญ</label>
-            <input type="text" id="tableSearchInput" placeholder="ค้นหารหัสสมาชิก, ชื่อลูกค้า, ที่อยู่, หรือเหตุผล..." class="exec-input">
-          </div>
           <div class="sm:col-span-4">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🔍 ค้นหาคำสำคัญ</label>
+            <input type="text" id="tableSearchInput" placeholder="ค้นหารหัสสมาชิก, ชื่อลูกค้า, ที่อยู่..." class="exec-input">
+          </div>
+          <div class="sm:col-span-3">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🏢 สาขา</label>
-            <select id="tableBranchSelect" class="exec-input">
+            <select id="tableBranchSelect" onchange="renderTable()" class="exec-input">
               <option value="ALL">ทุกลำดับสาขา</option>
               <option value="สาขารามอินทรา">สาขารามอินทรา</option>
               <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
@@ -994,8 +1059,18 @@
             </select>
           </div>
           <div class="sm:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">📌 สถานะ</label>
+            <select id="tableStatusSelect" onchange="renderTable()" class="exec-input">
+              <option value="ALL">ทุกสถานะ</option>
+              <option value="PENDING">⚠️ ต้องติดตาม (ยังไม่ได้รับน้ำ)</option>
+              <option value="FLOOD">🔴 น้ำท่วมสูงไม่สามารถส่งได้</option>
+              <option value="TRANSFER">🟣 โอนงานสิ้นวัน</option>
+              <option value="RESOLVED">✅ สำเร็จตามเงื่อนไข (ส่งสำเร็จ)</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
             <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🚚 เบอร์รถ / สายรถ</label>
-            <input type="text" id="tableTruckInput" placeholder="เช่น 16304, 13205..." class="exec-input">
+            <input type="text" id="tableTruckInput" placeholder="เช่น 16304..." class="exec-input">
           </div>
         </div>
 

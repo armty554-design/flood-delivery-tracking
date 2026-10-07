@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSupabase();
   initNavigation();
   initCharts();
+  renderPage1FilteredView();
   initMap();
   initCCTV();
   initGistdaSection();
@@ -491,7 +492,108 @@ function initCharts() {
 }
 
 // ==========================================
-// 4. Page 2: Leaflet Map (343 Pending Members)
+// 3.1. Page 1 Filter Logic (Branch & Status)
+// ==========================================
+function renderPage1FilteredView() {
+  const branchFilter = document.getElementById('durationBranchFilter')?.value || 'ALL';
+  const statusFilter = document.getElementById('durationStatusFilter')?.value || 'ALL';
+
+  const pendingList = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+  const resolvedList = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
+
+  // Filter Pending List
+  const filteredPending = pendingList.filter(item => {
+    if (branchFilter !== 'ALL' && item.branch !== branchFilter) return false;
+    if (statusFilter === 'FLOOD' && item.pendingCategory === 'โอนงานสิ้นวัน') return false;
+    if (statusFilter === 'TRANSFER' && item.pendingCategory !== 'โอนงานสิ้นวัน') return false;
+    if (statusFilter === 'RESOLVED') return false;
+    return true;
+  });
+
+  // Filter Resolved List
+  const filteredResolved = resolvedList.filter(item => {
+    if (branchFilter !== 'ALL' && item.branch !== branchFilter) return false;
+    if (statusFilter === 'PENDING' || statusFilter === 'FLOOD' || statusFilter === 'TRANSFER') return false;
+    return true;
+  });
+
+  const pendingCount = filteredPending.length;
+  const resolvedCount = filteredResolved.length;
+  const totalCount = pendingCount + resolvedCount;
+
+  const pendingRate = totalCount > 0 ? ((pendingCount / totalCount) * 100).toFixed(1) : '0.0';
+  const resolvedRate = totalCount > 0 ? ((resolvedCount / totalCount) * 100).toFixed(1) : '0.0';
+  const progressRate = resolvedRate;
+
+  // Breakdown for Pending
+  const ramIntraPending = filteredPending.filter(p => p.branch === 'สาขารามอินทรา').length;
+  const krungthepPending = filteredPending.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
+  const sukhumvitPending = filteredPending.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
+
+  const floodPending = filteredPending.filter(p => p.pendingCategory !== 'โอนงานสิ้นวัน').length;
+  const transferPending = filteredPending.filter(p => p.pendingCategory === 'โอนงานสิ้นวัน').length;
+
+  // Update Page 1 KPI Cards
+  const kpiPending = document.getElementById('page1KpiPending');
+  if (kpiPending) kpiPending.textContent = pendingCount.toLocaleString();
+
+  const kpiPendingRate = document.getElementById('page1KpiPendingRate');
+  if (kpiPendingRate) kpiPendingRate.textContent = `ราย (${pendingRate}%)`;
+
+  const kpiPendingBreakdown = document.getElementById('page1KpiPendingBreakdown');
+  if (kpiPendingBreakdown) {
+    if (branchFilter === 'ALL') {
+      kpiPendingBreakdown.innerHTML = `
+        <span>รามอินทรา: <strong class="text-rose-600">${ramIntraPending.toLocaleString()}</strong></span>
+        <span>กรุงเทพกรีฑา: <strong class="text-amber-600">${krungthepPending.toLocaleString()}</strong></span>
+        <span>สุขุมวิท 50: <strong class="text-purple-600">${sukhumvitPending.toLocaleString()}</strong></span>
+      `;
+    } else {
+      kpiPendingBreakdown.innerHTML = `
+        <span>${branchFilter}: <strong class="text-rose-600">${pendingCount.toLocaleString()}</strong> ราย</span>
+        <span>น้ำท่วม: <strong>${floodPending.toLocaleString()}</strong> | โอนงาน: <strong>${transferPending.toLocaleString()}</strong></span>
+      `;
+    }
+  }
+
+  const kpiResolved = document.getElementById('page1KpiResolved');
+  if (kpiResolved) kpiResolved.textContent = resolvedCount.toLocaleString();
+
+  const kpiResolvedRate = document.getElementById('page1KpiResolvedRate');
+  if (kpiResolvedRate) kpiResolvedRate.textContent = `ราย (${resolvedRate}%)`;
+
+  const kpiTotal = document.getElementById('page1KpiTotal');
+  if (kpiTotal) kpiTotal.textContent = totalCount.toLocaleString();
+
+  const kpiTotalBreakdown = document.getElementById('page1KpiTotalBreakdown');
+  if (kpiTotalBreakdown) {
+    kpiTotalBreakdown.innerHTML = `
+      <span>น้ำท่วมสูง: <strong>${floodPending.toLocaleString()}</strong></span>
+      <span>โอนงานสิ้นวัน: <strong>${transferPending.toLocaleString()}</strong></span>
+    `;
+  }
+
+  const kpiProgressRate = document.getElementById('page1KpiProgressRate');
+  if (kpiProgressRate) kpiProgressRate.textContent = `${progressRate}%`;
+
+  const kpiRemainingText = document.getElementById('page1KpiRemainingText');
+  if (kpiRemainingText) {
+    kpiRemainingText.innerHTML = `คงเหลือค้างจริง: <strong>${pendingRate}% (${pendingCount.toLocaleString()} ราย)</strong>`;
+  }
+}
+window.renderPage1FilteredView = renderPage1FilteredView;
+
+function resetPage1Filters() {
+  const bFilter = document.getElementById('durationBranchFilter');
+  const sFilter = document.getElementById('durationStatusFilter');
+  if (bFilter) bFilter.value = 'ALL';
+  if (sFilter) sFilter.value = 'ALL';
+  renderPage1FilteredView();
+}
+window.resetPage1Filters = resetPage1Filters;
+
+// ==========================================
+// 4. Page 2: Leaflet Map (Pending Members Display)
 // ==========================================
 function initMap() {
   const mapEl = document.getElementById('pendingMapContainer');
@@ -508,27 +610,55 @@ function initMap() {
   renderMapMarkers();
 }
 
-function renderMapMarkers() {
+function applyMapFilters() {
   if (!AppState.mapMarkersGroup) return;
   AppState.mapMarkersGroup.clearLayers();
 
-  const pendingList = AppState.dataStore.pending || [];
+  const pendingList = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+  
+  const branch = document.getElementById('mapBranchSelect')?.value || 'ALL';
+  const status = document.getElementById('mapStatusSelect')?.value || 'ALL';
+  const truck = (document.getElementById('mapTruckInput')?.value || '').trim().toLowerCase();
+
   let shownCount = 0;
+  let floodCount = 0;
+  let transferCount = 0;
 
   pendingList.forEach(item => {
-    // Filter condition
+    // 1. Branch Filter
+    if (branch !== 'ALL' && item.branch !== branch) return;
+
+    // 2. Legacy button filter compatibility
     if (AppState.activePendingFilter === 'RAM_INTRA' && item.branch !== 'สาขารามอินทรา') return;
     if (AppState.activePendingFilter === 'KRUNGTHEP' && item.branch !== 'สาขากรุงเทพกรีฑา') return;
     if (AppState.activePendingFilter === 'SUKHUMVIT' && item.branch !== 'สาขาสุขุมวิท 50') return;
-    if (AppState.activePendingFilter === 'TRANSFER' && item.pendingCategory !== 'โอนงานสิ้นวัน') return;
-    if (AppState.activePendingFilter === 'FLOOD' && item.pendingCategory === 'โอนงานสิ้นวัน') return;
+
+    // 3. Status Filter
+    const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
+    if (status === 'FLOOD' && isTransfer) return;
+    if (status === 'TRANSFER' && !isTransfer) return;
+
+    if (AppState.activePendingFilter === 'TRANSFER' && !isTransfer) return;
+    if (AppState.activePendingFilter === 'FLOOD' && isTransfer) return;
+
+    // 4. Truck / Member Search
+    if (truck) {
+      const trk = String(item.truck || '').toLowerCase();
+      const mid = String(item.memberId || '').toLowerCase();
+      const name = String(item.name || '').toLowerCase();
+      if (!trk.includes(truck) && !mid.includes(truck) && !name.includes(truck)) return;
+    }
 
     if (!item.lat || !item.lng) return;
 
     shownCount++;
-    const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
-    const pinClass = isTransfer ? 'custom-pin-transfer' : 'custom-pin-pending';
+    if (isTransfer) {
+      transferCount++;
+    } else {
+      floodCount++;
+    }
 
+    const pinClass = isTransfer ? 'custom-pin-transfer' : 'custom-pin-pending';
     const icon = L.divIcon({
       className: pinClass,
       iconSize: [16, 16],
@@ -564,13 +694,35 @@ function renderMapMarkers() {
   });
 
   const countBadge = document.getElementById('mapShownCount');
-  if (countBadge) countBadge.textContent = `${shownCount} จุด`;
+  if (countBadge) countBadge.textContent = `${shownCount.toLocaleString()} จุด`;
+
+  const breakdownText = document.getElementById('mapBreakdownText');
+  if (breakdownText) {
+    breakdownText.textContent = `น้ำท่วมสูง: ${floodCount.toLocaleString()} จุด • โอนงานสิ้นวัน: ${transferCount.toLocaleString()} จุด`;
+  }
 
   updateMapFilterButtonCounts();
 }
+window.applyMapFilters = applyMapFilters;
+
+function resetMapFilters() {
+  const bSelect = document.getElementById('mapBranchSelect');
+  const sSelect = document.getElementById('mapStatusSelect');
+  const tInput = document.getElementById('mapTruckInput');
+  if (bSelect) bSelect.value = 'ALL';
+  if (sSelect) sSelect.value = 'ALL';
+  if (tInput) tInput.value = '';
+  AppState.activePendingFilter = 'ALL';
+  applyMapFilters();
+}
+window.resetMapFilters = resetMapFilters;
+
+function renderMapMarkers() {
+  applyMapFilters();
+}
 
 function updateMapFilterButtonCounts() {
-  const pending = AppState.dataStore.pending || [];
+  const pending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
   const total = pending.length;
   const ramIntra = pending.filter(p => p.branch === 'สาขารามอินทรา').length;
   const krungthep = pending.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
@@ -603,7 +755,7 @@ function updateMapFilterButtonCounts() {
   const pendingBadge = document.getElementById('tableTabPendingBadge');
   if (pendingBadge) pendingBadge.textContent = `${total.toLocaleString()} ราย`;
 
-  const resolved = AppState.dataStore.resolved || [];
+  const resolved = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
   const resolvedBadge = document.getElementById('tableTabResolvedBadge');
   if (resolvedBadge) resolvedBadge.textContent = `${resolved.length.toLocaleString()} ราย`;
 
@@ -620,7 +772,7 @@ function filterMapPins(filterType) {
       btn.className = 'map-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200';
     }
   });
-  renderMapMarkers();
+  applyMapFilters();
 }
 window.filterMapPins = filterMapPins;
 
@@ -639,9 +791,9 @@ function syncLiveFromSupabase() {
     if (window.CRISIS_DATA) {
       AppState.dataStore = window.CRISIS_DATA;
     }
-    renderMapMarkers();
+    applyMapFilters();
     if (typeof renderTable === 'function') renderTable();
-    showToast(`✅ ซิงค์ข้อมูลล่าสุดเรียบร้อย (${AppState.dataStore.pending ? AppState.dataStore.pending.length : 977} รายที่ยังไม่ได้รับน้ำ)`);
+    showToast(`✅ ซิงค์ข้อมูลล่าสุดเรียบร้อย (${AppState.dataStore.pending ? AppState.dataStore.pending.length : 592} รายที่ยังไม่ได้รับน้ำ)`);
   } catch (err) {
     console.error('Sync failed:', err);
     showToast('⚠️ ไม่สามารถซิงค์ข้อมูลได้: ' + err.message);
@@ -739,6 +891,7 @@ function initGistdaSection() {
 function initTable() {
   const searchInput = document.getElementById('tableSearchInput');
   const branchSelect = document.getElementById('tableBranchSelect');
+  const statusSelect = document.getElementById('tableStatusSelect');
   const truckInput = document.getElementById('tableTruckInput');
   const dateInput = document.getElementById('tableDateInput');
   const startDateInput = document.getElementById('tableStartDateInput');
@@ -755,6 +908,13 @@ function initTable() {
 
   if (branchSelect) {
     branchSelect.addEventListener('change', () => {
+      AppState.tableCurrentPage = 1;
+      renderTable();
+    });
+  }
+
+  if (statusSelect) {
+    statusSelect.addEventListener('change', () => {
       AppState.tableCurrentPage = 1;
       renderTable();
     });
@@ -873,6 +1033,7 @@ function getFilteredTableData() {
   }
 
   const branchFilter = document.getElementById('tableBranchSelect')?.value || 'ALL';
+  const statusFilter = document.getElementById('tableStatusSelect')?.value || 'ALL';
   const query = AppState.tableSearchQuery;
   const truckFilter = AppState.tableTruckFilter;
   const dateMode = AppState.tableDateMode;
@@ -881,15 +1042,24 @@ function getFilteredTableData() {
   const endDate = AppState.tableEndDate;
 
   return list.filter(item => {
+    // 1. Branch Filter
     if (branchFilter !== 'ALL' && item.branch !== branchFilter) return false;
+
+    // 2. Status Filter
+    const isPending = !!item.pendingCategory;
+    const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
+    if (statusFilter === 'PENDING' && !isPending) return false;
+    if (statusFilter === 'FLOOD' && (!isPending || isTransfer)) return false;
+    if (statusFilter === 'TRANSFER' && (!isPending || !isTransfer)) return false;
+    if (statusFilter === 'RESOLVED' && isPending) return false;
     
-    // Truck Filter
+    // 3. Truck Filter
     if (truckFilter) {
       const trk = String(item.truck || '').toLowerCase();
       if (!trk.includes(truckFilter)) return false;
     }
 
-    // Date Filter
+    // 4. Date Filter
     if (dateMode === 'single' && singleDate) {
       const [y, m, d] = singleDate.split('-');
       const shortThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${parseInt(y, 10) + 543}`;
@@ -905,6 +1075,7 @@ function getFilteredTableData() {
       if (endDate && iso && iso > endDate) return false;
     }
 
+    // 5. Search Query
     if (query) {
       const str = `${item.memberId} ${item.name} ${item.truck} ${item.address} ${item.lastReason || item.resolvedReason || ''}`.toLowerCase();
       if (!str.includes(query)) return false;
@@ -2797,6 +2968,11 @@ function goToMapWithTruck() {
   const truck = AppState.activeTruckModalTruck;
   closeModal();
   switchPage('page-pending-map');
+  const mapTruckInput = document.getElementById('mapTruckInput');
+  if (mapTruckInput && truck) {
+    mapTruckInput.value = truck;
+    applyMapFilters();
+  }
 }
 window.goToMapWithTruck = goToMapWithTruck;
 
