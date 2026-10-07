@@ -108,9 +108,23 @@ async function syncAndEvaluate() {
 
     const r = latestAttempt.reason || '';
     const s = latestAttempt.status || '';
+    const dg = latestAttempt.delivery_group || '';
+    const round = latestAttempt.round || '';
     const isTr = latestAttempt.is_transferred === true;
-    const isFlood = r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด');
-    const isTransfer = isTr || r.includes('โอนงาน') || s.includes('โอนงาน');
+
+    // ตรวจสอบอย่างแม่นยำว่า "การเข้าส่งในวันล่าสุดสำเร็จหรือไม่"
+    const isDelivered = dg === 'เข้าส่งได้' ||
+                        r.includes('ลูกค้าตั้งถัง') ||
+                        r.includes('ลูกค้าอยู่บ้าน') ||
+                        r.includes('พบลูกค้า') ||
+                        r.includes('ตั้งถัง') ||
+                        r.includes('ส่งสำเร็จ') ||
+                        s === 'สำเร็จ' ||
+                        s === 'เข้าส่งได้';
+
+    // ตรวจสอบกรณีไม่สำเร็จ
+    const isFlood = !isDelivered && (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด'));
+    const isTransfer = !isDelivered && (isTr || round.includes('โอนงาน') || r.includes('โอนงาน') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || s.includes('โอนงาน'));
 
     // สร้างประวัติ history
     const historyParts = attempts.map(att => {
@@ -172,10 +186,10 @@ async function syncAndEvaluate() {
 
     // กำหนดหมวดหมู่ตามสถานะล่าสุด
     let category = 'ส่งสำเร็จแล้ว';
-    if (isTransfer) {
-      category = 'โอนงานสิ้นวัน';
-    } else if (isFlood) {
+    if (isFlood) {
       category = 'น้ำท่วมสูงไม่สามารถส่งได้';
+    } else if (isTransfer) {
+      category = 'โอนงานสิ้นวัน';
     }
 
     const memberObj = {
@@ -187,17 +201,17 @@ async function syncAndEvaluate() {
       attemptsCount: attempts.length,
       lastDate: lastDateThai,
       lastDateIso: latestAttempt.delivery_date,
-      lastReason: r || s || (isTransfer ? 'โอนงานสิ้นวัน' : 'น้ำท่วมสูงในพื้นที่'),
-      lastStatus: s || (isFlood ? 'รอน้ำลด' : 'ปกติ'),
+      lastReason: r || s || (isDelivered ? 'ลูกค้าตั้งถัง' : (isTransfer ? 'โอนงานสิ้นวัน' : 'น้ำท่วมสูงในพื้นที่')),
+      lastStatus: s || (isDelivered ? 'ปกติ' : (isFlood ? 'รอน้ำลด' : 'โอนงาน')),
       pendingCategory: category,
       history: historyParts.join(' ➔ '),
       lat: parseFloat(lat.toFixed(6)),
       lng: parseFloat(lng.toFixed(6)),
       gps: `${lat.toFixed(6)},${lng.toFixed(6)}`,
-      status: isTransfer ? 'โอนงานสิ้นวัน' : (isFlood ? 'น้ำท่วม' : 'สำเร็จ')
+      status: isDelivered ? 'สำเร็จ' : (isTransfer ? 'โอนงานสิ้นวัน' : (isFlood ? 'น้ำท่วม' : 'สำเร็จ'))
     };
 
-    if (isFlood || isTransfer) {
+    if (!isDelivered && (isFlood || isTransfer)) {
       pendingMembers.push(memberObj);
     } else {
       resolvedMembers.push({
@@ -209,9 +223,7 @@ async function syncAndEvaluate() {
         attemptsCount: memberObj.attemptsCount,
         resolvedDate: memberObj.lastDate,
         resolvedReason: memberObj.lastReason,
-        resolvedType: memberObj.lastReason.includes('ตั้งถัง') || memberObj.lastReason.includes('พบลูกค้า')
-          ? 'ส่งสำเร็จแล้ว (Delivered)'
-          : `สำเร็จตามเงื่อนไข: เข้าถึงพื้นที่ได้ ขาดส่งเหตุอื่น (${memberObj.lastReason})`,
+        resolvedType: isDelivered ? 'ส่งสำเร็จแล้ว (Delivered)' : `สำเร็จตามเงื่อนไข (${memberObj.lastReason})`,
         history: memberObj.history,
         lat: memberObj.lat,
         lng: memberObj.lng

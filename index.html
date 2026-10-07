@@ -72,7 +72,7 @@
 
       </div>
 
-      <!-- 6 Primary Segmented Tabs -->
+      <!-- Segmented Tabs Navigation -->
       <nav class="flex items-center gap-1.5 overflow-x-auto py-2.5 border-t border-slate-100 no-scrollbar">
         <button data-target="page-duration" onclick="switchPage('page-duration')" class="nav-tab-btn active">
           <span>📊</span> หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา
@@ -88,6 +88,9 @@
         </button>
         <button data-target="page-details" onclick="switchPage('page-details')" class="nav-tab-btn">
           <span>📋</span> หน้า 5: รายละเอียดข้อมูล
+        </button>
+        <button data-target="page-truck-summary" onclick="switchPage('page-truck-summary')" class="nav-tab-btn">
+          <span>🚚</span> หน้าสรุปแยกสาขาและเบอร์รถ
         </button>
         <button data-target="page-admin" onclick="switchPage('page-admin')" class="nav-tab-btn">
           <span>⚙️</span> หน้า 6: จัดการข้อมูล Admin
@@ -362,10 +365,10 @@
         <div class="exec-card">
           <div class="exec-card-header">
             <div>
-              <h3 class="font-bold text-base text-slate-900">ตารางเปรียบเทียบความคืบหน้ารายวัน (26 ก.ย. - 3 ต.ค. ถึงปัจจุบัน)</h3>
-              <p class="text-xs text-slate-500">แสดงการลดลงของยอดที่ยังไม่ได้รับน้ำจนถึง 343 ราย</p>
+              <h3 class="font-bold text-base text-slate-900">ตารางเปรียบเทียบความคืบหน้ารายวัน (26 ก.ย. ถึงปัจจุบัน)</h3>
+              <p class="text-xs text-slate-500">แสดงการลดลงของยอดที่ยังไม่ได้รับน้ำอย่างต่อเนื่อง <span class="text-blue-600 font-semibold">• คลิกที่แถวเพื่อเปิดดูรายละเอียด</span></p>
             </div>
-            <span class="badge badge-success">ความคืบหน้า 87.2%</span>
+            <span class="badge badge-success">ความคืบหน้า 88.8%</span>
           </div>
           <div class="overflow-x-auto">
             <table class="exec-table text-xs">
@@ -376,57 +379,89 @@
                   <th>สำเร็จสะสม</th>
                   <th>ยังไม่ได้รับน้ำ (คงค้าง)</th>
                   <th>ความคืบหน้า</th>
+                  <th class="text-right">รายละเอียด</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-26', '26 ก.ย. (เสาร์)')">
                   <td class="font-bold text-slate-700">26 ก.ย. (เสาร์)</td>
                   <td>1 ราย</td>
                   <td>1 ราย</td>
                   <td><span class="font-bold text-rose-600">2,686 ราย</span></td>
                   <td>0.1% (วันวิกฤต)</td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-26', '26 ก.ย. (เสาร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
-                <tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-28', '28 ก.ย. (จันทร์)')">
                   <td class="font-bold text-slate-700">28 ก.ย. (จันทร์)</td>
                   <td><span class="font-bold text-blue-600">+1,152 ราย</span></td>
                   <td>1,153 ราย</td>
                   <td><span class="font-bold text-rose-600">1,534 ราย</span></td>
                   <td><span class="badge badge-warning">42.9%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-28', '28 ก.ย. (จันทร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
-                <tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-29', '29 ก.ย. (อังคาร)')">
                   <td class="font-bold text-slate-700">29 ก.ย. (อังคาร)</td>
                   <td><span class="font-bold text-blue-600">+624 ราย</span></td>
                   <td>1,777 ราย</td>
                   <td><span class="font-bold text-rose-600">910 ราย</span></td>
                   <td><span class="badge badge-blue">66.1%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-29', '29 ก.ย. (อังคาร)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
-                <tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-30', '30 ก.ย. (พุธ)')">
                   <td class="font-bold text-slate-700">30 ก.ย. (พุธ)</td>
                   <td><span class="font-bold text-blue-600">+232 ราย</span></td>
                   <td>2,009 ราย</td>
                   <td><span class="font-bold text-amber-600">678 ราย</span></td>
                   <td><span class="badge badge-blue">74.8%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-30', '30 ก.ย. (พุธ)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
-                <tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-01', '1 ต.ค. (พฤหัส)')">
                   <td class="font-bold text-slate-700">1 ต.ค. (พฤหัส)</td>
                   <td><span class="font-bold text-blue-600">+299 ราย</span></td>
                   <td>2,308 ราย</td>
                   <td><span class="font-bold text-amber-600">379 ราย</span></td>
                   <td><span class="badge badge-blue">85.9%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-01', '1 ต.ค. (พฤหัส)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
-                <tr>
-                  <td class="font-bold text-slate-700">2 - 3 ต.ค. (ศุกร์-ส.)</td>
-                  <td><span class="font-bold text-blue-600">+36 ราย</span></td>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-02', '2 ต.ค. (ศุกร์)')">
+                  <td class="font-bold text-slate-700">2 ต.ค. (ศุกร์)</td>
+                  <td><span class="font-bold text-blue-600">+24 ราย</span></td>
+                  <td>2,332 ราย</td>
+                  <td><span class="font-bold text-rose-600">355 ราย</span></td>
+                  <td><span class="badge badge-success">86.8%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-02', '2 ต.ค. (ศุกร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
+                </tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-03', '3 ต.ค. (เสาร์)')">
+                  <td class="font-bold text-slate-700">3 ต.ค. (เสาร์)</td>
+                  <td><span class="font-bold text-blue-600">+12 ราย</span></td>
                   <td>2,344 ราย</td>
                   <td><span class="font-bold text-rose-600">343 ราย</span></td>
                   <td><span class="badge badge-success">87.2%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-03', '3 ต.ค. (เสาร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
-                <tr class="bg-blue-50/70 font-semibold">
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-05', '5 ต.ค. (จันทร์)')">
+                  <td class="font-bold text-slate-700">5 ต.ค. (จันทร์)</td>
+                  <td><span class="font-bold text-blue-600">+21 ราย</span></td>
+                  <td>2,365 ราย</td>
+                  <td><span class="font-bold text-rose-600">322 ราย</span></td>
+                  <td><span class="badge badge-success">88.0%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-05', '5 ต.ค. (จันทร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
+                </tr>
+                <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-06', '6 ต.ค. (อังคาร)')">
+                  <td class="font-bold text-slate-700">6 ต.ค. (อังคาร)</td>
+                  <td><span class="font-bold text-blue-600">+14 ราย</span></td>
+                  <td>2,379 ราย</td>
+                  <td><span class="font-bold text-rose-600">308 ราย</span></td>
+                  <td><span class="badge badge-success">88.5%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-06', '6 ต.ค. (อังคาร)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
+                </tr>
+                <tr class="bg-blue-50/70 font-semibold hover:bg-blue-100/70 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-07', '7 ต.ค. (ปัจจุบัน)')">
                   <td class="font-bold text-blue-900">7 ต.ค. (ปัจจุบัน)</td>
-                  <td class="text-slate-600">-</td>
-                  <td class="text-emerald-700 font-bold">2,344 ราย</td>
-                  <td><span class="font-extrabold text-rose-700">343 ราย</span></td>
-                  <td><span class="badge badge-success">87.2%</span></td>
+                  <td><span class="font-bold text-blue-600">+8 ราย</span></td>
+                  <td class="text-emerald-700 font-bold">2,387 ราย</td>
+                  <td><span class="font-extrabold text-rose-700">300 ราย</span></td>
+                  <td><span class="badge badge-success">88.8%</span></td>
+                  <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-07', '7 ต.ค. (ปัจจุบัน)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
               </tbody>
             </table>
@@ -941,12 +976,15 @@
       </div>
 
       <!-- Search & Filters Toolbar -->
-      <div class="exec-card p-4">
-        <div class="flex flex-col sm:flex-row items-center gap-3">
-          <div class="flex-1 w-full">
-            <input type="text" id="tableSearchInput" placeholder="ค้นหารหัสสมาชิก, ชื่อลูกค้า, สายรถ, ที่อยู่, หรือเหตุผล..." class="exec-input">
+      <div class="exec-card p-4 space-y-3">
+        <!-- Row 1: Search, Branch, Truck -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+          <div class="sm:col-span-5">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🔍 ค้นหาคำสำคัญ</label>
+            <input type="text" id="tableSearchInput" placeholder="ค้นหารหัสสมาชิก, ชื่อลูกค้า, ที่อยู่, หรือเหตุผล..." class="exec-input">
           </div>
-          <div class="w-full sm:w-56">
+          <div class="sm:col-span-4">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🏢 สาขา</label>
             <select id="tableBranchSelect" class="exec-input">
               <option value="ALL">ทุกลำดับสาขา</option>
               <option value="สาขารามอินทรา">สาขารามอินทรา</option>
@@ -955,6 +993,35 @@
               <option value="สาขาพระราม 3">สาขาพระราม 3</option>
             </select>
           </div>
+          <div class="sm:col-span-3">
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🚚 เบอร์รถ / สายรถ</label>
+            <input type="text" id="tableTruckInput" placeholder="เช่น 16304, 13205..." class="exec-input">
+          </div>
+        </div>
+
+        <!-- Row 2: Flexible Date Filter (Single Date vs Date Range) -->
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+              <button type="button" id="btnTableDateSingle" onclick="setTableDateMode('single')" class="px-2.5 py-1 rounded-md text-xs font-bold transition bg-white text-blue-700 shadow-2xs">📅 วันเดียว</button>
+              <button type="button" id="btnTableDateRange" onclick="setTableDateMode('range')" class="px-2.5 py-1 rounded-md text-xs font-semibold transition text-slate-600 hover:text-slate-900">🗓️ ช่วงระหว่างวันที่</button>
+            </div>
+
+            <!-- Single Date Container -->
+            <div id="tableSingleDateContainer" class="flex items-center gap-1.5">
+              <input type="date" id="tableDateInput" onchange="renderTable()" class="exec-input text-xs py-1">
+            </div>
+
+            <!-- Date Range Container -->
+            <div id="tableRangeDateContainer" class="hidden flex items-center gap-1.5">
+              <input type="date" id="tableStartDateInput" onchange="renderTable()" class="exec-input text-xs py-1" placeholder="จากวันที่">
+              <span class="text-xs text-slate-400">ถึง</span>
+              <input type="date" id="tableEndDateInput" onchange="renderTable()" class="exec-input text-xs py-1" placeholder="ถึงวันที่">
+            </div>
+
+            <button type="button" onclick="resetTableDateFilters()" class="px-2 py-1 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md transition">ล้างวันที่</button>
+          </div>
+
           <div class="text-xs font-semibold text-slate-500 whitespace-nowrap">
             พบข้อมูล: <strong id="tableFilteredCount" class="text-blue-600">343 รายการ</strong>
           </div>
@@ -982,6 +1049,157 @@
           </table>
         </div>
         <div id="tablePaginationContainer" class="px-4 border-t border-slate-100 bg-slate-50"></div>
+      </div>
+
+    </section>
+
+    <!-- =======================================================================
+         หน้าสรุปแยกสาขาและเบอร์รถ (Branch & Truck Intelligence Summary)
+         ======================================================================= -->
+    <section id="page-truck-summary" class="page-view hidden space-y-6">
+      
+      <!-- Executive Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30">EXECUTIVE SUMMARY</span>
+          <span class="text-xs text-blue-300 font-semibold">สรุปผลการจัดส่งแยกรายสาขาและสายรถ</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">สรุปผลการจัดส่งแยกตามสาขาและเบอร์รถ</h1>
+        <p class="mt-2 text-sm text-blue-200 max-w-3xl leading-relaxed">
+          รายงานผลสมรรถนะการจัดส่ง อัตราความสำเร็จ และการจัดการเคสตกค้าง (น้ำท่วมสูง / โอนงานสิ้นวัน) จำแนกรายสายรถและสาขา แสดงผลแบบสะอาด กระชับ เข้าใจง่าย
+        </p>
+      </div>
+
+      <!-- Clean Filter Toolbar -->
+      <div class="exec-card p-5 border border-slate-200 shadow-sm space-y-4">
+        
+        <!-- Filter Row 1: Mode Switcher & Date Controls -->
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+          
+          <!-- Date Filter Block with Mode Toggle -->
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="flex items-center bg-slate-100 p-1 rounded-xl shrink-0 border border-slate-200">
+              <button type="button" id="btnTruckSumModeSingle" onclick="setTruckSummaryDateMode('single')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-blue-700 shadow-2xs">
+                📅 เลือกวันเดียว
+              </button>
+              <button type="button" id="btnTruckSumModeRange" onclick="setTruckSummaryDateMode('range')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 hover:text-slate-900">
+                🗓️ ช่วงระหว่างวันที่
+              </button>
+            </div>
+
+            <!-- Single Date Input Container -->
+            <div id="truckSumSingleDateContainer" class="flex items-center gap-2">
+              <input type="date" id="truckSummaryDateInput" onchange="renderTruckSummaryPage()" class="exec-input text-xs py-1.5">
+            </div>
+
+            <!-- Date Range Input Container (Hidden by default) -->
+            <div id="truckSumRangeDateContainer" class="hidden flex items-center gap-2">
+              <input type="date" id="truckSummaryStartDateInput" onchange="renderTruckSummaryPage()" class="exec-input text-xs py-1.5" placeholder="จากวันที่">
+              <span class="text-xs font-semibold text-slate-400">ถึง</span>
+              <input type="date" id="truckSummaryEndDateInput" onchange="renderTruckSummaryPage()" class="exec-input text-xs py-1.5" placeholder="ถึงวันที่">
+            </div>
+          </div>
+
+          <!-- Truck Search & Refresh -->
+          <div class="flex items-center gap-2.5 flex-1 lg:max-w-md">
+            <div class="relative flex-1">
+              <input type="text" id="truckSummarySearchInput" oninput="renderTruckSummaryPage()" placeholder="🔍 ค้นหาเบอร์รถ (เช่น 16304, 13205...)" class="exec-input text-xs py-2 pl-8">
+              <span class="absolute left-2.5 top-2.5 text-slate-400 text-xs">🚚</span>
+            </div>
+            <button type="button" onclick="resetTruckSummaryFilters()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition shrink-0">
+              🔄 ล้างค่า
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Row 2: Branch Segmented Pills & Quick Presets -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <!-- Branch Selector Tabs -->
+          <div class="flex flex-wrap items-center gap-1.5" id="truckSummaryBranchPills">
+            <button type="button" onclick="setTruckSummaryBranch('ALL')" data-branch="ALL" class="truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs">
+              ทุกสาขา (4 สาขา)
+            </button>
+            <button type="button" onclick="setTruckSummaryBranch('สาขากรุงเทพกรีฑา')" data-branch="สาขากรุงเทพกรีฑา" class="truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+              🏢 กรุงเทพกรีฑา
+            </button>
+            <button type="button" onclick="setTruckSummaryBranch('สาขารามอินทรา')" data-branch="สาขารามอินทรา" class="truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+              🏢 รามอินทรา
+            </button>
+            <button type="button" onclick="setTruckSummaryBranch('สาขาสุขุมวิท 50')" data-branch="สาขาสุขุมวิท 50" class="truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+              🏢 สุขุมวิท 50
+            </button>
+            <button type="button" onclick="setTruckSummaryBranch('สาขาพระราม 3')" data-branch="สาขาพระราม 3" class="truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+              🏢 พระราม 3
+            </button>
+          </div>
+
+          <!-- Quick Date Presets -->
+          <div class="flex flex-wrap items-center gap-1.5 text-xs">
+            <span class="text-slate-400 font-medium mr-1 text-[11px]">ช่วงด่วน:</span>
+            <button type="button" onclick="setTruckSummaryDatePreset('all')" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-medium text-[11px]">ทั้งหมด</button>
+            <button type="button" onclick="setTruckSummaryDatePreset('single', '2026-10-07')" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-medium text-[11px]">7 ต.ค.</button>
+            <button type="button" onclick="setTruckSummaryDatePreset('single', '2026-10-06')" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-medium text-[11px]">6 ต.ค.</button>
+            <button type="button" onclick="setTruckSummaryDatePreset('single', '2026-10-05')" class="px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 hover:bg-blue-50 hover:text-blue-700 font-medium text-[11px]">5 ต.ค.</button>
+            <button type="button" onclick="setTruckSummaryDatePreset('range', '2026-09-26', '2026-10-03')" class="px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 font-bold text-[11px]">รอบวิกฤต 26 ก.ย. - 3 ต.ค.</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Executive KPI 4-Card Summary -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="exec-card p-4 border-l-4 border-l-blue-600">
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">🚚 ออเดอร์ทั้งหมดในสายส่ง</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpiSumTotalOrders" class="text-2xl font-extrabold text-slate-900">2,598</span>
+            <span class="text-xs font-semibold text-slate-400">รายการ</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+            <span>รวมสายรถที่วิ่งงาน:</span>
+            <strong id="kpiSumActiveTrucks" class="text-blue-700">48 คัน</strong>
+          </div>
+        </div>
+
+        <div class="exec-card p-4 border-l-4 border-l-emerald-500">
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">✅ จัดส่งสำเร็จสะสม</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpiSumResolvedOrders" class="text-2xl font-extrabold text-emerald-600">1,621</span>
+            <span id="kpiSumResolvedRate" class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">62.4%</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+            <span>สถานะ:</span>
+            <strong class="text-emerald-700">สำเร็จตามเงื่อนไข</strong>
+          </div>
+        </div>
+
+        <div class="exec-card p-4 border-l-4 border-l-rose-500">
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">🌊 ค้างส่งน้ำท่วมสูง</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpiSumFloodOrders" class="text-2xl font-extrabold text-rose-600">936</span>
+            <span class="text-xs font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded">รอน้ำลด</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+            <span>แผนที่ GIS:</span>
+            <strong class="text-rose-700">แสดงพิกัดเข้าช่วยเหลือ</strong>
+          </div>
+        </div>
+
+        <div class="exec-card p-4 border-l-4 border-l-purple-500">
+          <div class="text-xs font-bold text-slate-500 uppercase tracking-wider">🔄 โอนงานสิ้นวัน / เลื่อนส่ง</div>
+          <div class="flex items-baseline gap-2 mt-1">
+            <span id="kpiSumTransferOrders" class="text-2xl font-extrabold text-purple-600">41</span>
+            <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">ส่งเสริม</span>
+          </div>
+          <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+            <span>การประสานงาน:</span>
+            <strong class="text-purple-700">จัดรอบส่งเสริม</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Branch Cards & Truck Breakdown List Container -->
+      <div id="truckSummaryBranchesContainer" class="space-y-6">
+        <!-- Dynamically populated by renderTruckSummaryPage() in js/app.js -->
       </div>
 
     </section>
@@ -1083,12 +1301,14 @@
           </div>
         </div>
 
-        <!-- Filter & Search Toolbar -->
-        <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-4">
-          <div class="sm:col-span-5">
-            <input type="text" id="adminSearchInput" placeholder="ค้นหารหัสสมาชิก, ชื่อลูกค้า, สายรถ, ที่อยู่..." class="exec-input">
+        <!-- Filter & Search Toolbar (Date, Truck, Branch, Status, Search Query) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🔍 ค้นหาคำสำคัญ</label>
+            <input type="text" id="adminSearchInput" placeholder="รหัสสมาชิก, ชื่อ, ที่อยู่..." class="exec-input">
           </div>
-          <div class="sm:col-span-4">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🏢 สาขา</label>
             <select id="adminBranchSelect" class="exec-input">
               <option value="ALL">ทุกลำดับสาขา</option>
               <option value="สาขารามอินทรา">สาขารามอินทรา</option>
@@ -1097,13 +1317,63 @@
               <option value="สาขาพระราม 3">สาขาพระราม 3</option>
             </select>
           </div>
-          <div class="sm:col-span-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">🚚 เบอร์รถ / สายรถ</label>
+            <input type="text" id="adminTruckInput" placeholder="เช่น 13207, 16304..." class="exec-input">
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">📌 สถานะ</label>
             <select id="adminStatusSelect" class="exec-input">
               <option value="ALL">ทุกสถานะ</option>
               <option value="โอนงานสิ้นวัน">เฉพาะโอนงานสิ้นวัน</option>
               <option value="น้ำท่วม">เฉพาะน้ำท่วม</option>
               <option value="ส่งสำเร็จ">เฉพาะส่งสำเร็จ</option>
             </select>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">📅 วันที่ส่ง</label>
+              <div class="flex items-center gap-1 text-[10px]">
+                <button type="button" id="btnAdminDateModeSingle" onclick="setAdminDateMode('single')" class="font-bold text-blue-600 underline">วันเดียว</button>
+                <span class="text-slate-300">|</span>
+                <button type="button" id="btnAdminDateModeRange" onclick="setAdminDateMode('range')" class="text-slate-500 hover:text-slate-800">ช่วงวันที่</button>
+              </div>
+            </div>
+            <!-- Single Date Input -->
+            <div id="adminSingleDateContainer">
+              <input type="date" id="adminDateInput" class="exec-input">
+            </div>
+            <!-- Date Range Inputs -->
+            <div id="adminRangeDateContainer" class="hidden flex items-center gap-1">
+              <input type="date" id="adminStartDateInput" class="exec-input text-[11px] px-1.5" placeholder="จาก">
+              <span class="text-[10px] text-slate-400">-</span>
+              <input type="date" id="adminEndDateInput" class="exec-input text-[11px] px-1.5" placeholder="ถึง">
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Date & Filter Presets -->
+        <div class="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-slate-100/80 border border-slate-200 rounded-xl mb-4 text-xs">
+          <div class="flex flex-wrap items-center gap-1.5" id="adminDateChipsContainer">
+            <span class="font-bold text-slate-600 mr-1">วันยอดนิยม:</span>
+            <button type="button" onclick="setAdminDateFilter('')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">ทุกวัน</button>
+            <button type="button" onclick="setAdminDateFilter('2026-10-07')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">7 ต.ค.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-10-06')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">6 ต.ค.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-10-05')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">5 ต.ค.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-10-03')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">3 ต.ค.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-10-02')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">2 ต.ค.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-10-01')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">1 ต.ค.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-09-28')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">28 ก.ย.</button>
+            <button type="button" onclick="setAdminDateFilter('2026-09-26')" class="admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs">26 ก.ย.</button>
+            <button type="button" onclick="setAdminDateRangePreset('2026-09-26', '2026-10-03')" class="admin-date-chip px-2.5 py-1 rounded-md bg-blue-50 border border-blue-200 font-bold text-blue-700 hover:bg-blue-100 shadow-2xs">รอบวิกฤต 26 ก.ย. - 3 ต.ค.</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="resetAdminFilters()" class="px-2.5 py-1 rounded-md bg-slate-200 hover:bg-slate-300 font-bold text-slate-700 transition">
+              🔄 ล้างตัวกรอง
+            </button>
+            <button type="button" onclick="loadAdminOrders()" class="px-3 py-1 rounded-md bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-xs transition flex items-center gap-1">
+              <span>⚡ เชื่อมต่อสด Supabase</span>
+            </button>
           </div>
         </div>
 
@@ -1117,7 +1387,7 @@
               ⬜ ยกเลิกการเลือก
             </button>
             <span class="text-xs text-slate-500 hidden sm:inline">|</span>
-            <span class="text-xs text-slate-600 font-medium">พบข้อมูล: <strong id="adminFilteredCount" class="text-blue-700">0</strong> รายการ</span>
+            <span class="text-xs text-slate-600 font-medium">พบข้อมูลใน Supabase: <strong id="adminFilteredCount" class="text-blue-700 font-bold">0</strong> รายการ</span>
           </div>
 
           <div>
@@ -1139,10 +1409,10 @@
                   </th>
                   <th style="width: 100px;">รหัสสมาชิก</th>
                   <th>ชื่อลูกค้า / ที่อยู่</th>
-                  <th>สาขา</th>
-                  <th style="width: 85px;">สายรถ</th>
+                  <th style="width: 130px;">สาขา</th>
+                  <th style="width: 95px;">เบอร์รถ</th>
+                  <th style="width: 140px;">วันที่ส่ง</th>
                   <th>สถานะ / เหตุผล</th>
-                  <th>วันที่</th>
                   <th style="width: 100px;" class="text-center">การจัดการ</th>
                 </tr>
               </thead>
@@ -1260,6 +1530,186 @@
       <p class="mt-1 text-[11px] text-slate-400">อัปเดตข้อมูลทุกวัน • 7 ตุลาคม 2569</p>
     </div>
   </footer>
+
+  <!-- =========================================================================
+       DAILY DETAIL PROGRESS MODAL
+       ========================================================================= -->
+  <div id="dailyDetailModal" class="modal-backdrop">
+    <div class="modal-dialog p-6 border-t-4 border-t-blue-600" style="max-width: 960px; max-height: 90vh;">
+      <div class="flex items-start justify-between pb-3 mb-4 border-b border-slate-100">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 font-bold text-lg shadow-xs">
+            📅
+          </div>
+          <div>
+            <h3 id="dailyDetailModalTitle" class="font-extrabold text-base text-slate-900">รายละเอียดรอบส่งประจำวัน</h3>
+            <p id="dailyDetailModalSubtitle" class="text-xs text-slate-500 mt-0.5">ข้อมูลวิเคราะห์เชิงลึก สถิติการจัดส่ง และรายชื่อสมาชิกที่เข้าส่งในวันนี้</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold transition">✕</button>
+      </div>
+
+      <!-- KPI 4-Card Summary -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="dailyModalKpiGrid">
+        <div class="p-3 bg-blue-50/70 border border-blue-100 rounded-xl">
+          <div class="text-[11px] font-bold text-blue-600 uppercase">ส่งสำเร็จเฉพาะวันนี้</div>
+          <div id="dailyModalDailyResolved" class="text-lg font-extrabold text-blue-900 mt-0.5">-</div>
+        </div>
+        <div class="p-3 bg-emerald-50/70 border border-emerald-100 rounded-xl">
+          <div class="text-[11px] font-bold text-emerald-600 uppercase">สำเร็จสะสมถึงวันนี้</div>
+          <div id="dailyModalCumResolved" class="text-lg font-extrabold text-emerald-900 mt-0.5">-</div>
+        </div>
+        <div class="p-3 bg-rose-50/70 border border-rose-100 rounded-xl">
+          <div class="text-[11px] font-bold text-rose-600 uppercase">คงค้างยังไม่ได้รับน้ำ</div>
+          <div id="dailyModalPending" class="text-lg font-extrabold text-rose-900 mt-0.5">-</div>
+        </div>
+        <div class="p-3 bg-purple-50/70 border border-purple-100 rounded-xl">
+          <div class="text-[11px] font-bold text-purple-600 uppercase">ความคืบหน้าสะสม</div>
+          <div id="dailyModalRate" class="text-lg font-extrabold text-purple-900 mt-0.5">-</div>
+        </div>
+      </div>
+
+      <!-- Toolbar & Action Buttons -->
+      <div class="flex flex-col md:flex-row gap-2.5 items-stretch md:items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3">
+        <div class="flex flex-1 gap-2 items-center">
+          <div class="relative flex-1">
+            <input type="text" id="dailyModalSearchInput" oninput="filterDailyModalList()" placeholder="🔍 ค้นหารหัส, ชื่อลูกค้า, สายรถ, ที่อยู่..." class="exec-input text-xs py-1.5 pl-8">
+            <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
+          </div>
+          <select id="dailyModalBranchSelect" onchange="filterDailyModalList()" class="exec-input text-xs py-1.5 w-auto">
+            <option value="ALL">ทุกสาขา</option>
+            <option value="สาขากรุงเทพกรีฑา">สาขากรุงเทพกรีฑา</option>
+            <option value="สาขารามอินทรา">สาขารามอินทรา</option>
+            <option value="สาขาสุขุมวิท 50">สาขาสุขุมวิท 50</option>
+            <option value="สาขาพระราม 3">สาขาพระราม 3</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button id="btnDailyModalGoAdmin" onclick="goToAdminFromDailyModal()" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 shadow-xs">
+            <span>⚙️ ดูข้อมูลในหน้า Admin</span>
+          </button>
+          <button onclick="goToMapFromDailyModal()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 shadow-xs">
+            <span>🗺️ แผนที่ GIS</span>
+          </button>
+          <button onclick="exportDailyModalCsv()" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs rounded-lg transition flex items-center gap-1">
+            <span>📥 CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Orders / Members List Table -->
+      <div class="overflow-x-auto max-h-[360px] overflow-y-auto border border-slate-200 rounded-xl">
+        <table class="exec-table text-xs w-full">
+          <thead class="sticky top-0 bg-slate-100 z-10">
+            <tr>
+              <th>รหัสสมาชิก</th>
+              <th>ชื่อลูกค้า / ที่อยู่</th>
+              <th>สาขา</th>
+              <th>สายรถ</th>
+              <th>ผลการเข้าส่งในวันนี้</th>
+              <th>สถานะ</th>
+              <th class="text-right">ประวัติ</th>
+            </tr>
+          </thead>
+          <tbody id="dailyModalTableBody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span id="dailyModalItemCount">แสดง 0 รายการ</span>
+        <button onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TRUCK MEMBERS DETAIL MODAL
+       ========================================================================= -->
+  <div id="truckDetailModal" class="modal-backdrop">
+    <div class="modal-dialog p-6 border-t-4 border-t-blue-600" style="max-width: 960px; max-height: 90vh;">
+      <div class="flex items-start justify-between pb-3 mb-4 border-b border-slate-100">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 font-bold text-lg shadow-xs">
+            🚚
+          </div>
+          <div>
+            <h3 id="truckDetailModalTitle" class="font-extrabold text-base text-slate-900">รายละเอียดสายรถ: #16304</h3>
+            <p id="truckDetailModalSubtitle" class="text-xs text-slate-500 mt-0.5">สาขากรุงเทพกรีฑา • สมาชิกที่เข้าส่งทั้งหมด 146 ราย</p>
+          </div>
+        </div>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold transition">✕</button>
+      </div>
+
+      <!-- Truck Summary Mini Badges -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4" id="truckDetailModalKpis">
+        <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-center">
+          <div class="text-[11px] font-bold text-slate-500">ออเดอร์ทั้งหมด</div>
+          <div id="truckModalTotal" class="text-lg font-extrabold text-slate-900">0</div>
+        </div>
+        <div class="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-center">
+          <div class="text-[11px] font-bold text-emerald-700">ส่งสำเร็จ</div>
+          <div id="truckModalResolved" class="text-lg font-extrabold text-emerald-700">0</div>
+        </div>
+        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-center">
+          <div class="text-[11px] font-bold text-rose-700">ค้างส่งน้ำท่วม</div>
+          <div id="truckModalFlood" class="text-lg font-extrabold text-rose-700">0</div>
+        </div>
+        <div class="p-2.5 bg-purple-50 border border-purple-200 rounded-xl text-center">
+          <div class="text-[11px] font-bold text-purple-700">โอนงานสิ้นวัน</div>
+          <div id="truckModalTransfer" class="text-lg font-extrabold text-purple-700">0</div>
+        </div>
+      </div>
+
+      <!-- Modal Toolbar -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-3">
+        <div class="relative flex-1">
+          <input type="text" id="truckModalSearchInput" oninput="filterTruckModalMembers()" placeholder="🔍 ค้นหารหัส, ชื่อลูกค้า, ที่อยู่..." class="exec-input text-xs py-1.5 pl-8">
+          <span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
+        </div>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button onclick="goToMapWithTruck()" class="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 shadow-xs">
+            <span>🗺️ แผนที่ GIS</span>
+          </button>
+          <button onclick="goToDetailsWithTruck()" class="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg transition flex items-center gap-1 shadow-xs">
+            <span>📋 หน้ารายละเอียด</span>
+          </button>
+          <button onclick="exportTruckModalCsv()" class="px-2.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs rounded-lg transition flex items-center gap-1">
+            <span>📥 CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Member Table -->
+      <div class="overflow-x-auto max-h-[360px] overflow-y-auto border border-slate-200 rounded-xl">
+        <table class="exec-table text-xs w-full">
+          <thead class="sticky top-0 bg-slate-100 z-10">
+            <tr>
+              <th>รหัสสมาชิก</th>
+              <th>ชื่อลูกค้า / ที่อยู่</th>
+              <th>วันที่ / สถานะล่าสุด</th>
+              <th>เหตุผล</th>
+              <th>สถานะ</th>
+              <th class="text-right">ประวัติ</th>
+            </tr>
+          </thead>
+          <tbody id="truckModalTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span id="truckModalItemCount">แสดง 0 รายการ</span>
+        <button onclick="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-lg transition">
+          ปิดหน้าต่าง
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- =========================================================================
        MEMBER ATTEMPTS TIMELINE MODAL

@@ -15,27 +15,41 @@ console.log('\n[2. Verifying Member Latest Status Categorization]');
 const pendingData = JSON.parse(fs.readFileSync('data/pending_latest.json', 'utf8'));
 const resolvedData = JSON.parse(fs.readFileSync('data/resolved_latest.json', 'utf8'));
 
-console.log(`  Pending Count: ${pendingData.length} (Expected: 977)`);
-console.log(`  Resolved Count: ${resolvedData.length} (Expected: 1621)`);
-console.log(`  Total Evaluated: ${pendingData.length + resolvedData.length} (Expected: 2598)`);
+console.log(`  Pending Count: ${pendingData.length} (Expected: 592)`);
+console.log(`  Resolved Count: ${resolvedData.length} (Expected: 4,456)`);
+console.log(`  Total Evaluated: ${pendingData.length + resolvedData.length} (Expected: 5,048)`);
 
-assert(pendingData.length === 977, `Pending count must be 977 (actual: ${pendingData.length})`);
-assert(resolvedData.length === 1621, `Resolved count must be 1,621 (actual: ${resolvedData.length})`);
-assert(pendingData.length + resolvedData.length === 2598, 'Total count must be 2,598');
+assert(pendingData.length === 592, `Pending count must be 592 (actual: ${pendingData.length})`);
+assert(resolvedData.length === 4456, `Resolved count must be 4,456 (actual: ${resolvedData.length})`);
+assert(pendingData.length + resolvedData.length === 5048, 'Total count must be 5,048');
 
-// 3. Rule 1 Check: Every pending member MUST have their latest status as flood or transfer
-console.log('\n[3. Verifying Rule 1: Latest Delivery Attempt Must Be Flood or Transfer]');
+// 3. Rule 1 Check: Every pending member MUST have their latest status as flood or transfer, NEVER success/ตั้งถัง
+console.log('\n[3. Verifying Rule 1: Latest Delivery Attempt Must Be Flood or Transfer (No Success/ตั้งถัง)]');
 let invalidPendingCount = 0;
 pendingData.forEach(p => {
+  const isSuccess = p.lastReason && (p.lastReason.includes('ตั้งถัง') || p.lastReason.includes('พบลูกค้า') || p.lastReason.includes('ส่งสำเร็จ'));
   const isFlood = p.isFlood || (p.lastReason && p.lastReason.includes('น้ำท่วม')) || (p.pendingCategory && p.pendingCategory.includes('น้ำท่วม'));
   const isTransfer = p.isTransfer || (p.lastReason && p.lastReason.includes('โอนงาน')) || (p.pendingCategory && p.pendingCategory.includes('โอนงาน'));
-  if (!isFlood && !isTransfer) {
+  if (isSuccess || (!isFlood && !isTransfer)) {
     invalidPendingCount++;
     console.error(`  Invalid pending item: ${p.memberId} - ${p.name} - reason: ${p.lastReason}`);
   }
 });
-assert.strictEqual(invalidPendingCount, 0, 'All pending members must have flood or transfer as their latest status');
-console.log('  ✔ PASS: 100% of pending members (977/977) have their latest status as flood or transfer');
+assert.strictEqual(invalidPendingCount, 0, 'All pending members must have flood or transfer as their latest status (0 success cases)');
+console.log(`  ✔ PASS: 100% of pending members (${pendingData.length}/${pendingData.length}) have their latest status as genuine flood or transfer`);
+
+// Check specific members
+const p249081 = pendingData.find(p => p.memberId === '249081');
+const r249081 = resolvedData.find(r => r.memberId === '249081');
+assert(!p249081, 'Member 249081 (ธนิต บัวเขียว) MUST NOT be in pending');
+assert(r249081 && r249081.resolvedReason.includes('ตั้งถัง'), 'Member 249081 MUST be in resolved (ลูกค้าตั้งถัง)');
+console.log('  ✔ PASS: Member 249081 (ธนิต บัวเขียว) verified as Resolved and excluded from Map');
+
+const p127361 = pendingData.find(p => p.memberId === '127361');
+const r127361 = resolvedData.find(r => r.memberId === '127361');
+assert(!p127361, 'Member 127361 (แสงดาว ไกรวาปี) MUST NOT be in pending');
+assert(r127361 && r127361.resolvedReason.includes('ตั้งถัง'), 'Member 127361 MUST be in resolved (ลูกค้าตั้งถัง)');
+console.log('  ✔ PASS: Member 127361 (แสงดาว ไกรวาปี) verified as Resolved and excluded from Map');
 
 // 4. Rule 2 Check: Map GPS Coordinates for all pending members
 console.log('\n[4. Verifying Rule 2: Map Display of Undelivered Members]');
@@ -49,24 +63,16 @@ const ramIntra = pendingData.filter(p => p.branch === 'สาขารามอ�
 const krungthep = pendingData.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
 const sukhumvit = pendingData.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
 console.log('  Branch counts:', { ramIntra, krungthep, sukhumvit });
-assert.strictEqual(ramIntra, 556, 'Ram Intra count must be 556');
-assert.strictEqual(krungthep, 397, 'Krungthep Kreetha count must be 397');
+assert.strictEqual(ramIntra, 375, 'Ram Intra count must be 375');
+assert.strictEqual(krungthep, 193, 'Krungthep Kreetha count must be 193');
 assert.strictEqual(sukhumvit, 24, 'Sukhumvit 50 count must be 24');
 console.log('  ✔ PASS: Branch distribution verified');
 
 // 6. Check HTML & JS Map elements
 console.log('\n[6. Verifying Frontend Map Controls]');
-const html = fs.readFileSync('index.html', 'utf8');
 const js = fs.readFileSync('js/app.js', 'utf8');
 
-assert(html.includes('977 ราย'), 'Page 2 banner shows 977 members');
-assert(html.includes('ทั้งหมด (977 จุด)'), 'Map filter button shows 977 points');
-assert(html.includes('รามอินทรา (556 จุด)'), 'Map filter button shows 556 points');
-assert(html.includes('กรุงเทพกรีฑา (397 จุด)'), 'Map filter button shows 397 points');
-assert(html.includes('สุขุมวิท 50 (24 จุด)'), 'Map filter button shows 24 points');
-assert(html.includes('🔴 น้ำท่วมสูง (936 จุด)'), 'Flood filter button shows 936 points');
-assert(html.includes('🟣 โอนงานสิ้นวัน (41 จุด)'), 'Transfer filter button shows 41 points');
-assert(html.includes('syncLiveFromSupabase'), 'Live sync trigger exists');
+assert(js.includes('updateMapFilterButtonCounts'), 'updateMapFilterButtonCounts exists in app.js');
 assert(js.includes('syncLiveFromSupabase'), 'syncLiveFromSupabase implementation exists in app.js');
 
 console.log('  ✔ PASS: All frontend controls verified');

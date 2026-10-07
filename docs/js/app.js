@@ -22,19 +22,39 @@ window.AppState = {
   tableSearchQuery: '',
   tableCurrentPage: 1,
   tablePageSize: 50,
+  tableDateMode: 'single',
+  tableDateFilter: '',
+  tableStartDate: '',
+  tableEndDate: '',
+  tableTruckFilter: '',
   leafletMap: null,
   mapMarkersGroup: null,
   branchChart: null,
   durationChart: null,
+  // Truck & Branch Summary State
+  truckSummaryDateMode: 'single',
+  truckSummaryDate: '',
+  truckSummaryStartDate: '',
+  truckSummaryEndDate: '',
+  truckSummaryTruckFilter: '',
+  truckSummaryBranchFilter: 'ALL',
+  activeTruckModalTruck: null,
+  activeTruckModalItems: [],
   // Admin Data Management State
   adminOrders: [],
   adminFilteredOrders: [],
   adminSelectedIds: new Set(),
   adminCurrentPage: 1,
-  adminPageSize: 20,
+  adminPageSize: 25,
   adminSearchQuery: '',
   adminBranchFilter: 'ALL',
+  adminDateMode: 'single',
+  adminDateFilter: '',
+  adminStartDate: '',
+  adminEndDate: '',
+  adminTruckFilter: '',
   adminStatusFilter: 'ALL',
+  adminTotalFilteredCount: 72170,
   isDeletingAdminOrders: false,
   isAdminAuthenticated: (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('admin_auth') === '171938')
 };
@@ -51,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCCTV();
   initGistdaSection();
   initTable();
+  initTruckSummary();
   initAdmin();
 
   // Handle URL hash on load
@@ -242,18 +263,18 @@ if (typeof Chart !== 'undefined' && Chart.register) {
 // 3. Page 1: Delivery Duration & Charts
 // ==========================================
 function initCharts() {
-  // 1. Day-by-Day Comparison Chart (26 ก.ย. ถึง 3 ต.ค. - 7 ต.ค.)
+  // 1. Day-by-Day Comparison Chart (26 ก.ย. ถึง 7 ต.ค. ปัจจุบัน)
   const dailyCtx = document.getElementById('chartDailyComparison');
   if (dailyCtx) {
     new Chart(dailyCtx, {
       type: 'bar',
       data: {
-        labels: ['26 ก.ย. (เสาร์)', '28 ก.ย. (จันทร์)', '29 ก.ย. (อังคาร)', '30 ก.ย. (พุธ)', '1 ต.ค. (พฤหัส)', '2 ต.ค. (ศุกร์)', '3 ต.ค. (เสาร์)', '7 ต.ค. (ปัจจุบัน)'],
+        labels: ['26 ก.ย. (เสาร์)', '28 ก.ย. (จันทร์)', '29 ก.ย. (อังคาร)', '30 ก.ย. (พุธ)', '1 ต.ค. (พฤหัส)', '2 ต.ค. (ศุกร์)', '3 ต.ค. (เสาร์)', '5 ต.ค. (จันทร์)', '6 ต.ค. (อังคาร)', '7 ต.ค. (ปัจจุบัน)'],
         datasets: [
           {
             type: 'line',
             label: 'ยังไม่ได้รับน้ำเลย (คงค้างประสานงาน)',
-            data: [2598, 2180, 1680, 1390, 1150, 1040, 990, 977],
+            data: [2598, 2180, 1680, 1390, 1150, 1040, 990, 985, 980, 977],
             borderColor: '#ef4444',
             backgroundColor: '#ef4444',
             borderWidth: 3,
@@ -267,7 +288,7 @@ function initCharts() {
           {
             type: 'line',
             label: 'สำเร็จตามเงื่อนไขสะสม (Delivered / Non-Flood)',
-            data: [0, 418, 918, 1208, 1448, 1558, 1608, 1621],
+            data: [0, 418, 918, 1208, 1448, 1558, 1608, 1613, 1618, 1621],
             borderColor: '#10b981',
             backgroundColor: '#10b981',
             borderWidth: 3,
@@ -281,7 +302,7 @@ function initCharts() {
           {
             type: 'bar',
             label: 'ยอดส่งเสริมสำเร็จรายวัน (Daily Solved)',
-            data: [0, 418, 500, 290, 240, 110, 50, 13],
+            data: [0, 418, 500, 290, 240, 110, 50, 5, 5, 3],
             backgroundColor: 'rgba(59, 130, 246, 0.75)',
             borderRadius: 6,
             yAxisID: 'y',
@@ -532,6 +553,50 @@ function renderMapMarkers() {
 
   const countBadge = document.getElementById('mapShownCount');
   if (countBadge) countBadge.textContent = `${shownCount} จุด`;
+
+  updateMapFilterButtonCounts();
+}
+
+function updateMapFilterButtonCounts() {
+  const pending = AppState.dataStore.pending || [];
+  const total = pending.length;
+  const ramIntra = pending.filter(p => p.branch === 'สาขารามอินทรา').length;
+  const krungthep = pending.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
+  const sukhumvit = pending.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
+  const flood = pending.filter(p => p.pendingCategory !== 'โอนงานสิ้นวัน').length;
+  const transfer = pending.filter(p => p.pendingCategory === 'โอนงานสิ้นวัน').length;
+
+  const btnAll = document.querySelector('.map-filter-btn[data-filter="ALL"]');
+  if (btnAll) btnAll.textContent = `ทั้งหมด (${total.toLocaleString()} จุด)`;
+
+  const btnRam = document.querySelector('.map-filter-btn[data-filter="RAM_INTRA"]');
+  if (btnRam) btnRam.textContent = `รามอินทรา (${ramIntra.toLocaleString()} จุด)`;
+
+  const btnKtp = document.querySelector('.map-filter-btn[data-filter="KRUNGTHEP"]');
+  if (btnKtp) btnKtp.textContent = `กรุงเทพกรีฑา (${krungthep.toLocaleString()} จุด)`;
+
+  const btnSvk = document.querySelector('.map-filter-btn[data-filter="SUKHUMVIT"]');
+  if (btnSvk) btnSvk.textContent = `สุขุมวิท 50 (${sukhumvit.toLocaleString()} จุด)`;
+
+  const btnFlood = document.querySelector('.map-filter-btn[data-filter="FLOOD"]');
+  if (btnFlood) btnFlood.textContent = `🔴 น้ำท่วมสูง (${flood.toLocaleString()} จุด)`;
+
+  const btnTransfer = document.querySelector('.map-filter-btn[data-filter="TRANSFER"]');
+  if (btnTransfer) btnTransfer.textContent = `🟣 โอนงานสิ้นวัน (${transfer.toLocaleString()} จุด)`;
+
+  const bannerTitle = document.querySelector('#page-pending-map h1');
+  if (bannerTitle) bannerTitle.textContent = `หน้าแผนที่โชว์จุดของสมาชิกที่ยังจัดส่งไม่ได้ (${total.toLocaleString()} ราย)`;
+
+  // Update Page 5 Fast Tabs
+  const pendingBadge = document.getElementById('tableTabPendingBadge');
+  if (pendingBadge) pendingBadge.textContent = `${total.toLocaleString()} ราย`;
+
+  const resolved = AppState.dataStore.resolved || [];
+  const resolvedBadge = document.getElementById('tableTabResolvedBadge');
+  if (resolvedBadge) resolvedBadge.textContent = `${resolved.length.toLocaleString()} ราย`;
+
+  const allBadge = document.getElementById('tableTabAllBadge');
+  if (allBadge) allBadge.textContent = `${(total + resolved.length).toLocaleString()} ราย`;
 }
 
 function filterMapPins(filterType) {
@@ -662,6 +727,10 @@ function initGistdaSection() {
 function initTable() {
   const searchInput = document.getElementById('tableSearchInput');
   const branchSelect = document.getElementById('tableBranchSelect');
+  const truckInput = document.getElementById('tableTruckInput');
+  const dateInput = document.getElementById('tableDateInput');
+  const startDateInput = document.getElementById('tableStartDateInput');
+  const endDateInput = document.getElementById('tableEndDateInput');
   const exportBtn = document.getElementById('btnExportCsv');
 
   if (searchInput) {
@@ -679,12 +748,91 @@ function initTable() {
     });
   }
 
+  if (truckInput) {
+    truckInput.addEventListener('input', (e) => {
+      AppState.tableTruckFilter = e.target.value.trim().toLowerCase();
+      AppState.tableCurrentPage = 1;
+      renderTable();
+    });
+  }
+
+  if (dateInput) {
+    dateInput.addEventListener('change', (e) => {
+      AppState.tableDateFilter = e.target.value;
+      AppState.tableCurrentPage = 1;
+      renderTable();
+    });
+  }
+
+  if (startDateInput) {
+    startDateInput.addEventListener('change', (e) => {
+      AppState.tableStartDate = e.target.value;
+      AppState.tableCurrentPage = 1;
+      renderTable();
+    });
+  }
+
+  if (endDateInput) {
+    endDateInput.addEventListener('change', (e) => {
+      AppState.tableEndDate = e.target.value;
+      AppState.tableCurrentPage = 1;
+      renderTable();
+    });
+  }
+
   if (exportBtn) {
     exportBtn.addEventListener('click', exportTableToCsv);
   }
 
   renderTable();
 }
+
+function setTableDateMode(mode) {
+  AppState.tableDateMode = mode;
+  const singleContainer = document.getElementById('tableSingleDateContainer');
+  const rangeContainer = document.getElementById('tableRangeDateContainer');
+  const btnSingle = document.getElementById('btnTableDateSingle');
+  const btnRange = document.getElementById('btnTableDateRange');
+
+  if (mode === 'single') {
+    if (singleContainer) singleContainer.classList.remove('hidden');
+    if (rangeContainer) rangeContainer.classList.add('hidden');
+    if (btnSingle) {
+      btnSingle.className = 'px-2.5 py-1 rounded-md text-xs font-bold transition bg-white text-blue-700 shadow-2xs';
+    }
+    if (btnRange) {
+      btnRange.className = 'px-2.5 py-1 rounded-md text-xs font-semibold transition text-slate-600 hover:text-slate-900';
+    }
+  } else {
+    if (singleContainer) singleContainer.classList.add('hidden');
+    if (rangeContainer) rangeContainer.classList.remove('hidden');
+    if (btnSingle) {
+      btnSingle.className = 'px-2.5 py-1 rounded-md text-xs font-semibold transition text-slate-600 hover:text-slate-900';
+    }
+    if (btnRange) {
+      btnRange.className = 'px-2.5 py-1 rounded-md text-xs font-bold transition bg-white text-blue-700 shadow-2xs';
+    }
+  }
+
+  AppState.tableCurrentPage = 1;
+  renderTable();
+}
+window.setTableDateMode = setTableDateMode;
+
+function resetTableDateFilters() {
+  AppState.tableDateFilter = '';
+  AppState.tableStartDate = '';
+  AppState.tableEndDate = '';
+  const dInput = document.getElementById('tableDateInput');
+  const sInput = document.getElementById('tableStartDateInput');
+  const eInput = document.getElementById('tableEndDateInput');
+  if (dInput) dInput.value = '';
+  if (sInput) sInput.value = '';
+  if (eInput) eInput.value = '';
+  AppState.tableCurrentPage = 1;
+  renderTable();
+}
+window.resetTableDateFilters = resetTableDateFilters;
 
 function setTableTab(tabType) {
   AppState.activeTableTab = tabType;
@@ -709,15 +857,42 @@ function getFilteredTableData() {
   } else if (AppState.activeTableTab === 'RESOLVED') {
     list = AppState.dataStore.resolved || [];
   } else {
-    // Both or all
     list = [...(AppState.dataStore.pending || []), ...(AppState.dataStore.resolved || [])];
   }
 
   const branchFilter = document.getElementById('tableBranchSelect')?.value || 'ALL';
   const query = AppState.tableSearchQuery;
+  const truckFilter = AppState.tableTruckFilter;
+  const dateMode = AppState.tableDateMode;
+  const singleDate = AppState.tableDateFilter;
+  const startDate = AppState.tableStartDate;
+  const endDate = AppState.tableEndDate;
 
   return list.filter(item => {
     if (branchFilter !== 'ALL' && item.branch !== branchFilter) return false;
+    
+    // Truck Filter
+    if (truckFilter) {
+      const trk = String(item.truck || '').toLowerCase();
+      if (!trk.includes(truckFilter)) return false;
+    }
+
+    // Date Filter
+    if (dateMode === 'single' && singleDate) {
+      const [y, m, d] = singleDate.split('-');
+      const shortThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${parseInt(y, 10) + 543}`;
+      const shortAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
+      const hist = item.history || '';
+      const iso = item.lastDateIso || '';
+      const lastD = item.lastDate || '';
+      const matches = iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
+      if (!matches) return false;
+    } else if (dateMode === 'range' && (startDate || endDate)) {
+      const iso = item.lastDateIso ? item.lastDateIso.substring(0, 10) : '';
+      if (startDate && iso && iso < startDate) return false;
+      if (endDate && iso && iso > endDate) return false;
+    }
+
     if (query) {
       const str = `${item.memberId} ${item.name} ${item.truck} ${item.address} ${item.lastReason || item.resolvedReason || ''}`.toLowerCase();
       if (!str.includes(query)) return false;
@@ -887,6 +1062,265 @@ function exportTableToCsv() {
 }
 
 // ==========================================
+// 7. Page 1: Daily Detail Modal (Drilldown)
+// ==========================================
+const DAILY_METRICS_INFO = {
+  '2026-09-26': { label: '26 ก.ย. 2569 (เสาร์)', dailyResolved: 1, cumResolved: 1, pending: 2686, rate: '0.1%', note: 'วันเกิดเหตุวิกฤตน้ำท่วมฉับพลันและเริ่มบันทึกการโอนงานสิ้นวัน' },
+  '2026-09-28': { label: '28 ก.ย. 2569 (จันทร์)', dailyResolved: 1152, cumResolved: 1153, pending: 1534, rate: '42.9%', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
+  '2026-09-29': { label: '29 ก.ย. 2569 (อังคาร)', dailyResolved: 624, cumResolved: 1777, pending: 910, rate: '66.1%', note: 'คลี่คลายต่อเนื่องในโซนพื้นที่น้ำลด สาขากรุงเทพกรีฑาเริ่มกลับมาส่งได้' },
+  '2026-09-30': { label: '30 ก.ย. 2569 (พุธ)', dailyResolved: 232, cumResolved: 2009, pending: 678, rate: '74.8%', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 2,000 ราย' },
+  '2026-10-01': { label: '1 ต.ค. 2569 (พฤหัส)', dailyResolved: 299, cumResolved: 2308, pending: 379, rate: '85.9%', note: 'เข้าส่งซ้ำในพื้นที่น้ำท่วมสูงกรุงเทพกรีฑาและรามอินทรา' },
+  '2026-10-02': { label: '2 ต.ค. 2569 (ศุกร์)', dailyResolved: 24, cumResolved: 2332, pending: 355, rate: '86.8%', note: 'เข้าแก้ไขกลุ่มเคสตกค้างและจุดน้ำลดระดับ' },
+  '2026-10-03': { label: '3 ต.ค. 2569 (เสาร์)', dailyResolved: 12, cumResolved: 2344, pending: 343, rate: '87.2%', note: 'เก็บตกรอบสัปดาห์แรก คลี่คลายได้ 87.2%' },
+  '2026-10-05': { label: '5 ต.ค. 2569 (จันทร์)', dailyResolved: 21, cumResolved: 2365, pending: 322, rate: '88.0%', note: 'เริ่มรอบสัปดาห์ใหม่ เข้าพื้นที่จุดน้ำท่วมเดิมซ้ำ' },
+  '2026-10-06': { label: '6 ต.ค. 2569 (อังคาร)', dailyResolved: 14, cumResolved: 2379, pending: 308, rate: '88.5%', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 88.5%' },
+  '2026-10-07': { label: '7 ต.ค. 2569 (ปัจจุบัน)', dailyResolved: 8, cumResolved: 2387, pending: 300, rate: '88.8%', note: 'สถานะปัจจุบัน คงเหลือกลุ่มน้ำท่วมลึกและโอนงานที่กำลังติดตามประสานงาน' }
+};
+
+AppState.currentDailyModalDate = '2026-09-28';
+AppState.currentDailyModalItems = [];
+
+function openDailyDetailModal(dateStr, dateLabel) {
+  AppState.currentDailyModalDate = dateStr;
+  const modal = document.getElementById('dailyDetailModal');
+  if (!modal) return;
+
+  const metric = DAILY_METRICS_INFO[dateStr] || {
+    label: dateLabel || dateStr,
+    dailyResolved: 0,
+    cumResolved: 0,
+    pending: 0,
+    rate: '-',
+    note: 'ข้อมูลสรุปการจัดส่งประจำวัน'
+  };
+
+  const titleEl = document.getElementById('dailyDetailModalTitle');
+  const subtitleEl = document.getElementById('dailyDetailModalSubtitle');
+  const dailyResolvedEl = document.getElementById('dailyModalDailyResolved');
+  const cumResolvedEl = document.getElementById('dailyModalCumResolved');
+  const pendingEl = document.getElementById('dailyModalPending');
+  const rateEl = document.getElementById('dailyModalRate');
+
+  if (titleEl) titleEl.textContent = `📊 รายละเอียดรอบส่งประจำวัน: ${metric.label}`;
+  if (subtitleEl) subtitleEl.textContent = metric.note;
+  if (dailyResolvedEl) dailyResolvedEl.textContent = `+${metric.dailyResolved.toLocaleString()} ราย`;
+  if (cumResolvedEl) cumResolvedEl.textContent = `${metric.cumResolved.toLocaleString()} ราย`;
+  if (pendingEl) pendingEl.textContent = `${metric.pending.toLocaleString()} ราย`;
+  if (rateEl) rateEl.textContent = metric.rate;
+
+  // Reset modal filters
+  const searchInput = document.getElementById('dailyModalSearchInput');
+  const branchSelect = document.getElementById('dailyModalBranchSelect');
+  if (searchInput) searchInput.value = '';
+  if (branchSelect) branchSelect.value = 'ALL';
+
+  // Gather members for this date
+  AppState.currentDailyModalItems = extractMembersForDailyModal(dateStr);
+  filterDailyModalList();
+
+  modal.classList.add('active');
+}
+window.openDailyDetailModal = openDailyDetailModal;
+
+function extractMembersForDailyModal(dateStr) {
+  const [y, m, d] = dateStr.split('-');
+  const thaiYear = parseInt(y, 10) + 543;
+  const shortDateThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${thaiYear}`;
+  const shortDateAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
+  const shortDayMonth = `${parseInt(d, 10)}/${parseInt(m, 10)}`;
+
+  const allCrisis = [...(AppState.dataStore.pending || []), ...(AppState.dataStore.resolved || [])];
+
+  let matchedItems = [];
+
+  allCrisis.forEach(item => {
+    const history = item.history || '';
+    const steps = history.split('➔').map(s => s.trim());
+    let stepForDate = steps.find(s => s.startsWith(shortDateThai) || s.startsWith(shortDateAd) || s.startsWith(shortDayMonth));
+
+    let matched = false;
+    let dayReason = '';
+
+    if (stepForDate) {
+      matched = true;
+      const match = stepForDate.match(/\[(.*?)\]/);
+      dayReason = match ? match[1] : stepForDate;
+    } else if (item.lastDateIso && item.lastDateIso.startsWith(dateStr)) {
+      matched = true;
+      dayReason = item.lastReason || item.resolvedReason || 'ส่งสำเร็จ';
+    } else if (item.lastDate && (item.lastDate === shortDateThai || item.lastDate === shortDateAd)) {
+      matched = true;
+      dayReason = item.lastReason || item.resolvedReason || 'ส่งสำเร็จ';
+    }
+
+    if (matched) {
+      const isFlood = dayReason.includes('น้ำท่วม') || dayReason.includes('รอน้ำลด');
+      const isTransfer = dayReason.includes('โอนงาน') || dayReason.includes('เลื่อนวันที่ส่ง') || dayReason.includes('ข้อผิดพลาด');
+      const isSuccess = dayReason.includes('ปกติ') || dayReason.includes('ตั้งถัง') || dayReason.includes('สำเร็จ') || dayReason.includes('ส่งแล้ว');
+
+      let statusBadgeHtml = isSuccess
+        ? `<span class="badge badge-success">ส่งสำเร็จ</span>`
+        : (isTransfer ? `<span class="badge badge-purple">โอนงาน / เลื่อนส่ง</span>` : `<span class="badge badge-danger">น้ำท่วมสูง</span>`);
+
+      matchedItems.push({
+        memberId: item.memberId,
+        name: item.name,
+        branch: item.branch,
+        truck: item.truck,
+        address: item.address,
+        attemptsCount: item.attemptsCount,
+        dayReason: dayReason || (isSuccess ? 'จัดส่งสำเร็จ' : 'น้ำท่วมสูงในพื้นที่'),
+        statusBadgeHtml,
+        history: item.history
+      });
+    }
+  });
+
+  // Fallback: If no explicit date attempt records (e.g. current day 7 Oct or 3 Oct), show active pending & resolved cohort
+  if (matchedItems.length === 0 && allCrisis.length > 0) {
+    const cohort = (AppState.dataStore.pending && AppState.dataStore.pending.length > 0)
+      ? AppState.dataStore.pending.slice(0, 100)
+      : allCrisis.slice(0, 100);
+
+    matchedItems = cohort.map(item => {
+      const isPending = !!item.pendingCategory;
+      const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
+      const statusBadgeHtml = isPending
+        ? `<span class="badge ${isTransfer ? 'badge-purple' : 'badge-danger'}">${item.pendingCategory || 'น้ำท่วม'}</span>`
+        : `<span class="badge badge-success">ส่งสำเร็จ</span>`;
+
+      return {
+        memberId: item.memberId,
+        name: item.name,
+        branch: item.branch,
+        truck: item.truck,
+        address: item.address,
+        attemptsCount: item.attemptsCount,
+        dayReason: item.lastReason || item.resolvedReason || 'ติดตามการจัดส่ง',
+        statusBadgeHtml,
+        history: item.history
+      };
+    });
+  }
+
+  return matchedItems;
+}
+
+function filterDailyModalList() {
+  const tbody = document.getElementById('dailyModalTableBody');
+  const countEl = document.getElementById('dailyModalItemCount');
+  if (!tbody) return;
+
+  const searchInput = document.getElementById('dailyModalSearchInput');
+  const branchSelect = document.getElementById('dailyModalBranchSelect');
+
+  const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+  const branch = branchSelect ? branchSelect.value : 'ALL';
+
+  const items = AppState.currentDailyModalItems || [];
+
+  const filtered = items.filter(item => {
+    if (branch !== 'ALL' && item.branch !== branch) return false;
+    if (query) {
+      const str = `${item.memberId} ${item.name} ${item.branch} ${item.truck} ${item.address} ${item.dayReason}`.toLowerCase();
+      if (!str.includes(query)) return false;
+    }
+    return true;
+  });
+
+  if (countEl) countEl.textContent = `แสดง ${filtered.length.toLocaleString()} รายการ (จากทั้งหมด ${items.length.toLocaleString()} รายการของวันนี้)`;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" class="text-center py-8 text-slate-400 font-semibold">
+          ไม่พบรายการข้อมูลตามเงื่อนไขที่ค้นหา
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filtered.slice(0, 100).map(item => {
+    return `
+      <tr>
+        <td class="font-bold text-slate-800 font-mono">#${item.memberId}</td>
+        <td>
+          <div class="font-semibold text-slate-900">${item.name}</div>
+          <div class="text-[11px] text-slate-500 truncate max-w-xs">${item.address || '-'}</div>
+        </td>
+        <td><span class="font-medium text-slate-700">${item.branch}</span></td>
+        <td><span class="font-mono text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">${item.truck || '-'}</span></td>
+        <td>
+          <div class="text-xs text-slate-800 font-medium">${item.dayReason}</div>
+          <div class="text-[11px] text-slate-400">เข้าส่งรวม ${item.attemptsCount} ครั้ง</div>
+        </td>
+        <td>${item.statusBadgeHtml}</td>
+        <td class="text-right">
+          <button onclick="viewMemberHistory('${item.memberId}')" class="px-2.5 py-1 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1">
+            <span>ไทม์ไลน์</span>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  if (filtered.length > 100) {
+    tbody.innerHTML += `
+      <tr class="bg-slate-50">
+        <td colspan="7" class="text-center py-2 text-xs text-slate-500 font-semibold">
+          ... แสดง 100 รายการแรก หากต้องการดูข้อมูลทั้งหมดหรือกรองละเอียด กด "⚙️ ดูข้อมูลในหน้า Admin" ด้านบน ...
+        </td>
+      </tr>
+    `;
+  }
+}
+window.filterDailyModalList = filterDailyModalList;
+
+function goToAdminFromDailyModal() {
+  const dateStr = AppState.currentDailyModalDate;
+  closeModal();
+  switchPage('page-admin');
+  const dateInput = document.getElementById('adminDateInput');
+  if (dateInput && dateStr) {
+    dateInput.value = dateStr;
+    AppState.adminDateFilter = dateStr;
+    if (typeof loadAdminOrders === 'function') {
+      loadAdminOrders(1);
+    }
+  }
+}
+window.goToAdminFromDailyModal = goToAdminFromDailyModal;
+
+function goToMapFromDailyModal() {
+  closeModal();
+  switchPage('page-pending-map');
+}
+window.goToMapFromDailyModal = goToMapFromDailyModal;
+
+function exportDailyModalCsv() {
+  const items = AppState.currentDailyModalItems || [];
+  if (items.length === 0) return alert('ไม่มีข้อมูลสำหรับส่งออก CSV');
+
+  const dateStr = AppState.currentDailyModalDate || 'export';
+  let csv = '\uFEFFรหัสสมาชิก,ชื่อลูกค้า,สาขา,สายรถ,ที่อยู่,จำนวนครั้งเข้าส่ง,ผลการส่งวันนี้,ประวัติ\n';
+  items.forEach(item => {
+    const reason = (item.dayReason || '').replace(/"/g, '""');
+    const addr = (item.address || '').replace(/"/g, '""');
+    const hist = (item.history || '').replace(/"/g, '""');
+    csv += `"${item.memberId}","${item.name}","${item.branch}","${item.truck}","${addr}",${item.attemptsCount},"${reason}","${hist}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `daily_orders_${dateStr}.csv`;
+  a.click();
+}
+window.exportDailyModalCsv = exportDailyModalCsv;
+
+// ==========================================
 // 8. Page 6: Admin Management & Supabase Selection Delete
 // ==========================================
 function initAdmin() {
@@ -927,6 +1361,8 @@ function initAdmin() {
   // --- Admin Data Table Controls ---
   const searchInput = document.getElementById('adminSearchInput');
   const branchSelect = document.getElementById('adminBranchSelect');
+  const dateInput = document.getElementById('adminDateInput');
+  const truckInput = document.getElementById('adminTruckInput');
   const statusSelect = document.getElementById('adminStatusSelect');
   const masterCheckbox = document.getElementById('adminMasterCheckbox');
   const btnSelectAll = document.getElementById('btnAdminSelectAll');
@@ -934,24 +1370,49 @@ function initAdmin() {
   const btnDeleteSelected = document.getElementById('btnAdminDeleteSelected');
   const btnConfirmDelete = document.getElementById('btnConfirmDeleteSupabase');
 
+  let adminDebounce = null;
+
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
-      AppState.adminSearchQuery = e.target.value.trim().toLowerCase();
-      applyAdminFilters();
+      clearTimeout(adminDebounce);
+      adminDebounce = setTimeout(() => {
+        AppState.adminSearchQuery = e.target.value.trim().toLowerCase();
+        AppState.adminCurrentPage = 1;
+        loadAdminOrders();
+      }, 300);
     });
   }
 
   if (branchSelect) {
     branchSelect.addEventListener('change', (e) => {
       AppState.adminBranchFilter = e.target.value;
-      applyAdminFilters();
+      AppState.adminCurrentPage = 1;
+      loadAdminOrders();
+    });
+  }
+
+  if (dateInput) {
+    dateInput.addEventListener('change', (e) => {
+      setAdminDateFilter(e.target.value);
+    });
+  }
+
+  if (truckInput) {
+    truckInput.addEventListener('input', (e) => {
+      clearTimeout(adminDebounce);
+      adminDebounce = setTimeout(() => {
+        AppState.adminTruckFilter = e.target.value.trim();
+        AppState.adminCurrentPage = 1;
+        loadAdminOrders();
+      }, 300);
     });
   }
 
   if (statusSelect) {
     statusSelect.addEventListener('change', (e) => {
       AppState.adminStatusFilter = e.target.value;
-      applyAdminFilters();
+      AppState.adminCurrentPage = 1;
+      loadAdminOrders();
     });
   }
 
@@ -1025,132 +1486,325 @@ function handleAdminFile(file) {
   }
 }
 
-// Fetch orders for Admin Table from Supabase Cloud (with fallback)
-async function loadAdminOrders() {
-  const tbody = document.getElementById('adminOrdersTableBody');
-  if (tbody) {
-    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400 font-semibold"><span class="live-pulse inline-block mr-2"></span>กำลังโหลดข้อมูลจาก Supabase Cloud...</td></tr>`;
-  }
-
+function formatThaiDateTime(dateStr) {
+  if (!dateStr) return '-';
   try {
-    const resp = await fetch(
-      `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=id,order_code,member_id,customer_name,branch,truck_number,status,reason,delivery_date,address&order=id.desc&limit=300`,
-      {
-        headers: {
-          'apikey': SUPABASE_CONFIG.anonKey,
-          'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
-        }
-      }
-    );
-    if (resp.ok) {
-      const data = await resp.json();
-      if (Array.isArray(data) && data.length > 0) {
-        AppState.adminOrders = data;
-        applyAdminFilters();
-        return;
-      }
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
+    const dateFormatted = d.toLocaleDateString('th-TH', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    });
+    const hours = String(d.getUTCHours()).padStart(2, '0');
+    const mins = String(d.getUTCMinutes()).padStart(2, '0');
+    // Check if time is non-zero
+    if (hours !== '00' || mins !== '00') {
+      // Local Thai time representation
+      const localH = String(d.getHours()).padStart(2, '0');
+      const localM = String(d.getMinutes()).padStart(2, '0');
+      return `${dateFormatted} ${localH}:${localM} น.`;
     }
-  } catch (err) {
-    console.warn('Supabase fetch failed, falling back to local dataset:', err);
+    return dateFormatted;
+  } catch (e) {
+    return String(dateStr).substring(0, 10);
+  }
+}
+window.formatThaiDateTime = formatThaiDateTime;
+
+function setAdminDateMode(mode) {
+  AppState.adminDateMode = mode;
+  const singleContainer = document.getElementById('adminSingleDateContainer');
+  const rangeContainer = document.getElementById('adminRangeDateContainer');
+  const btnSingle = document.getElementById('btnAdminDateModeSingle');
+  const btnRange = document.getElementById('btnAdminDateModeRange');
+
+  if (mode === 'single') {
+    if (singleContainer) singleContainer.classList.remove('hidden');
+    if (rangeContainer) rangeContainer.classList.add('hidden');
+    if (btnSingle) btnSingle.className = 'font-bold text-blue-600 underline';
+    if (btnRange) btnRange.className = 'text-slate-500 hover:text-slate-800';
+  } else {
+    if (singleContainer) singleContainer.classList.add('hidden');
+    if (rangeContainer) rangeContainer.classList.remove('hidden');
+    if (btnSingle) btnSingle.className = 'text-slate-500 hover:text-slate-800';
+    if (btnRange) btnRange.className = 'font-bold text-blue-600 underline';
   }
 
-  // Fallback: Populate from local data store if cloud fetch is restricted or offline
-  const fallback = [];
-  let synthId = 10001;
-  (AppState.dataStore.pending || []).forEach(p => {
-    fallback.push({
-      id: p.id || synthId++,
-      order_code: p.order_code || synthId,
-      member_id: p.memberId || 'N/A',
-      customer_name: p.name || 'สมาชิกทั่วไป',
-      branch: p.branch || 'สาขารามอินทรา',
-      truck_number: p.truck || '-',
-      status: p.pendingCategory || 'ค้างส่งน้ำท่วม',
-      reason: p.lastReason || 'น้ำท่วมสูงไม่สามารถส่งได้',
-      delivery_date: '2026-09-26',
-      address: p.address || '-'
-    });
-  });
-  (AppState.dataStore.resolved || []).slice(0, 100).forEach(r => {
-    fallback.push({
-      id: r.id || synthId++,
-      order_code: r.order_code || synthId,
-      member_id: r.memberId || 'N/A',
-      customer_name: r.name || 'สมาชิกทั่วไป',
-      branch: r.branch || 'สาขากรุงเทพกรีฑา',
-      truck_number: r.truck || '-',
-      status: 'ส่งสำเร็จ',
-      reason: r.resolvedReason || 'ส่งสำเร็จตรงรอบ',
-      delivery_date: '2026-10-02',
-      address: r.address || '-'
-    });
-  });
-
-  AppState.adminOrders = fallback;
-  applyAdminFilters();
+  AppState.adminCurrentPage = 1;
+  loadAdminOrders();
 }
+window.setAdminDateMode = setAdminDateMode;
 
-function applyAdminFilters() {
-  const q = AppState.adminSearchQuery || '';
-  const branch = AppState.adminBranchFilter || 'ALL';
-  const status = AppState.adminStatusFilter || 'ALL';
+function setAdminDateRangePreset(start, end) {
+  AppState.adminDateMode = 'range';
+  AppState.adminStartDate = start;
+  AppState.adminEndDate = end;
 
-  AppState.adminFilteredOrders = (AppState.adminOrders || []).filter(item => {
-    // Search query matching
-    if (q) {
-      const matchMember = (item.member_id || '').toLowerCase().includes(q);
-      const matchName = (item.customer_name || '').toLowerCase().includes(q);
-      const matchTruck = (item.truck_number || '').toLowerCase().includes(q);
-      const matchAddr = (item.address || '').toLowerCase().includes(q);
-      const matchReason = (item.reason || '').toLowerCase().includes(q);
-      if (!matchMember && !matchName && !matchTruck && !matchAddr && !matchReason) {
-        return false;
-      }
+  const singleContainer = document.getElementById('adminSingleDateContainer');
+  const rangeContainer = document.getElementById('adminRangeDateContainer');
+  const sInput = document.getElementById('adminStartDateInput');
+  const eInput = document.getElementById('adminEndDateInput');
+  const btnSingle = document.getElementById('btnAdminDateModeSingle');
+  const btnRange = document.getElementById('btnAdminDateModeRange');
+
+  if (singleContainer) singleContainer.classList.add('hidden');
+  if (rangeContainer) rangeContainer.classList.remove('hidden');
+  if (btnSingle) btnSingle.className = 'text-slate-500 hover:text-slate-800';
+  if (btnRange) btnRange.className = 'font-bold text-blue-600 underline';
+  if (sInput) sInput.value = start;
+  if (eInput) eInput.value = end;
+
+  document.querySelectorAll('.admin-date-chip').forEach(chip => {
+    if (chip.textContent.includes('รอบวิกฤต')) {
+      chip.className = 'admin-date-chip px-2.5 py-1 rounded-md bg-blue-600 text-white font-bold shadow-xs';
+    } else {
+      chip.className = 'admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs';
     }
-
-    // Branch filter
-    if (branch !== 'ALL' && item.branch !== branch) {
-      return false;
-    }
-
-    // Status filter
-    if (status !== 'ALL') {
-      const itemStatus = (item.status || '') + ' ' + (item.reason || '');
-      if (status === 'โอนงานสิ้นวัน' && !itemStatus.includes('โอนงาน')) return false;
-      if (status === 'น้ำท่วม' && !itemStatus.includes('น้ำท่วม')) return false;
-      if (status === 'ส่งสำเร็จ' && !itemStatus.includes('สำเร็จ') && !itemStatus.includes('ปกติ') && !itemStatus.includes('ตั้งถัง')) return false;
-    }
-
-    return true;
   });
 
   AppState.adminCurrentPage = 1;
-  const countEl = document.getElementById('adminFilteredCount');
-  if (countEl) countEl.textContent = AppState.adminFilteredOrders.length.toLocaleString();
+  loadAdminOrders();
+}
+window.setAdminDateRangePreset = setAdminDateRangePreset;
 
-  renderAdminTable();
+function setAdminDateFilter(dateStr) {
+  AppState.adminDateFilter = dateStr;
+  const dateInput = document.getElementById('adminDateInput');
+  if (dateInput) dateInput.value = dateStr;
+
+  // Highlight active chip
+  document.querySelectorAll('.admin-date-chip').forEach(chip => {
+    const chipText = chip.textContent.trim();
+    if ((!dateStr && chipText === 'ทุกวัน') || (dateStr && chip.getAttribute('onclick')?.includes(dateStr))) {
+      chip.className = 'admin-date-chip px-2.5 py-1 rounded-md bg-blue-600 text-white font-bold shadow-xs';
+    } else {
+      chip.className = 'admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs';
+    }
+  });
+
+  AppState.adminCurrentPage = 1;
+  loadAdminOrders();
+}
+window.setAdminDateFilter = setAdminDateFilter;
+
+function resetAdminFilters() {
+  AppState.adminSearchQuery = '';
+  AppState.adminBranchFilter = 'ALL';
+  AppState.adminDateMode = 'single';
+  AppState.adminDateFilter = '';
+  AppState.adminStartDate = '';
+  AppState.adminEndDate = '';
+  AppState.adminTruckFilter = '';
+  AppState.adminStatusFilter = 'ALL';
+  AppState.adminCurrentPage = 1;
+
+  if (document.getElementById('adminSearchInput')) document.getElementById('adminSearchInput').value = '';
+  if (document.getElementById('adminBranchSelect')) document.getElementById('adminBranchSelect').value = 'ALL';
+  if (document.getElementById('adminDateInput')) document.getElementById('adminDateInput').value = '';
+  if (document.getElementById('adminStartDateInput')) document.getElementById('adminStartDateInput').value = '';
+  if (document.getElementById('adminEndDateInput')) document.getElementById('adminEndDateInput').value = '';
+  if (document.getElementById('adminTruckInput')) document.getElementById('adminTruckInput').value = '';
+  if (document.getElementById('adminStatusSelect')) document.getElementById('adminStatusSelect').value = 'ALL';
+
+  setAdminDateMode('single');
+
+  document.querySelectorAll('.admin-date-chip').forEach(chip => {
+    if (chip.textContent.trim() === 'ทุกวัน') {
+      chip.className = 'admin-date-chip px-2.5 py-1 rounded-md bg-blue-600 text-white font-bold shadow-xs';
+    } else {
+      chip.className = 'admin-date-chip px-2.5 py-1 rounded-md bg-white border border-slate-300 font-semibold text-slate-700 hover:bg-blue-50 hover:text-blue-700 shadow-2xs';
+    }
+  });
+
+  loadAdminOrders();
+}
+window.resetAdminFilters = resetAdminFilters;
+
+// Fetch orders for Admin Table directly from Supabase Cloud (Live across all 72,170+ rows)
+async function loadAdminOrders() {
+  const tbody = document.getElementById('adminOrdersTableBody');
+  const countEl = document.getElementById('adminFilteredCount');
+  const totalCountEl = document.getElementById('adminTotalRowCount');
+
+  if (tbody) {
+    tbody.innerHTML = `<tr><td colspan="8" class="text-center py-10 text-slate-500 font-semibold"><span class="live-pulse inline-block mr-2"></span>กำลังเชื่อมต่อและดึงข้อมูลสดจาก Supabase Cloud (72,170+ รายการ)...</td></tr>`;
+  }
+
+  const q = (AppState.adminSearchQuery || '').trim();
+  const branch = AppState.adminBranchFilter || 'ALL';
+  const date = (AppState.adminDateFilter || '').trim();
+  const truck = (AppState.adminTruckFilter || '').trim();
+  const status = AppState.adminStatusFilter || 'ALL';
+  const page = AppState.adminCurrentPage || 1;
+  const pageSize = AppState.adminPageSize || 25;
+  const startIdx = (page - 1) * pageSize;
+  const endIdx = startIdx + pageSize - 1;
+
+  try {
+    let url = `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=id,order_code,member_id,customer_name,branch,truck_number,status,reason,delivery_date,address,is_transferred,round&order=delivery_date.desc.nullslast,id.desc`;
+
+    if (branch !== 'ALL') {
+      url += `&branch=eq.${encodeURIComponent(branch)}`;
+    }
+    if (truck) {
+      url += `&truck_number=ilike.*${encodeURIComponent(truck)}*`;
+    }
+    if (AppState.adminDateMode === 'single' && date) {
+      url += `&delivery_date=gte.${encodeURIComponent(date)}T00:00:00%2B00:00&delivery_date=lte.${encodeURIComponent(date)}T23:59:59%2B00:00`;
+    } else if (AppState.adminDateMode === 'range') {
+      const sDate = AppState.adminStartDate || (document.getElementById('adminStartDateInput')?.value || '');
+      const eDate = AppState.adminEndDate || (document.getElementById('adminEndDateInput')?.value || '');
+      if (sDate) {
+        url += `&delivery_date=gte.${encodeURIComponent(sDate)}T00:00:00%2B00:00`;
+      }
+      if (eDate) {
+        url += `&delivery_date=lte.${encodeURIComponent(eDate)}T23:59:59%2B00:00`;
+      }
+    }
+    if (status === 'โอนงานสิ้นวัน') {
+      url += `&or=(is_transferred.eq.true,reason.ilike.*โอนงาน*,status.ilike.*โอนงาน*,round.ilike.*โอนงาน*)`;
+    } else if (status === 'น้ำท่วม') {
+      url += `&or=(reason.ilike.*น้ำท่วม*,status.ilike.*น้ำท่วม*,status.ilike.*รอน้ำลด*)`;
+    } else if (status === 'ส่งสำเร็จ') {
+      url += `&or=(status.ilike.*สำเร็จ*,status.ilike.*ปกติ*,reason.ilike.*ตั้งถัง*,reason.ilike.*พบลูกค้า*)`;
+    }
+    if (q) {
+      url += `&or=(member_id.ilike.*${encodeURIComponent(q)}*,customer_name.ilike.*${encodeURIComponent(q)}*,truck_number.ilike.*${encodeURIComponent(q)}*,address.ilike.*${encodeURIComponent(q)}*,reason.ilike.*${encodeURIComponent(q)}*)`;
+    }
+
+    const resp = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+        'Prefer': 'count=exact',
+        'Range-Unit': 'items',
+        'Range': `${startIdx}-${endIdx}`
+      }
+    });
+
+    if (resp.ok) {
+      const data = await resp.json();
+      const contentRange = resp.headers.get('content-range');
+      let total = 0;
+      if (contentRange && contentRange.includes('/')) {
+        total = parseInt(contentRange.split('/')[1], 10) || 0;
+      } else {
+        total = data.length;
+      }
+
+      AppState.adminOrders = data;
+      AppState.adminFilteredOrders = data;
+      AppState.adminTotalFilteredCount = total;
+
+      if (countEl) countEl.textContent = total.toLocaleString();
+      renderAdminTable(data, total, page, pageSize);
+      return;
+    }
+  } catch (err) {
+    console.warn('Live Supabase query error, falling back to local dataset:', err);
+  }
+
+  // Fallback to local store filtering
+  applyAdminLocalFilters();
+}
+window.loadAdminOrders = loadAdminOrders;
+
+function applyAdminLocalFilters() {
+  const q = (AppState.adminSearchQuery || '').toLowerCase();
+  const branch = AppState.adminBranchFilter || 'ALL';
+  const date = AppState.adminDateFilter || '';
+  const truck = (AppState.adminTruckFilter || '').toLowerCase();
+  const status = AppState.adminStatusFilter || 'ALL';
+
+  if (!AppState.adminLocalAllOrders || AppState.adminLocalAllOrders.length === 0) {
+    const fallback = [];
+    let synthId = 10001;
+    (AppState.dataStore.pending || []).forEach(p => {
+      fallback.push({
+        id: p.id || synthId++,
+        order_code: p.order_code || synthId,
+        member_id: p.memberId || 'N/A',
+        customer_name: p.name || 'สมาชิกทั่วไป',
+        branch: p.branch || 'สาขารามอินทรา',
+        truck_number: p.truck || '-',
+        status: p.pendingCategory || 'ค้างส่งน้ำท่วม',
+        reason: p.lastReason || 'น้ำท่วมสูงไม่สามารถส่งได้',
+        delivery_date: p.lastDateIso || '2026-09-28T07:45:00+00:00',
+        address: p.address || '-'
+      });
+    });
+    (AppState.dataStore.resolved || []).forEach(r => {
+      fallback.push({
+        id: r.id || synthId++,
+        order_code: r.order_code || synthId,
+        member_id: r.memberId || 'N/A',
+        customer_name: r.name || 'สมาชิกทั่วไป',
+        branch: r.branch || 'สาขากรุงเทพกรีฑา',
+        truck_number: r.truck || '-',
+        status: 'ส่งสำเร็จ',
+        reason: r.resolvedReason || 'ลูกค้าตั้งถัง',
+        delivery_date: r.resolvedDateIso || '2026-10-03T11:53:00+00:00',
+        address: r.address || '-'
+      });
+    });
+    AppState.adminLocalAllOrders = fallback;
+  }
+
+  const filtered = (AppState.adminLocalAllOrders || []).filter(item => {
+    if (q) {
+      const match = (item.member_id || '').toLowerCase().includes(q) ||
+                    (item.customer_name || '').toLowerCase().includes(q) ||
+                    (item.truck_number || '').toLowerCase().includes(q) ||
+                    (item.address || '').toLowerCase().includes(q) ||
+                    (item.reason || '').toLowerCase().includes(q);
+      if (!match) return false;
+    }
+    if (branch !== 'ALL' && item.branch !== branch) return false;
+    if (truck && !(item.truck_number || '').toLowerCase().includes(truck)) return false;
+    if (date && !(item.delivery_date || '').startsWith(date)) return false;
+    if (status !== 'ALL') {
+      const st = (item.status || '') + ' ' + (item.reason || '');
+      if (status === 'โอนงานสิ้นวัน' && !st.includes('โอนงาน')) return false;
+      if (status === 'น้ำท่วม' && !st.includes('น้ำท่วม')) return false;
+      if (status === 'ส่งสำเร็จ' && !st.includes('สำเร็จ') && !st.includes('ปกติ') && !st.includes('ตั้งถัง')) return false;
+    }
+    return true;
+  });
+
+  const total = filtered.length;
+  const pageSize = AppState.adminPageSize || 25;
+  const page = AppState.adminCurrentPage || 1;
+  const start = (page - 1) * pageSize;
+  const pageItems = filtered.slice(start, start + pageSize);
+
+  AppState.adminFilteredOrders = pageItems;
+  AppState.adminTotalFilteredCount = total;
+
+  const countEl = document.getElementById('adminFilteredCount');
+  if (countEl) countEl.textContent = total.toLocaleString();
+
+  renderAdminTable(pageItems, total, page, pageSize);
 }
 
-function renderAdminTable() {
+function renderAdminTable(items, totalCount, page, pageSize) {
   const tbody = document.getElementById('adminOrdersTableBody');
   if (!tbody) return;
 
-  const total = AppState.adminFilteredOrders.length;
-  const pageSize = AppState.adminPageSize || 20;
-  const totalPages = Math.ceil(total / pageSize) || 1;
-  AppState.adminCurrentPage = Math.min(Math.max(1, AppState.adminCurrentPage), totalPages);
+  const total = totalCount !== undefined ? totalCount : AppState.adminFilteredOrders.length;
+  const size = pageSize || AppState.adminPageSize || 25;
+  const curPage = page || AppState.adminCurrentPage || 1;
+  const totalPages = Math.ceil(total / size) || 1;
 
-  const startIdx = (AppState.adminCurrentPage - 1) * pageSize;
-  const endIdx = startIdx + pageSize;
-  const pageItems = AppState.adminFilteredOrders.slice(startIdx, endIdx);
+  const pageItems = items || AppState.adminFilteredOrders;
 
-  if (pageItems.length === 0) {
+  if (!pageItems || pageItems.length === 0) {
     tbody.innerHTML = `
       <tr>
         <td colspan="8" class="text-center py-10 text-slate-400">
           <div class="text-2xl mb-1">🔍</div>
-          <div class="font-semibold text-sm">ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา</div>
-          <p class="text-xs text-slate-400 mt-1">ลองปรับเปลี่ยนคำค้นหาหรือตัวกรองสาขา/สถานะ</p>
+          <div class="font-semibold text-sm">ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหาใน Supabase</div>
+          <p class="text-xs text-slate-400 mt-1">ลองปรับเปลี่ยนคำค้นหา วันที่ส่ง เบอร์รถ หรือตัวกรองสาขา/สถานะ</p>
         </td>
       </tr>
     `;
@@ -1162,16 +1816,16 @@ function renderAdminTable() {
   let html = '';
   pageItems.forEach(item => {
     const isChecked = AppState.adminSelectedIds.has(item.id);
-    const dateFormatted = item.delivery_date ? (item.delivery_date.substring(0, 10)) : '-';
+    const formattedDate = formatThaiDateTime(item.delivery_date);
 
     // Status Badge determination
     let statusBadge = '<span class="badge badge-success">ส่งสำเร็จ</span>';
-    const statusText = (item.status || '') + ' ' + (item.reason || '');
+    const statusText = (item.status || '') + ' ' + (item.reason || '') + ' ' + (item.round || '');
     if (statusText.includes('น้ำท่วม')) {
       statusBadge = '<span class="badge badge-danger">น้ำท่วมสูง</span>';
-    } else if (statusText.includes('โอนงาน')) {
+    } else if (item.is_transferred || statusText.includes('โอนงาน')) {
       statusBadge = '<span class="badge badge-purple">โอนงานสิ้นวัน</span>';
-    } else if (statusText.includes('ติดตาม')) {
+    } else if (statusText.includes('ติดตาม') || statusText.includes('ไม่สามารถ')) {
       statusBadge = '<span class="badge badge-warning">ติดตามปัญหา</span>';
     }
 
@@ -1180,20 +1834,20 @@ function renderAdminTable() {
         <td class="text-center">
           <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleAdminRowSelect(${item.id}, this.checked)" class="admin-row-chk w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
         </td>
-        <td class="font-mono text-xs font-bold text-blue-700">${item.member_id || '-'}</td>
+        <td class="font-mono text-xs font-bold text-blue-700">#${item.member_id || '-'}</td>
         <td>
           <div class="font-bold text-slate-900 text-xs">${item.customer_name || 'ไม่ระบุชื่อ'}</div>
           <div class="text-[11px] text-slate-400 truncate max-w-xs" title="${item.address || ''}">${item.address || '-'}</div>
         </td>
         <td><span class="text-xs text-slate-700 font-semibold">${item.branch || '-'}</span></td>
-        <td><span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-700">${item.truck_number || '-'}</span></td>
+        <td><span class="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200">${item.truck_number || '-'}</span></td>
+        <td class="text-xs font-semibold text-slate-700 whitespace-nowrap">${formattedDate}</td>
         <td>
           <div class="flex flex-col gap-0.5">
             <div>${statusBadge}</div>
-            <div class="text-[11px] text-slate-500 truncate max-w-[180px]" title="${item.reason || ''}">${item.reason || '-'}</div>
+            <div class="text-[11px] text-slate-500 truncate max-w-[180px]" title="${item.reason || ''}">${item.reason || item.status || '-'}</div>
           </div>
         </td>
-        <td class="text-xs text-slate-500 whitespace-nowrap">${dateFormatted}</td>
         <td class="text-center">
           <div class="flex items-center justify-center gap-1.5">
             <button type="button" onclick="openAdminEditModal(${item.id})" title="แก้ไขข้อมูลออเดอร์นี้" class="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold transition inline-flex items-center justify-center">
@@ -1224,10 +1878,7 @@ function toggleAdminRowSelect(id, checked) {
 window.toggleAdminRowSelect = toggleAdminRowSelect;
 
 function toggleAdminSelectAllOnPage(checked) {
-  const pageSize = AppState.adminPageSize || 20;
-  const startIdx = (AppState.adminCurrentPage - 1) * pageSize;
-  const endIdx = startIdx + pageSize;
-  const pageItems = AppState.adminFilteredOrders.slice(startIdx, endIdx);
+  const pageItems = AppState.adminOrders || [];
 
   pageItems.forEach(item => {
     if (checked) {
@@ -1237,13 +1888,17 @@ function toggleAdminSelectAllOnPage(checked) {
     }
   });
 
-  renderAdminTable();
+  const total = AppState.adminTotalFilteredCount || pageItems.length;
+  const totalPages = Math.ceil(total / AppState.adminPageSize) || 1;
+  renderAdminTable(pageItems, total, AppState.adminCurrentPage, AppState.adminPageSize);
 }
 window.toggleAdminSelectAllOnPage = toggleAdminSelectAllOnPage;
 
 function clearAdminSelection() {
   AppState.adminSelectedIds.clear();
-  renderAdminTable();
+  const pageItems = AppState.adminOrders || [];
+  const total = AppState.adminTotalFilteredCount || pageItems.length;
+  renderAdminTable(pageItems, total, AppState.adminCurrentPage, AppState.adminPageSize);
 }
 window.clearAdminSelection = clearAdminSelection;
 
@@ -1262,11 +1917,7 @@ function updateAdminSelectionUI() {
 
   // Update master checkbox state
   if (masterBox) {
-    const pageSize = AppState.adminPageSize || 20;
-    const startIdx = (AppState.adminCurrentPage - 1) * pageSize;
-    const endIdx = startIdx + pageSize;
-    const pageItems = AppState.adminFilteredOrders.slice(startIdx, endIdx);
-
+    const pageItems = AppState.adminOrders || [];
     if (pageItems.length === 0) {
       masterBox.checked = false;
       masterBox.indeterminate = false;
@@ -1295,7 +1946,7 @@ function renderAdminPagination(totalItems, totalPages) {
   container.innerHTML = `
     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 py-3 text-xs text-slate-500">
       <div>
-        แสดงรายการที่ <strong class="text-slate-700">${startItem.toLocaleString()}</strong> ถึง <strong class="text-slate-700">${endItem.toLocaleString()}</strong> จากทั้งหมด <strong class="text-slate-700">${totalItems.toLocaleString()}</strong> รายการ
+        แสดงรายการที่ <strong class="text-slate-700">${startItem.toLocaleString()}</strong> ถึง <strong class="text-slate-700">${endItem.toLocaleString()}</strong> จากทั้งหมด <strong class="text-blue-700 font-bold">${totalItems.toLocaleString()}</strong> รายการใน Supabase
       </div>
       <div class="flex items-center gap-1">
         <button onclick="setAdminPage(1)" ${cur === 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2.5 py-1 rounded bg-slate-100 font-semibold text-slate-700 transition">⇤ แรกสุด</button>
@@ -1309,11 +1960,11 @@ function renderAdminPagination(totalItems, totalPages) {
 }
 
 function setAdminPage(pageNum) {
-  const total = AppState.adminFilteredOrders.length;
+  const total = AppState.adminTotalFilteredCount || AppState.adminFilteredOrders.length;
   const totalPages = Math.ceil(total / AppState.adminPageSize) || 1;
   if (pageNum < 1 || pageNum > totalPages) return;
   AppState.adminCurrentPage = pageNum;
-  renderAdminTable();
+  loadAdminOrders();
 }
 window.setAdminPage = setAdminPage;
 
@@ -1330,10 +1981,10 @@ function openAdminDeleteModal() {
   if (countEl) countEl.textContent = AppState.adminSelectedIds.size.toLocaleString();
 
   if (listEl) {
-    const selectedList = AppState.adminOrders.filter(o => AppState.adminSelectedIds.has(o.id));
+    const selectedList = (AppState.adminOrders || []).filter(o => AppState.adminSelectedIds.has(o.id));
     let itemsHtml = '';
     selectedList.slice(0, 10).forEach(item => {
-      itemsHtml += `<div class="truncate">• ID: <strong>#${item.id}</strong> | รหัสสมาชิก: <strong>${item.member_id}</strong> - ${item.customer_name} (${item.branch})</div>`;
+      itemsHtml += `<div class="truncate">• ID: <strong>#${item.id}</strong> | รหัสสมาชิก: <strong>${item.member_id}</strong> - ${item.customer_name} (${item.branch}) [วันที่: ${formatThaiDateTime(item.delivery_date)}]</div>`;
     });
     if (selectedList.length > 10) {
       itemsHtml += `<div class="text-slate-400 italic">... และอีก ${(selectedList.length - 10).toLocaleString()} รายการ</div>`;
@@ -1383,7 +2034,7 @@ async function executeSupabaseDelete() {
 
     // Success! Update local state
     const deletedCount = idsArray.length;
-    AppState.adminOrders = AppState.adminOrders.filter(o => !AppState.adminSelectedIds.has(o.id));
+    AppState.adminOrders = (AppState.adminOrders || []).filter(o => !AppState.adminSelectedIds.has(o.id));
     AppState.adminSelectedIds.clear();
     AppState.supabaseRowCount = Math.max(0, AppState.supabaseRowCount - deletedCount);
 
@@ -1397,9 +2048,9 @@ async function executeSupabaseDelete() {
     }
 
     closeModal();
-    applyAdminFilters();
+    await loadAdminOrders();
 
-    // Show feedback toast or alert
+    // Show feedback alert
     alert(`✅ ลบข้อมูลสำเร็จจำนวน ${deletedCount.toLocaleString()} รายการ ออกจากฐานข้อมูล Supabase Cloud เรียบร้อยแล้ว`);
   } catch (err) {
     console.error('Delete operation error:', err);
@@ -1636,5 +2287,542 @@ async function saveAdminOrderEdit() {
   }
 }
 window.saveAdminOrderEdit = saveAdminOrderEdit;
+
+// ==========================================
+// 9. Page: Branch & Truck Intelligence Summary
+// ==========================================
+const TRUCK_ZONES = {
+  '16306': 'ชุมชนนักกีฬาแหลมทอง ซ.1-15 / ทับช้าง',
+  '16304': 'หมู่บ้านชาลิสา / กรุงเทพกรีฑา 18-20',
+  '16302': 'สะพานสูง / ถ.นักกีฬาแหลมทอง',
+  '16308': 'เคหะร่มเกล้า / ราษฎร์พัฒนา',
+  '16204': 'ศรีนครินทร์-ร่มเกล้า / กรุงเทพกรีฑาตัดใหม่',
+  '16301': 'พัฒนาการตัดใหม่ / สะพานสูง',
+  '16202': 'หัวหมาก / ลำสาลี',
+  '16303': 'ประชาสุขคอนโด / นักกีฬาแหลมทอง 9',
+  '16305': 'รามคำแหง 118 / สัมมากร',
+  '16102': 'มีนบุรีใต้ / เคหะชุมชน',
+  '13205': 'นิมิตใหม่ / แสนแสบ / มีนบุรี',
+  '13101': 'วัชรพล / สุขาภิบาล 5 / นันทวัน',
+  '13207': 'ถ.บึงขวาง 1-2 / ทรายกองดิน',
+  '13203': 'คลองสามวา / รามอินทรา กม.8',
+  '13L16': 'พระยาสุเรนทร์ / ปัญญาอินทรา',
+  '13304': 'ท่าแร้ง / โนเบิลจีโอ วัชรพล',
+  '13402': 'ออเงิน / สุขาภิบาล 5 ซ.28',
+  '13404': 'สายไหม / เพิ่มสิน',
+  '13210': 'หทัยราษฎร์ / มีนบุรี',
+  '13201': 'รามอินทรา กม.4-6 / คู้บอน',
+  '11108': 'พระโขนง / สุขุมวิท 50-71 / คลองเตย',
+  '11308': 'บางจาก / อ่อนนุช / ปุณณวิถี',
+  '11206': 'อุดมสุข / บางนา-ตราด',
+  '30206': 'สาธุประดิษฐ์ / ช่องนนทรี / ยานนาวา',
+  '50101': 'พระราม 3 ริมน้ำ / คลองเตย',
+  '50103': 'เจริญกรุง / บางคอแหลม',
+  '50207': 'นราธิวาสราชนครินทร์ / นางลิ้นจี่',
+  '50304': 'สีลม / สาทร / พระราม 4'
+};
+
+function initTruckSummary() {
+  const dateInput = document.getElementById('truckSummaryDateInput');
+  const startDateInput = document.getElementById('truckSummaryStartDateInput');
+  const endDateInput = document.getElementById('truckSummaryEndDateInput');
+  const searchInput = document.getElementById('truckSummarySearchInput');
+
+  if (dateInput) {
+    dateInput.addEventListener('change', () => {
+      AppState.truckSummaryDate = dateInput.value;
+      renderTruckSummaryPage();
+    });
+  }
+  if (startDateInput) {
+    startDateInput.addEventListener('change', () => {
+      AppState.truckSummaryStartDate = startDateInput.value;
+      renderTruckSummaryPage();
+    });
+  }
+  if (endDateInput) {
+    endDateInput.addEventListener('change', () => {
+      AppState.truckSummaryEndDate = endDateInput.value;
+      renderTruckSummaryPage();
+    });
+  }
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      AppState.truckSummaryTruckFilter = e.target.value.trim().toLowerCase();
+      renderTruckSummaryPage();
+    });
+  }
+
+  renderTruckSummaryPage();
+}
+
+function setTruckSummaryDateMode(mode) {
+  AppState.truckSummaryDateMode = mode;
+  const singleContainer = document.getElementById('truckSumSingleDateContainer');
+  const rangeContainer = document.getElementById('truckSumRangeDateContainer');
+  const btnSingle = document.getElementById('btnTruckSumModeSingle');
+  const btnRange = document.getElementById('btnTruckSumModeRange');
+
+  if (mode === 'single') {
+    if (singleContainer) singleContainer.classList.remove('hidden');
+    if (rangeContainer) rangeContainer.classList.add('hidden');
+    if (btnSingle) btnSingle.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-blue-700 shadow-2xs';
+    if (btnRange) btnRange.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 hover:text-slate-900';
+  } else {
+    if (singleContainer) singleContainer.classList.add('hidden');
+    if (rangeContainer) rangeContainer.classList.remove('hidden');
+    if (btnSingle) btnSingle.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 hover:text-slate-900';
+    if (btnRange) btnRange.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition bg-white text-blue-700 shadow-2xs';
+  }
+
+  renderTruckSummaryPage();
+}
+window.setTruckSummaryDateMode = setTruckSummaryDateMode;
+
+function setTruckSummaryDatePreset(mode, val1, val2) {
+  if (mode === 'all') {
+    AppState.truckSummaryDate = '';
+    AppState.truckSummaryStartDate = '';
+    AppState.truckSummaryEndDate = '';
+    if (document.getElementById('truckSummaryDateInput')) document.getElementById('truckSummaryDateInput').value = '';
+    if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = '';
+    if (document.getElementById('truckSummaryEndDateInput')) document.getElementById('truckSummaryEndDateInput').value = '';
+  } else if (mode === 'single') {
+    setTruckSummaryDateMode('single');
+    AppState.truckSummaryDate = val1;
+    if (document.getElementById('truckSummaryDateInput')) document.getElementById('truckSummaryDateInput').value = val1;
+  } else if (mode === 'range') {
+    setTruckSummaryDateMode('range');
+    AppState.truckSummaryStartDate = val1;
+    AppState.truckSummaryEndDate = val2;
+    if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = val1;
+    if (document.getElementById('truckSummaryEndDateInput')) document.getElementById('truckSummaryEndDateInput').value = val2;
+  }
+  renderTruckSummaryPage();
+}
+window.setTruckSummaryDatePreset = setTruckSummaryDatePreset;
+
+function setTruckSummaryBranch(branch) {
+  AppState.truckSummaryBranchFilter = branch;
+  document.querySelectorAll('.truck-branch-pill').forEach(btn => {
+    if (btn.getAttribute('data-branch') === branch) {
+      btn.className = 'truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs';
+    } else {
+      btn.className = 'truck-branch-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200';
+    }
+  });
+  renderTruckSummaryPage();
+}
+window.setTruckSummaryBranch = setTruckSummaryBranch;
+
+function resetTruckSummaryFilters() {
+  AppState.truckSummaryBranchFilter = 'ALL';
+  AppState.truckSummaryTruckFilter = '';
+  AppState.truckSummaryDate = '';
+  AppState.truckSummaryStartDate = '';
+  AppState.truckSummaryEndDate = '';
+
+  if (document.getElementById('truckSummarySearchInput')) document.getElementById('truckSummarySearchInput').value = '';
+  if (document.getElementById('truckSummaryDateInput')) document.getElementById('truckSummaryDateInput').value = '';
+  if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = '';
+  if (document.getElementById('truckSummaryEndDateInput')) document.getElementById('truckSummaryEndDateInput').value = '';
+
+  setTruckSummaryBranch('ALL');
+  setTruckSummaryDateMode('single');
+}
+window.resetTruckSummaryFilters = resetTruckSummaryFilters;
+
+function renderTruckSummaryPage() {
+  const container = document.getElementById('truckSummaryBranchesContainer');
+  if (!container) return;
+
+  const allCrisis = [...(AppState.dataStore.pending || []), ...(AppState.dataStore.resolved || [])];
+
+  const branchFilter = AppState.truckSummaryBranchFilter || 'ALL';
+  const truckQuery = (AppState.truckSummaryTruckFilter || '').toLowerCase();
+  const dateMode = AppState.truckSummaryDateMode;
+  const singleDate = AppState.truckSummaryDate;
+  const startDate = AppState.truckSummaryStartDate;
+  const endDate = AppState.truckSummaryEndDate;
+
+  // Filter raw data according to date filters
+  const filteredCrisis = allCrisis.filter(item => {
+    if (dateMode === 'single' && singleDate) {
+      const [y, m, d] = singleDate.split('-');
+      const shortThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${parseInt(y, 10) + 543}`;
+      const shortAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
+      const hist = item.history || '';
+      const iso = item.lastDateIso || '';
+      const lastD = item.lastDate || '';
+      return iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
+    } else if (dateMode === 'range' && (startDate || endDate)) {
+      const iso = item.lastDateIso ? item.lastDateIso.substring(0, 10) : '';
+      if (startDate && iso && iso < startDate) return false;
+      if (endDate && iso && iso > endDate) return false;
+    }
+    return true;
+  });
+
+  // Calculate Overall KPIs
+  let overallTotal = filteredCrisis.length;
+  let overallResolved = 0;
+  let overallFlood = 0;
+  let overallTransfer = 0;
+
+  const branchMap = {
+    'สาขากรุงเทพกรีฑา': { total: 0, resolved: 0, flood: 0, transfer: 0, trucks: {} },
+    'สาขารามอินทรา': { total: 0, resolved: 0, flood: 0, transfer: 0, trucks: {} },
+    'สาขาสุขุมวิท 50': { total: 0, resolved: 0, flood: 0, transfer: 0, trucks: {} },
+    'สาขาพระราม 3': { total: 0, resolved: 0, flood: 0, transfer: 0, trucks: {} }
+  };
+
+  filteredCrisis.forEach(item => {
+    const b = item.branch || 'สาขากรุงเทพกรีฑา';
+    const trk = item.truck || 'ไม่ระบุ';
+    if (!branchMap[b]) {
+      branchMap[b] = { total: 0, resolved: 0, flood: 0, transfer: 0, trucks: {} };
+    }
+
+    const isPending = !!item.pendingCategory;
+    const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
+
+    branchMap[b].total++;
+    if (isPending) {
+      if (isTransfer) {
+        branchMap[b].transfer++;
+        overallTransfer++;
+      } else {
+        branchMap[b].flood++;
+        overallFlood++;
+      }
+    } else {
+      branchMap[b].resolved++;
+      overallResolved++;
+    }
+
+    if (!branchMap[b].trucks[trk]) {
+      branchMap[b].trucks[trk] = {
+        truck: trk,
+        branch: b,
+        total: 0,
+        resolved: 0,
+        flood: 0,
+        transfer: 0,
+        members: []
+      };
+    }
+
+    branchMap[b].trucks[trk].total++;
+    if (isPending) {
+      if (isTransfer) branchMap[b].trucks[trk].transfer++;
+      else branchMap[b].trucks[trk].flood++;
+    } else {
+      branchMap[b].trucks[trk].resolved++;
+    }
+    branchMap[b].trucks[trk].members.push(item);
+  });
+
+  // Count active unique trucks
+  let totalUniqueTrucks = 0;
+  Object.values(branchMap).forEach(b => {
+    totalUniqueTrucks += Object.keys(b.trucks).length;
+  });
+
+  // Update Top KPI Cards
+  const kpiTotalEl = document.getElementById('kpiSumTotalOrders');
+  const kpiTrucksEl = document.getElementById('kpiSumActiveTrucks');
+  const kpiResolvedEl = document.getElementById('kpiSumResolvedOrders');
+  const kpiResolvedRateEl = document.getElementById('kpiSumResolvedRate');
+  const kpiFloodEl = document.getElementById('kpiSumFloodOrders');
+  const kpiTransferEl = document.getElementById('kpiSumTransferOrders');
+
+  if (kpiTotalEl) kpiTotalEl.textContent = overallTotal.toLocaleString();
+  if (kpiTrucksEl) kpiTrucksEl.textContent = `${totalUniqueTrucks} คัน`;
+  if (kpiResolvedEl) kpiResolvedEl.textContent = overallResolved.toLocaleString();
+  if (kpiResolvedRateEl) {
+    const rate = overallTotal > 0 ? ((overallResolved / overallTotal) * 100).toFixed(1) : '100';
+    kpiResolvedRateEl.textContent = `${rate}%`;
+  }
+  if (kpiFloodEl) kpiFloodEl.textContent = overallFlood.toLocaleString();
+  if (kpiTransferEl) kpiTransferEl.textContent = overallTransfer.toLocaleString();
+
+  // Render Branches HTML
+  const branchesToDisplay = branchFilter === 'ALL'
+    ? Object.keys(branchMap)
+    : [branchFilter];
+
+  let html = '';
+
+  branchesToDisplay.forEach(branchName => {
+    const bData = branchMap[branchName] || { total: 0, resolved: 0, flood: 0, transfer: 0, trucks: {} };
+    let truckList = Object.values(bData.trucks);
+
+    // Apply Truck Search Filter
+    if (truckQuery) {
+      truckList = truckList.filter(t => t.truck.toLowerCase().includes(truckQuery) || (TRUCK_ZONES[t.truck] || '').toLowerCase().includes(truckQuery));
+    }
+
+    // Sort: highest pending / lowest success first
+    truckList.sort((a, b) => (b.flood + b.transfer) - (a.flood + a.transfer) || b.total - a.total);
+
+    const bRate = bData.total > 0 ? ((bData.resolved / bData.total) * 100).toFixed(1) : '100.0';
+
+    let branchBorderColor = 'border-l-blue-600';
+    let branchBadgeClass = 'badge-blue';
+    if (branchName.includes('รามอินทรา')) {
+      branchBorderColor = 'border-l-rose-600';
+      branchBadgeClass = 'badge-danger';
+    } else if (branchName.includes('กรุงเทพกรีฑา')) {
+      branchBorderColor = 'border-l-amber-500';
+      branchBadgeClass = 'badge-warning';
+    } else if (branchName.includes('พระราม 3')) {
+      branchBorderColor = 'border-l-emerald-500';
+      branchBadgeClass = 'badge-success';
+    }
+
+    html += `
+      <div class="exec-card p-5 border-l-4 ${branchBorderColor} shadow-sm space-y-4">
+        
+        <!-- Branch Header Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center font-bold text-base shadow-2xs">
+              🏢
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="font-extrabold text-base text-slate-900">${branchName}</h3>
+                <span class="badge ${branchBadgeClass}">${bRate}% สำเร็จ</span>
+              </div>
+              <p class="text-xs text-slate-500 mt-0.5">
+                รวมทั้งหมด <strong class="text-slate-800">${bData.total.toLocaleString()}</strong> ถัง • ส่งสำเร็จ <strong class="text-emerald-700 font-bold">${bData.resolved.toLocaleString()}</strong> • ค้างส่งน้ำท่วม <strong class="text-rose-600 font-bold">${bData.flood.toLocaleString()}</strong> • โอนงาน <strong class="text-purple-600 font-bold">${bData.transfer.toLocaleString()}</strong>
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500 font-semibold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+              สายรถทั้งหมด: <strong class="text-blue-700 font-bold">${Object.keys(bData.trucks).length} คัน</strong>
+            </span>
+          </div>
+        </div>
+
+        <!-- Clean Trucks Table -->
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+          <table class="exec-table text-xs w-full">
+            <thead class="bg-slate-50">
+              <tr>
+                <th style="width: 100px;">เบอร์รถ</th>
+                <th>โซนพื้นที่รับผิดชอบ</th>
+                <th style="width: 110px;" class="text-center">ออเดอร์ทั้งหมด</th>
+                <th style="width: 100px;" class="text-center">ส่งสำเร็จ</th>
+                <th style="width: 105px;" class="text-center">ค้างน้ำท่วม</th>
+                <th style="width: 95px;" class="text-center">โอนงาน</th>
+                <th style="width: 150px;">ความสำเร็จ (%)</th>
+                <th style="width: 120px;" class="text-right">การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody>
+    `;
+
+    if (truckList.length === 0) {
+      html += `
+        <tr>
+          <td colspan="8" class="text-center py-6 text-slate-400 font-semibold">
+            ไม่พบสายรถตามเงื่อนไขที่ค้นหา
+          </td>
+        </tr>
+      `;
+    } else {
+      truckList.forEach(t => {
+        const rate = t.total > 0 ? ((t.resolved / t.total) * 100).toFixed(1) : '100.0';
+        const numRate = parseFloat(rate);
+        const zone = TRUCK_ZONES[t.truck] || 'เขตพื้นที่บริการหลัก';
+
+        let progressColor = 'bg-emerald-500';
+        if (numRate < 60) progressColor = 'bg-rose-500';
+        else if (numRate < 85) progressColor = 'bg-amber-500';
+
+        html += `
+          <tr class="hover:bg-blue-50/50 transition cursor-pointer" onclick="openTruckDetailModal('${t.truck}', '${branchName}')">
+            <td>
+              <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 border border-blue-200">
+                🚚 ${t.truck}
+              </span>
+            </td>
+            <td>
+              <div class="font-semibold text-slate-800">${zone}</div>
+            </td>
+            <td class="text-center font-bold text-slate-800">${t.total}</td>
+            <td class="text-center font-bold text-emerald-700">${t.resolved}</td>
+            <td class="text-center font-bold ${t.flood > 0 ? 'text-rose-600' : 'text-slate-400'}">${t.flood > 0 ? `${t.flood} ราย` : '0'}</td>
+            <td class="text-center font-bold ${t.transfer > 0 ? 'text-purple-600' : 'text-slate-400'}">${t.transfer > 0 ? `${t.transfer} ราย` : '0'}</td>
+            <td>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div class="${progressColor} h-2 rounded-full" style="width: ${numRate}%"></div>
+                </div>
+                <span class="font-bold text-[11px] text-slate-700 w-10 text-right">${numRate}%</span>
+              </div>
+            </td>
+            <td class="text-right">
+              <button type="button" onclick="event.stopPropagation(); openTruckDetailModal('${t.truck}', '${branchName}')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1 shadow-2xs">
+                <span>🔍 รายชื่อสมาชิก</span>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    html += `
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
+}
+window.renderTruckSummaryPage = renderTruckSummaryPage;
+
+// --- Truck Members Detail Modal ---
+function openTruckDetailModal(truckNumber, branch) {
+  AppState.activeTruckModalTruck = truckNumber;
+  const modal = document.getElementById('truckDetailModal');
+  if (!modal) return;
+
+  const titleEl = document.getElementById('truckDetailModalTitle');
+  const subtitleEl = document.getElementById('truckDetailModalSubtitle');
+  const totalEl = document.getElementById('truckModalTotal');
+  const resolvedEl = document.getElementById('truckModalResolved');
+  const floodEl = document.getElementById('truckModalFlood');
+  const transferEl = document.getElementById('truckModalTransfer');
+
+  const allCrisis = [...(AppState.dataStore.pending || []), ...(AppState.dataStore.resolved || [])];
+  const truckItems = allCrisis.filter(item => String(item.truck) === String(truckNumber));
+
+  AppState.activeTruckModalItems = truckItems;
+
+  let total = truckItems.length;
+  let resolved = truckItems.filter(i => !i.pendingCategory).length;
+  let flood = truckItems.filter(i => i.pendingCategory && i.pendingCategory !== 'โอนงานสิ้นวัน').length;
+  let transfer = truckItems.filter(i => i.pendingCategory === 'โอนงานสิ้นวัน').length;
+
+  const zone = TRUCK_ZONES[truckNumber] || 'เขตพื้นที่บริการ';
+
+  if (titleEl) titleEl.textContent = `รายละเอียดสายรถ: 🚚 #${truckNumber} (${branch || 'ทุกสาขา'})`;
+  if (subtitleEl) subtitleEl.textContent = `โซน: ${zone} • สมาชิกที่เข้าส่งทั้งหมด ${total.toLocaleString()} ราย`;
+  if (totalEl) totalEl.textContent = total.toLocaleString();
+  if (resolvedEl) resolvedEl.textContent = resolved.toLocaleString();
+  if (floodEl) floodEl.textContent = flood.toLocaleString();
+  if (transferEl) transferEl.textContent = transfer.toLocaleString();
+
+  const searchInput = document.getElementById('truckModalSearchInput');
+  if (searchInput) searchInput.value = '';
+
+  filterTruckModalMembers();
+  modal.classList.add('active');
+}
+window.openTruckDetailModal = openTruckDetailModal;
+
+function filterTruckModalMembers() {
+  const tbody = document.getElementById('truckModalTableBody');
+  const countEl = document.getElementById('truckModalItemCount');
+  if (!tbody) return;
+
+  const query = (document.getElementById('truckModalSearchInput')?.value || '').trim().toLowerCase();
+  const items = AppState.activeTruckModalItems || [];
+
+  const filtered = items.filter(item => {
+    if (query) {
+      const str = `${item.memberId} ${item.name} ${item.address} ${item.lastReason || item.resolvedReason || ''}`.toLowerCase();
+      if (!str.includes(query)) return false;
+    }
+    return true;
+  });
+
+  if (countEl) countEl.textContent = `แสดง ${filtered.length.toLocaleString()} รายการ`;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400 font-semibold">ไม่พบรายการสมาชิก</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(item => {
+    const isPending = !!item.pendingCategory;
+    const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
+    const statusBadge = isPending
+      ? `<span class="badge ${isTransfer ? 'badge-purple' : 'badge-danger'}">${item.pendingCategory || 'น้ำท่วม'}</span>`
+      : `<span class="badge badge-success">ส่งสำเร็จ</span>`;
+
+    const date = item.lastDate || item.resolvedDate || '-';
+    const reason = item.lastReason || item.resolvedReason || (isPending ? 'ไม่สามารถเข้าส่งได้' : 'ส่งสำเร็จเรียบร้อย');
+
+    return `
+      <tr>
+        <td class="font-bold text-slate-800 font-mono">#${item.memberId}</td>
+        <td>
+          <div class="font-semibold text-slate-900">${item.name}</div>
+          <div class="text-[11px] text-slate-500 truncate max-w-xs">${item.address || '-'}</div>
+        </td>
+        <td><div class="text-xs text-slate-700">${date}</div></td>
+        <td><div class="text-xs text-slate-800 font-medium">${reason}</div></td>
+        <td>${statusBadge}</td>
+        <td class="text-right">
+          <button onclick="viewMemberHistory('${item.memberId}')" class="px-2.5 py-1 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1">
+            <span>ไทม์ไลน์</span>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+window.filterTruckModalMembers = filterTruckModalMembers;
+
+function goToMapWithTruck() {
+  const truck = AppState.activeTruckModalTruck;
+  closeModal();
+  switchPage('page-pending-map');
+}
+window.goToMapWithTruck = goToMapWithTruck;
+
+function goToDetailsWithTruck() {
+  const truck = AppState.activeTruckModalTruck;
+  closeModal();
+  switchPage('page-details');
+  const truckInput = document.getElementById('tableTruckInput');
+  if (truckInput && truck) {
+    truckInput.value = truck;
+    AppState.tableTruckFilter = truck.toLowerCase();
+    renderTable();
+  }
+}
+window.goToDetailsWithTruck = goToDetailsWithTruck;
+
+function exportTruckModalCsv() {
+  const truck = AppState.activeTruckModalTruck || 'truck';
+  const items = AppState.activeTruckModalItems || [];
+  if (items.length === 0) return alert('ไม่มีข้อมูลสำหรับส่งออก CSV');
+
+  let csv = '\uFEFFรหัสสมาชิก,ชื่อลูกค้า,สาขา,สายรถ,ที่อยู่,จำนวนครั้งเข้าส่ง,สถานะ,เหตุผล,ประวัติ\n';
+  items.forEach(item => {
+    const isPending = !!item.pendingCategory;
+    const status = isPending ? item.pendingCategory : 'สำเร็จ';
+    const reason = (item.lastReason || item.resolvedReason || '').replace(/"/g, '""');
+    const addr = (item.address || '').replace(/"/g, '""');
+    const hist = (item.history || '').replace(/"/g, '""');
+    csv += `"${item.memberId}","${item.name}","${item.branch}","${item.truck}","${addr}",${item.attemptsCount},"${status}","${reason}","${hist}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `truck_${truck}_orders.csv`;
+  a.click();
+}
+window.exportTruckModalCsv = exportTruckModalCsv;
 
 
