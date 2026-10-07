@@ -735,23 +735,36 @@ function applyMapFilters() {
 
     // Lazy on-demand popup generation for maximum performance
     marker.bindPopup(() => `
-      <div style="font-family: 'Prompt', sans-serif; font-size: 13px; line-height: 1.4; min-width: 240px;">
+      <div style="font-family: 'Prompt', sans-serif; font-size: 13px; line-height: 1.4; min-width: 260px; max-width: 320px;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-          <span style="font-weight: 800; color: #1e3a8a;">#${item.memberId}</span>
-          <span style="font-size: 11px; font-weight: 700; background: ${isTransfer ? '#f5f3ff; color: #5b21b6' : '#fef2f2; color: #991b1b'}; padding: 2px 6px; border-radius: 4px;">
+          <span style="font-weight: 800; color: #1e3a8a; font-size: 14px;">#${item.memberId}</span>
+          <span style="font-size: 11px; font-weight: 700; background: ${isTransfer ? '#f5f3ff; color: #5b21b6; border: 1px solid #ddd6fe' : '#fef2f2; color: #991b1b; border: 1px solid #fecaca'}; padding: 2px 8px; border-radius: 9999px;">
             ${item.pendingCategory || 'น้ำท่วมสูง'}
           </span>
         </div>
-        <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">${item.name}</div>
-        <div style="color: #475569; font-size: 12px; margin-bottom: 4px;">${item.branch} • สายรถ ${item.truck}</div>
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; margin: 6px 0; font-size: 12px; color: #b91c1c;">
-          <strong>สถานะล่าสุด:</strong> ${item.lastReason} (${item.lastDate})
+        <div style="font-weight: 700; color: #0f172a; font-size: 14px; margin-bottom: 4px;">${item.name}</div>
+        <div style="color: #475569; font-size: 12px; margin-bottom: 6px;">
+          🏢 <strong>${item.branch}</strong> • สายรถ <strong>#${item.truck}</strong>
         </div>
-        <div style="font-size: 11px; color: #64748b; margin-bottom: 6px;">
-          เข้าส่งทั้งหมด: <strong>${item.attemptsCount} ครั้ง</strong>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 8px; margin: 6px 0; font-size: 12px;">
+          <div style="color: #b91c1c; font-weight: 600;">⚠️ <strong>สถานะล่าสุด:</strong> ${item.lastReason}</div>
+          <div style="color: #64748b; font-size: 11px; margin-top: 2px;">วันที่: ${item.lastDate} (เข้าส่งรวม ${item.attemptsCount} ครั้ง)</div>
         </div>
-        <div style="font-size: 11px; color: #64748b;">
-          <strong>ที่อยู่:</strong> ${item.address || 'กรุงเทพมหานคร'}
+
+        <div style="font-size: 12px; color: #334155; margin-bottom: 6px; line-height: 1.35;">
+          📍 <strong>ที่อยู่:</strong> ${item.address || 'กรุงเทพมหานคร'}
+        </div>
+
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 6px 8px; margin: 6px 0; font-size: 11px; color: #1e40af; display: flex; align-items: center; justify-content: space-between;">
+          <span>🌐 GPS: <strong>${item.lat.toFixed(5)}, ${item.lng.toFixed(5)}</strong></span>
+          ${item.hasExactGps !== false ? '<span style="color:#059669; font-weight:700;">(ตรงฐานข้อมูล)</span>' : '<span style="color:#d97706; font-weight:600;">(อ้างอิงพื้นที่)</span>'}
+        </div>
+
+        <div style="margin-top: 8px;">
+          <a href="https://www.google.com/maps?q=${item.lat},${item.lng}" target="_blank" style="width: 100%; text-align: center; background: #2563eb; color: #ffffff; text-decoration: none; padding: 6px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+            🗺️ เปิดดูบน Google Maps (Street View)
+          </a>
         </div>
       </div>
     `);
@@ -1192,6 +1205,13 @@ function renderTable() {
         <td>
           <div class="font-semibold text-slate-900">${item.name}</div>
           <div class="text-xs text-slate-500 truncate max-w-xs">${item.address}</div>
+          ${item.lat && item.lng ? `
+            <div class="mt-0.5">
+              <a href="https://www.google.com/maps?q=${item.lat},${item.lng}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-mono text-blue-600 hover:text-blue-800 hover:underline" title="เปิดพิกัดจริงบน Google Maps">
+                📍 ${item.lat.toFixed(5)}, ${item.lng.toFixed(5)} <span class="text-[10px] text-slate-400 font-sans">↗</span>
+              </a>
+            </div>
+          ` : ''}
         </td>
         <td><span class="font-medium text-slate-700">${item.branch}</span></td>
         <td><span class="font-mono text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded">${item.truck}</span></td>
@@ -1267,9 +1287,22 @@ function viewMemberHistory(memberId) {
 
   if (body) {
     body.innerHTML = `
-      <div class="mb-4 pb-3 border-b border-slate-100">
-        <div class="text-xs text-slate-500">สาขา: <strong>${member.branch}</strong> | สายรถ: <strong>${member.truck}</strong></div>
-        <div class="text-xs text-slate-500 mt-1">ที่อยู่: ${member.address}</div>
+      <div class="mb-4 pb-3 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        <div>
+          <div class="text-xs text-slate-500">🏢 สาขา: <strong>${member.branch}</strong> | สายรถ: <strong>#${member.truck}</strong></div>
+          <div class="text-xs text-slate-600 mt-1">📍 ที่อยู่: <strong>${member.address}</strong></div>
+          ${member.lat && member.lng ? `
+            <div class="text-xs text-blue-700 font-mono mt-1 flex items-center gap-1.5">
+              <span>🌐 GPS: <strong>${member.lat.toFixed(6)}, ${member.lng.toFixed(6)}</strong></span>
+              ${member.hasExactGps !== false ? '<span class="badge badge-success text-[10px] py-0 px-1.5">ตรงฐานข้อมูล</span>' : '<span class="badge badge-warning text-[10px] py-0 px-1.5">อ้างอิงพื้นที่</span>'}
+            </div>
+          ` : ''}
+        </div>
+        ${member.lat && member.lng ? `
+          <a href="https://www.google.com/maps?q=${member.lat},${member.lng}" target="_blank" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-2xs no-underline shrink-0">
+            🗺️ นำทาง Google Maps
+          </a>
+        ` : ''}
       </div>
       <div>
         <h4 class="font-bold text-xs text-slate-500 uppercase tracking-wider mb-3">ลำดับการเข้าส่ง (Attempts Timeline)</h4>

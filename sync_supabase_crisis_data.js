@@ -149,49 +149,81 @@ async function syncAndEvaluate() {
       return `${d} [${reasonText}]`;
     });
 
-    // ค้นหาพิกัด GPS ที่แม่นยำที่สุด
-    let lat = latestAttempt.latitude;
-    let lng = latestAttempt.longitude;
+    // ค้นหาที่อยู่ address ที่สมบูรณ์ที่สุดจากทุก attempts
+    let bestAddress = (latestAttempt.address || '').trim();
+    if (!bestAddress || bestAddress === 'กรุงเทพมหานคร') {
+      for (const att of attempts) {
+        const addr = (att.address || '').trim();
+        if (addr && addr !== 'กรุงเทพมหานคร' && addr.length > 5) {
+          bestAddress = addr;
+          break;
+        }
+      }
+    }
+    if (!bestAddress) bestAddress = 'กรุงเทพมหานคร';
 
-    if ((!lat || !lng) && latestAttempt.gps && latestAttempt.gps.includes(',')) {
+    // ค้นหาพิกัด GPS ที่แม่นยำที่สุดจากฐานข้อมูล
+    let lat = null;
+    let lng = null;
+    let hasExactGps = false;
+
+    // 1. ตรวจสอบรอบล่าสุด
+    if (latestAttempt.latitude && latestAttempt.longitude) {
+      const pLat = parseFloat(latestAttempt.latitude);
+      const pLng = parseFloat(latestAttempt.longitude);
+      if (pLat > 12 && pLat < 16 && pLng > 99 && pLng < 102) {
+        lat = pLat;
+        lng = pLng;
+        hasExactGps = true;
+      }
+    }
+    if (!hasExactGps && latestAttempt.gps && latestAttempt.gps.includes(',')) {
       const parts = latestAttempt.gps.split(',');
       const pLat = parseFloat(parts[0]);
       const pLng = parseFloat(parts[1]);
-      if (pLat && pLng && pLat > 5 && pLng > 90) {
+      if (pLat > 12 && pLat < 16 && pLng > 99 && pLng < 102) {
         lat = pLat;
         lng = pLng;
+        hasExactGps = true;
       }
     }
 
-    // ถ้ายังไม่มี ตรวจสอบจากประวัติการส่งรอบอื่น
-    if (!lat || !lng) {
+    // 2. ถ้ายังไม่มี ตรวจสอบจากประวัติการส่งรอบอื่นทั้งหมด
+    if (!hasExactGps) {
       for (const att of attempts) {
-        if (att.latitude && att.longitude && att.latitude > 5 && att.longitude > 90) {
-          lat = att.latitude;
-          lng = att.longitude;
-          break;
+        if (att.latitude && att.longitude) {
+          const pLat = parseFloat(att.latitude);
+          const pLng = parseFloat(att.longitude);
+          if (pLat > 12 && pLat < 16 && pLng > 99 && pLng < 102) {
+            lat = pLat;
+            lng = pLng;
+            hasExactGps = true;
+            break;
+          }
         }
         if (att.gps && att.gps.includes(',')) {
           const parts = att.gps.split(',');
           const pLat = parseFloat(parts[0]);
           const pLng = parseFloat(parts[1]);
-          if (pLat && pLng && pLat > 5 && pLng > 90) {
+          if (pLat > 12 && pLat < 16 && pLng > 99 && pLng < 102) {
             lat = pLat;
             lng = pLng;
+            hasExactGps = true;
             break;
           }
         }
       }
     }
 
-    // กรณีไม่มีพิกัดในฐานข้อมูลเลย ให้ใช้จุดกึ่งกลางสาขา + jitter สุ่มกระจายเล็กน้อย
+    // 3. กรณีไม่มีพิกัดในฐานข้อมูลเลย ให้ใช้จุดศูนย์กลางสาขา + การกระจายตัวเล็กน้อย
     if (!lat || !lng) {
-      const bCenter = BRANCH_CENTERS[latestAttempt.branch] || [13.7800, 100.6700];
+      const bCenter = BRANCH_CENTERS[latestAttempt.branch] || [13.8400, 100.6700];
       const seed = parseInt(mId.replace(/\D/g, '').slice(-4) || `${idx}`, 10);
       const angle = (seed % 360) * (Math.PI / 180);
-      const dist = 0.008 + ((seed % 20) * 0.001);
+      const dist = 0.005 + ((seed % 15) * 0.001);
       lat = bCenter[0] + Math.sin(angle) * dist;
       lng = bCenter[1] + Math.cos(angle) * dist;
+      hasExactGps = false;
     }
 
     // วันที่ส่งล่าสุดแบบแสดงผล
@@ -211,7 +243,7 @@ async function syncAndEvaluate() {
       memberId: mId,
       name: latestAttempt.customer_name || `สมาชิก #${mId}`,
       branch: latestAttempt.branch || 'สาขารามอินทรา',
-      address: latestAttempt.address || 'กรุงเทพมหานคร',
+      address: bestAddress,
       truck: latestAttempt.truck_number || '-',
       attemptsCount: attempts.length,
       lastDate: lastDateThai,
@@ -223,6 +255,7 @@ async function syncAndEvaluate() {
       lat: parseFloat(lat.toFixed(6)),
       lng: parseFloat(lng.toFixed(6)),
       gps: `${lat.toFixed(6)},${lng.toFixed(6)}`,
+      hasExactGps: hasExactGps,
       status: isDelivered ? 'สำเร็จ' : (isTransfer ? 'โอนงานสิ้นวัน' : (isFlood ? 'น้ำท่วม' : 'สำเร็จ'))
     };
 
@@ -241,7 +274,9 @@ async function syncAndEvaluate() {
         resolvedType: isDelivered ? 'ส่งสำเร็จแล้ว (Delivered)' : `สำเร็จตามเงื่อนไข (${memberObj.lastReason})`,
         history: memberObj.history,
         lat: memberObj.lat,
-        lng: memberObj.lng
+        lng: memberObj.lng,
+        gps: memberObj.gps,
+        hasExactGps: memberObj.hasExactGps
       });
     }
   });
