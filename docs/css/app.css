@@ -47,12 +47,16 @@ body {
 }
 
 /* ==========================================================================
-   Collapsible Left Sidebar System
+/* ==========================================================================
+   Collapsible Left Sidebar System (Executive SaaS & Crisis HQ Design)
    ========================================================================== */
 .sidebar-wrapper {
-  width: 280px;
-  min-width: 280px;
-  max-width: 280px;
+  width: 288px;
+  min-width: 288px;
+  max-width: 288px;
+  background: #ffffff;
+  border-right: 1px solid var(--border);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
   transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1), transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: width, transform;
 }
@@ -87,39 +91,54 @@ body.sidebar-collapsed #sidebarToggleIcon {
 
 body.sidebar-collapsed .nav-tab-btn {
   justify-content: center;
-  padding: 0.75rem 0.5rem;
+  padding: 0.6rem 0.5rem;
   position: relative;
 }
 
-body.sidebar-collapsed .nav-icon {
-  font-size: 1.25rem;
+body.sidebar-collapsed .nav-icon-container {
   margin: 0;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 /* Tooltip when collapsed */
 body.sidebar-collapsed .nav-tab-btn[title]::after {
   content: attr(title);
   position: absolute;
-  left: calc(100% + 12px);
+  left: calc(100% + 14px);
   top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) scale(0.95);
   background: #0f172a;
-  color: #ffffff;
-  padding: 0.4rem 0.75rem;
+  color: #f8fafc;
+  padding: 0.45rem 0.85rem;
   font-size: 0.75rem;
   font-weight: 600;
   border-radius: 0.5rem;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 999;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px -3px rgba(15, 23, 42, 0.3), 0 4px 6px -4px rgba(15, 23, 42, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 body.sidebar-collapsed .nav-tab-btn[title]:hover::after {
   opacity: 1;
-  transform: translateY(-50%) translateX(2px);
+  transform: translateY(-50%) scale(1);
+}
+
+/* Sidebar Section Headers */
+.sidebar-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem 0.35rem 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
 }
 
 /* Tab Navigation Buttons */
@@ -127,39 +146,96 @@ body.sidebar-collapsed .nav-tab-btn[title]:hover::after {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.65rem 0.875rem;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  border-radius: 0.75rem;
-  color: var(--text-muted);
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.875rem;
+  color: #475569;
   background: transparent;
   border: 1px solid transparent;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-icon-container {
+  width: 2.25rem;
+  height: 2.25rem;
+  min-width: 2.25rem;
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 1.125rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e2e8f0;
+}
+
+.nav-tab-btn .nav-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #1e293b;
+  transition: color 0.15s ease;
+}
+
+.nav-tab-btn .nav-subtitle {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #64748b;
+  margin-top: 2px;
+  transition: color 0.15s ease;
 }
 
 .nav-tab-btn:hover {
+  background: #f8fafc;
   color: var(--primary);
-  background: var(--primary-subtle);
-  border-color: #bfdbfe;
+  border-color: #e2e8f0;
+  transform: translateX(2px);
 }
 
+.nav-tab-btn:hover .nav-icon-container {
+  background: #e0e7ff;
+  border-color: #c7d2fe;
+  color: var(--primary);
+}
+
+.nav-tab-btn:hover .nav-title {
+  color: var(--primary);
+}
+
+/* Active Nav State */
 .nav-tab-btn.active {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
   color: #ffffff;
-  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
   border-color: #1d4ed8;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 14px -1px rgba(37, 99, 235, 0.35);
+  transform: translateX(0);
 }
 
-.nav-tab-btn.active .sidebar-text {
+.nav-tab-btn.active .nav-icon-container {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
   color: #ffffff;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-tab-btn.active .nav-title {
+  color: #ffffff;
+}
+
+.nav-tab-btn.active .nav-subtitle {
+  color: #bfdbfe;
 }
 
 .nav-tab-btn.active .sidebar-badge {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.22);
   color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 /* Custom Scrollbar for Sidebar */

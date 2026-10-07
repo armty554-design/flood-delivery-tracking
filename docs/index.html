@@ -35,108 +35,159 @@
   <!-- =========================================================================
        COLLAPSIBLE EXECUTIVE LEFT SIDEBAR (ย่อ-ขยายได้)
        ========================================================================= -->
-  <aside id="appSidebar" class="sidebar-wrapper fixed lg:sticky top-0 left-0 h-screen z-50 flex flex-col bg-white border-r border-slate-200 transition-all duration-300 select-none shadow-lg lg:shadow-none">
+  <aside id="appSidebar" class="sidebar-wrapper fixed lg:sticky top-0 left-0 h-screen z-50 flex flex-col bg-white border-r border-slate-200/90 transition-all duration-300 select-none shadow-xl lg:shadow-none">
     
     <!-- Sidebar Header (Brand & Collapse Button) -->
-    <div class="sidebar-header flex items-center justify-between px-4 h-16 sm:h-20 border-b border-slate-100 shrink-0">
+    <div class="sidebar-header flex items-center justify-between px-4 h-18 border-b border-slate-100 shrink-0 bg-white">
       <!-- Logo & Brand Text -->
-      <div class="sidebar-brand flex items-center space-x-3 overflow-hidden cursor-pointer" onclick="switchPage('page-duration')">
-        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 shrink-0">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      <div class="sidebar-brand flex items-center space-x-3 overflow-hidden cursor-pointer group" onclick="switchPage('page-duration')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-blue-500/25 shrink-0 border border-blue-400/30 group-hover:scale-105 transition-transform duration-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         </div>
         <div class="sidebar-text transition-all duration-300 overflow-hidden whitespace-nowrap">
           <div class="flex items-center gap-1.5">
-            <span class="font-black text-base tracking-tight text-slate-900">WATER INTELLIGENCE</span>
-            <span class="badge badge-blue text-[10px] font-bold px-1.5 py-0.5">ผู้บริหาร</span>
+            <span class="font-extrabold text-sm tracking-tight text-slate-900">WATER INTELLIGENCE</span>
+            <span class="badge badge-blue text-[9px] font-bold px-1.5 py-0.5 shadow-2xs">ผู้บริหาร</span>
           </div>
-          <p class="text-[11px] text-slate-400 truncate">ศูนย์บัญชาการติดตาม 4 สาขา</p>
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <p class="text-[11px] font-medium text-slate-500 truncate">ศูนย์บัญชาการติดตาม 4 สาขา</p>
+          </div>
         </div>
       </div>
 
       <!-- Desktop Collapse Toggle Button -->
-      <button id="sidebarToggleBtn" onclick="toggleSidebar()" class="sidebar-toggle-btn hidden lg:flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 border border-slate-200 transition cursor-pointer" title="ย่อ/ขยายเมนู (Toggle Sidebar)">
+      <button id="sidebarToggleBtn" onclick="toggleSidebar()" class="sidebar-toggle-btn hidden lg:flex items-center justify-center w-8 h-8 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50/80 border border-slate-200/80 transition shadow-2xs cursor-pointer" title="ย่อ/ขยายเมนู (Toggle Sidebar)">
         <svg id="sidebarToggleIcon" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
         </svg>
       </button>
 
       <!-- Mobile Close Button -->
-      <button onclick="closeMobileSidebar()" class="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 hover:bg-slate-100">
+      <button onclick="closeMobileSidebar()" class="lg:hidden flex items-center justify-center w-8 h-8 rounded-xl text-slate-500 hover:bg-slate-100 transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
 
     <!-- Navigation List (Vertical Tabs) -->
-    <nav class="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-1.5 custom-scrollbar">
-      <div class="sidebar-section-title px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-        <span class="sidebar-text">เมนูหลัก (Pages)</span>
+    <nav class="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-1 custom-scrollbar">
+      
+      <!-- Section 1: Overview & Analytics -->
+      <div class="sidebar-section-title">
+        <span class="sidebar-text">📊 ภาพรวม & วิเคราะห์</span>
       </div>
 
       <!-- 1. กราฟติดตาม -->
-      <button data-target="page-duration" onclick="switchPage('page-duration')" class="nav-tab-btn w-full justify-start active" title="หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา">
-        <span class="nav-icon text-lg shrink-0">📊</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา</span>
+      <button data-target="page-duration" onclick="switchPage('page-duration')" class="nav-tab-btn group w-full justify-start active" title="หน้า 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา">
+        <div class="nav-icon-container">
+          <span class="nav-icon">📊</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">กราฟติดตามระยะเวลาส่ง</div>
+          <div class="nav-subtitle truncate">หน้า 1 • เปรียบเทียบ 4 สาขา</div>
+        </div>
       </button>
 
       <!-- 2. สรุปแยกสาขาและเบอร์รถ -->
-      <button data-target="page-truck-summary" onclick="switchPage('page-truck-summary')" class="nav-tab-btn w-full justify-start" title="หน้าสรุปแยกสาขาและเบอร์รถ">
-        <span class="nav-icon text-lg shrink-0">🚚</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้าสรุปแยกสาขาและเบอร์รถ</span>
-        <span class="sidebar-badge badge badge-blue text-[10px] py-0 px-1.5">สรุป</span>
+      <button data-target="page-truck-summary" onclick="switchPage('page-truck-summary')" class="nav-tab-btn group w-full justify-start" title="หน้าสรุปแยกสาขาและเบอร์รถ">
+        <div class="nav-icon-container">
+          <span class="nav-icon">🚚</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">สรุปแยกสาขา & เบอร์รถ</div>
+          <div class="nav-subtitle truncate">วิเคราะห์รายสายส่ง/คัน</div>
+        </div>
+        <span class="sidebar-badge badge badge-blue text-[10px] py-0.5 px-2 font-bold shadow-2xs">สรุป</span>
       </button>
 
+      <!-- Section 2: Spatial & Surveillance -->
+      <div class="sidebar-section-title mt-2">
+        <span class="sidebar-text">🗺️ เชิงพื้นที่ & ตรวจการณ์</span>
+      </div>
+
       <!-- 3. แผนที่โชว์จุด -->
-      <button data-target="page-pending-map" onclick="switchPage('page-pending-map')" class="nav-tab-btn w-full justify-start" title="หน้า 2: แผนที่โชว์จุดสมาชิกที่ยังจัดส่งไม่ได้">
-        <span class="nav-icon text-lg shrink-0">🗺️</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้า 2: แผนที่โชว์จุดสมาชิกที่ยังจัดส่งไม่ได้</span>
-        <span id="navMapBadge" class="sidebar-badge badge badge-danger text-[10px] py-0 px-1.5 font-bold">539</span>
+      <button data-target="page-pending-map" onclick="switchPage('page-pending-map')" class="nav-tab-btn group w-full justify-start" title="หน้า 2: แผนที่โชว์จุดสมาชิกที่ยังจัดส่งไม่ได้">
+        <div class="nav-icon-container">
+          <span class="nav-icon">🗺️</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">แผนที่โชว์จุดสมาชิกค้างส่ง</div>
+          <div class="nav-subtitle truncate">หน้า 2 • จุดน้ำท่วม/โอนงาน</div>
+        </div>
+        <span id="navMapBadge" class="sidebar-badge badge badge-danger text-[10px] py-0.5 px-2 font-bold shadow-2xs">539</span>
       </button>
 
       <!-- 4. CCtv -->
-      <button data-target="page-cctv" onclick="switchPage('page-cctv')" class="nav-tab-btn w-full justify-start" title="หน้า 3: CCtv">
-        <span class="nav-icon text-lg shrink-0">📹</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้า 3: CCtv</span>
+      <button data-target="page-cctv" onclick="switchPage('page-cctv')" class="nav-tab-btn group w-full justify-start" title="หน้า 3: CCtv (ระบบตรวจการณ์สด)">
+        <div class="nav-icon-container">
+          <span class="nav-icon">📹</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">กล้องวงจรปิด CCtv</div>
+          <div class="nav-subtitle truncate">หน้า 3 • ตรวจการณ์สด 45+ ตัว</div>
+        </div>
         <span class="sidebar-badge live-pulse"></span>
       </button>
 
       <!-- 5. GISTDA Open API -->
-      <button data-target="page-gistda-flood" onclick="switchPage('page-gistda-flood')" class="nav-tab-btn w-full justify-start" title="หน้า 4: แผนที่น้ำท่วม GISTDA Open API">
-        <span class="nav-icon text-lg shrink-0">🛰️</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้า 4: แผนที่น้ำท่วม GISTDA Open API</span>
+      <button data-target="page-gistda-flood" onclick="switchPage('page-gistda-flood')" class="nav-tab-btn group w-full justify-start" title="หน้า 4: แผนที่น้ำท่วม GISTDA Open API">
+        <div class="nav-icon-container">
+          <span class="nav-icon">🛰️</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">แผนที่น้ำท่วม GISTDA</div>
+          <div class="nav-subtitle truncate">หน้า 4 • Open API ดาวเทียม</div>
+        </div>
       </button>
 
+      <!-- Section 3: Data & Admin -->
+      <div class="sidebar-section-title mt-2">
+        <span class="sidebar-text">📑 ข้อมูล & จัดการระบบ</span>
+      </div>
+
       <!-- 6. รายละเอียดข้อมูล -->
-      <button data-target="page-details" onclick="switchPage('page-details')" class="nav-tab-btn w-full justify-start" title="หน้า 5: รายละเอียดข้อมูล">
-        <span class="nav-icon text-lg shrink-0">📋</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้า 5: รายละเอียดข้อมูล</span>
+      <button data-target="page-details" onclick="switchPage('page-details')" class="nav-tab-btn group w-full justify-start" title="หน้า 5: รายละเอียดข้อมูล">
+        <div class="nav-icon-container">
+          <span class="nav-icon">📋</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">รายละเอียดข้อมูลสมาชิก</div>
+          <div class="nav-subtitle truncate">หน้า 5 • ค้นหา & ประวัติรอบส่ง</div>
+        </div>
       </button>
 
       <!-- 7. จัดการข้อมูล Admin -->
-      <button data-target="page-admin" onclick="switchPage('page-admin')" class="nav-tab-btn w-full justify-start" title="หน้า 6: จัดการข้อมูล Admin">
-        <span class="nav-icon text-lg shrink-0">⚙️</span>
-        <span class="sidebar-text text-xs sm:text-sm font-semibold truncate text-left flex-1">หน้า 6: จัดการข้อมูล Admin</span>
+      <button data-target="page-admin" onclick="switchPage('page-admin')" class="nav-tab-btn group w-full justify-start" title="หน้า 6: จัดการข้อมูล Admin">
+        <div class="nav-icon-container">
+          <span class="nav-icon">⚙️</span>
+        </div>
+        <div class="sidebar-text flex-1 min-w-0 text-left">
+          <div class="nav-title truncate">จัดการข้อมูล Admin</div>
+          <div class="nav-subtitle truncate">หน้า 6 • Supabase Realtime</div>
+        </div>
       </button>
     </nav>
 
     <!-- Sidebar Bottom / Status Footer -->
-    <div class="sidebar-footer p-3 border-t border-slate-100 bg-slate-50/50 space-y-2 shrink-0">
-      <div id="executiveDailyBadge" class="flex items-center gap-2 p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold shadow-2xs">
+    <div class="sidebar-footer p-3 border-t border-slate-100 bg-slate-50/70 space-y-2 shrink-0">
+      <div id="executiveDailyBadge" class="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50/90 border border-emerald-200/80 text-emerald-800 text-[11px] font-bold shadow-2xs">
         <span class="live-pulse shrink-0"></span>
         <span class="sidebar-text truncate">เข้าอัปเดตทุกวัน • วันที่ 7 ต.ค. 2569</span>
       </div>
 
-      <div id="supabaseStatusBadge" class="flex items-center gap-2 p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-bold shadow-2xs">
+      <div id="supabaseStatusBadge" class="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50/90 border border-blue-200/80 text-blue-800 text-[11px] font-bold shadow-2xs">
         <span class="live-pulse bg-blue-600 shrink-0"></span>
         <span class="sidebar-text truncate">Supabase Cloud: เชื่อมต่อสด (72,170 รายการ)</span>
       </div>
 
-      <div class="flex items-center justify-between px-2 py-1 text-slate-500 font-mono text-[11px]">
+      <div class="flex items-center justify-between px-2 pt-1 text-slate-500 font-mono text-[11px]">
         <div class="flex items-center gap-1.5">
           <span>🕒</span>
           <span id="liveClockText">12:00:00 น.</span>
         </div>
-        <button onclick="toggleSidebar()" class="sidebar-text text-[11px] font-sans font-bold text-blue-600 hover:underline hidden lg:inline cursor-pointer">
-          ย่อเมนู
+        <button onclick="toggleSidebar()" class="sidebar-text text-[11px] font-sans font-bold text-blue-600 hover:text-blue-700 hidden lg:inline-flex items-center gap-1 cursor-pointer" title="ย่อแถบเมนูด้านข้าง">
+          <span>ย่อเมนู</span>
+          <span class="text-[10px] bg-blue-100 text-blue-700 px-1 py-0.2 rounded">⇥</span>
         </button>
       </div>
     </div>
