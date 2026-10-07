@@ -890,10 +890,22 @@ const CCTV_SOURCES = {
     embedUrl: 'https://traffic.longdo.com/',
     isWater: false
   },
-  BMA: {
-    name: 'BMA CCTV & Traffic (ศูนย์กล้องวงจรปิดและจราจร กรุงเทพมหานคร)',
-    url: 'https://cctv.bangkok.go.th/',
-    embedUrl: 'https://cctv.bangkok.go.th/',
+  RADAR: {
+    name: 'เรดาร์ตรวจสภาพอากาศและกลุ่มฝนสด (Windy Live Doppler Weather & Rain Radar HD)',
+    url: 'https://www.windy.com/-Weather-radar-radar?radar,13.756,100.502,9',
+    embedUrl: 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true',
+    isWater: false
+  },
+  RAINVIEWER: {
+    name: 'RainViewer Live Radar (เรดาร์ตรวจจับกลุ่มฝนดาวเทียม HD เรียลไทม์)',
+    url: 'https://www.rainviewer.com/weather-radar-map-live.html',
+    embedUrl: 'https://www.rainviewer.com/map.html?loc=13.7563,100.5018,9&oFa=0&oC=1&oU=0&oCS=1&oF=0&oAP=1&c=3&o=90&lm=1&layer=radar&sm=1&sn=1',
+    isWater: false
+  },
+  TMD: {
+    name: 'เรดาร์ตรวจอากาศกรมอุตุนิยมวิทยา (TMD Weather Radar สุวรรณภูมิ / กทม.)',
+    url: 'https://weather.tmd.go.th/bkkLoop.php',
+    embedUrl: 'https://weather.tmd.go.th/bkkLoop.php',
     isWater: false
   },
   DOH: {
@@ -902,17 +914,17 @@ const CCTV_SOURCES = {
     embedUrl: 'https://www.doh-cctv.com/',
     isWater: false
   },
-  RADAR: {
-    name: 'เรดาร์ตรวจน้ำท่วม & กลุ่มฝน กทม. (Live Radar Animation)',
-    url: 'https://weather.bangkok.go.th/radar/',
-    embedUrl: 'https://weather.bangkok.go.th/radar/RadarAnimation.aspx',
-    isWater: false
-  },
   WATER: {
     name: '🌊 แดชบอร์ดระดับน้ำคลอง 12 สถานีหลัก & สถานีสูบน้ำ กทม. (DDS Live Telemetry)',
     url: 'https://dds.bangkok.go.th/',
     embedUrl: 'https://dds.bangkok.go.th/',
     isWater: true
+  },
+  BMA: {
+    name: 'BMA CCTV & Traffic (ศูนย์กล้องวงจรปิดและจราจร กรุงเทพมหานคร)',
+    url: 'https://cctv.bangkok.go.th/',
+    embedUrl: 'https://cctv.bangkok.go.th/',
+    isWater: false
   },
   TRAFFICVISION: {
     name: 'TrafficVision CCTV Hub (สำรองเชื่อมโยงผ่าน Longdo & BMA 1,800+ จุด)',
