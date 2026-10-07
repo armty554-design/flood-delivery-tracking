@@ -883,10 +883,28 @@ window.syncLiveFromSupabase = syncLiveFromSupabase;
 // ==========================================
 // 5. Page 3: Live CCTV & Traffic Surveillance Hub
 // ==========================================
+const DEDICATED_CCTV_CAMERAS = [
+  { id: 1, name: '1. แยกรามอินทรา กม.8 (ถ.นวมินทร์)', branch: 'สาขารามอินทรา', status: '🔴 น้ำท่วม 20cm', desc: 'จุดตัดสายส่งหลัก น้ำท่วมผิวจราจร 1-2 เลนซ้าย', lat: 13.8400, lon: 100.6650, url: 'https://traffic.longdo.com/loc/13.8400,100.6650' },
+  { id: 2, name: '2. ซอยรามอินทรา 34 (อยู่เย็น)', branch: 'สาขารามอินทรา', status: '🔴 น้ำท่วม 25-30cm', desc: 'ซอยลึกระบายน้ำช้า รถกระบะยกสูงเข้าได้', lat: 13.8480, lon: 100.6350, url: 'https://traffic.longdo.com/loc/13.8480,100.6350' },
+  { id: 3, name: '3. แยกมีนบุรี (สุวินทวงศ์ - รามอินทรา)', branch: 'สาขารามอินทรา', status: '🔴 น้ำท่วม 15-20cm', desc: 'พื้นที่หนองจอก-มีนบุรี น้ำเอ่อขังผิวทางบางช่วง', lat: 13.8140, lon: 100.7310, url: 'https://traffic.longdo.com/loc/13.8140,100.7310' },
+  { id: 4, name: '4. ถ.คู้บอน - แยกคลองสามวา', branch: 'สาขารามอินทรา', status: '🟡 เฝ้าระวัง', desc: 'เส้นทางส่งน้ำสาย 13205 น้ำลดระดับลงเรื่อยๆ', lat: 13.8560, lon: 100.6720, url: 'https://traffic.longdo.com/loc/13.8560,100.6720' },
+  { id: 5, name: '5. อุโมงค์ทางลอดกรุงเทพกรีฑา', branch: 'สาขากรุงเทพกรีฑา', status: '🟡 เฝ้าระวังน้ำขัง', desc: 'เครื่องสูบน้ำทำงานปกติ สัญจรได้ชะลอตัว', lat: 13.7485, lon: 100.6650, url: 'https://traffic.longdo.com/loc/13.7485,100.6650' },
+  { id: 6, name: '6. ถ.กรุงเทพกรีฑาตัดใหม่ - ร่มเกล้า', branch: 'สาขากรุงเทพกรีฑา', status: '🟢 ปกติ', desc: 'เส้นทางหลักสัญจรได้คล่องตัว ผิวจราจรแห้ง', lat: 13.7440, lon: 100.6920, url: 'https://traffic.longdo.com/loc/13.7440,100.6920' },
+  { id: 7, name: '7. ต่างระดับทับช้าง (มอเตอร์เวย์ ทล.7)', branch: 'สาขากรุงเทพกรีฑา', status: '🟢 ทางหลวงเปิดปกติ', desc: 'เชื่อม ถ.ศรีนครินทร์ - ร่มเกล้า การจราจรคล่องตัว', lat: 13.7380, lon: 100.6850, url: 'https://highwaytraffic.go.th/' },
+  { id: 8, name: '8. แยกเสรีไทย - นิคมฯ บางชัน', branch: 'สาขากรุงเทพกรีฑา', status: '🟡 เฝ้าระวัง', desc: 'จุดถ่ายโอนงานสาย 16304 มีน้ำขังบางช่วง', lat: 13.7820, lon: 100.6780, url: 'https://traffic.longdo.com/loc/13.7820,100.6780' },
+  { id: 9, name: '9. ทางด่วนสุขุมวิท 50 (อาจณรงค์)', branch: 'สาขาสุขุมวิท 50', status: '🟢 สัญจรได้ 100%', desc: 'ทางขึ้น-ลงด่วนสุขุมวิท 50 การจราจรคล่องตัว', lat: 13.7080, lon: 100.5980, url: 'https://traffic.longdo.com/loc/13.7080,100.5980' },
+  { id: 10, name: '10. ทางด่วนเฉลิมมหานคร (ท่าเรือ - สุขุมวิท)', branch: 'สาขาสุขุมวิท 50', status: '🟢 ปกติ', desc: 'เส้นทางเชื่อมโยงคลังสินค้าและสายส่ง', lat: 13.7190, lon: 100.5580, url: 'https://traffic.longdo.com/loc/13.7190,100.5580' },
+  { id: 11, name: '11. แยกบางนา - สุขุมวิท 103 (อุดมสุข)', branch: 'สาขาสุขุมวิท 50', status: '🟢 ปกติ', desc: 'จุดเชื่อมต่อสายส่งรอบนอก สัญจรสะดวก', lat: 13.6680, lon: 100.6050, url: 'https://traffic.longdo.com/loc/13.6680,100.6050' },
+  { id: 12, name: '12. แยกอ่อนนุช (สุขุมวิท 77)', branch: 'สาขาสุขุมวิท 50', status: '🟢 สัญจรปกติ', desc: 'เข้าสู่พื้นที่พระโขนง-ประเวศ การจราจรหนาแน่น', lat: 13.7060, lon: 100.6020, url: 'https://traffic.longdo.com/loc/13.7060,100.6020' },
+  { id: 13, name: '13. สะพานพระราม 3 - ถ.พระราม 3', branch: 'สาขาพระราม 3', status: '🟢 สำเร็จ 100%', desc: 'พื้นที่ปกติสมบูรณ์ ไม่มีปัญหาน้ำท่วม', lat: 13.6820, lon: 100.5400, url: 'https://traffic.longdo.com/loc/13.6820,100.5400' },
+  { id: 14, name: '14. แยกถนนตก - เจริญกรุง - พระราม 3', branch: 'สาขาพระราม 3', status: '🟢 ปกติ', desc: 'จุดระบายน้ำหลักคลองช่องนนทรีทำงานเต็มที่', lat: 13.7020, lon: 100.5420, url: 'https://traffic.longdo.com/loc/13.7020,100.5420' }
+];
+
 let longdoMapInstance = null;
 let longdoCamerasEnabled = true;
 let longdoTrafficEnabled = true;
 let longdoEventsEnabled = true;
+let longdoCustomMarkers = [];
 
 function initLongdoTrafficMap() {
   if (longdoMapInstance || typeof longdo === 'undefined') return;
@@ -907,7 +925,7 @@ function initLongdoTrafficMap() {
       if (longdo.Layers && longdo.Layers.TRAFFIC) {
         longdoMapInstance.Layers.add(longdo.Layers.TRAFFIC);
       }
-      // Load CCTV cameras overlay
+      // Load ALL official CCTV cameras across Bangkok, Expressways, Highways
       if (longdo.Overlays && longdo.Overlays.cameras) {
         longdoMapInstance.Overlays.load(longdo.Overlays.cameras);
       }
@@ -915,12 +933,46 @@ function initLongdoTrafficMap() {
       if (longdo.Overlays && longdo.Overlays.events) {
         longdoMapInstance.Overlays.load(longdo.Overlays.events);
       }
+
+      // Add high-visibility glowing markers for all 14 branch dedicated cameras
+      renderDedicatedCctvMarkers();
     });
   } catch (err) {
     console.warn('Longdo Map init warning:', err);
   }
 }
 window.initLongdoTrafficMap = initLongdoTrafficMap;
+
+function renderDedicatedCctvMarkers() {
+  if (!longdoMapInstance || typeof longdo === 'undefined') return;
+  
+  DEDICATED_CCTV_CAMERAS.forEach(cam => {
+    const marker = new longdo.Marker(
+      { lon: cam.lon, lat: cam.lat },
+      {
+        title: cam.name,
+        detail: `
+          <div style="font-family:'Prompt',sans-serif;padding:8px;min-width:240px;color:#0f172a;">
+            <div style="font-weight:bold;font-size:14px;color:#1e293b;border-bottom:1px solid #e2e8f0;padding-bottom:4px;margin-bottom:6px;">${cam.name}</div>
+            <div style="font-size:12px;font-weight:bold;color:#2563eb;margin-bottom:4px;">📍 ${cam.branch} • <span style="color:#e11d48;">${cam.status}</span></div>
+            <p style="font-size:11px;color:#64748b;margin:0 0 10px 0;line-height:1.4;">${cam.desc}</p>
+            <a href="${cam.url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:6px 12px;background:linear-gradient(to right,#2563eb,#4f46e5);color:#ffffff;border-radius:8px;font-size:11px;font-weight:bold;text-decoration:none;box-shadow:0 2px 6px rgba(37,99,235,0.35);">📹 เปิดสตรีมกล้องสด</a>
+          </div>
+        `,
+        icon: {
+          html: `
+            <div style="cursor:pointer;display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:#0f172a;border:2.5px solid #38bdf8;border-radius:50%;box-shadow:0 0 12px rgba(56,189,248,0.85);font-size:16px;">
+              📹
+            </div>
+          `,
+          offset: { x: 17, y: 17 }
+        }
+      }
+    );
+    longdoMapInstance.Overlays.add(marker);
+    longdoCustomMarkers.push(marker);
+  });
+}
 
 function zoomLongdoMap(lat, lon, zoomLevel = 14) {
   if (longdoMapInstance) {
@@ -938,6 +990,17 @@ function zoomLongdoMap(lat, lon, zoomLevel = 14) {
 }
 window.zoomLongdoMap = zoomLongdoMap;
 
+function focusCameraOnLongdoMap(lat, lon, zoomLevel = 15) {
+  switchCctvPortal('LONGDO');
+  zoomLongdoMap(lat, lon, zoomLevel);
+  // Smooth scroll up to CCTV map
+  const container = document.getElementById('longdoTrafficMapContainer');
+  if (container) {
+    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+window.focusCameraOnLongdoMap = focusCameraOnLongdoMap;
+
 function toggleLongdoLayer(layerType) {
   if (!longdoMapInstance || typeof longdo === 'undefined') return;
   if (layerType === 'traffic') {
@@ -953,8 +1016,10 @@ function toggleLongdoLayer(layerType) {
     longdoCamerasEnabled = !longdoCamerasEnabled;
     if (longdoCamerasEnabled) {
       longdoMapInstance.Overlays.load(longdo.Overlays.cameras);
+      longdoCustomMarkers.forEach(m => longdoMapInstance.Overlays.add(m));
     } else {
       longdoMapInstance.Overlays.unload(longdo.Overlays.cameras);
+      longdoCustomMarkers.forEach(m => longdoMapInstance.Overlays.remove(m));
     }
     const btn = document.getElementById('btnToggleLongdoCameras');
     if (btn) btn.className = longdoCamerasEnabled ? 'px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs cursor-pointer' : 'px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 text-slate-400 hover:text-white cursor-pointer';

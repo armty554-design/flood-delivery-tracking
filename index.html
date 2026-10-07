@@ -854,11 +854,11 @@
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
           <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-bold text-slate-500 uppercase mr-1">เลือกพอร์ทัลตรวจการณ์:</span>
-            <button data-source="RADAR" onclick="switchCctvPortal('RADAR')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
-              🌧️ เรดาร์ฝนสด Windy Radar (HD)
+            <button data-source="LONGDO" onclick="switchCctvPortal('LONGDO')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
+              📹 Longdo Traffic & CCTV (กล้อง กทม. ทางด่วน สดทุกจุด)
             </button>
-            <button data-source="LONGDO" onclick="switchCctvPortal('LONGDO')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
-              📹 Longdo Traffic CCTV (กล้อง กทม. & ทางด่วน สด)
+            <button data-source="RADAR" onclick="switchCctvPortal('RADAR')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+              🌧️ เรดาร์ฝนสด Windy Radar (HD)
             </button>
             <button data-source="RAINVIEWER" onclick="switchCctvPortal('RAINVIEWER')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
               🌦️ RainViewer เรดาร์ตรวจฝน
@@ -881,7 +881,7 @@
           </div>
 
           <div class="flex flex-wrap items-center gap-2">
-            <a id="cctvDirectLinkBtn" href="https://www.windy.com/-Weather-radar-radar?radar,13.756,100.502,9" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
+            <a id="cctvDirectLinkBtn" href="https://traffic.longdo.com/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
               <span>🚀 เปิดพอร์ทัลเต็มจอ (แท็บใหม่)</span>
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -893,21 +893,21 @@
           <div class="flex items-center gap-2">
             <span class="live-pulse shrink-0"></span>
             <span id="cctvPortalStatusText" class="text-slate-700 font-medium">
-              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">เรดาร์ตรวจสภาพอากาศและกลุ่มฝนสด (Windy Live Doppler Weather & Rain Radar HD)</strong>
+              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">Longdo Map Live Traffic & CCTV (แสดงกล้องสด กทม. ทางด่วน และ 14 จุดสาขาครบถ้วน)</strong>
             </span>
           </div>
           <div class="flex items-center gap-2 text-slate-500 text-[11px]">
-            <span>💡 สตรีมสดความละเอียดสูงพร้อม Interactive Animation คมชัด 100%</span>
+            <span>💡 แสดงกล้อง CCTV สดทุกจุดบนแผนที่ พร้อมเส้นสีการจราจรแบบเรียลไทม์</span>
           </div>
         </div>
 
         <!-- Embedded Frame & Dashboard Container -->
         <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 560px;">
           <!-- Video / Portal Iframe (Works 100% for Windy Radar & RainViewer) -->
-          <iframe id="cctvPortalIframe" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" data-src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" class="w-full h-full border-0" style="min-height: 560px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
+          <iframe id="cctvPortalIframe" src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" data-src="https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true" class="w-full h-full border-0 hidden" style="min-height: 560px;" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
 
           <!-- Interactive Longdo Traffic & CCTV Map (Native API v3 - Active when LONGDO is clicked) -->
-          <div id="longdoTrafficMapContainer" class="hidden w-full h-full relative" style="min-height: 560px;">
+          <div id="longdoTrafficMapContainer" class="w-full h-full relative" style="min-height: 560px;">
             <div id="longdoMapDiv" class="w-full h-full" style="min-height: 560px;"></div>
             
             <!-- Longdo Map Controls & Quick Zone Jump Bar -->
@@ -917,11 +917,11 @@
                   <span class="live-pulse"></span>
                   <span>Longdo Live Traffic & CCTV:</span>
                 </span>
+                <button id="btnToggleLongdoCameras" onclick="toggleLongdoLayer('cameras')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs cursor-pointer">
+                  📹 แสดงกล้องทั้งหมด (1,500+ จุด)
+                </button>
                 <button id="btnToggleLongdoTraffic" onclick="toggleLongdoLayer('traffic')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-xs cursor-pointer">
                   🚦 การจราจรสด
-                </button>
-                <button id="btnToggleLongdoCameras" onclick="toggleLongdoLayer('cameras')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-xs cursor-pointer">
-                  📹 กล้อง CCTV
                 </button>
                 <button id="btnToggleLongdoEvents" onclick="toggleLongdoLayer('events')" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-600 text-white shadow-xs cursor-pointer">
                   ⚠️ เหตุการณ์ & น้ำท่วม
@@ -1420,7 +1420,7 @@
               <a href="https://traffic.longdo.com/loc/13.8400,100.6650" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.8400, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.8400, 100.6650, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1438,7 +1438,7 @@
               <a href="https://traffic.longdo.com/loc/13.8480,100.6350" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.8480, 100.6350); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.8480, 100.6350, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1456,7 +1456,7 @@
               <a href="https://traffic.longdo.com/loc/13.8140,100.7310" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.8140, 100.7310); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.8140, 100.7310, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1474,7 +1474,7 @@
               <a href="https://traffic.longdo.com/loc/13.8560,100.6720" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.8560, 100.6720); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.8560, 100.6720, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1492,7 +1492,7 @@
               <a href="https://traffic.longdo.com/loc/13.7485,100.6650" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7485, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7485, 100.6650, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1510,7 +1510,7 @@
               <a href="https://traffic.longdo.com/loc/13.7440,100.6920" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7440, 100.6920); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7440, 100.6920, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1528,7 +1528,7 @@
               <a href="https://highwaytraffic.go.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้อง DOH
               </a>
-              <button onclick="zoomToLocation(13.7380, 100.6850); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7380, 100.6850, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1546,7 +1546,7 @@
               <a href="https://traffic.longdo.com/loc/13.7820,100.6780" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7820, 100.6780); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7820, 100.6780, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1564,7 +1564,7 @@
               <a href="https://traffic.longdo.com/loc/13.7080,100.5980" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7080, 100.5980); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7080, 100.5980, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1582,7 +1582,7 @@
               <a href="https://traffic.longdo.com/loc/13.7190,100.5580" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7190, 100.5580); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7190, 100.5580, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1600,7 +1600,7 @@
               <a href="https://traffic.longdo.com/loc/13.6680,100.6050" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.6680, 100.6050); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.6680, 100.6050, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1618,7 +1618,7 @@
               <a href="https://traffic.longdo.com/loc/13.7060,100.6020" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7060, 100.6020); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7060, 100.6020, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1636,7 +1636,7 @@
               <a href="https://traffic.longdo.com/loc/13.6820,100.5400" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.6820, 100.5400); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.6820, 100.5400, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
@@ -1654,7 +1654,7 @@
               <a href="https://traffic.longdo.com/loc/13.7020,100.5420" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
                 🌐 กล้องสด
               </a>
-              <button onclick="zoomToLocation(13.7020, 100.5420); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+              <button onclick="focusCameraOnLongdoMap(13.7020, 100.5420, 15)" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer" title="ซูมพิกัดนี้บนแผนที่">
                 🗺️ แผนที่
               </button>
             </div>
