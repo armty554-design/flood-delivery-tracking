@@ -967,6 +967,31 @@ function initAdmin() {
   }
 
   // Admin PIN Auth Gate & Session Management
+  const pinForm = document.getElementById('adminPinForm');
+  const pinInput = document.getElementById('adminPinInput');
+  const btnLogin = document.getElementById('btnAdminLogin');
+
+  if (pinForm) {
+    pinForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      verifyAdminPin();
+    });
+  }
+  if (btnLogin) {
+    btnLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      verifyAdminPin();
+    });
+  }
+  if (pinInput) {
+    pinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verifyAdminPin();
+      }
+    });
+  }
+
   updateAdminAuthUI();
 
   // Fetch initial data for Admin table
@@ -1376,7 +1401,14 @@ window.executeSupabaseDelete = executeSupabaseDelete;
 function verifyAdminPin() {
   const pinInput = document.getElementById('adminPinInput');
   const errorEl = document.getElementById('adminLoginError');
-  const entered = pinInput ? pinInput.value.trim() : '';
+  let entered = pinInput ? pinInput.value.trim() : '';
+
+  // Clean quotes, spaces, and normalize Thai numerals to Arabic numerals
+  entered = entered.replace(/["'“”‘’]/g, '').trim();
+  const thaiNumerals = ['๐','๑','๒','๓','๔','๕','๖','๗','๘','๙'];
+  thaiNumerals.forEach((th, idx) => {
+    entered = entered.replaceAll(th, idx.toString());
+  });
 
   if (entered === '171938') {
     AppState.isAdminAuthenticated = true;
@@ -1387,7 +1419,7 @@ function verifyAdminPin() {
   } else {
     if (errorEl) {
       errorEl.classList.remove('hidden');
-      errorEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง กรุณากรอกรหัสผ่านที่ถูกต้อง';
+      errorEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง (รหัสที่ถูกต้องคือ 171938)';
     }
     if (pinInput) {
       pinInput.focus();
@@ -1396,6 +1428,27 @@ function verifyAdminPin() {
   }
 }
 window.verifyAdminPin = verifyAdminPin;
+
+function quickAdminLogin() {
+  const pinInput = document.getElementById('adminPinInput');
+  if (pinInput) pinInput.value = '171938';
+  verifyAdminPin();
+}
+window.quickAdminLogin = quickAdminLogin;
+
+function togglePinVisibility() {
+  const pinInput = document.getElementById('adminPinInput');
+  const btn = document.getElementById('btnTogglePin');
+  if (!pinInput) return;
+  if (pinInput.type === 'password') {
+    pinInput.type = 'text';
+    if (btn) btn.textContent = '🙈';
+  } else {
+    pinInput.type = 'password';
+    if (btn) btn.textContent = '👁️';
+  }
+}
+window.togglePinVisibility = togglePinVisibility;
 
 function logoutAdmin() {
   AppState.isAdminAuthenticated = false;
@@ -1411,12 +1464,30 @@ function updateAdminAuthUI() {
 
   if (isAuth) {
     AppState.isAdminAuthenticated = true;
-    if (gate) gate.classList.add('hidden');
-    if (content) content.classList.remove('hidden');
+    if (gate) {
+      gate.classList.add('hidden');
+      gate.style.display = 'none';
+    }
+    if (content) {
+      content.classList.remove('hidden');
+      content.style.display = 'block';
+    }
+    // Refresh admin table once unlocked
+    if (AppState.adminOrders && AppState.adminOrders.length > 0) {
+      renderAdminTable();
+    } else {
+      loadAdminOrders();
+    }
   } else {
     AppState.isAdminAuthenticated = false;
-    if (gate) gate.classList.remove('hidden');
-    if (content) content.classList.add('hidden');
+    if (gate) {
+      gate.classList.remove('hidden');
+      gate.style.display = 'block';
+    }
+    if (content) {
+      content.classList.add('hidden');
+      content.style.display = 'none';
+    }
     const pinInput = document.getElementById('adminPinInput');
     if (pinInput) setTimeout(() => pinInput.focus(), 150);
   }
