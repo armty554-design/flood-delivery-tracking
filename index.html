@@ -845,110 +845,207 @@
       </div>
 
       <!-- Live Switcher & Portal Frame -->
-      <div class="exec-card">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-          <div class="flex items-center gap-2">
+      <div class="exec-card p-5 space-y-4">
+        
+        <!-- Top Switcher & Launchers -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div class="flex flex-wrap items-center gap-2">
             <span class="text-xs font-bold text-slate-500 uppercase mr-1">เลือกพอร์ทัลตรวจการณ์:</span>
-            <button data-source="TRAFFICVISION" class="cctv-source-btn px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white shadow-xs">
+            <button data-source="TRAFFICVISION" onclick="switchCctvPortal('TRAFFICVISION')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer">
               TrafficVision CCTV Hub (1,800+ จุด)
             </button>
-            <button data-source="BMA" class="cctv-source-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+            <button data-source="BMA" onclick="switchCctvPortal('BMA')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
               BMA Traffic (สจส. กทม.)
             </button>
+            <button data-source="RADAR" onclick="switchCctvPortal('RADAR')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+              🌧️ เรดาร์ฝน & น้ำท่วม กทม.
+            </button>
+            <button data-source="WATER" onclick="switchCctvPortal('WATER')" class="cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer">
+              🌊 ระดับน้ำคลอง กทม.
+            </button>
           </div>
-          <div class="flex items-center gap-1.5 text-xs text-slate-500">
-            <span class="live-pulse"></span>
-            <span>สถานะสัญญาณ: ออนไลน์ 24 ชม.</span>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <a id="cctvDirectLinkBtn" href="https://trafficvision.in.th/" target="_blank" rel="noopener noreferrer" class="px-3.5 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-500/20 inline-flex items-center gap-1.5 cursor-pointer">
+              <span>🚀 เปิดพอร์ทัลเต็มจอ (แท็บใหม่)</span>
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
           </div>
         </div>
 
-        <div class="cctv-frame-container">
-          <iframe id="cctvPortalIframe" src="about:blank" data-src="https://trafficvision.in.th/" class="w-full h-full border-0" allowfullscreen></iframe>
+        <!-- Portal Info & Notice Banner -->
+        <div class="p-3 bg-blue-50/80 border border-blue-200/80 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="live-pulse shrink-0"></span>
+            <span id="cctvPortalStatusText" class="text-slate-700 font-medium">
+              กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">TrafficVision Thailand (1,800+ กล้อง)</strong>
+            </span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-500 text-[11px]">
+            <span>💡 หากระบบเบราว์เซอร์บล็อก iframe ให้คลิกปุ่ม "เปิดพอร์ทัลเต็มจอ" ด้านบน</span>
+          </div>
+        </div>
+
+        <!-- Embedded Frame Container -->
+        <div class="cctv-frame-container relative rounded-2xl overflow-hidden border border-slate-200 shadow-inner bg-slate-950" style="min-height: 480px; height: 550px;">
+          <iframe id="cctvPortalIframe" src="about:blank" data-src="https://trafficvision.in.th/" class="w-full h-full border-0" allow="camera; microphone; geolocation; autoplay; fullscreen" allowfullscreen></iframe>
         </div>
       </div>
 
       <!-- 14 Dedicated Branch & Choke Point Cameras Grid -->
-      <div class="exec-card">
+      <div class="exec-card p-5 space-y-4">
         <div class="exec-card-header">
           <div>
-            <h3 class="font-bold text-base text-slate-900">14 กล้องเฉพาะประจำ 4 สาขาและเส้นทางคอขวดน้ำท่วม</h3>
-            <p class="text-xs text-slate-500">อัปเดตภาพสดอัตโนมัติทุก 30 วินาที</p>
+            <h3 class="font-bold text-base text-slate-900">14 จุดตรวจการณ์กล้องวงจรปิดประจำ 4 สาขาและเส้นทางคอขวดน้ำท่วม</h3>
+            <p class="text-xs text-slate-500">คลิก "ดูสด" หรือ "ซูมบนแผนที่" เพื่อมอนิเตอร์สภาพน้ำท่วมรายจุดทันที</p>
           </div>
           <span class="badge badge-success">Live Camera Feeds</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/ramintra_km8.jpg" data-base-src="https://trafficvision.in.th/camera/ramintra_km8.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1545459720-aac8509eb02c?w=400&q=80'" alt="กล้อง 1">
-              <span class="absolute top-2 left-2 badge badge-danger text-[10px]">สด</span>
+          <!-- กล้อง 1: กม.8 -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-danger text-[10px] font-bold">🔴 น้ำท่วม 20cm</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขารามอินทรา</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">1. แยกรามอินทรา กม.8</div>
-            <div class="text-[11px] text-slate-500">สาขารามอินทรา • น้ำท่วมผิวจราจร 20cm</div>
+            <div class="font-bold text-xs text-slate-900">1. แยกรามอินทรา กม.8 (ถ.นวมินทร์)</div>
+            <p class="text-[11px] text-slate-500 leading-tight">จุดตัดสายส่งหลัก น้ำท่วมผิวจราจร 1-2 เลนซ้าย</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.8400, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
           </div>
 
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/ramintra_soi34.jpg" data-base-src="https://trafficvision.in.th/camera/ramintra_soi34.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=400&q=80'" alt="กล้อง 2">
-              <span class="absolute top-2 left-2 badge badge-danger text-[10px]">สด</span>
+          <!-- กล้อง 2: รามอินทรา 34 -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-danger text-[10px] font-bold">🔴 น้ำท่วม 25-30cm</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขารามอินทรา</span>
             </div>
             <div class="font-bold text-xs text-slate-900">2. ซอยรามอินทรา 34 (อยู่เย็น)</div>
-            <div class="text-[11px] text-slate-500">สาขารามอินทรา • น้ำท่วมสูง รถเล็กผ่านยาก</div>
+            <p class="text-[11px] text-slate-500 leading-tight">ซอยลึกระบายน้ำช้า รถกระบะยกสูงเข้าได้</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.8480, 100.6350); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
           </div>
 
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/krungthep_tunnel.jpg" data-base-src="https://trafficvision.in.th/camera/krungthep_tunnel.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=400&q=80'" alt="กล้อง 3">
-              <span class="absolute top-2 left-2 badge badge-warning text-[10px]">สด</span>
+          <!-- กล้อง 3: อุโมงค์กรุงเทพกรีฑา -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-warning text-[10px] font-bold">🟡 เฝ้าระวังน้ำขัง</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขากรุงเทพกรีฑา</span>
             </div>
             <div class="font-bold text-xs text-slate-900">3. อุโมงค์ทางลอดกรุงเทพกรีฑา</div>
-            <div class="text-[11px] text-slate-500">สาขากรุงเทพกรีฑา • ระบายน้ำต่อเนื่อง</div>
-          </div>
-
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/krungthep_newroad.jpg" data-base-src="https://trafficvision.in.th/camera/krungthep_newroad.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1494783367193-149034c05e8f?w=400&q=80'" alt="กล้อง 4">
-              <span class="absolute top-2 left-2 badge badge-success text-[10px]">สด</span>
+            <p class="text-[11px] text-slate-500 leading-tight">เครื่องสูบน้ำทำงานปกติ สัญจรได้ชะลอตัว</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7485, 100.6650); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
             </div>
-            <div class="font-bold text-xs text-slate-900">4. ถ.กรุงเทพกรีฑาตัดใหม่</div>
-            <div class="text-[11px] text-slate-500">สาขากรุงเทพกรีฑา • สัญจรได้ปกติ</div>
           </div>
 
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/phrakanong_gate.jpg" data-base-src="https://trafficvision.in.th/camera/phrakanong_gate.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&q=80'" alt="กล้อง 5">
-              <span class="absolute top-2 left-2 badge badge-success text-[10px]">สด</span>
+          <!-- กล้อง 4: กรุงเทพกรีฑาตัดใหม่ -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 ปกติ</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขากรุงเทพกรีฑา</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">4. ถ.กรุงเทพกรีฑาตัดใหม่ - ร่มเกล้า</div>
+            <p class="text-[11px] text-slate-500 leading-tight">เส้นทางหลักสัญจรได้คล่องตัว ผิวจราจรแห้ง</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://trafficvision.in.th/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7440, 100.6920); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 5: ปตร.พระโขนง -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 เดินเครื่องสูบน้ำ</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขาสุขุมวิท 50</span>
             </div>
             <div class="font-bold text-xs text-slate-900">5. ปตร.พระโขนง (สุขุมวิท 50)</div>
-            <div class="text-[11px] text-slate-500">สาขาสุขุมวิท 50 • เร่งสูบระบายน้ำ</div>
-          </div>
-
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/sukhumvit50_klongtoey.jpg" data-base-src="https://trafficvision.in.th/camera/sukhumvit50_klongtoey.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1508873696983-2df5293cb32f?w=400&q=80'" alt="กล้อง 6">
-              <span class="absolute top-2 left-2 badge badge-success text-[10px]">สด</span>
+            <p class="text-[11px] text-slate-500 leading-tight">สถานีสูบน้ำหลักเร่งระบายลงแม่น้ำเจ้าพระยา</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7080, 100.5980); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
             </div>
-            <div class="font-bold text-xs text-slate-900">6. แยกคลองเตย - สุขุมวิท 50</div>
-            <div class="text-[11px] text-slate-500">สาขาสุขุมวิท 50 • รถคล่องตัว</div>
           </div>
 
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/bhumibol_bridge.jpg" data-base-src="https://trafficvision.in.th/camera/bhumibol_bridge.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400&q=80'" alt="กล้อง 7">
-              <span class="absolute top-2 left-2 badge badge-success text-[10px]">สด</span>
+          <!-- กล้อง 6: แยกคลองเตย -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 คล่องตัว</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขาสุขุมวิท 50</span>
+            </div>
+            <div class="font-bold text-xs text-slate-900">6. แยกคลองเตย - ถ.พระราม 4</div>
+            <p class="text-[11px] text-slate-500 leading-tight">ไม่มีน้ำท่วมขัง การจราจรเคลื่อนตัวได้ดี</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7190, 100.5580); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
+          </div>
+
+          <!-- กล้อง 7: สะพานภูมิพล -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 คล่องตัว 100%</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขาพระราม 3</span>
             </div>
             <div class="font-bold text-xs text-slate-900">7. สะพานภูมิพล - พระราม 3</div>
-            <div class="text-[11px] text-slate-500">สาขาพระราม 3 • การจราจรคล่องตัว</div>
+            <p class="text-[11px] text-slate-500 leading-tight">เส้นทางขนส่งหลักเชื่อมพระราม 3 - สุขสวัสดิ์ แห้งปกติ</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.6820, 100.5400); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
           </div>
 
-          <div class="exec-card p-3">
-            <div class="cctv-card-thumb mb-2">
-              <img src="https://trafficvision.in.th/camera/nanglinchee_rama3.jpg" data-base-src="https://trafficvision.in.th/camera/nanglinchee_rama3.jpg" class="cctv-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=400&q=80'" alt="กล้อง 8">
-              <span class="absolute top-2 left-2 badge badge-success text-[10px]">สด</span>
+          <!-- กล้อง 8: แยกนางลิ้นจี่ -->
+          <div class="exec-card p-3.5 border border-slate-200 hover:border-blue-300 transition shadow-2xs space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="badge badge-success text-[10px] font-bold">🟢 ปกติ</span>
+              <span class="text-[11px] font-bold text-slate-500">สาขาพระราม 3</span>
             </div>
-            <div class="font-bold text-xs text-slate-900">8. แยกนางลิ้นจี่ - พระราม 3</div>
-            <div class="text-[11px] text-slate-500">สาขาพระราม 3 • ผิวจราจรแห้งปกติ</div>
+            <div class="font-bold text-xs text-slate-900">8. แยกนางลิ้นจี่ - ถ.พระราม 3</div>
+            <p class="text-[11px] text-slate-500 leading-tight">ไม่มีน้ำขัง การส่งน้ำ 18,420 จุดสำเร็จครบ 100%</p>
+            <div class="flex items-center gap-1.5 pt-1">
+              <a href="https://bmatraffic.com/" target="_blank" class="flex-1 px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-center rounded-lg text-[11px] font-bold transition">
+                🌐 สตรีมสด
+              </a>
+              <button onclick="zoomToLocation(13.7020, 100.5420); switchPage('page-pending-map')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition" title="ซูมพิกัดนี้บนแผนที่">
+                🗺️ แผนที่
+              </button>
+            </div>
           </div>
 
         </div>

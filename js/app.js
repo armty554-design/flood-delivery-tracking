@@ -884,35 +884,59 @@ window.syncLiveFromSupabase = syncLiveFromSupabase;
 // 5. Page 3: Live CCTV Surveillance Hub
 // ==========================================
 const CCTV_SOURCES = {
-  TRAFFICVISION: 'https://trafficvision.in.th/',
-  BMA: 'https://bmatraffic.com/'
+  TRAFFICVISION: {
+    name: 'TrafficVision Thailand (1,800+ กล้อง)',
+    url: 'https://trafficvision.in.th/',
+    embedUrl: 'https://trafficvision.in.th/'
+  },
+  BMA: {
+    name: 'BMA Traffic (สจส. กรุงเทพมหานคร)',
+    url: 'https://bmatraffic.com/',
+    embedUrl: 'https://bmatraffic.com/'
+  },
+  RADAR: {
+    name: 'เรดาร์ตรวจน้ำท่วม & กลุ่มฝน กทม. (Live Radar)',
+    url: 'https://weather.bangkok.go.th/radar/',
+    embedUrl: 'https://weather.bangkok.go.th/radar/RadarAnimation.aspx'
+  },
+  WATER: {
+    name: 'ระบบตรวจวัดระดับน้ำคลองสายหลัก กทม. (DDS Water Info)',
+    url: 'https://dds.bangkok.go.th/',
+    embedUrl: 'https://dds.bangkok.go.th/'
+  }
 };
 
-function initCCTV() {
-  const switcherBtns = document.querySelectorAll('.cctv-source-btn');
+function switchCctvPortal(srcKey) {
+  const info = CCTV_SOURCES[srcKey] || CCTV_SOURCES.TRAFFICVISION;
   const iframe = document.getElementById('cctvPortalIframe');
+  const directLinkBtn = document.getElementById('cctvDirectLinkBtn');
+  const statusText = document.getElementById('cctvPortalStatusText');
 
-  switcherBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const srcKey = btn.getAttribute('data-source');
-      switcherBtns.forEach(b => {
-        b.className = 'cctv-source-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200';
-      });
-      btn.className = 'cctv-source-btn px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white shadow-xs';
-      if (iframe && CCTV_SOURCES[srcKey]) {
-        iframe.src = CCTV_SOURCES[srcKey];
-      }
-    });
+  // Update tabs styling
+  document.querySelectorAll('.cctv-source-btn').forEach(btn => {
+    if (btn.getAttribute('data-source') === srcKey) {
+      btn.className = 'cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-blue-600 text-white shadow-xs cursor-pointer';
+    } else {
+      btn.className = 'cctv-source-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer';
+    }
   });
 
-  // Auto-refresh 14 camera cards every 30 seconds
-  if (!navigator.webdriver) {
-    setInterval(() => {
-      document.querySelectorAll('.cctv-thumb-img').forEach(img => {
-        const base = img.getAttribute('data-base-src') || img.src.split('?')[0];
-        img.src = `${base}?t=${Date.now()}`;
-      });
-    }, 30000);
+  if (iframe) {
+    iframe.src = info.embedUrl;
+  }
+  if (directLinkBtn) {
+    directLinkBtn.href = info.url;
+  }
+  if (statusText) {
+    statusText.innerHTML = `กำลังเชื่อมโยงสัญญาณสตรีมสด: <strong class="text-blue-700 font-bold">${info.name}</strong>`;
+  }
+}
+window.switchCctvPortal = switchCctvPortal;
+
+function initCCTV() {
+  const iframe = document.getElementById('cctvPortalIframe');
+  if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
+    iframe.src = 'https://trafficvision.in.th/';
   }
 }
 
@@ -2574,35 +2598,107 @@ window.saveAdminOrderEdit = saveAdminOrderEdit;
 // 9. Page: Branch & Truck Intelligence Summary
 // ==========================================
 const TRUCK_ZONES = {
-  '16306': 'ชุมชนนักกีฬาแหลมทอง ซ.1-15 / ทับช้าง',
-  '16304': 'หมู่บ้านชาลิสา / กรุงเทพกรีฑา 18-20',
-  '16302': 'สะพานสูง / ถ.นักกีฬาแหลมทอง',
-  '16308': 'เคหะร่มเกล้า / ราษฎร์พัฒนา',
-  '16204': 'ศรีนครินทร์-ร่มเกล้า / กรุงเทพกรีฑาตัดใหม่',
-  '16301': 'พัฒนาการตัดใหม่ / สะพานสูง',
-  '16202': 'หัวหมาก / ลำสาลี',
-  '16303': 'ประชาสุขคอนโด / นักกีฬาแหลมทอง 9',
-  '16305': 'รามคำแหง 118 / สัมมากร',
-  '16102': 'มีนบุรีใต้ / เคหะชุมชน',
-  '13205': 'นิมิตใหม่ / แสนแสบ / มีนบุรี',
-  '13101': 'วัชรพล / สุขาภิบาล 5 / นันทวัน',
-  '13207': 'ถ.บึงขวาง 1-2 / ทรายกองดิน',
-  '13203': 'คลองสามวา / รามอินทรา กม.8',
-  '13L16': 'พระยาสุเรนทร์ / ปัญญาอินทรา',
-  '13304': 'ท่าแร้ง / โนเบิลจีโอ วัชรพล',
-  '13402': 'ออเงิน / สุขาภิบาล 5 ซ.28',
-  '13404': 'สายไหม / เพิ่มสิน',
-  '13210': 'หทัยราษฎร์ / มีนบุรี',
-  '13201': 'รามอินทรา กม.4-6 / คู้บอน',
-  '11108': 'พระโขนง / สุขุมวิท 50-71 / คลองเตย',
-  '11308': 'บางจาก / อ่อนนุช / ปุณณวิถี',
-  '11206': 'อุดมสุข / บางนา-ตราด',
+  // สาขารามอินทรา (23 คัน)
+  '13205': 'หนองจอก / ลำผักชี / สุวินทวงศ์ (ม.โรยัลปาร์ควิลล์, ม.คริสตัล)',
+  '13S01': 'คลองสามวา / ทรายกองดินใต้ / ถ.ประชาร่วมใจ (ม.กฤษดานคร 25)',
+  '13203': 'คลองสามวา / บางชัน / พระยาสุเรนทร์ 35 (ม.เดอะพาลา)',
+  '13101': 'บึงกุ่ม / คลองกุ่ม / ถ.เสรีไทย (ม.นาริสา, ม.สหกรณ์)',
+  '13102': 'คันนายาว / บึงกุ่ม / ถ.เสรีไทย',
+  '13103': 'บึงกุ่ม / คลองกุ่ม / ถ.นวมินทร์',
+  '13104': 'บึงกุ่ม / คลองกุ่ม / ซ.โพธิ์แก้ว',
+  '13105': 'หนองจอก / ถ.ฉลองกรุง / ลำผักชี',
+  '13201': 'คลองสามวา / บางชัน / มีนบุรี / ซ.คู้บอน',
+  '13202': 'คลองสามวา / บางชัน / มีนบุรี',
+  '13204': 'คลองสามวา / ถ.หทัยราษฎร์ / พระยาสุเรนทร์',
+  '13206': 'สุวินทวงศ์ / มีนบุรี / หนองจอก',
+  '13207': 'มีนบุรี / ถ.บึงขวาง / ทรายกองดิน',
+  '13301': 'ท่าแร้ง / วัชรพล / สุขาภิบาล 5',
+  '13302': 'ลาดพร้าว / ถ.ประเสริฐมนูกิจ (เกษตร-นวมินทร์)',
+  '13304': 'ลาดพร้าว / บางชัน / ถ.วัชรพล',
+  '13305': 'ลาดพร้าว / โชคชัย 4 / ลาดพร้าววังหิน',
+  '13401': 'ท่าแร้ง / ซ.วัชรพล / ถ.รามอินทรา',
+  '13402': 'สายไหม / ออเงิน / สุขาภิบาล 5 ซ.28',
+  '13404': 'สายไหม / ถ.เพิ่มสิน / วัชรพล',
+  '13L11': 'ลาดพร้าว / บึงกุ่ม / คลองกุ่ม',
+  '13L16': 'คู้บอน / ท่าแร้ง / คลองสามวา / ปัญญาอินทรา',
+
+  // สาขากรุงเทพกรีฑา (22 คัน)
+  '16304': 'สะพานสูง / ทับช้าง / กรุงเทพกรีฑา 8-10 (ม.นักกีฬาแหลมทอง, ม.ชาลิสา)',
+  '16302': 'บางกะปิ / คลองจั่น / ถ.แฮปปี้แลนด์ (ม.ฉัตรแก้ว)',
+  '16204': 'บางกะปิ / คลองจั่น / ซ.โพธิ์แก้ว 4 (ม.สินสุข โพธิ์แก้ว)',
+  '16301': 'สะพานสูง / ถ.รามคำแหง 118 (ม.สัมมากร)',
+  '16303': 'สะพานสูง / หัวหมาก / ถ.กรุงเทพกรีฑา',
+  '16305': 'สะพานสูง / กรุงเทพกรีฑา / ถ.ศรีนครินทร์',
+  '16306': 'สะพานสูง / เคหะร่มเกล้า / ถ.ราษฎร์พัฒนา',
+  '16307': 'สะพานสูง / ถ.รามคำแหง / กรุงเทพกรีฑา',
+  '16308': 'สะพานสูง / ทับช้าง / ถ.ราษฎร์พัฒนา',
+  '16101': 'วังทองหลาง / ซ.ลาดพร้าว 80-100',
+  '16102': 'วังทองหลาง / ถ.รามคำแหง / ลาดพร้าว',
+  '16103': 'วังทองหลาง / ถ.ลาดพร้าว / รามคำแหง',
+  '16104': 'วังทองหลาง / ถ.รามคำแหง / หัวหมาก',
+  '16105': 'หัวหมาก / ถ.รามคำแหง / ลำสาลี',
+  '16106': 'ลาดพร้าว / วังทองหลาง / โชคชัย 4',
+  '16107': 'หัวหมาก / แยกลำสาลี / รามคำแหง',
+  '16201': 'ลาดพร้าว / วังทองหลาง / ถ.ประดิษฐ์มนูธรรม',
+  '16202': 'วังทองหลาง / ลาดพร้าว / เอกมัย-รามอินทรา',
+  '16203': 'หัวหมาก / บางกะปิ / ถ.รามคำแหง',
+  '16205': 'รามคำแหง / หัวหมาก / ถ.พัฒนาการ',
+  '16206': 'ลาดพร้าว / บางกะปิ / แฮปปี้แลนด์',
+  '16L19': 'บางกะปิ / ถ.รามคำแหง / หัวหมาก',
+
+  // สาขาสุขุมวิท 50 (18 คัน)
+  '11L13': 'พระโขนง / คลองเตย / ถ.สุขุมวิท 50-71',
+  '11102': 'พระโขนง / สุขุมวิท 50 / ซ.สุขุมวิท 48-62',
+  '11104': 'คลองเตย / สุขุมวิท / พระโขนง',
+  '11105': 'คลองเตย / พระราม 4 / ซ.สุขุมวิท 22-26',
+  '11106': 'พระโขนง / สุขุมวิท 71 / ปรีดีพนมยงค์',
+  '11107': 'สุขุมวิท 50 / คลองเตย / พระราม 4',
+  '11108': 'สุขุมวิท 50-71 / คลองเตย / ซ.อ่อนนุช',
+  '11202': 'สุขุมวิท / คลองเตย / พระโขนง',
+  '11203': 'คลองเตย / พระราม 4 / สุขุมวิท',
+  '11204': 'สุขุมวิท 101-103 / ถ.อุดมสุข',
+  '11205': 'สุขุมวิท / บางจาก / ซ.ปุณณวิถี',
+  '11206': 'สุขุมวิท / อุดมสุข / ถ.บางนา-ตราด',
+  '11207': 'สุขุมวิท / คลองเตย / พระโขนง',
+  '11301': 'พระโขนง / สุขุมวิท 77 / ถ.อ่อนนุช',
+  '11302': 'สุขุมวิท / คลองเตย / ซ.เอกมัย',
+  '11305': 'สุขุมวิท / ซ.ทองหล่อ / คลองเตย',
+  '11306': 'สุขุมวิท / พระโขนง / คลองเตย',
+  '11308': 'สุขุมวิท / บางจาก / อ่อนนุช / ปุณณวิถี',
+
+  // สาขาพระราม 3 (5 คัน)
   '30206': 'สาธุประดิษฐ์ / ช่องนนทรี / ยานนาวา',
-  '50101': 'พระราม 3 ริมน้ำ / คลองเตย',
-  '50103': 'เจริญกรุง / บางคอแหลม',
-  '50207': 'นราธิวาสราชนครินทร์ / นางลิ้นจี่',
-  '50304': 'สีลม / สาทร / พระราม 4'
+  '50101': 'พระราม 3 ริมแม่น้ำ / ยานนาวา / สาธุประดิษฐ์',
+  '50103': 'เจริญกรุง / บางคอแหลม / ถ.พระราม 3',
+  '50207': 'นราธิวาสราชนครินทร์ / ช่องนนทรี / นางลิ้นจี่',
+  '50304': 'สีลม / สาทร / พระราม 4 / คลองเตย'
 };
+
+function getTruckZone(truckNumber, members = []) {
+  if (TRUCK_ZONES[truckNumber]) return TRUCK_ZONES[truckNumber];
+  if (members && members.length > 0) {
+    const landmarkKeywords = [
+      'นักกีฬาแหลมทอง', 'ชาลิสา', 'โรยัลปาร์ควิลล์', 'คริสตัล', 'สัมมากร', 'นาริสา',
+      'กฤษดานคร', 'สะพานสูง', 'ทับช้าง', 'คลองสามวา', 'หนองจอก', 'มีนบุรี',
+      'เสรีไทย', 'รามคำแหง', 'กรุงเทพกรีฑา', 'ศรีนครินทร์', 'ร่มเกล้า', 'พัฒนาการ',
+      'อ่อนนุช', 'หัวหมาก', 'สุขุมวิท', 'พระโขนง', 'คลองเตย', 'บางจาก', 'อุดมสุข',
+      'บางนา', 'พระราม 3', 'สาธุประดิษฐ์', 'ยานนาวา', 'วัชรพล', 'สุขาภิบาล 5',
+      'สายไหม', 'เพิ่มสิน', 'ออเงิน', 'ท่าแร้ง', 'คู้บอน', 'พระยาสุเรนทร์',
+      'หทัยราษฎร์', 'นิมิตใหม่', 'สุวินทวงศ์', 'ลำผักชี', 'บึงกุ่ม', 'แฮปปี้แลนด์',
+      'ลาดพร้าว', 'วังทองหลาง', 'บางชัน', 'คันนายาว', 'ประชาร่วมใจ', 'ฉลองกรุง'
+    ];
+    const counts = {};
+    members.forEach(m => {
+      const a = m.address || '';
+      landmarkKeywords.forEach(lm => {
+        if (a.includes(lm)) counts[lm] = (counts[lm] || 0) + 1;
+      });
+    });
+    const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(x => x[0]);
+    if (top.length > 0) return top.join(' / ');
+  }
+  return 'เขตพื้นที่บริการหลัก';
+}
 
 function initTruckSummary() {
   const dateInput = document.getElementById('truckSummaryDateInput');
@@ -2841,7 +2937,7 @@ function renderTruckSummaryPage() {
 
     // Apply Truck Search Filter
     if (truckQuery) {
-      truckList = truckList.filter(t => t.truck.toLowerCase().includes(truckQuery) || (TRUCK_ZONES[t.truck] || '').toLowerCase().includes(truckQuery));
+      truckList = truckList.filter(t => t.truck.toLowerCase().includes(truckQuery) || (getTruckZone(t.truck, t.members) || '').toLowerCase().includes(truckQuery));
     }
 
     // Sort: highest pending / lowest success first
@@ -2919,7 +3015,7 @@ function renderTruckSummaryPage() {
       truckList.forEach(t => {
         const rate = t.total > 0 ? ((t.resolved / t.total) * 100).toFixed(1) : '100.0';
         const numRate = parseFloat(rate);
-        const zone = TRUCK_ZONES[t.truck] || 'เขตพื้นที่บริการหลัก';
+        const zone = getTruckZone(t.truck, t.members);
 
         let progressColor = 'bg-emerald-500';
         if (numRate < 60) progressColor = 'bg-rose-500';
