@@ -130,19 +130,19 @@
         </button>
 
         <!-- 2. Flooded Routes Map & Weather/Forecast Intel -->
-        <button onclick="switchTab('routes')" id="tabBtn-routes" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+        <button onclick="switchTab('routes')" id="tabBtn-routes" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
           <span class="flex items-center"><i data-lucide="route" class="w-4 h-4 mr-2.5 text-amber-500"></i> 2. เส้นทางเดินรถ & สภาพอากาศ</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200">8 สายทาง</span>
         </button>
 
         <!-- 3. Water Monitoring & Live CCTV -->
-        <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+        <button onclick="switchTab('water')" id="tabBtn-water" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
           <span class="flex items-center"><i data-lucide="waves" class="w-4 h-4 mr-2.5 text-cyan-600"></i> 3. ระดับน้ำ & ข่าวสารน้ำท่วม</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-cyan-50 text-cyan-700 border border-cyan-200">โทรมาตร</span>
         </button>
 
         <!-- 4. Dedicated Live CCTV Surveillance Portal (1,800+ Live Cams) -->
-        <button onclick="switchTab('cctv')" id="tabBtn-cctv" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+        <button onclick="switchTab('cctv')" id="tabBtn-cctv" class="tab-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition text-left text-slate-600 hover:bg-blue-50 hover:text-blue-700">
           <span class="flex items-center"><i data-lucide="video" class="w-4 h-4 mr-2.5 text-blue-600"></i> 4. พอร์ทัลกล้องสดออนไลน์</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 animate-pulse">1,800+ จุด LIVE</span>
         </button>
@@ -1875,23 +1875,22 @@
     <!-- Tab 5: รายงานระดับน้ำ & ข่าวสารน้ำท่วม Real-time (Hydrology & Flood Feed) -->
     <section id="tabContent-water" class="hidden space-y-5">
       <!-- 5.1 Real-time Water & Flood Header & Control Bar -->
-      <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-                <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> ศูนย์ข้อมูลระดับน้ำ & ข่าวสาร Real-time
-              </span>
-              <span class="flex items-center text-xs text-slate-500">
-                <span class="pulse-dot mr-1.5"></span> สดจากสถานีตรวจวัด & ศูนย์วิทยุ กทม.
-              </span>
-            </div>
-            <h2 class="text-lg sm:text-xl font-bold text-slate-900 mt-1">รายงานระดับน้ำ & ข่าวสารน้ำท่วม Real-time (4 สาขา)</h2>
-            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">ติดตามระดับน้ำในลำคลองสายหลัก (คลองประเวศบุรีรมย์, คลองแสนแสบ, คลองลาดพร้าว, แม่น้ำเจ้าพระยา / พระราม 3) และเชื่อมโยงผลกระทบต่อสายรถจัดส่ง 16xxx, 13xxx, 50xxx, 3xxxx</p>
+      <div class="bg-white rounded-2xl p-5 shadow-xs border border-slate-200/80 space-y-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 shrink-0">
+              <i data-lucide="waves" class="w-3.5 h-3.5 mr-1 text-blue-600"></i> ศูนย์ข้อมูลระดับน้ำ & ข่าวสาร Real-time
+            </span>
+            <span class="flex items-center text-xs text-slate-500">
+              <span class="pulse-dot mr-1.5 shrink-0"></span> สดจากสถานีตรวจวัด & ศูนย์วิทยุ กทม.
+            </span>
           </div>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 mt-1">รายงานระดับน้ำ & ข่าวสารน้ำท่วม Real-time (4 สาขา)</h2>
+          <p class="text-xs sm:text-sm text-slate-500 mt-0.5 leading-relaxed">ติดตามระดับน้ำในลำคลองสายหลัก (คลองประเวศบุรีรมย์, คลองแสนแสบ, คลองลาดพร้าว, แม่น้ำเจ้าพระยา / พระราม 3) และเชื่อมโยงผลกระทบต่อสายรถจัดส่ง 16xxx, 13xxx, 50xxx, 3xxxx</p>
+        </div>
 
-          <!-- Controls: Auto-Sync, Refresh, Timestamp -->
-          <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+        <!-- Controls: Auto-Sync, Refresh, Timestamp -->
+        <div class="flex flex-wrap items-center gap-2.5 pt-3 border-t border-slate-100">
             <!-- Sync interval select -->
             <div class="flex items-center space-x-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5">
               <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -1928,7 +1927,6 @@
               <span>JK World Flood Watch ↗</span>
             </a>
           </div>
-        </div>
 
         <!-- Metric KPI Cards Bar (Expanded to 6 columns) -->
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-4 pt-4 border-t border-slate-100">
@@ -2243,7 +2241,6 @@
               </a>
             </div>
           </div>
-        </div>
         </div>
 
         <!-- Cameras Grid Container -->
@@ -2907,6 +2904,7 @@
       </div>
     </div>
   </footer>
+  </div> <!-- Close main content wrapper from line 240 -->
 
   <!-- Detail & Action Modal (Delivery History & Lifecycle Modal) -->
   <div id="actionModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
