@@ -180,6 +180,8 @@ function initSupabase() {
         if (adminCountEl) adminCountEl.textContent = count.toLocaleString();
       }
     }
+    // Auto-sync latest operational dataset into all charts and views
+    syncLatestSupabaseDataToAppState();
   }).catch(err => {
     console.warn('Supabase ping check:', err);
   });
@@ -341,7 +343,7 @@ function initCharts() {
   // 1. Day-by-Day Comparison Chart (26 ก.ย. ถึง 7 ต.ค. ปัจจุบัน)
   const dailyCtx = document.getElementById('chartDailyComparison');
   if (dailyCtx) {
-    new Chart(dailyCtx, {
+    AppState.dailyChart = new Chart(dailyCtx, {
       type: 'bar',
       data: {
         labels: ['26 ก.ย. (เสาร์)', '28 ก.ย. (จันทร์)', '29 ก.ย. (อังคาร)', '30 ก.ย. (พุธ)', '1 ต.ค. (พฤหัส)', '2 ต.ค. (ศุกร์)', '3 ต.ค. (เสาร์)', '5 ต.ค. (จันทร์)', '6 ต.ค. (อังคาร)', '7 ต.ค. (ปัจจุบัน)'],
@@ -653,6 +655,254 @@ function resetPage1Filters() {
   renderPage1FilteredView();
 }
 window.resetPage1Filters = resetPage1Filters;
+
+// ==========================================
+// 3.2. Central Auto-Update & Dynamic Sync Engine
+// ==========================================
+function formatShortDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const yearBe = d.getFullYear() + 543;
+    return `${day}/${month}/${yearBe}`;
+  } catch (e) {
+    return String(dateStr).substring(0, 10);
+  }
+}
+window.formatShortDate = formatShortDate;
+
+function updateChartsFromLiveDataset() {
+  const pending = (AppState.dataStore && AppState.dataStore.pending) || [];
+  const resolved = (AppState.dataStore && AppState.dataStore.resolved) || [];
+
+  // 1. Update Branch Comparison Bar Chart
+  if (AppState.branchChart && AppState.branchChart.data && AppState.branchChart.data.datasets) {
+    const branches = ['สาขารามอินทรา', 'สาขากรุงเทพกรีฑา', 'สาขาสุขุมวิท 50', 'สาขาพระราม 3'];
+    const deliveredCounts = [0, 0, 0, 0];
+    const floodCounts = [0, 0, 0, 0];
+    const transferCounts = [0, 0, 0, 0];
+
+    pending.forEach(p => {
+      const idx = branches.indexOf(p.branch);
+      if (idx !== -1) {
+        if (p.pendingCategory === 'โอนงานสิ้นวัน') {
+          transferCounts[idx]++;
+        } else {
+          floodCounts[idx]++;
+        }
+      }
+    });
+
+    const ramIntraResolved = resolved.filter(r => r.branch === 'สาขารามอินทรา').length;
+    const ktpResolved = resolved.filter(r => r.branch === 'สาขากรุงเทพกรีฑา').length;
+    const svkResolved = resolved.filter(r => r.branch === 'สาขาสุขุมวิท 50').length;
+    const rm3Resolved = resolved.filter(r => r.branch === 'สาขาพระราม 3').length;
+
+    deliveredCounts[0] = 7974 + ramIntraResolved;
+    deliveredCounts[1] = 11816 + ktpResolved;
+    deliveredCounts[2] = 23803 + svkResolved;
+    deliveredCounts[3] = 18420 + rm3Resolved;
+
+    if (AppState.branchChart.data.datasets[0]) AppState.branchChart.data.datasets[0].data = deliveredCounts;
+    if (AppState.branchChart.data.datasets[1]) AppState.branchChart.data.datasets[1].data = floodCounts;
+    if (AppState.branchChart.data.datasets[2]) AppState.branchChart.data.datasets[2].data = transferCounts;
+    AppState.branchChart.update();
+  }
+
+  // 2. Update Daily Comparison Chart
+  if (AppState.dailyChart && AppState.dailyChart.data && AppState.dailyChart.data.datasets) {
+    const currentPending = pending.length;
+    const currentResolved = resolved.length;
+    const ds = AppState.dailyChart.data.datasets;
+    if (ds && ds.length >= 2) {
+      if (ds[0] && ds[0].data) ds[0].data[ds[0].data.length - 1] = currentPending;
+      if (ds[1] && ds[1].data) ds[1].data[ds[1].data.length - 1] = currentResolved;
+      AppState.dailyChart.update();
+    }
+  }
+
+  // 3. Update Duration Trend Chart
+  if (AppState.durationChart && AppState.durationChart.data && AppState.durationChart.data.datasets) {
+    const pendingRam = pending.filter(p => p.branch === 'สาขารามอินทรา').length;
+    const pendingKtp = pending.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
+    const pendingSvk = pending.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
+    const pendingRm3 = pending.filter(p => p.branch === 'สาขาพระราม 3').length;
+
+    const rateRam = +(100 - (pendingRam / (pendingRam + 7974)) * 100).toFixed(1);
+    const rateKtp = +(100 - (pendingKtp / (pendingKtp + 11816)) * 100).toFixed(1);
+    const rateSvk = +(100 - (pendingSvk / (pendingSvk + 23803)) * 100).toFixed(1);
+    const rateRm3 = +(100 - (pendingRm3 / (pendingRm3 + 18420)) * 100).toFixed(1);
+
+    const ds = AppState.durationChart.data.datasets;
+    if (ds && ds.length >= 4) {
+      ds[0].data[ds[0].data.length - 1] = rateRm3;
+      ds[1].data[ds[1].data.length - 1] = rateSvk;
+      ds[2].data[ds[2].data.length - 1] = rateKtp;
+      ds[3].data[ds[3].data.length - 1] = rateRam;
+      AppState.durationChart.update();
+    }
+  }
+}
+window.updateChartsFromLiveDataset = updateChartsFromLiveDataset;
+
+function syncAppWithNewRecords(records) {
+  if (!records || records.length === 0) return;
+
+  const pendingMap = new Map();
+  const resolvedMap = new Map();
+
+  (AppState.dataStore.pending || []).forEach(p => {
+    if (p.memberId) pendingMap.set(String(p.memberId).trim(), { ...p });
+  });
+  (AppState.dataStore.resolved || []).forEach(r => {
+    if (r.memberId) resolvedMap.set(String(r.memberId).trim(), { ...r });
+  });
+
+  let maxDate = '';
+
+  records.forEach(row => {
+    const memberId = String(row.member_id || '').trim();
+    if (!memberId) return;
+
+    const dateIso = row.delivery_date || '';
+    if (dateIso && (!maxDate || dateIso > maxDate)) maxDate = dateIso;
+
+    const shortDate = formatShortDate(dateIso);
+    const reason = String(row.reason || '').trim();
+    const status = String(row.status || '').trim();
+    const note = String(row.note || '').trim();
+    const branch = row.branch || 'สาขารามอินทรา';
+    const truck = row.truck_number || '';
+    const name = row.customer_name || 'สมาชิก';
+    const addr = row.address || '';
+    const lat = row.latitude || (row.gps ? parseFloat(row.gps.split(',')[0]) : null);
+    const lng = row.longitude || (row.gps ? parseFloat(row.gps.split(',')[1]) : null);
+
+    const isFlood = reason.includes('น้ำท่วม') || status.includes('น้ำท่วม') || reason.includes('รอน้ำลด');
+    const isTransferred = row.is_transferred || (note && note.includes('โอนงาน')) || (reason && reason.includes('โอนงาน')) || (status && status.includes('โอนงาน'));
+    const isSuccess = status.includes('สำเร็จ') || reason.includes('ตั้งถัง') || reason.includes('พบลูกค้า') || reason.includes('ปกติ') || reason.includes('ไม่พบถังเปล่า') || reason.includes('ไม่รับน้ำ') || (status === '1' && !isFlood && !isTransferred);
+
+    if (isFlood || isTransferred) {
+      const category = isTransferred ? 'โอนงานสิ้นวัน' : 'น้ำท่วมสูงไม่สามารถส่งได้';
+      if (pendingMap.has(memberId)) {
+        const item = pendingMap.get(memberId);
+        item.lastDate = shortDate;
+        item.lastDateIso = dateIso;
+        item.lastReason = reason || status;
+        item.pendingCategory = category;
+        item.attemptsCount = (item.attemptsCount || 1) + 1;
+        if (!item.history.includes(shortDate)) {
+          item.history = `${item.history || ''} ➔ ${shortDate} [${reason || status}]`;
+        }
+      } else {
+        if (resolvedMap.has(memberId)) resolvedMap.delete(memberId);
+        pendingMap.set(memberId, {
+          memberId: memberId,
+          name: name,
+          branch: branch,
+          address: addr,
+          truck: truck,
+          attemptsCount: 1,
+          lastDate: shortDate,
+          lastDateIso: dateIso,
+          lastReason: reason || status,
+          lastStatus: status,
+          pendingCategory: category,
+          history: `${shortDate} [${reason || status}]`,
+          lat: lat || 13.805,
+          lng: lng || 100.68,
+          gps: lat && lng ? `${lat},${lng}` : '',
+          hasExactGps: !!(lat && lng),
+          status: isTransferred ? 'โอนงานสิ้นวัน' : 'น้ำท่วม'
+        });
+      }
+    } else if (isSuccess) {
+      if (pendingMap.has(memberId)) {
+        const p = pendingMap.get(memberId);
+        pendingMap.delete(memberId);
+        resolvedMap.set(memberId, {
+          memberId: memberId,
+          name: p.name || name,
+          branch: p.branch || branch,
+          address: p.address || addr,
+          truck: truck || p.truck,
+          lastDate: p.lastDate,
+          lastDateIso: p.lastDateIso,
+          lastReason: p.lastReason,
+          pendingCategory: p.pendingCategory,
+          resolvedDate: shortDate,
+          resolvedDateIso: dateIso,
+          resolvedStatus: reason || status || 'สำเร็จตามเงื่อนไข',
+          history: `${p.history || ''} ➔ ${shortDate} [${reason || status || 'จัดส่งสำเร็จ'}]`,
+          lat: p.lat || lat,
+          lng: p.lng || lng,
+          attemptsCount: (p.attemptsCount || 1) + 1
+        });
+      }
+    }
+  });
+
+  AppState.dataStore.pending = Array.from(pendingMap.values());
+  AppState.dataStore.resolved = Array.from(resolvedMap.values());
+
+  if (window.CRISIS_DATA) {
+    window.CRISIS_DATA.pending = AppState.dataStore.pending;
+    window.CRISIS_DATA.resolved = AppState.dataStore.resolved;
+    window.CRISIS_DATA.pendingCount = AppState.dataStore.pending.length;
+    window.CRISIS_DATA.resolvedCount = AppState.dataStore.resolved.length;
+  }
+
+  // Update Header Badges
+  if (maxDate) {
+    const dObj = new Date(maxDate);
+    if (!isNaN(dObj.getTime())) {
+      const thaiDate = dObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+      const badge = document.getElementById('headerDateBadge');
+      if (badge) {
+        badge.innerHTML = `<span class="live-pulse bg-emerald-500 mr-1.5"></span> อัปเดตข้อมูลสด: ${thaiDate}`;
+      }
+    }
+  }
+
+  // Refresh All Application Views
+  refreshAllApplicationViews();
+}
+window.syncAppWithNewRecords = syncAppWithNewRecords;
+
+function refreshAllApplicationViews() {
+  if (typeof renderPage1FilteredView === 'function') renderPage1FilteredView();
+  if (typeof updateChartsFromLiveDataset === 'function') updateChartsFromLiveDataset();
+  if (typeof renderMapMarkers === 'function') renderMapMarkers();
+  if (typeof updateMapFilterButtonCounts === 'function') updateMapFilterButtonCounts();
+  if (typeof renderTable === 'function') renderTable();
+  if (typeof renderTruckSummaryPage === 'function') renderTruckSummaryPage();
+}
+window.refreshAllApplicationViews = refreshAllApplicationViews;
+
+async function syncLatestSupabaseDataToAppState() {
+  try {
+    const url = `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?or=(reason.ilike.*น้ำท่วม*,status.ilike.*น้ำท่วม*,reason.ilike.*โอนงาน*,status.ilike.*โอนงาน*,is_transferred.eq.true)&order=delivery_date.desc&limit=2000`;
+    const resp = await fetch(url, {
+      headers: {
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+      }
+    });
+    if (resp.ok) {
+      const records = await resp.json();
+      if (records && records.length > 0) {
+        syncAppWithNewRecords(records);
+        console.log(`✅ ซิงค์ข้อมูลล่าสุดจาก Supabase Cloud เข้าสู่ทุกหน้าของระบบอัตโนมัติ (${records.length} รายการ)`);
+      }
+    }
+  } catch (err) {
+    console.warn('Sync latest Supabase data notice:', err);
+  }
+}
+window.syncLatestSupabaseDataToAppState = syncLatestSupabaseDataToAppState;
 
 // ==========================================
 // 4. Page 2: Leaflet Map (Pending Members Display)
@@ -2419,7 +2669,10 @@ async function startParsedDataUpload() {
     AppState.adminCurrentPage = 1;
     await loadAdminOrders();
 
-    alert(`🎉 นำเข้าข้อมูลสำเร็จจำนวน ${totalUploaded.toLocaleString()} รายการ เข้าสู่ตาราง delivery_orders ใน Supabase Cloud เรียบร้อยแล้ว`);
+    // Auto-update all dashboards, charts, maps & reports across the application!
+    syncAppWithNewRecords(rows);
+
+    alert(`🎉 นำเข้าข้อมูลสำเร็จจำนวน ${totalUploaded.toLocaleString()} รายการ และอัปเดตระบบอัตโนมัติทุกหน้า (กราฟ, แผนที่, สรุปสายรถ, และตารางข้อมูล) เรียบร้อยแล้ว!`);
 
   } catch (err) {
     console.error('Fatal upload error:', err);
