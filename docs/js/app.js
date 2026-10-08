@@ -56,6 +56,7 @@ window.AppState = {
   adminStatusFilter: 'ALL',
   adminTotalFilteredCount: 72170,
   isDeletingAdminOrders: false,
+  memberAddressLookup: {},
 };
 
 // Performance Debounce Utility
@@ -1874,6 +1875,16 @@ window.exportDailyModalCsv = exportDailyModalCsv;
 // 8. Page 6: Admin Management & Supabase Selection Delete
 // ==========================================
 function initAdmin() {
+  // Preload member address & GPS lookup for instant uploader enrichment
+  if (!AppState.memberAddressLookup || Object.keys(AppState.memberAddressLookup).length === 0) {
+    fetch('data/member_address_lookup.json')
+      .then(r => r.json())
+      .then(data => {
+        AppState.memberAddressLookup = data || {};
+      })
+      .catch(e => console.warn('Address lookup load notice:', e));
+  }
+
   const fileInput = document.getElementById('adminFileInput');
   const dropZone = document.getElementById('adminDropZone');
   const uploadBtn = document.getElementById('btnAdminUpload');
@@ -2102,12 +2113,12 @@ function parseExcelOrCsvFile(file) {
         const hLow = h.toLowerCase();
         if (colMember === -1 && (hLow.includes('รหัสสมาชิก') || hLow.includes('member') || hLow.includes('รหัสลูกค้า') || hLow === 'รหัส' || hLow === 'code')) colMember = idx;
         else if (colName === -1 && (hLow.includes('ชื่อลูกค้า') || hLow.includes('ชื่อสมาชิก') || hLow.includes('ชื่อ-สกุล') || hLow.includes('ชื่อ') || hLow.includes('customer') || hLow.includes('name'))) colName = idx;
-        else if (colDate === -1 && (hLow.includes('วันที่') || hLow.includes('delivery_date') || hLow.includes('date') || hLow.includes('วันส่ง'))) colDate = idx;
+        else if (colDate === -1 && (hLow.includes('วันเวลา') || hLow.includes('วันที่') || hLow.includes('delivery_date') || hLow.includes('date') || hLow.includes('วันส่ง'))) colDate = idx;
         else if (colRound === -1 && (hLow.includes('รอบ') || hLow.includes('round'))) colRound = idx;
         else if (colStatus === -1 && (hLow.includes('สถานะ') || hLow.includes('status'))) colStatus = idx;
         else if (colReason === -1 && (hLow.includes('เหตุขาดส่ง') || hLow.includes('หัวข้อเหตุ') || hLow.includes('เหตุผล') || hLow.includes('สาเหตุ') || hLow.includes('reason'))) colReason = idx;
         else if (colTruck === -1 && (hLow.includes('เบอร์รถ') || hLow.includes('สายรถ') || hLow.includes('รถ') || hLow.includes('truck'))) colTruck = idx;
-        else if (colBranch === -1 && (hLow.includes('สาขา') || hLow.includes('branch') || hLow.includes('คลัง'))) colBranch = idx;
+        else if (colBranch === -1 && (hLow.includes('คลัง') || hLow.includes('สาขา') || hLow.includes('branch'))) colBranch = idx;
         else if (colAddress === -1 && (hLow.includes('ที่อยู่') || hLow.includes('address') || hLow.includes('สถานที่'))) colAddress = idx;
         else if (colGps === -1 && (hLow.includes('gps') || hLow.includes('พิกัด') || hLow.includes('lat') || hLow.includes('coord'))) colGps = idx;
         else if (colNote === -1 && (hLow.includes('หมายเหตุ') || hLow.includes('note'))) colNote = idx;
@@ -2150,6 +2161,7 @@ function parseExcelOrCsvFile(file) {
         const note = colNote !== -1 && row[colNote] !== undefined ? String(row[colNote]).trim() : '';
 
         // Normalize branch
+        if (branch.startsWith('Member.')) branch = branch.replace(/^Member\./, '');
         if (branch.startsWith('คลัง')) branch = branch.replace(/^คลัง/, 'สาขา');
         if (!branch) {
           if (truck.startsWith('13')) branch = 'สาขารามอินทรา';
@@ -2158,6 +2170,14 @@ function parseExcelOrCsvFile(file) {
           else if (truck.startsWith('31') || truck.startsWith('30')) branch = 'สาขาพระราม 3';
           else branch = 'สาขารามอินทรา';
         }
+
+        // Member address / GPS lookup enrichment
+        const lookup = (AppState.memberAddressLookup && AppState.memberAddressLookup[memberId]) || {};
+        const finalAddress = address || lookup.address || '';
+        const finalGps = gps || lookup.gps || '';
+        const finalLat = lookup.latitude || null;
+        const finalLng = lookup.longitude || null;
+        const finalDistrict = lookup.district || '';
 
         const isTransferred = (note && note.includes('โอนงาน')) ||
                               (reason && reason.includes('โอนงาน')) ||
@@ -2179,8 +2199,11 @@ function parseExcelOrCsvFile(file) {
           reason: reason,
           truck_number: truck,
           branch: branch,
-          address: address,
-          gps: gps,
+          address: finalAddress,
+          gps: finalGps,
+          latitude: finalLat,
+          longitude: finalLng,
+          district: finalDistrict,
           note: note,
           is_transferred: isTransferred,
           delivery_group: reason && (reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('น้ำท่วม') || reason.includes('เลื่อนวันที่ส่ง')) ? 'ยังส่งไม่ได้' : 'เข้าส่งได้'
@@ -2248,35 +2271,66 @@ function parseExcelOrCsvFile(file) {
 window.parseExcelOrCsvFile = parseExcelOrCsvFile;
 
 function normalizeParsedDate(val) {
-  if (!val) return new Date().toISOString();
+  if (!val && val !== 0) return new Date().toISOString();
   if (val instanceof Date) {
     if (isNaN(val.getTime())) return new Date().toISOString();
     return val.toISOString();
   }
   const s = String(val).trim();
-  // Check Excel serial date number like 45573
-  if (/^\d{5}(\.\d+)?$/.test(s)) {
+  if (!s) return new Date().toISOString();
+
+  // 1. Check Excel serial date number like 45573 or 45572.43194
+  if (/^\d{4,5}(\.\d+)?$/.test(s)) {
     const num = parseFloat(s);
-    const date = new Date((num - 25569) * 86400 * 1000);
+    // Excel epoch 1900
+    const date = new Date(Math.round((num - 25569) * 86400 * 1000));
     if (!isNaN(date.getTime())) return date.toISOString();
   }
-  // Match YYYY-MM-DD
-  if (s.match(/^\d{4}-\d{2}-\d{2}/)) {
-    return s.includes('T') ? (s.includes('+') || s.endsWith('Z') ? s : s + '+07:00') : s + 'T00:00:00+07:00';
-  }
-  // Match DD/MM/YYYY or D/M/YYYY (Thai Buddhist or Gregorian)
-  const slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(.*)/);
-  if (slashMatch) {
-    let day = slashMatch[1].padStart(2, '0');
-    let month = slashMatch[2].padStart(2, '0');
-    let year = parseInt(slashMatch[3], 10);
-    if (year > 2400) year -= 543; // Convert Buddhist Era to Gregorian
-    const restTime = slashMatch[4] ? slashMatch[4].trim() : '';
-    if (restTime && restTime.match(/^\d{1,2}:\d{2}/)) {
-      return `${year}-${month}-${day}T${restTime.length === 5 ? restTime + ':00' : restTime}+07:00`;
+
+  // 2. Format: YYYY-MM-DD or YYYY/MM/DD (with optional time and BE year support)
+  const ymdMatch = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[\sT](\d{1,2}):(\d{2})(?::(\d{2}))?)?(.*)$/);
+  if (ymdMatch) {
+    let year = parseInt(ymdMatch[1], 10);
+    if (year > 2400) year -= 543; // Buddhist Era
+    const month = ymdMatch[2].padStart(2, '0');
+    const day = ymdMatch[3].padStart(2, '0');
+    const hh = ymdMatch[4] ? ymdMatch[4].padStart(2, '0') : '00';
+    const mm = ymdMatch[5] ? ymdMatch[5].padStart(2, '0') : '00';
+    const ss = ymdMatch[6] ? ymdMatch[6].padStart(2, '0') : '00';
+    const tz = ymdMatch[7] ? ymdMatch[7].trim() : '';
+
+    if (tz && (tz.startsWith('+') || tz.startsWith('-') || tz.toUpperCase() === 'Z')) {
+      return `${year}-${month}-${day}T${hh}:${mm}:${ss}${tz}`;
     }
-    return `${year}-${month}-${day}T00:00:00+07:00`;
+    return `${year}-${month}-${day}T${hh}:${mm}:${ss}+07:00`;
   }
+
+  // 3. Format: DD/MM/YYYY or DD-MM-YYYY (with optional time and BE year support)
+  const dmyMatch = s.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})(?:[\sT](\d{1,2}):(\d{2})(?::(\d{2}))?)?(.*)$/);
+  if (dmyMatch) {
+    const day = dmyMatch[1].padStart(2, '0');
+    const month = dmyMatch[2].padStart(2, '0');
+    let year = parseInt(dmyMatch[3], 10);
+    if (year > 2400) year -= 543; // Buddhist Era
+    const hh = dmyMatch[4] ? dmyMatch[4].padStart(2, '0') : '00';
+    const mm = dmyMatch[5] ? dmyMatch[5].padStart(2, '0') : '00';
+    const ss = dmyMatch[6] ? dmyMatch[6].padStart(2, '0') : '00';
+    const tz = dmyMatch[7] ? dmyMatch[7].trim() : '';
+
+    if (tz && (tz.startsWith('+') || tz.startsWith('-') || tz.toUpperCase() === 'Z')) {
+      return `${year}-${month}-${day}T${hh}:${mm}:${ss}${tz}`;
+    }
+    return `${year}-${month}-${day}T${hh}:${mm}:${ss}+07:00`;
+  }
+
+  // 4. Fallback ISO parser
+  try {
+    const parsed = new Date(s);
+    if (!isNaN(parsed.getTime())) {
+      return parsed.toISOString();
+    }
+  } catch (e) {}
+
   return s;
 }
 window.normalizeParsedDate = normalizeParsedDate;
@@ -2562,15 +2616,15 @@ async function loadAdminOrders() {
       url += `&truck_number=ilike.*${encodeURIComponent(truck)}*`;
     }
     if (AppState.adminDateMode === 'single' && date) {
-      url += `&delivery_date=gte.${encodeURIComponent(date)}T00:00:00%2B00:00&delivery_date=lte.${encodeURIComponent(date)}T23:59:59%2B00:00`;
+      url += `&delivery_date=gte.${encodeURIComponent(date)}T00:00:00%2B07:00&delivery_date=lte.${encodeURIComponent(date)}T23:59:59%2B07:00`;
     } else if (AppState.adminDateMode === 'range') {
       const sDate = AppState.adminStartDate || (document.getElementById('adminStartDateInput')?.value || '');
       const eDate = AppState.adminEndDate || (document.getElementById('adminEndDateInput')?.value || '');
       if (sDate) {
-        url += `&delivery_date=gte.${encodeURIComponent(sDate)}T00:00:00%2B00:00`;
+        url += `&delivery_date=gte.${encodeURIComponent(sDate)}T00:00:00%2B07:00`;
       }
       if (eDate) {
-        url += `&delivery_date=lte.${encodeURIComponent(eDate)}T23:59:59%2B00:00`;
+        url += `&delivery_date=lte.${encodeURIComponent(eDate)}T23:59:59%2B07:00`;
       }
     }
     if (status === 'โอนงานสิ้นวัน') {
