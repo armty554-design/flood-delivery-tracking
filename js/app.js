@@ -417,7 +417,7 @@ function initCharts() {
     });
   }
 
-  // 2. Comparison Bar Chart (4 Branches)
+  // 2. Comparison Bar Chart (4 Branches - Crisis 5,072 Dataset)
   const branchCtx = document.getElementById('chartBranchCompare');
   if (branchCtx) {
     AppState.branchChart = new Chart(branchCtx, {
@@ -427,21 +427,21 @@ function initCharts() {
         datasets: [
           {
             label: 'ส่งสำเร็จ (Delivered)',
-            data: [7974, 11816, 23803, 18420],
+            data: [1554, 2167, 944, 14],
             backgroundColor: '#10b981',
             borderRadius: 6,
             datalabelColor: '#047857'
           },
           {
             label: 'ค้างส่งน้ำท่วม (Flood Pending)',
-            data: [539, 397, 0, 0],
+            data: [279, 97, 0, 0],
             backgroundColor: '#ef4444',
             borderRadius: 6,
             datalabelColor: '#dc2626'
           },
           {
             label: 'โอนงานสิ้นวัน (Transfer EOD)',
-            data: [17, 0, 24, 0],
+            data: [7, 2, 8, 0],
             backgroundColor: '#8b5cf6',
             borderRadius: 6,
             datalabelColor: '#7c3aed'
@@ -456,14 +456,14 @@ function initCharts() {
           legend: { position: 'top', labels: { font: { family: 'Prompt', size: 12 } } },
           tooltip: {
             callbacks: {
-              label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} รายการ`
+              label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()} ราย`
             }
           }
         },
         scales: {
           y: {
             beginAtZero: true,
-            suggestedMax: 26000,
+            suggestedMax: 2500,
             grid: { color: '#f1f5f9' },
             ticks: { font: { family: 'Prompt' } }
           },
@@ -482,11 +482,11 @@ function initCharts() {
     AppState.durationChart = new Chart(durationCtx, {
       type: 'line',
       data: {
-        labels: ['26 ก.ย.', '28 ก.ย.', '30 ก.ย.', '2 ต.ค.', '4 ต.ค.', '6 ต.ค.', '7 ต.ค.'],
+        labels: ['26 ก.ย.', '27 ก.ย.', '28 ก.ย.', '29 ก.ย.', '30 ก.ย.', '1 ต.ค.', '2 ต.ค.', '3 ต.ค.', '4 ต.ค.', '5 ต.ค.', '6 ต.ค.', '7 ต.ค.'],
         datasets: [
           {
             label: 'พระราม 3 (สำเร็จ %)',
-            data: [100.0, 100.0, 100.0, 100.0, 100.0, 100.0, 100.0],
+            data: [0.0, 0.0, 14.3, 21.4, 21.4, 21.4, 28.6, 78.6, 78.6, 78.6, 78.6, 100.0],
             borderColor: '#10b981',
             backgroundColor: 'transparent',
             tension: 0.3,
@@ -495,7 +495,7 @@ function initCharts() {
           },
           {
             label: 'สุขุมวิท 50 (สำเร็จ %)',
-            data: [96.8, 97.2, 97.8, 98.0, 98.2, 98.4, 98.4],
+            data: [0.0, 0.1, 5.8, 7.4, 8.3, 9.2, 13.6, 71.0, 71.3, 81.0, 91.8, 99.2],
             borderColor: '#3b82f6',
             backgroundColor: 'transparent',
             tension: 0.3,
@@ -504,7 +504,7 @@ function initCharts() {
           },
           {
             label: 'กรุงเทพกรีฑา (สำเร็จ %)',
-            data: [48.5, 52.0, 58.6, 64.2, 69.8, 74.5, 74.5],
+            data: [0.0, 0.0, 1.9, 4.0, 5.2, 8.4, 13.2, 48.5, 50.0, 75.4, 85.6, 95.6],
             borderColor: '#f59e0b',
             backgroundColor: 'transparent',
             tension: 0.3,
@@ -513,7 +513,7 @@ function initCharts() {
           },
           {
             label: 'รามอินทรา (สำเร็จ %)',
-            data: [32.1, 36.4, 42.0, 48.5, 53.2, 58.2, 58.2],
+            data: [0.0, 0.2, 2.7, 4.7, 6.9, 7.9, 11.9, 55.2, 55.5, 66.1, 77.1, 84.5],
             borderColor: '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.08)',
             fill: true,
@@ -537,7 +537,7 @@ function initCharts() {
         },
         scales: {
           y: {
-            min: 20,
+            min: 0,
             max: 108,
             grid: { color: '#f1f5f9' },
             ticks: {
@@ -889,10 +889,10 @@ function updateChartsFromLiveDataset() {
     const svkResolved = resolved.filter(r => r.branch === 'สาขาสุขุมวิท 50').length;
     const rm3Resolved = resolved.filter(r => r.branch === 'สาขาพระราม 3').length;
 
-    deliveredCounts[0] = 7974 + ramIntraResolved;
-    deliveredCounts[1] = 11816 + ktpResolved;
-    deliveredCounts[2] = 23803 + svkResolved;
-    deliveredCounts[3] = 18420 + rm3Resolved;
+    deliveredCounts[0] = ramIntraResolved;
+    deliveredCounts[1] = ktpResolved;
+    deliveredCounts[2] = svkResolved;
+    deliveredCounts[3] = rm3Resolved;
 
     if (AppState.branchChart.data.datasets[0]) AppState.branchChart.data.datasets[0].data = deliveredCounts;
     if (AppState.branchChart.data.datasets[1]) AppState.branchChart.data.datasets[1].data = floodCounts;
@@ -906,26 +906,35 @@ function updateChartsFromLiveDataset() {
   // 3. Update Branch Matrix Table and Branch KPI cards
   renderBranchPerformanceMatrixAndKpis();
 
-  // 4. Update Duration Trend Chart
+  // 4. Update Duration Trend Chart (12-day per-branch success rate trends)
   if (AppState.durationChart && AppState.durationChart.data && AppState.durationChart.data.datasets) {
-    const pendingRam = pending.filter(p => p.branch === 'สาขารามอินทรา').length;
-    const pendingKtp = pending.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
-    const pendingSvk = pending.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
-    const pendingRm3 = pending.filter(p => p.branch === 'สาขาพระราม 3').length;
+    const dateKeys = [
+      '2026-09-26', '2026-09-27', '2026-09-28', '2026-09-29', '2026-09-30',
+      '2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05',
+      '2026-10-06', '2026-10-07'
+    ];
+    const branchConfigs = [
+      { key: 'สาขาพระราม 3', datasetIdx: 0 },
+      { key: 'สาขาสุขุมวิท 50', datasetIdx: 1 },
+      { key: 'สาขากรุงเทพกรีฑา', datasetIdx: 2 },
+      { key: 'สาขารามอินทรา', datasetIdx: 3 }
+    ];
 
-    const rateRam = +(100 - (pendingRam / (pendingRam + 7974)) * 100).toFixed(1);
-    const rateKtp = +(100 - (pendingKtp / (pendingKtp + 11816)) * 100).toFixed(1);
-    const rateSvk = +(100 - (pendingSvk / (pendingSvk + 23803)) * 100).toFixed(1);
-    const rateRm3 = +(100 - (pendingRm3 / (pendingRm3 + 18420)) * 100).toFixed(1);
-
-    const ds = AppState.durationChart.data.datasets;
-    if (ds && ds.length >= 4) {
-      ds[0].data[ds[0].data.length - 1] = rateRm3;
-      ds[1].data[ds[1].data.length - 1] = rateSvk;
-      ds[2].data[ds[2].data.length - 1] = rateKtp;
-      ds[3].data[ds[3].data.length - 1] = rateRam;
-      AppState.durationChart.update();
-    }
+    branchConfigs.forEach(bc => {
+      const bTotal = resolved.filter(r => r.branch === bc.key).length + pending.filter(p => p.branch === bc.key).length;
+      let cumCount = 0;
+      const ratePoints = [];
+      dateKeys.forEach(dKey => {
+        const dResolved = resolved.filter(r => r.branch === bc.key && r.resolvedDateIso && r.resolvedDateIso.startsWith(dKey)).length;
+        cumCount += dResolved;
+        const rate = bTotal > 0 ? ((cumCount / bTotal) * 100).toFixed(1) : '100.0';
+        ratePoints.push(parseFloat(rate));
+      });
+      if (AppState.durationChart.data.datasets[bc.datasetIdx]) {
+        AppState.durationChart.data.datasets[bc.datasetIdx].data = ratePoints;
+      }
+    });
+    AppState.durationChart.update();
   }
 }
 window.updateChartsFromLiveDataset = updateChartsFromLiveDataset;
