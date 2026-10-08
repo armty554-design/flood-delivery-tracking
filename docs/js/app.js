@@ -748,6 +748,37 @@ function updateChartsFromLiveDataset() {
 }
 window.updateChartsFromLiveDataset = updateChartsFromLiveDataset;
 
+function isSuccessReason(reason, status) {
+  const r = String(reason || '').trim();
+  const s = String(status || '').trim();
+
+  // Explicit success indicators
+  if (r.includes('ลูกค้าตั้งถัง') || r.includes('ตั้งถัง')) return true;
+  if (r.includes('ลูกค้าอยู่บ้าน') || r.includes('พบลูกค้า')) return true;
+  if (r.includes('ส่งสำเร็จ') || s.includes('ส่งสำเร็จ') || s.includes('สำเร็จ')) return true;
+  if (r.includes('ปกติ') || s.includes('ปกติ')) return true;
+  if (r.includes('ไม่พบถังเปล่า') || r.includes('ไม่รับน้ำ')) return true;
+  if (r.includes('ถังเต็ม') || r.includes('ยังไม่รับน้ำ')) return true;
+
+  // Normal status '1' with NO failure reason
+  if (s === '1' && (!r || r === '-' || r === '1' || r === 'ปกติ')) return true;
+
+  return false;
+}
+window.isSuccessReason = isSuccessReason;
+
+function isFailureReason(reason, status) {
+  const r = String(reason || '').trim();
+  const s = String(status || '').trim();
+
+  if (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || r.includes('รอน้ำลด')) return 'น้ำท่วมสูงไม่สามารถส่งได้';
+  if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด')) return 'โอนงานสิ้นวัน';
+  if (r.includes('โอนงาน') || s.includes('โอนงาน')) return 'โอนงานสิ้นวัน';
+
+  return null;
+}
+window.isFailureReason = isFailureReason;
+
 function syncAppWithNewRecords(records) {
   if (!records || records.length === 0) return;
 
@@ -763,7 +794,10 @@ function syncAppWithNewRecords(records) {
 
   let maxDate = '';
 
-  records.forEach(row => {
+  // Sort chronologically ascending to preserve actual delivery timeline
+  const sortedRecords = [...records].sort((a, b) => new Date(a.delivery_date || 0).getTime() - new Date(b.delivery_date || 0).getTime());
+
+  sortedRecords.forEach(row => {
     const memberId = String(row.member_id || '').trim();
     if (!memberId) return;
 
@@ -773,7 +807,6 @@ function syncAppWithNewRecords(records) {
     const shortDate = formatShortDate(dateIso);
     const reason = String(row.reason || '').trim();
     const status = String(row.status || '').trim();
-    const note = String(row.note || '').trim();
     const branch = row.branch || 'สาขารามอินทรา';
     const truck = row.truck_number || '';
     const name = row.customer_name || 'สมาชิก';
@@ -781,18 +814,49 @@ function syncAppWithNewRecords(records) {
     const lat = row.latitude || (row.gps ? parseFloat(row.gps.split(',')[0]) : null);
     const lng = row.longitude || (row.gps ? parseFloat(row.gps.split(',')[1]) : null);
 
-    const isFlood = reason.includes('น้ำท่วม') || status.includes('น้ำท่วม') || reason.includes('รอน้ำลด');
-    const isTransferred = row.is_transferred || (note && note.includes('โอนงาน')) || (reason && reason.includes('โอนงาน')) || (status && status.includes('โอนงาน'));
-    const isSuccess = status.includes('สำเร็จ') || reason.includes('ตั้งถัง') || reason.includes('พบลูกค้า') || reason.includes('ปกติ') || reason.includes('ไม่พบถังเปล่า') || reason.includes('ไม่รับน้ำ') || (status === '1' && !isFlood && !isTransferred);
+    const isSuccess = isSuccessReason(reason, status);
+    const failCategory = !isSuccess ? isFailureReason(reason, status) : null;
 
-    if (isFlood || isTransferred) {
-      const category = isTransferred ? 'โอนงานสิ้นวัน' : 'น้ำท่วมสูงไม่สามารถส่งได้';
+    if (isSuccess) {
+      if (pendingMap.has(memberId)) {
+        const p = pendingMap.get(memberId);
+        pendingMap.delete(memberId);
+        resolvedMap.set(memberId, {
+          memberId: memberId,
+          name: p.name || name,
+          branch: p.branch || branch,
+          address: p.address || addr,
+          truck: truck || p.truck,
+          lastDate: p.lastDate,
+          lastDateIso: p.lastDateIso,
+          lastReason: p.lastReason,
+          pendingCategory: p.pendingCategory,
+          resolvedDate: shortDate,
+          resolvedDateIso: dateIso,
+          resolvedStatus: reason || status || 'ลูกค้าตั้งถัง (สำเร็จ)',
+          history: `${p.history || ''} ➔ ${shortDate} [${reason || status || 'จัดส่งสำเร็จ'}]`,
+          lat: p.lat || lat,
+          lng: p.lng || lng,
+          gps: p.gps || (lat && lng ? `${lat},${lng}` : ''),
+          hasExactGps: !!(lat && lng || p.hasExactGps),
+          attemptsCount: (p.attemptsCount || 1) + 1
+        });
+      } else if (resolvedMap.has(memberId)) {
+        const r = resolvedMap.get(memberId);
+        r.resolvedDate = shortDate;
+        r.resolvedDateIso = dateIso;
+        r.resolvedStatus = reason || status || 'ลูกค้าตั้งถัง (สำเร็จ)';
+        if (!r.history.includes(shortDate)) {
+          r.history = `${r.history || ''} ➔ ${shortDate} [${reason || status || 'จัดส่งสำเร็จ'}]`;
+        }
+      }
+    } else if (failCategory) {
       if (pendingMap.has(memberId)) {
         const item = pendingMap.get(memberId);
         item.lastDate = shortDate;
         item.lastDateIso = dateIso;
         item.lastReason = reason || status;
-        item.pendingCategory = category;
+        item.pendingCategory = failCategory;
         item.attemptsCount = (item.attemptsCount || 1) + 1;
         if (!item.history.includes(shortDate)) {
           item.history = `${item.history || ''} ➔ ${shortDate} [${reason || status}]`;
@@ -810,36 +874,13 @@ function syncAppWithNewRecords(records) {
           lastDateIso: dateIso,
           lastReason: reason || status,
           lastStatus: status,
-          pendingCategory: category,
+          pendingCategory: failCategory,
           history: `${shortDate} [${reason || status}]`,
           lat: lat || 13.805,
           lng: lng || 100.68,
           gps: lat && lng ? `${lat},${lng}` : '',
           hasExactGps: !!(lat && lng),
-          status: isTransferred ? 'โอนงานสิ้นวัน' : 'น้ำท่วม'
-        });
-      }
-    } else if (isSuccess) {
-      if (pendingMap.has(memberId)) {
-        const p = pendingMap.get(memberId);
-        pendingMap.delete(memberId);
-        resolvedMap.set(memberId, {
-          memberId: memberId,
-          name: p.name || name,
-          branch: p.branch || branch,
-          address: p.address || addr,
-          truck: truck || p.truck,
-          lastDate: p.lastDate,
-          lastDateIso: p.lastDateIso,
-          lastReason: p.lastReason,
-          pendingCategory: p.pendingCategory,
-          resolvedDate: shortDate,
-          resolvedDateIso: dateIso,
-          resolvedStatus: reason || status || 'สำเร็จตามเงื่อนไข',
-          history: `${p.history || ''} ➔ ${shortDate} [${reason || status || 'จัดส่งสำเร็จ'}]`,
-          lat: p.lat || lat,
-          lng: p.lng || lng,
-          attemptsCount: (p.attemptsCount || 1) + 1
+          status: failCategory === 'โอนงานสิ้นวัน' ? 'โอนงานสิ้นวัน' : 'น้ำท่วม'
         });
       }
     }
@@ -853,6 +894,17 @@ function syncAppWithNewRecords(records) {
     window.CRISIS_DATA.resolved = AppState.dataStore.resolved;
     window.CRISIS_DATA.pendingCount = AppState.dataStore.pending.length;
     window.CRISIS_DATA.resolvedCount = AppState.dataStore.resolved.length;
+    window.CRISIS_DATA.totalCount = AppState.dataStore.pending.length + AppState.dataStore.resolved.length;
+
+    const pendingByBranch = {};
+    AppState.dataStore.pending.forEach(p => {
+      pendingByBranch[p.branch] = (pendingByBranch[p.branch] || 0) + 1;
+    });
+    window.CRISIS_DATA.pendingByBranch = pendingByBranch;
+    window.CRISIS_DATA.pendingByCategory = {
+      "น้ำท่วมสูงไม่สามารถส่งได้": AppState.dataStore.pending.filter(p => p.pendingCategory !== 'โอนงานสิ้นวัน').length,
+      "โอนงานสิ้นวัน": AppState.dataStore.pending.filter(p => p.pendingCategory === 'โอนงานสิ้นวัน').length
+    };
   }
 
   // Update Header Badges
@@ -2429,12 +2481,14 @@ function parseExcelOrCsvFile(file) {
         const finalLng = lookup.longitude || null;
         const finalDistrict = lookup.district || '';
 
-        const isTransferred = (note && note.includes('โอนงาน')) ||
+        const isSuccess = isSuccessReason(reason, status);
+        const isTransferred = !isSuccess && (
+                              (note && note.includes('โอนงาน')) ||
                               (reason && reason.includes('โอนงาน')) ||
                               (round && round.includes('โอนงาน')) ||
-                              (status && status.includes('โอนงาน'));
+                              (status && status.includes('โอนงาน')));
 
-        if (reason.includes('น้ำท่วม') || status.includes('น้ำท่วม')) floodCount++;
+        if (!isSuccess && (reason.includes('น้ำท่วม') || status.includes('น้ำท่วม') || reason.includes('รอน้ำลด'))) floodCount++;
         if (isTransferred) transferCount++;
 
         branchStats[branch] = (branchStats[branch] || 0) + 1;
@@ -2456,7 +2510,7 @@ function parseExcelOrCsvFile(file) {
           district: finalDistrict,
           note: note,
           is_transferred: isTransferred,
-          delivery_group: reason && (reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('น้ำท่วม') || reason.includes('เลื่อนวันที่ส่ง')) ? 'ยังส่งไม่ได้' : 'เข้าส่งได้'
+          delivery_group: isSuccess ? 'เข้าส่งได้' : (reason && (reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('น้ำท่วม') || reason.includes('เลื่อนวันที่ส่ง') || isTransferred) ? 'ยังส่งไม่ได้' : 'เข้าส่งได้')
         });
       }
 
