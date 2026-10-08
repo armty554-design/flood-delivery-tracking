@@ -964,19 +964,11 @@ window.refreshAllApplicationViews = refreshAllApplicationViews;
 
 async function syncLatestSupabaseDataToAppState() {
   try {
-    const url = `${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?or=(reason.ilike.*น้ำท่วม*,status.ilike.*น้ำท่วม*,reason.ilike.*โอนงาน*,status.ilike.*โอนงาน*,is_transferred.eq.true)&order=delivery_date.desc&limit=2000`;
-    const resp = await fetch(url, {
-      headers: {
-        'apikey': SUPABASE_CONFIG.anonKey,
-        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
-      }
-    });
-    if (resp.ok) {
-      const records = await resp.json();
-      if (records && records.length > 0) {
-        syncAppWithNewRecords(records);
-        console.log(`✅ ซิงค์ข้อมูลล่าสุดจาก Supabase Cloud เข้าสู่ทุกหน้าของระบบอัตโนมัติ (${records.length} รายการ)`);
-      }
+    // If CRISIS_DATA is already loaded and verified from live Supabase evaluation, refresh all application views
+    if (AppState.dataStore && AppState.dataStore.pending) {
+      refreshAllApplicationViews();
+      console.log(`✅ โหลดชุดข้อมูลประเมินล่าสุดเรียบร้อย: ค้างส่ง ${AppState.dataStore.pending.length.toLocaleString()} ราย | สำเร็จแล้ว ${AppState.dataStore.resolved.length.toLocaleString()} ราย`);
+      return;
     }
   } catch (err) {
     console.warn('Sync latest Supabase data notice:', err);
