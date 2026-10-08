@@ -748,9 +748,35 @@ function updateChartsFromLiveDataset() {
 }
 window.updateChartsFromLiveDataset = updateChartsFromLiveDataset;
 
-function isSuccessReason(reason, status) {
+function isJob30AutoClose(rowOrReason, status, round, note) {
+  let r = '', s = '', ro = '', n = '';
+  if (typeof rowOrReason === 'object' && rowOrReason !== null) {
+    r = String(rowOrReason.reason || '').trim();
+    s = String(rowOrReason.status || '').trim();
+    ro = String(rowOrReason.round || '').trim();
+    n = String(rowOrReason.note || '').trim();
+  } else {
+    r = String(rowOrReason || '').trim();
+    s = String(status || '').trim();
+    ro = String(round || '').trim();
+    n = String(note || '').trim();
+  }
+
+  if (n.includes('Job 30') || n.includes('auto ปิด Job') || n.includes('ปิด Job') || n.includes('ตรวจพบ Job 30')) return true;
+  if (ro.includes('ยกเลิก') && (!r || r === '-' || r === '1' || r === 'ปกติ')) return true;
+
+  return false;
+}
+window.isJob30AutoClose = isJob30AutoClose;
+
+function isSuccessReason(reason, status, round, note) {
   const r = String(reason || '').trim();
   const s = String(status || '').trim();
+  const ro = String(round || '').trim();
+  const n = String(note || '').trim();
+
+  // Job 30 Auto Close
+  if (isJob30AutoClose(r, s, ro, n)) return true;
 
   // Explicit success indicators
   if (r.includes('ลูกค้าตั้งถัง') || r.includes('ตั้งถัง')) return true;
@@ -761,23 +787,11 @@ function isSuccessReason(reason, status) {
   if (r.includes('ถังเต็ม') || r.includes('ยังไม่รับน้ำ')) return true;
 
   // Normal status '1' with NO failure reason
-  if (s === '1' && (!r || r === '-' || r === '1' || r === 'ปกติ')) return true;
+  if (s === '1' && (!r || r === '-' || r === '1' || r === 'ปกติ') && !ro.includes('ยกเลิก')) return true;
 
   return false;
 }
 window.isSuccessReason = isSuccessReason;
-
-function isSystemAutoCancel(row) {
-  const round = String(row.round || '').trim();
-  const note = String(row.note || '').trim();
-  const reason = String(row.reason || '').trim();
-
-  if (round.includes('ยกเลิก') && (!reason || reason === '-' || reason === 'ปกติ')) return true;
-  if (note.includes('auto ปิด Job') || note.includes('ยกเลิกอัตโนมัติ') || note.includes('Job 30')) return true;
-
-  return false;
-}
-window.isSystemAutoCancel = isSystemAutoCancel;
 
 function isFailureReason(reason, status) {
   const r = String(reason || '').trim();
@@ -813,9 +827,6 @@ function syncAppWithNewRecords(records) {
     const memberId = String(row.member_id || '').trim();
     if (!memberId) return;
 
-    // Ignore system auto-cancel records that do not represent physical delivery runs
-    if (isSystemAutoCancel(row)) return;
-
     const dateIso = row.delivery_date || '';
     if (dateIso && (!maxDate || dateIso > maxDate)) maxDate = dateIso;
 
@@ -829,8 +840,10 @@ function syncAppWithNewRecords(records) {
     const lat = row.latitude || (row.gps ? parseFloat(row.gps.split(',')[0]) : null);
     const lng = row.longitude || (row.gps ? parseFloat(row.gps.split(',')[1]) : null);
 
-    const isSuccess = isSuccessReason(reason, status);
+    const isJob30 = isJob30AutoClose(row);
+    const isSuccess = isSuccessReason(reason, status, row.round, row.note);
     const failCategory = !isSuccess ? isFailureReason(reason, status) : null;
+    const successLabel = isJob30 ? 'ปิด Job 30 (สำเร็จ)' : (reason || status || 'ลูกค้าตั้งถัง (สำเร็จ)');
 
     if (isSuccess) {
       if (pendingMap.has(memberId)) {
@@ -848,8 +861,8 @@ function syncAppWithNewRecords(records) {
           pendingCategory: p.pendingCategory,
           resolvedDate: shortDate,
           resolvedDateIso: dateIso,
-          resolvedStatus: reason || status || 'ลูกค้าตั้งถัง (สำเร็จ)',
-          history: `${p.history || ''} ➔ ${shortDate} [${reason || status || 'จัดส่งสำเร็จ'}]`,
+          resolvedStatus: successLabel,
+          history: `${p.history || ''} ➔ ${shortDate} [${successLabel}]`,
           lat: p.lat || lat,
           lng: p.lng || lng,
           gps: p.gps || (lat && lng ? `${lat},${lng}` : ''),
@@ -860,9 +873,9 @@ function syncAppWithNewRecords(records) {
         const r = resolvedMap.get(memberId);
         r.resolvedDate = shortDate;
         r.resolvedDateIso = dateIso;
-        r.resolvedStatus = reason || status || 'ลูกค้าตั้งถัง (สำเร็จ)';
+        r.resolvedStatus = successLabel;
         if (!r.history.includes(shortDate)) {
-          r.history = `${r.history || ''} ➔ ${shortDate} [${reason || status || 'จัดส่งสำเร็จ'}]`;
+          r.history = `${r.history || ''} ➔ ${shortDate} [${successLabel}]`;
         }
       }
     } else if (failCategory) {
