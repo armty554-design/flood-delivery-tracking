@@ -298,13 +298,13 @@
             <span class="badge badge-danger">สถานะล่าสุด</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span id="page1KpiPending" class="kpi-value text-rose-600">383</span>
-            <span id="page1KpiPendingRate" class="text-sm font-semibold text-slate-500">ราย (7.5%)</span>
+            <span id="page1KpiPending" class="kpi-value text-rose-600">347</span>
+            <span id="page1KpiPendingRate" class="text-sm font-semibold text-slate-500">ราย (6.8%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2" id="page1KpiPendingBreakdown">
-            <span>รามอินทรา: <strong class="text-rose-600">279</strong></span>
-            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">98</strong></span>
-            <span>สุขุมวิท 50: <strong class="text-purple-600">6</strong></span>
+            <span>รามอินทรา: <strong class="text-rose-600">254</strong></span>
+            <span>กรุงเทพกรีฑา: <strong class="text-amber-600">92</strong></span>
+            <span>สุขุมวิท 50: <strong class="text-purple-600">1</strong></span>
           </div>
         </div>
 
@@ -315,8 +315,8 @@
             <span class="badge badge-success">ปลดล็อคสำเร็จ</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span id="page1KpiResolved" class="kpi-value text-emerald-600">4,706</span>
-            <span id="page1KpiResolvedRate" class="text-sm font-semibold text-slate-500">ราย (92.5%)</span>
+            <span id="page1KpiResolved" class="kpi-value text-emerald-600">4,742</span>
+            <span id="page1KpiResolvedRate" class="text-sm font-semibold text-slate-500">ราย (93.2%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
             <span>ส่งสำเร็จแล้ว (Delivered) / เข้าถึงพื้นที่ได้แล้ว</span>
@@ -334,8 +334,8 @@
             <span class="text-sm font-semibold text-slate-500">ราย (100%)</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2" id="page1KpiTotalBreakdown">
-            <span>น้ำท่วมสูง: <strong>373</strong></span>
-            <span>โอนงานสิ้นวัน: <strong>10</strong></span>
+            <span>น้ำท่วมสูง: <strong>345</strong></span>
+            <span>โอนงานสิ้นวัน: <strong>2</strong></span>
           </div>
         </div>
 
@@ -346,11 +346,11 @@
             <span class="badge badge-purple">คลี่คลายแล้ว</span>
           </div>
           <div class="flex items-baseline gap-1">
-            <span id="page1KpiProgressRate" class="kpi-value text-indigo-600">92.5%</span>
+            <span id="page1KpiProgressRate" class="kpi-value text-indigo-600">93.2%</span>
             <span class="text-sm font-semibold text-slate-500">ของกลุ่มวิกฤต</span>
           </div>
           <div class="mt-2 text-xs text-slate-600 flex justify-between border-t border-slate-100 pt-2">
-            <span id="page1KpiRemainingText">คงเหลือค้างจริง: <strong>7.5% (383 ราย)</strong></span>
+            <span id="page1KpiRemainingText">คงเหลือค้างจริง: <strong>6.8% (347 ราย)</strong></span>
           </div>
         </div>
 
@@ -415,7 +415,7 @@
               <h3 class="font-bold text-base text-slate-900">กราฟเปรียบเทียบวัน: ความคืบหน้าการคลี่คลายวิกฤต (26 ก.ย. - 7 ต.ค.)</h3>
               <p class="text-xs text-slate-500">คงค้างยังไม่ได้รับน้ำ (เส้นแดง) ลดลง vs สำเร็จสะสม (เส้นเขียว) เพิ่มขึ้น</p>
             </div>
-            <span id="dailyChartPendingBadge" class="badge badge-danger">383 คงเหลือ</span>
+            <span id="dailyChartPendingBadge" class="badge badge-danger">347 คงเหลือ</span>
           </div>
           <div class="h-72 w-full">
             <canvas id="chartDailyComparison"></canvas>
@@ -531,7 +531,7 @@
               <h3 class="font-bold text-base text-slate-900">ตารางเปรียบเทียบความคืบหน้ารายวัน (26 ก.ย. ถึงปัจจุบัน)</h3>
               <p class="text-xs text-slate-500">แสดงการลดลงของยอดที่ยังไม่ได้รับน้ำอย่างต่อเนื่อง <span class="text-blue-600 font-semibold">• คลิกที่แถวเพื่อเปิดดูรายละเอียด</span></p>
             </div>
-            <span id="dailyProgressHeaderBadge" class="badge badge-success">ความคืบหน้า 92.5%</span>
+            <span id="dailyProgressHeaderBadge" class="badge badge-success">ความคืบหน้า 93.2%</span>
           </div>
           <div class="overflow-x-auto">
             <table class="exec-table text-xs">
@@ -548,98 +548,98 @@
               <tbody id="dailyProgressionTableBody">
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-26', '26 ก.ย. (เสาร์)')">
                   <td class="font-bold text-slate-700">26 ก.ย. (เสาร์)</td>
-                  <td><span class="font-bold text-blue-600">+1 ราย</span></td>
-                  <td>1 ราย</td>
-                  <td><span class="font-bold text-rose-600">5,088 ราย</span></td>
-                  <td>0.0% (วันวิกฤต)</td>
+                  <td><span class="font-bold text-blue-600">+9 ราย</span></td>
+                  <td>9 ราย</td>
+                  <td><span class="font-bold text-rose-600">5,080 ราย</span></td>
+                  <td>0.2% (วันวิกฤต)</td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-26', '26 ก.ย. (เสาร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-27', '27 ก.ย. (อาทิตย์)')">
                   <td class="font-bold text-slate-700">27 ก.ย. (อาทิตย์)</td>
-                  <td><span class="font-bold text-blue-600">+4 ราย</span></td>
-                  <td>5 ราย</td>
-                  <td><span class="font-bold text-rose-600">5,084 ราย</span></td>
-                  <td><span class="badge badge-warning">0.1%</span></td>
+                  <td>0 ราย</td>
+                  <td>9 ราย</td>
+                  <td><span class="font-bold text-rose-600">5,080 ราย</span></td>
+                  <td><span class="badge badge-warning">0.2%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-27', '27 ก.ย. (อาทิตย์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-28', '28 ก.ย. (จันทร์)')">
                   <td class="font-bold text-slate-700">28 ก.ย. (จันทร์)</td>
-                  <td><span class="font-bold text-blue-600">+145 ราย</span></td>
-                  <td>150 ราย</td>
-                  <td><span class="font-bold text-rose-600">4,939 ราย</span></td>
-                  <td><span class="badge badge-warning">2.9%</span></td>
+                  <td><span class="font-bold text-blue-600">+148 ราย</span></td>
+                  <td>157 ราย</td>
+                  <td><span class="font-bold text-rose-600">4,932 ราย</span></td>
+                  <td><span class="badge badge-warning">3.1%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-28', '28 ก.ย. (จันทร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-29', '29 ก.ย. (อังคาร)')">
                   <td class="font-bold text-slate-700">29 ก.ย. (อังคาร)</td>
-                  <td><span class="font-bold text-blue-600">+102 ราย</span></td>
-                  <td>252 ราย</td>
-                  <td><span class="font-bold text-rose-600">4,837 ราย</span></td>
-                  <td><span class="badge badge-warning">5.0%</span></td>
+                  <td><span class="font-bold text-blue-600">+115 ราย</span></td>
+                  <td>272 ราย</td>
+                  <td><span class="font-bold text-rose-600">4,817 ราย</span></td>
+                  <td><span class="badge badge-warning">5.3%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-29', '29 ก.ย. (อังคาร)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-09-30', '30 ก.ย. (พุธ)')">
                   <td class="font-bold text-slate-700">30 ก.ย. (พุธ)</td>
-                  <td><span class="font-bold text-blue-600">+75 ราย</span></td>
-                  <td>327 ราย</td>
-                  <td><span class="font-bold text-rose-600">4,762 ราย</span></td>
-                  <td><span class="badge badge-warning">6.4%</span></td>
+                  <td><span class="font-bold text-blue-600">+68 ราย</span></td>
+                  <td>340 ราย</td>
+                  <td><span class="font-bold text-rose-600">4,749 ราย</span></td>
+                  <td><span class="badge badge-warning">6.7%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-09-30', '30 ก.ย. (พุธ)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-01', '1 ต.ค. (พฤหัส)')">
                   <td class="font-bold text-slate-700">1 ต.ค. (พฤหัส)</td>
-                  <td><span class="font-bold text-blue-600">+101 ราย</span></td>
-                  <td>428 ราย</td>
-                  <td><span class="font-bold text-rose-600">4,661 ราย</span></td>
-                  <td><span class="badge badge-warning">8.4%</span></td>
+                  <td><span class="font-bold text-blue-600">+114 ราย</span></td>
+                  <td>454 ราย</td>
+                  <td><span class="font-bold text-rose-600">4,635 ราย</span></td>
+                  <td><span class="badge badge-warning">8.9%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-01', '1 ต.ค. (พฤหัส)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-02', '2 ต.ค. (ศุกร์)')">
                   <td class="font-bold text-slate-700">2 ต.ค. (ศุกร์)</td>
-                  <td><span class="font-bold text-blue-600">+238 ราย</span></td>
-                  <td>666 ราย</td>
-                  <td><span class="font-bold text-rose-600">4,423 ราย</span></td>
-                  <td><span class="badge badge-warning">13.1%</span></td>
+                  <td><span class="font-bold text-blue-600">+83 ราย</span></td>
+                  <td>537 ราย</td>
+                  <td><span class="font-bold text-rose-600">4,552 ราย</span></td>
+                  <td><span class="badge badge-warning">10.6%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-02', '2 ต.ค. (ศุกร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-03', '3 ต.ค. (เสาร์)')">
                   <td class="font-bold text-slate-700">3 ต.ค. (เสาร์)</td>
-                  <td><span class="font-bold text-blue-600">+2,150 ราย</span></td>
-                  <td>2,816 ราย</td>
-                  <td><span class="font-bold text-amber-600">2,273 ราย</span></td>
-                  <td><span class="badge badge-blue">55.3%</span></td>
+                  <td><span class="font-bold text-blue-600">+2,315 ราย</span></td>
+                  <td>2,852 ราย</td>
+                  <td><span class="font-bold text-amber-600">2,237 ราย</span></td>
+                  <td><span class="badge badge-blue">56.0%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-03', '3 ต.ค. (เสาร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-04', '4 ต.ค. (อาทิตย์)')">
                   <td class="font-bold text-slate-700">4 ต.ค. (อาทิตย์)</td>
-                  <td><span class="font-bold text-blue-600">+42 ราย</span></td>
-                  <td>2,858 ราย</td>
-                  <td><span class="font-bold text-amber-600">2,231 ราย</span></td>
-                  <td><span class="badge badge-blue">56.2%</span></td>
+                  <td>0 ราย</td>
+                  <td>2,852 ราย</td>
+                  <td><span class="font-bold text-amber-600">2,237 ราย</span></td>
+                  <td><span class="badge badge-blue">56.0%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-04', '4 ต.ค. (อาทิตย์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-05', '5 ต.ค. (จันทร์)')">
                   <td class="font-bold text-slate-700">5 ต.ค. (จันทร์)</td>
-                  <td><span class="font-bold text-blue-600">+870 ราย</span></td>
-                  <td>3,728 ราย</td>
-                  <td><span class="font-bold text-amber-600">1,361 ราย</span></td>
-                  <td><span class="badge badge-blue">73.3%</span></td>
+                  <td><span class="font-bold text-blue-600">+873 ราย</span></td>
+                  <td>3,725 ราย</td>
+                  <td><span class="font-bold text-amber-600">1,364 ราย</span></td>
+                  <td><span class="badge badge-blue">73.2%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-05', '5 ต.ค. (จันทร์)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="hover:bg-blue-50/60 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-06', '6 ต.ค. (อังคาร)')">
                   <td class="font-bold text-slate-700">6 ต.ค. (อังคาร)</td>
-                  <td><span class="font-bold text-blue-600">+538 ราย</span></td>
-                  <td>4,266 ราย</td>
-                  <td><span class="font-bold text-rose-600">823 ราย</span></td>
-                  <td><span class="badge badge-success">83.8%</span></td>
+                  <td><span class="font-bold text-blue-600">+560 ราย</span></td>
+                  <td>4,285 ราย</td>
+                  <td><span class="font-bold text-rose-600">804 ราย</span></td>
+                  <td><span class="badge badge-success">84.2%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-06', '6 ต.ค. (อังคาร)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
                 <tr class="bg-blue-50/70 font-semibold hover:bg-blue-100/70 cursor-pointer transition" onclick="openDailyDetailModal('2026-10-07', '7 ต.ค. (ปัจจุบัน)')">
                   <td class="font-bold text-blue-900">7 ต.ค. (ปัจจุบัน)</td>
-                  <td><span class="font-bold text-blue-600">+440 ราย</span></td>
-                  <td class="text-emerald-700 font-bold">4,706 ราย</td>
-                  <td><span class="font-extrabold text-rose-700">383 ราย</span></td>
-                  <td><span class="badge badge-success">92.5%</span></td>
+                  <td><span class="font-bold text-blue-600">+457 ราย</span></td>
+                  <td class="text-emerald-700 font-bold">4,742 ราย</td>
+                  <td><span class="font-extrabold text-rose-700">347 ราย</span></td>
+                  <td><span class="badge badge-success">93.2%</span></td>
                   <td class="text-right"><button onclick="event.stopPropagation(); openDailyDetailModal('2026-10-07', '7 ต.ค. (ปัจจุบัน)')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1"><span>🔍 ดูรายละเอียด</span></button></td>
                 </tr>
               </tbody>
@@ -680,40 +680,40 @@
               </tr>
               <tr>
                 <td class="font-bold text-slate-900">สาขาสุขุมวิท 50</td>
-                <td><span class="font-bold text-blue-600">959 ราย</span></td>
+                <td><span class="font-bold text-blue-600">964 ราย</span></td>
                 <td>0 ราย</td>
-                <td>6 ราย</td>
+                <td>1 ราย</td>
                 <td>965 ราย</td>
-                <td><span class="font-bold text-blue-600">99.4%</span></td>
+                <td><span class="font-bold text-blue-600">99.9%</span></td>
                 <td><span class="badge badge-blue">ปกติสมบูรณ์</span></td>
               </tr>
               <tr>
                 <td class="font-bold text-slate-900">สาขากรุงเทพกรีฑา</td>
-                <td><span class="font-bold text-amber-600">2,168 ราย</span></td>
-                <td>96 ราย</td>
-                <td>2 ราย</td>
+                <td><span class="font-bold text-amber-600">2,174 ราย</span></td>
+                <td>91 ราย</td>
+                <td>1 ราย</td>
                 <td>2,266 ราย</td>
-                <td><span class="font-bold text-amber-600">95.7%</span></td>
+                <td><span class="font-bold text-amber-600">95.9%</span></td>
                 <td><span class="badge badge-warning">เฝ้าระวังน้ำขัง</span></td>
               </tr>
               <tr>
                 <td class="font-bold text-slate-900">สาขารามอินทรา</td>
-                <td><span class="font-bold text-rose-600">1,564 ราย</span></td>
-                <td>277 ราย</td>
-                <td>2 ราย</td>
+                <td><span class="font-bold text-rose-600">1,589 ราย</span></td>
+                <td>254 ราย</td>
+                <td>0 ราย</td>
                 <td>1,843 ราย</td>
-                <td><span class="font-bold text-rose-600">84.9%</span></td>
+                <td><span class="font-bold text-rose-600">86.2%</span></td>
                 <td><span class="badge badge-danger">วิกฤตน้ำท่วม 30-40cm</span></td>
               </tr>
             </tbody>
             <tfoot id="branchMatrixTableFoot" class="bg-slate-50 font-bold border-t-2 border-slate-200">
               <tr>
                 <td>รวมทั้งหมด (4 สาขา)</td>
-                <td class="text-emerald-700">4,706 ราย</td>
-                <td class="text-rose-600">373 ราย</td>
-                <td class="text-purple-600">10 ราย</td>
+                <td class="text-emerald-700">4,742 ราย</td>
+                <td class="text-rose-600">345 ราย</td>
+                <td class="text-purple-600">2 ราย</td>
                 <td>5,089 ราย</td>
-                <td class="text-blue-700 font-extrabold">92.5%</td>
+                <td class="text-blue-700 font-extrabold">93.2%</td>
                 <td><span class="badge badge-success">ภาพรวมคลี่คลาย</span></td>
               </tr>
             </tfoot>
@@ -769,9 +769,9 @@
           <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500/30 text-rose-200 border border-rose-400/30">PAGE 2</span>
           <span class="text-xs text-rose-300 font-semibold">พิกัด GIS สมาชิกตกค้าง</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">หน้าแผนที่โชว์จุดของสมาชิกที่ยังจัดส่งไม่ได้ (383 ราย)</h1>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">หน้าแผนที่โชว์จุดของสมาชิกที่ยังจัดส่งไม่ได้ (347 ราย)</h1>
         <p class="mt-2 text-sm text-rose-200 max-w-2xl">
-          พิกัดดาวเทียม GIS แสดงจุดจัดส่งของสมาชิก 383 ราย ที่สถานะการส่งล่าสุดยังคงประสบปัญหาน้ำท่วมหรือมีการโอนงานสิ้นวัน แยกตามสาขารามอินทรา (279 ราย), กรุงเทพกรีฑา (98 ราย) และสุขุมวิท 50 (6 ราย)
+          พิกัดดาวเทียม GIS แสดงจุดจัดส่งของสมาชิก 347 ราย ที่สถานะการส่งล่าสุดยังคงประสบปัญหาน้ำท่วมหรือมีการโอนงานสิ้นวัน แยกตามสาขารามอินทรา (254 ราย), กรุงเทพกรีฑา (92 ราย) และสุขุมวิท 50 (1 ราย)
         </p>
       </div>
 
@@ -1888,10 +1888,10 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
           <button onclick="setTableTab('PENDING')" data-tab="PENDING" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white shadow-xs">
-            ⚠️ ยังไม่ได้รับน้ำ (<span id="tableTabPendingBadge">383 ราย</span>)
+            ⚠️ ยังไม่ได้รับน้ำ (<span id="tableTabPendingBadge">347 ราย</span>)
           </button>
           <button onclick="setTableTab('RESOLVED')" data-tab="RESOLVED" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-            ✅ สำเร็จตามเงื่อนไข (<span id="tableTabResolvedBadge">4,706 ราย</span>)
+            ✅ สำเร็จตามเงื่อนไข (<span id="tableTabResolvedBadge">4,742 ราย</span>)
           </button>
           <button onclick="setTableTab('ALL')" data-tab="ALL" class="table-tab-btn px-4 py-2 rounded-lg text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
             📊 รวมกลุ่มวิกฤต (<span id="tableTabAllBadge">5,089 ราย</span>)

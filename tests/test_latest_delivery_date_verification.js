@@ -15,12 +15,12 @@ console.log('\n[2. Verifying Member Latest Status Categorization]');
 const pendingData = JSON.parse(fs.readFileSync('data/pending_latest.json', 'utf8'));
 const resolvedData = JSON.parse(fs.readFileSync('data/resolved_latest.json', 'utf8'));
 
-console.log(`  Pending Count: ${pendingData.length} (Expected: 383)`);
-console.log(`  Resolved Count: ${resolvedData.length} (Expected: 4,706)`);
+console.log(`  Pending Count: ${pendingData.length} (Expected: 347)`);
+console.log(`  Resolved Count: ${resolvedData.length} (Expected: 4,742)`);
 console.log(`  Total Evaluated: ${pendingData.length + resolvedData.length} (Expected: 5,089)`);
 
-assert(pendingData.length === 383, `Pending count must be 383 (actual: ${pendingData.length})`);
-assert(resolvedData.length === 4706, `Resolved count must be 4,706 (actual: ${resolvedData.length})`);
+assert(pendingData.length === 347, `Pending count must be 347 (actual: ${pendingData.length})`);
+assert(resolvedData.length === 4742, `Resolved count must be 4,742 (actual: ${resolvedData.length})`);
 assert(pendingData.length + resolvedData.length === 5089, 'Total count must be 5,089');
 
 // 3. Rule 1 Check: Every pending member MUST have their latest status as flood or transfer, NEVER success/ตั้งถัง
@@ -37,6 +37,13 @@ pendingData.forEach(p => {
 });
 assert.strictEqual(invalidPendingCount, 0, 'All pending members must have flood or transfer as their latest status (0 success cases)');
 console.log(`  ✔ PASS: 100% of pending members (${pendingData.length}/${pendingData.length}) have their latest status as genuine flood or transfer`);
+
+// Check member 265014 specifically (had success on 30/9 before flood on 3/10)
+const p265014 = pendingData.find(p => p.memberId === '265014');
+const r265014 = resolvedData.find(r => r.memberId === '265014');
+assert(!p265014, 'Member 265014 (นิตยา รุ่งแสง) MUST NOT be in pending');
+assert(r265014 && (r265014.resolvedStatus || '').includes('ลูกค้าตั้งถัง'), 'Member 265014 MUST be in resolved (ลูกค้าตั้งถัง)');
+console.log('  ✔ PASS: Member 265014 (นิตยา รุ่งแสง) verified as Resolved (ลูกค้าตั้งถัง 30/9) and excluded from Pending Map');
 
 // Check specific members from user screenshots
 const p252998 = pendingData.find(p => p.memberId === '252998');
@@ -116,9 +123,9 @@ const ramIntra = pendingData.filter(p => p.branch === 'สาขารามอ�
 const krungthep = pendingData.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
 const sukhumvit = pendingData.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
 console.log('  Branch counts:', { ramIntra, krungthep, sukhumvit });
-assert.strictEqual(ramIntra, 279, 'Ram Intra count must be 279');
-assert.strictEqual(krungthep, 98, 'Krungthep Kreetha count must be 98');
-assert.strictEqual(sukhumvit, 6, 'Sukhumvit 50 count must be 6');
+assert.strictEqual(ramIntra, 254, 'Ram Intra count must be 254');
+assert.strictEqual(krungthep, 92, 'Krungthep Kreetha count must be 92');
+assert.strictEqual(sukhumvit, 1, 'Sukhumvit 50 count must be 1');
 console.log('  ✔ PASS: Branch distribution verified');
 console.log('  ✔ PASS: Branch distribution verified');
 

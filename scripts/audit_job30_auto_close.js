@@ -140,7 +140,8 @@ async function auditAndReevaluate() {
     if (!hasCrisis) continue;
 
     const latest = list[list.length - 1];
-    const isSuccess = isSuccessReason(latest.reason, latest.status, latest.round, latest.note);
+    const successAttempts = list.filter(o => isSuccessReason(o.reason, o.status, o.round, o.note));
+    const hasAnySuccess = successAttempts.length > 0;
     const failCat = isFailureReason(latest.reason, latest.status);
 
     const addrObj = addressLookup[mid] || {};
@@ -161,21 +162,22 @@ async function auditAndReevaluate() {
       return `${dStr} [${rStr}]`;
     }).join(' ➔ ');
 
-    if (isSuccess) {
-      if (isJob30AutoClose(latest)) job30ResolvedCount++;
-      const resolvedStatus = isJob30AutoClose(latest) ? 'ปิด Job 30 (สำเร็จ)' : (latest.reason || 'ลูกค้าตั้งถัง (สำเร็จ)');
+    if (hasAnySuccess) {
+      const lastSuccess = successAttempts[successAttempts.length - 1];
+      if (isJob30AutoClose(lastSuccess)) job30ResolvedCount++;
+      const resolvedStatus = isJob30AutoClose(lastSuccess) ? 'ปิด Job 30 (สำเร็จ)' : (lastSuccess.reason || 'ลูกค้าตั้งถัง (สำเร็จ)');
       resolvedList.push({
         memberId: mid,
         name: name,
         branch: branch,
         address: address,
-        truck: truck,
+        truck: lastSuccess.truck_number || truck,
         attemptsCount: list.length,
         lastDate: formatShortThaiDate(list[0].delivery_date),
         lastDateIso: list[0].delivery_date,
         lastReason: list[0].reason || 'ไม่สามารถเข้าส่งได้',
-        resolvedDate: formatShortThaiDate(latest.delivery_date),
-        resolvedDateIso: latest.delivery_date,
+        resolvedDate: formatShortThaiDate(lastSuccess.delivery_date),
+        resolvedDateIso: lastSuccess.delivery_date,
         resolvedStatus: resolvedStatus,
         history: historyTimeline,
         lat: lat,

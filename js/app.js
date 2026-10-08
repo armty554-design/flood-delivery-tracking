@@ -674,6 +674,23 @@ function formatShortDate(dateStr) {
 }
 window.formatShortDate = formatShortDate;
 
+function getThaiDateKey(isoStr) {
+  if (!isoStr) return '';
+  try {
+    const d = new Date(isoStr);
+    if (isNaN(d.getTime())) return String(isoStr).substring(0, 10);
+    const tzOffset = 7 * 60; // Bangkok UTC+7
+    const localTime = new Date(d.getTime() + (tzOffset + d.getTimezoneOffset()) * 60000);
+    const year = localTime.getFullYear();
+    const month = String(localTime.getMonth() + 1).padStart(2, '0');
+    const day = String(localTime.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } catch (e) {
+    return String(isoStr).substring(0, 10);
+  }
+}
+window.getThaiDateKey = getThaiDateKey;
+
 function renderDailyProgressTableAndChart() {
   const pending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
   const resolved = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
@@ -684,14 +701,14 @@ function renderDailyProgressTableAndChart() {
     { key: '2026-09-27', label: '27 ก.ย. (อาทิตย์)', note: 'เริ่มส่งมอบน้ำบรรเทาความเดือดร้อนเบื้องต้นในพื้นที่เข้าถึงได้' },
     { key: '2026-09-28', label: '28 ก.ย. (จันทร์)', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
     { key: '2026-09-29', label: '29 ก.ย. (อังคาร)', note: 'คลี่คลายต่อเนื่องในโซนพื้นที่น้ำลด สาขากรุงเทพกรีฑาเริ่มกลับมาส่งได้' },
-    { key: '2026-09-30', label: '30 ก.ย. (พุธ)', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 326 ราย' },
+    { key: '2026-09-30', label: '30 ก.ย. (พุธ)', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 340 ราย' },
     { key: '2026-10-01', label: '1 ต.ค. (พฤหัส)', note: 'เข้าส่งซ้ำในพื้นที่น้ำท่วมสูงกรุงเทพกรีฑาและรามอินทรา' },
     { key: '2026-10-02', label: '2 ต.ค. (ศุกร์)', note: 'เข้าแก้ไขกลุ่มเคสตกค้างและจุดน้ำลดระดับ' },
-    { key: '2026-10-03', label: '3 ต.ค. (เสาร์)', note: 'เคลียร์ส่งมอบสำเร็จครั้งใหญ่สะสมทะลุ 2,800 ราย (55.2%)' },
+    { key: '2026-10-03', label: '3 ต.ค. (เสาร์)', note: 'เคลียร์ส่งมอบสำเร็จครั้งใหญ่สะสมทะลุ 2,852 ราย (56.0%)' },
     { key: '2026-10-04', label: '4 ต.ค. (อาทิตย์)', note: 'เก็บตกรอบสุดสัปดาห์ในจุดที่น้ำลด' },
-    { key: '2026-10-05', label: '5 ต.ค. (จันทร์)', note: 'เปิดสัปดาห์ใหม่ เข้าส่งสำเร็จเพิ่มอีก 865 ราย (แตะ 73.1%)' },
-    { key: '2026-10-06', label: '6 ต.ค. (อังคาร)', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 83.7%' },
-    { key: '2026-10-07', label: '7 ต.ค. (ปัจจุบัน)', note: 'สถานะปัจจุบัน จัดส่งสำเร็จ 92.3% คงเหลือกลุ่มน้ำท่วมลึกและโอนงาน 393 ราย' }
+    { key: '2026-10-05', label: '5 ต.ค. (จันทร์)', note: 'เปิดสัปดาห์ใหม่ เข้าส่งสำเร็จเพิ่มอีก 873 ราย (แตะ 73.2%)' },
+    { key: '2026-10-06', label: '6 ต.ค. (อังคาร)', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 84.2%' },
+    { key: '2026-10-07', label: '7 ต.ค. (ปัจจุบัน)', note: 'สถานะปัจจุบัน จัดส่งสำเร็จ 93.2% คงเหลือกลุ่มน้ำท่วมลึกและโอนงาน 347 ราย' }
   ];
 
   let cumCount = 0;
@@ -702,7 +719,7 @@ function renderDailyProgressTableAndChart() {
   const tableRowsHtml = [];
 
   dateConfigs.forEach((d, index) => {
-    const dailyResolved = resolved.filter(r => (r.resolvedDateIso && r.resolvedDateIso.startsWith(d.key))).length;
+    const dailyResolved = resolved.filter(r => (getThaiDateKey(r.resolvedDateIso) === d.key)).length;
     cumCount += dailyResolved;
     const remainingPending = totalCrisis - cumCount;
     const rateVal = totalCrisis > 0 ? ((cumCount / totalCrisis) * 100).toFixed(1) : '0.0';
@@ -925,7 +942,7 @@ function updateChartsFromLiveDataset() {
       let cumCount = 0;
       const ratePoints = [];
       dateKeys.forEach(dKey => {
-        const dResolved = resolved.filter(r => r.branch === bc.key && r.resolvedDateIso && r.resolvedDateIso.startsWith(dKey)).length;
+        const dResolved = resolved.filter(r => r.branch === bc.key && getThaiDateKey(r.resolvedDateIso) === dKey).length;
         cumCount += dResolved;
         const rate = bTotal > 0 ? ((cumCount / bTotal) * 100).toFixed(1) : '100.0';
         ratePoints.push(parseFloat(rate));
@@ -1084,7 +1101,14 @@ function syncAppWithNewRecords(records) {
         }
       }
     } else if (failCategory) {
-      if (pendingMap.has(memberId)) {
+      if (resolvedMap.has(memberId)) {
+        // If member already had a previous success in the crisis period, they remain Resolved
+        const r = resolvedMap.get(memberId);
+        r.attemptsCount = (r.attemptsCount || 1) + 1;
+        if (!r.history.includes(shortDate)) {
+          r.history = `${r.history || ''} ➔ ${shortDate} [${reason || status}]`;
+        }
+      } else if (pendingMap.has(memberId)) {
         const item = pendingMap.get(memberId);
         item.lastDate = shortDate;
         item.lastDateIso = dateIso;
@@ -1095,7 +1119,6 @@ function syncAppWithNewRecords(records) {
           item.history = `${item.history || ''} ➔ ${shortDate} [${reason || status}]`;
         }
       } else {
-        if (resolvedMap.has(memberId)) resolvedMap.delete(memberId);
         pendingMap.set(memberId, {
           memberId: memberId,
           name: name,
@@ -2221,7 +2244,7 @@ function extractMembersForDailyModal(dateStr) {
     let isSuccess = false;
 
     // 1. Check if resolved on this date
-    if (item.resolvedDateIso && item.resolvedDateIso.startsWith(dateStr)) {
+    if (getThaiDateKey(item.resolvedDateIso) === dateStr) {
       isMatch = true;
       isSuccess = true;
       dayReason = item.resolvedStatus || item.resolvedReason || 'ส่งสำเร็จ';
