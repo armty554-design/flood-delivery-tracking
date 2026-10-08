@@ -346,12 +346,12 @@ function initCharts() {
     AppState.dailyChart = new Chart(dailyCtx, {
       type: 'bar',
       data: {
-        labels: ['26 ก.ย. (เสาร์)', '28 ก.ย. (จันทร์)', '29 ก.ย. (อังคาร)', '30 ก.ย. (พุธ)', '1 ต.ค. (พฤหัส)', '2 ต.ค. (ศุกร์)', '3 ต.ค. (เสาร์)', '5 ต.ค. (จันทร์)', '6 ต.ค. (อังคาร)', '7 ต.ค. (ปัจจุบัน)'],
+        labels: ['26 ก.ย. (เสาร์)', '27 ก.ย. (อาทิตย์)', '28 ก.ย. (จันทร์)', '29 ก.ย. (อังคาร)', '30 ก.ย. (พุธ)', '1 ต.ค. (พฤหัส)', '2 ต.ค. (ศุกร์)', '3 ต.ค. (เสาร์)', '4 ต.ค. (อาทิตย์)', '5 ต.ค. (จันทร์)', '6 ต.ค. (อังคาร)', '7 ต.ค. (ปัจจุบัน)'],
         datasets: [
           {
             type: 'line',
             label: 'ยังไม่ได้รับน้ำเลย (คงค้างประสานงาน)',
-            data: [2598, 2180, 1680, 1390, 1150, 1040, 990, 985, 980, 977],
+            data: [5072, 5068, 4923, 4821, 4746, 4646, 4420, 2271, 2229, 1364, 829, 393],
             borderColor: '#ef4444',
             backgroundColor: '#ef4444',
             borderWidth: 3,
@@ -365,7 +365,7 @@ function initCharts() {
           {
             type: 'line',
             label: 'สำเร็จตามเงื่อนไขสะสม (Delivered / Non-Flood)',
-            data: [0, 418, 918, 1208, 1448, 1558, 1608, 1613, 1618, 1621],
+            data: [0, 4, 149, 251, 326, 426, 652, 2801, 2843, 3708, 4243, 4679],
             borderColor: '#10b981',
             backgroundColor: '#10b981',
             borderWidth: 3,
@@ -379,7 +379,7 @@ function initCharts() {
           {
             type: 'bar',
             label: 'ยอดส่งเสริมสำเร็จรายวัน (Daily Solved)',
-            data: [0, 418, 500, 290, 240, 110, 50, 5, 5, 3],
+            data: [0, 4, 145, 102, 75, 100, 226, 2149, 42, 865, 535, 436],
             backgroundColor: 'rgba(59, 130, 246, 0.75)',
             borderRadius: 6,
             yAxisID: 'y',
@@ -404,7 +404,7 @@ function initCharts() {
         scales: {
           y: {
             beginAtZero: true,
-            max: 2950,
+            max: 5500,
             grid: { color: '#f1f5f9' },
             ticks: { font: { family: 'Prompt' } }
           },
@@ -674,6 +674,194 @@ function formatShortDate(dateStr) {
 }
 window.formatShortDate = formatShortDate;
 
+function renderDailyProgressTableAndChart() {
+  const pending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+  const resolved = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
+  const totalCrisis = pending.length + resolved.length;
+
+  const dateConfigs = [
+    { key: '2026-09-26', label: '26 ก.ย. (เสาร์)', note: 'วันเกิดเหตุวิกฤตน้ำท่วมฉับพลันและเริ่มบันทึกการโอนงานสิ้นวัน' },
+    { key: '2026-09-27', label: '27 ก.ย. (อาทิตย์)', note: 'เริ่มส่งมอบน้ำบรรเทาความเดือดร้อนเบื้องต้นในพื้นที่เข้าถึงได้' },
+    { key: '2026-09-28', label: '28 ก.ย. (จันทร์)', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
+    { key: '2026-09-29', label: '29 ก.ย. (อังคาร)', note: 'คลี่คลายต่อเนื่องในโซนพื้นที่น้ำลด สาขากรุงเทพกรีฑาเริ่มกลับมาส่งได้' },
+    { key: '2026-09-30', label: '30 ก.ย. (พุธ)', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 326 ราย' },
+    { key: '2026-10-01', label: '1 ต.ค. (พฤหัส)', note: 'เข้าส่งซ้ำในพื้นที่น้ำท่วมสูงกรุงเทพกรีฑาและรามอินทรา' },
+    { key: '2026-10-02', label: '2 ต.ค. (ศุกร์)', note: 'เข้าแก้ไขกลุ่มเคสตกค้างและจุดน้ำลดระดับ' },
+    { key: '2026-10-03', label: '3 ต.ค. (เสาร์)', note: 'เคลียร์ส่งมอบสำเร็จครั้งใหญ่สะสมทะลุ 2,800 ราย (55.2%)' },
+    { key: '2026-10-04', label: '4 ต.ค. (อาทิตย์)', note: 'เก็บตกรอบสุดสัปดาห์ในจุดที่น้ำลด' },
+    { key: '2026-10-05', label: '5 ต.ค. (จันทร์)', note: 'เปิดสัปดาห์ใหม่ เข้าส่งสำเร็จเพิ่มอีก 865 ราย (แตะ 73.1%)' },
+    { key: '2026-10-06', label: '6 ต.ค. (อังคาร)', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 83.7%' },
+    { key: '2026-10-07', label: '7 ต.ค. (ปัจจุบัน)', note: 'สถานะปัจจุบัน จัดส่งสำเร็จ 92.3% คงเหลือกลุ่มน้ำท่วมลึกและโอนงาน 393 ราย' }
+  ];
+
+  let cumCount = 0;
+  const labels = [];
+  const pendingData = [];
+  const cumResolvedData = [];
+  const dailyResolvedData = [];
+  const tableRowsHtml = [];
+
+  dateConfigs.forEach((d, index) => {
+    const dailyResolved = resolved.filter(r => (r.resolvedDateIso && r.resolvedDateIso.startsWith(d.key))).length;
+    cumCount += dailyResolved;
+    const remainingPending = totalCrisis - cumCount;
+    const rateVal = totalCrisis > 0 ? ((cumCount / totalCrisis) * 100).toFixed(1) : '0.0';
+    const rateText = `${rateVal}%`;
+
+    // Dynamically update DAILY_METRICS_INFO for drilldown modal
+    if (typeof DAILY_METRICS_INFO !== 'undefined') {
+      DAILY_METRICS_INFO[d.key] = {
+        label: `${d.label} 2569`,
+        dailyResolved,
+        cumResolved: cumCount,
+        pending: remainingPending,
+        rate: rateText,
+        note: d.note
+      };
+    }
+
+    labels.push(d.label);
+    pendingData.push(remainingPending);
+    cumResolvedData.push(cumCount);
+    dailyResolvedData.push(dailyResolved);
+
+    const isLast = index === dateConfigs.length - 1;
+    const isFirst = index === 0;
+    const badgeClass = parseFloat(rateVal) >= 80 ? 'badge-success' : (parseFloat(rateVal) >= 50 ? 'badge-blue' : 'badge-warning');
+
+    const dailyResolvedHtml = dailyResolved > 0 
+      ? `<span class="font-bold text-blue-600">+${dailyResolved.toLocaleString()} ราย</span>` 
+      : '0 ราย';
+    const pendingHtml = remainingPending > 1500 
+      ? `<span class="font-bold text-rose-600">${remainingPending.toLocaleString()} ราย</span>` 
+      : (remainingPending > 500 ? `<span class="font-bold text-amber-600">${remainingPending.toLocaleString()} ราย</span>` : `<span class="font-extrabold text-rose-700">${remainingPending.toLocaleString()} ราย</span>`);
+    const rateHtml = isFirst 
+      ? `0.0% (วันวิกฤต)` 
+      : `<span class="badge ${badgeClass}">${rateText}</span>`;
+    const rowClass = isLast 
+      ? 'bg-blue-50/70 font-semibold hover:bg-blue-100/70 cursor-pointer transition' 
+      : 'hover:bg-blue-50/60 cursor-pointer transition';
+    const dateTitleClass = isLast ? 'font-bold text-blue-900' : 'font-bold text-slate-700';
+
+    tableRowsHtml.push(`
+      <tr class="${rowClass}" onclick="openDailyDetailModal('${d.key}', '${d.label}')">
+        <td class="${dateTitleClass}">${d.label}</td>
+        <td>${dailyResolvedHtml}</td>
+        <td class="${isLast ? 'text-emerald-700 font-bold' : ''}">${cumCount.toLocaleString()} ราย</td>
+        <td>${pendingHtml}</td>
+        <td>${rateHtml}</td>
+        <td class="text-right">
+          <button onclick="event.stopPropagation(); openDailyDetailModal('${d.key}', '${d.label}')" class="px-2.5 py-1 text-[11px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition inline-flex items-center gap-1">
+            <span>🔍 ดูรายละเอียด</span>
+          </button>
+        </td>
+      </tr>
+    `);
+  });
+
+  // Inject into Table Body
+  const tbody = document.getElementById('dailyProgressionTableBody');
+  if (tbody) {
+    tbody.innerHTML = tableRowsHtml.join('');
+  }
+
+  // Update Header Badge
+  const headerBadge = document.getElementById('dailyProgressHeaderBadge');
+  if (headerBadge) {
+    const finalRate = totalCrisis > 0 ? ((cumCount / totalCrisis) * 100).toFixed(1) : '92.3';
+    headerBadge.textContent = `ความคืบหน้า ${finalRate}%`;
+  }
+
+  // Update Chart
+  if (AppState.dailyChart && AppState.dailyChart.data && AppState.dailyChart.data.datasets) {
+    AppState.dailyChart.data.labels = labels;
+    if (AppState.dailyChart.data.datasets[0]) AppState.dailyChart.data.datasets[0].data = pendingData;
+    if (AppState.dailyChart.data.datasets[1]) AppState.dailyChart.data.datasets[1].data = cumResolvedData;
+    if (AppState.dailyChart.data.datasets[2]) AppState.dailyChart.data.datasets[2].data = dailyResolvedData;
+    if (AppState.dailyChart.options && AppState.dailyChart.options.scales && AppState.dailyChart.options.scales.y) {
+      AppState.dailyChart.options.scales.y.max = Math.ceil((totalCrisis + 300) / 500) * 500;
+    }
+    AppState.dailyChart.update();
+  }
+}
+window.renderDailyProgressTableAndChart = renderDailyProgressTableAndChart;
+
+function renderBranchPerformanceMatrixAndKpis() {
+  const pending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+  const resolved = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
+
+  const branchConfigs = [
+    { key: 'สาขาพระราม 3', name: 'สาขาพระราม 3', prefix: 'Rm3', statusText: 'ปกติสมบูรณ์', badgeClass: 'badge-success', colorClass: 'text-emerald-600' },
+    { key: 'สาขาสุขุมวิท 50', name: 'สาขาสุขุมวิท 50', prefix: 'Svk', statusText: 'ปกติสมบูรณ์', badgeClass: 'badge-blue', colorClass: 'text-blue-600' },
+    { key: 'สาขากรุงเทพกรีฑา', name: 'สาขากรุงเทพกรีฑา', prefix: 'Ktp', statusText: 'เฝ้าระวังน้ำขัง', badgeClass: 'badge-warning', colorClass: 'text-amber-600' },
+    { key: 'สาขารามอินทรา', name: 'สาขารามอินทรา', prefix: 'Ram', statusText: 'วิกฤตน้ำท่วม 30-40cm', badgeClass: 'badge-danger', colorClass: 'text-rose-600' }
+  ];
+
+  let totalResolvedSum = 0;
+  let totalFloodSum = 0;
+  let totalTransferSum = 0;
+  let totalCrisisSum = 0;
+
+  const rowsHtml = branchConfigs.map(b => {
+    const branchPending = pending.filter(p => p.branch === b.key);
+    const branchResolved = resolved.filter(r => r.branch === b.key);
+
+    const floodCount = branchPending.filter(p => p.pendingCategory !== 'โอนงานสิ้นวัน').length;
+    const transferCount = branchPending.filter(p => p.pendingCategory === 'โอนงานสิ้นวัน').length;
+    const resolvedCount = branchResolved.length;
+    const totalCount = branchPending.length + resolvedCount;
+    const rateVal = totalCount > 0 ? ((resolvedCount / totalCount) * 100).toFixed(1) : '100.0';
+
+    totalResolvedSum += resolvedCount;
+    totalFloodSum += floodCount;
+    totalTransferSum += transferCount;
+    totalCrisisSum += totalCount;
+
+    // Update individual Page 1 Branch KPI cards
+    const rateEl = document.getElementById(`page1BranchKpi${b.prefix}Rate`);
+    const resolvedEl = document.getElementById(`page1BranchKpi${b.prefix}Resolved`);
+    const pendingEl = document.getElementById(`page1BranchKpi${b.prefix}Pending`);
+    const badgeEl = document.getElementById(`page1BranchKpi${b.prefix}Badge`);
+
+    if (rateEl) rateEl.textContent = `${rateVal}%`;
+    if (resolvedEl) resolvedEl.textContent = `${resolvedCount.toLocaleString()} ราย`;
+    if (pendingEl) pendingEl.textContent = `ค้างส่ง: ${branchPending.length.toLocaleString()} ราย`;
+    if (badgeEl) badgeEl.textContent = `สำเร็จ ${rateVal}%`;
+
+    return `
+      <tr>
+        <td class="font-bold text-slate-900">${b.name}</td>
+        <td><span class="font-bold ${b.colorClass}">${resolvedCount.toLocaleString()} ราย</span></td>
+        <td>${floodCount.toLocaleString()} ราย</td>
+        <td>${transferCount.toLocaleString()} ราย</td>
+        <td>${totalCount.toLocaleString()} ราย</td>
+        <td><span class="font-bold ${b.colorClass}">${rateVal}%</span></td>
+        <td><span class="badge ${b.badgeClass}">${b.statusText}</span></td>
+      </tr>
+    `;
+  });
+
+  const matrixTbody = document.getElementById('branchMatrixTableBody');
+  if (matrixTbody) matrixTbody.innerHTML = rowsHtml.join('');
+
+  const matrixTfoot = document.getElementById('branchMatrixTableFoot');
+  if (matrixTfoot) {
+    const overallRate = totalCrisisSum > 0 ? ((totalResolvedSum / totalCrisisSum) * 100).toFixed(1) : '92.3';
+    matrixTfoot.innerHTML = `
+      <tr>
+        <td>รวมทั้งหมด (4 สาขา)</td>
+        <td class="text-emerald-700">${totalResolvedSum.toLocaleString()} ราย</td>
+        <td class="text-rose-600">${totalFloodSum.toLocaleString()} ราย</td>
+        <td class="text-purple-600">${totalTransferSum.toLocaleString()} ราย</td>
+        <td>${totalCrisisSum.toLocaleString()} ราย</td>
+        <td class="text-blue-700 font-extrabold">${overallRate}%</td>
+        <td><span class="badge badge-success">ภาพรวมคลี่คลาย</span></td>
+      </tr>
+    `;
+  }
+}
+window.renderBranchPerformanceMatrixAndKpis = renderBranchPerformanceMatrixAndKpis;
+
 function updateChartsFromLiveDataset() {
   const pending = (AppState.dataStore && AppState.dataStore.pending) || [];
   const resolved = (AppState.dataStore && AppState.dataStore.resolved) || [];
@@ -712,19 +900,13 @@ function updateChartsFromLiveDataset() {
     AppState.branchChart.update();
   }
 
-  // 2. Update Daily Comparison Chart
-  if (AppState.dailyChart && AppState.dailyChart.data && AppState.dailyChart.data.datasets) {
-    const currentPending = pending.length;
-    const currentResolved = resolved.length;
-    const ds = AppState.dailyChart.data.datasets;
-    if (ds && ds.length >= 2) {
-      if (ds[0] && ds[0].data) ds[0].data[ds[0].data.length - 1] = currentPending;
-      if (ds[1] && ds[1].data) ds[1].data[ds[1].data.length - 1] = currentResolved;
-      AppState.dailyChart.update();
-    }
-  }
+  // 2. Update Daily Progression Table and Daily Chart
+  renderDailyProgressTableAndChart();
 
-  // 3. Update Duration Trend Chart
+  // 3. Update Branch Matrix Table and Branch KPI cards
+  renderBranchPerformanceMatrixAndKpis();
+
+  // 4. Update Duration Trend Chart
   if (AppState.durationChart && AppState.durationChart.data && AppState.durationChart.data.datasets) {
     const pendingRam = pending.filter(p => p.branch === 'สาขารามอินทรา').length;
     const pendingKtp = pending.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
@@ -1938,16 +2120,18 @@ function exportTableToCsv() {
 // 7. Page 1: Daily Detail Modal (Drilldown)
 // ==========================================
 const DAILY_METRICS_INFO = {
-  '2026-09-26': { label: '26 ก.ย. 2569 (เสาร์)', dailyResolved: 1, cumResolved: 1, pending: 2686, rate: '0.1%', note: 'วันเกิดเหตุวิกฤตน้ำท่วมฉับพลันและเริ่มบันทึกการโอนงานสิ้นวัน' },
-  '2026-09-28': { label: '28 ก.ย. 2569 (จันทร์)', dailyResolved: 1152, cumResolved: 1153, pending: 1534, rate: '42.9%', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
-  '2026-09-29': { label: '29 ก.ย. 2569 (อังคาร)', dailyResolved: 624, cumResolved: 1777, pending: 910, rate: '66.1%', note: 'คลี่คลายต่อเนื่องในโซนพื้นที่น้ำลด สาขากรุงเทพกรีฑาเริ่มกลับมาส่งได้' },
-  '2026-09-30': { label: '30 ก.ย. 2569 (พุธ)', dailyResolved: 232, cumResolved: 2009, pending: 678, rate: '74.8%', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 2,000 ราย' },
-  '2026-10-01': { label: '1 ต.ค. 2569 (พฤหัส)', dailyResolved: 299, cumResolved: 2308, pending: 379, rate: '85.9%', note: 'เข้าส่งซ้ำในพื้นที่น้ำท่วมสูงกรุงเทพกรีฑาและรามอินทรา' },
-  '2026-10-02': { label: '2 ต.ค. 2569 (ศุกร์)', dailyResolved: 24, cumResolved: 2332, pending: 355, rate: '86.8%', note: 'เข้าแก้ไขกลุ่มเคสตกค้างและจุดน้ำลดระดับ' },
-  '2026-10-03': { label: '3 ต.ค. 2569 (เสาร์)', dailyResolved: 12, cumResolved: 2344, pending: 343, rate: '87.2%', note: 'เก็บตกรอบสัปดาห์แรก คลี่คลายได้ 87.2%' },
-  '2026-10-05': { label: '5 ต.ค. 2569 (จันทร์)', dailyResolved: 21, cumResolved: 2365, pending: 322, rate: '88.0%', note: 'เริ่มรอบสัปดาห์ใหม่ เข้าพื้นที่จุดน้ำท่วมเดิมซ้ำ' },
-  '2026-10-06': { label: '6 ต.ค. 2569 (อังคาร)', dailyResolved: 14, cumResolved: 2379, pending: 308, rate: '88.5%', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 88.5%' },
-  '2026-10-07': { label: '7 ต.ค. 2569 (ปัจจุบัน)', dailyResolved: 8, cumResolved: 2387, pending: 300, rate: '88.8%', note: 'สถานะปัจจุบัน คงเหลือกลุ่มน้ำท่วมลึกและโอนงานที่กำลังติดตามประสานงาน' }
+  '2026-09-26': { label: '26 ก.ย. 2569 (เสาร์)', dailyResolved: 0, cumResolved: 0, pending: 5072, rate: '0.0%', note: 'วันเกิดเหตุวิกฤตน้ำท่วมฉับพลันและเริ่มบันทึกการโอนงานสิ้นวัน' },
+  '2026-09-27': { label: '27 ก.ย. 2569 (อาทิตย์)', dailyResolved: 4, cumResolved: 4, pending: 5068, rate: '0.1%', note: 'เริ่มส่งมอบน้ำบรรเทาความเดือดร้อนเบื้องต้นในพื้นที่เข้าถึงได้' },
+  '2026-09-28': { label: '28 ก.ย. 2569 (จันทร์)', dailyResolved: 145, cumResolved: 149, pending: 4923, rate: '2.9%', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
+  '2026-09-29': { label: '29 ก.ย. 2569 (อังคาร)', dailyResolved: 102, cumResolved: 251, pending: 4821, rate: '4.9%', note: 'คลี่คลายต่อเนื่องในโซนพื้นที่น้ำลด สาขากรุงเทพกรีฑาเริ่มกลับมาส่งได้' },
+  '2026-09-30': { label: '30 ก.ย. 2569 (พุธ)', dailyResolved: 75, cumResolved: 326, pending: 4746, rate: '6.4%', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 326 ราย' },
+  '2026-10-01': { label: '1 ต.ค. 2569 (พฤหัส)', dailyResolved: 100, cumResolved: 426, pending: 4646, rate: '8.4%', note: 'เข้าส่งซ้ำในพื้นที่น้ำท่วมสูงกรุงเทพกรีฑาและรามอินทรา' },
+  '2026-10-02': { label: '2 ต.ค. 2569 (ศุกร์)', dailyResolved: 226, cumResolved: 652, pending: 4420, rate: '12.9%', note: 'เข้าแก้ไขกลุ่มเคสตกค้างและจุดน้ำลดระดับ' },
+  '2026-10-03': { label: '3 ต.ค. 2569 (เสาร์)', dailyResolved: 2149, cumResolved: 2801, pending: 2271, rate: '55.2%', note: 'เคลียร์ส่งมอบสำเร็จครั้งใหญ่สะสมทะลุ 2,800 ราย (55.2%)' },
+  '2026-10-04': { label: '4 ต.ค. 2569 (อาทิตย์)', dailyResolved: 42, cumResolved: 2843, pending: 2229, rate: '56.1%', note: 'เก็บตกรอบสุดสัปดาห์ในจุดที่น้ำลด' },
+  '2026-10-05': { label: '5 ต.ค. 2569 (จันทร์)', dailyResolved: 865, cumResolved: 3708, pending: 1364, rate: '73.1%', note: 'เปิดสัปดาห์ใหม่ เข้าส่งสำเร็จเพิ่มอีก 865 ราย (แตะ 73.1%)' },
+  '2026-10-06': { label: '6 ต.ค. 2569 (อังคาร)', dailyResolved: 535, cumResolved: 4243, pending: 829, rate: '83.7%', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 83.7%' },
+  '2026-10-07': { label: '7 ต.ค. 2569 (ปัจจุบัน)', dailyResolved: 436, cumResolved: 4679, pending: 393, rate: '92.3%', note: 'สถานะปัจจุบัน จัดส่งสำเร็จ 92.3% คงเหลือกลุ่มน้ำท่วมลึกและโอนงาน 393 ราย' }
 };
 
 AppState.currentDailyModalDate = '2026-09-28';
@@ -2002,37 +2186,54 @@ function extractMembersForDailyModal(dateStr) {
   const shortDateAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
   const shortDayMonth = `${parseInt(d, 10)}/${parseInt(m, 10)}`;
 
-  const allCrisis = [...(AppState.dataStore.pending || []), ...(AppState.dataStore.resolved || [])];
+  const pendingList = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+  const resolvedList = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
+  const allCrisis = [...pendingList, ...resolvedList];
 
   let matchedItems = [];
 
   allCrisis.forEach(item => {
-    const history = item.history || '';
-    const steps = history.split('➔').map(s => s.trim());
-    let stepForDate = steps.find(s => s.startsWith(shortDateThai) || s.startsWith(shortDateAd) || s.startsWith(shortDayMonth));
-
-    let matched = false;
+    let isMatch = false;
     let dayReason = '';
+    let isSuccess = false;
 
-    if (stepForDate) {
-      matched = true;
-      const match = stepForDate.match(/\[(.*?)\]/);
-      dayReason = match ? match[1] : stepForDate;
-    } else if (item.lastDateIso && item.lastDateIso.startsWith(dateStr)) {
-      matched = true;
-      dayReason = item.lastReason || item.resolvedReason || 'ส่งสำเร็จ';
-    } else if (item.lastDate && (item.lastDate === shortDateThai || item.lastDate === shortDateAd)) {
-      matched = true;
-      dayReason = item.lastReason || item.resolvedReason || 'ส่งสำเร็จ';
+    // 1. Check if resolved on this date
+    if (item.resolvedDateIso && item.resolvedDateIso.startsWith(dateStr)) {
+      isMatch = true;
+      isSuccess = true;
+      dayReason = item.resolvedStatus || item.resolvedReason || 'ส่งสำเร็จ';
+    } else if (item.resolvedDate && (item.resolvedDate === shortDateThai || item.resolvedDate === shortDateAd)) {
+      isMatch = true;
+      isSuccess = true;
+      dayReason = item.resolvedStatus || item.resolvedReason || 'ส่งสำเร็จ';
     }
 
-    if (matched) {
-      const isFlood = dayReason.includes('น้ำท่วม') || dayReason.includes('รอน้ำลด');
+    // 2. Check history steps or lastDate
+    if (!isMatch) {
+      const history = item.history || '';
+      const steps = history.split('➔').map(s => s.trim());
+      const stepForDate = steps.find(s => s.startsWith(shortDateThai) || s.startsWith(shortDateAd) || s.startsWith(shortDayMonth));
+      if (stepForDate) {
+        isMatch = true;
+        const match = stepForDate.match(/\[(.*?)\]/);
+        dayReason = match ? match[1] : stepForDate;
+      } else if (item.lastDateIso && item.lastDateIso.startsWith(dateStr)) {
+        isMatch = true;
+        dayReason = item.lastReason || item.pendingCategory || 'ติดตามการจัดส่ง';
+      } else if (item.lastDate && (item.lastDate === shortDateThai || item.lastDate === shortDateAd)) {
+        isMatch = true;
+        dayReason = item.lastReason || item.pendingCategory || 'ติดตามการจัดส่ง';
+      }
+    }
+
+    if (isMatch) {
+      if (!isSuccess) {
+        isSuccess = dayReason.includes('ปกติ') || dayReason.includes('ตั้งถัง') || dayReason.includes('สำเร็จ') || dayReason.includes('ส่งแล้ว') || dayReason.includes('Job 30') || dayReason.includes('พบลูกค้า');
+      }
       const isTransfer = dayReason.includes('โอนงาน') || dayReason.includes('เลื่อนวันที่ส่ง') || dayReason.includes('ข้อผิดพลาด');
-      const isSuccess = dayReason.includes('ปกติ') || dayReason.includes('ตั้งถัง') || dayReason.includes('สำเร็จ') || dayReason.includes('ส่งแล้ว');
 
       let statusBadgeHtml = isSuccess
-        ? `<span class="badge badge-success">ส่งสำเร็จ</span>`
+        ? `<span class="badge badge-success">ส่งสำเร็จ (${dayReason})</span>`
         : (isTransfer ? `<span class="badge badge-purple">โอนงาน / เลื่อนส่ง</span>` : `<span class="badge badge-danger">น้ำท่วมสูง</span>`);
 
       matchedItems.push({
@@ -2049,12 +2250,9 @@ function extractMembersForDailyModal(dateStr) {
     }
   });
 
-  // Fallback: If no explicit date attempt records (e.g. current day 7 Oct or 3 Oct), show active pending & resolved cohort
+  // Fallback if no explicit date attempt records
   if (matchedItems.length === 0 && allCrisis.length > 0) {
-    const cohort = (AppState.dataStore.pending && AppState.dataStore.pending.length > 0)
-      ? AppState.dataStore.pending.slice(0, 100)
-      : allCrisis.slice(0, 100);
-
+    const cohort = (pendingList.length > 0) ? pendingList.slice(0, 100) : allCrisis.slice(0, 100);
     matchedItems = cohort.map(item => {
       const isPending = !!item.pendingCategory;
       const isTransfer = item.pendingCategory === 'โอนงานสิ้นวัน';
