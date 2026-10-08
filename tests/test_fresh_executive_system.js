@@ -59,9 +59,9 @@ pages.forEach(p => {
 // 4. Page 1 Content Verification
 console.log('\n[4. Page 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา & กราฟเปรียบเทียบวัน]');
 assert(html.includes('100') && html.includes('สาขาพระราม 3'), 'Rama 3 success metric present');
-assert((html.includes('99.9%') || html.includes('98.4%') || html.includes('99.2%')) && html.includes('สาขาสุขุมวิท 50'), 'Sukhumvit 50 success metric present');
-assert((html.includes('91.7%') || html.includes('74.5%') || html.includes('95.6%')) && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha success metric present');
-assert((html.includes('80.9%') || html.includes('58.2%') || html.includes('84.5%')) && html.includes('สาขารามอินทรา'), 'Ram Intra success metric present');
+assert((html.includes('99.9%') || html.includes('98.4%') || html.includes('99.2%') || html.includes('99.4%')) && html.includes('สาขาสุขุมวิท 50'), 'Sukhumvit 50 success metric present');
+assert((html.includes('91.7%') || html.includes('74.5%') || html.includes('95.6%') || html.includes('95.7%')) && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha success metric present');
+assert((html.includes('80.9%') || html.includes('58.2%') || html.includes('84.5%') || html.includes('84.9%')) && html.includes('สาขารามอินทรา'), 'Ram Intra success metric present');
 assert(html.includes('id="chartDailyComparison"'), 'Day-by-Day comparison chart canvas #chartDailyComparison exists');
 assert(html.includes('id="chartBranchCompare"'), 'Comparison bar chart canvas #chartBranchCompare exists');
 assert(html.includes('id="chartDurationTrend"'), 'Duration trend chart canvas #chartDurationTrend exists');

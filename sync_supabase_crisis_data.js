@@ -113,8 +113,14 @@ async function syncAndEvaluate() {
                         r.includes('ลูกค้าอยู่บ้าน') ||
                         r.includes('ส่งสำเร็จ') ||
                         s === 'เข้าส่งได้' ||
-                        s === 'สำเร็จ';
-      const isFailed = r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('น้ำท่วม') || r.includes('เกิดข้อผิดพลาด');
+                        s === 'สำเร็จ' ||
+                        r.includes('ถนนปิด') ||
+                        r.includes('ลิฟท์') ||
+                        r.includes('อาคารไม่อนุญาต') ||
+                        s.includes('ถนนปิด') ||
+                        s.includes('ลิฟท์') ||
+                        s.includes('อาคารไม่อนุญาต');
+      const isFailed = (r.includes('ไม่สามารถเข้าส่งได้') && !r.includes('ถนนปิด') && !r.includes('ลิฟท์') && !r.includes('อาคารไม่อนุญาต')) || r.includes('เลื่อนวันที่ส่ง') || r.includes('น้ำท่วม') || r.includes('เกิดข้อผิดพลาด');
       return isSuccess && !isFailed;
     });
 
@@ -130,9 +136,9 @@ async function syncAndEvaluate() {
     // ตรวจสอบสถานะรอบล่าสุด
     // สถานะวิกฤตน้ำท่วม: ต้องมีคำว่าน้ำท่วม
     const isLatestFlood = r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || s.includes('รอน้ำลด');
-    // สถานะโอนงาน/ข้อผิดพลาดค้างส่ง: ต้องเป็นข้อผิดพลาดจริง ไม่ใช่การขาดส่งปกติ (เช่น ไม่รับน้ำ ไม่พบถัง)
-    const isNormalReason = r.includes('ไม่รับน้ำ') || r.includes('ไม่พบถัง') || r.includes('ตั้งถัง') || r.includes('พบลูกค้า') || r.includes('อยู่บ้าน') || r.includes('ส่งสำเร็จ');
-    const isLatestTransferError = !isNormalReason && (r.includes('เกิดข้อผิดพลาด') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || r.includes('โอนงาน'));
+    // สถานะโอนงาน/ข้อผิดพลาดค้างส่ง: ต้องเป็นข้อผิดพลาดจริง ไม่ใช่การขาดส่งปกติ (เช่น ไม่รับน้ำ ไม่พบถัง หรืออุปสรรคอาคาร/ถนนที่กำหนดเป็นสำเร็จ)
+    const isNormalReason = r.includes('ไม่รับน้ำ') || r.includes('ไม่พบถัง') || r.includes('ตั้งถัง') || r.includes('พบลูกค้า') || r.includes('อยู่บ้าน') || r.includes('ส่งสำเร็จ') || r.includes('ถนนปิด') || r.includes('ลิฟท์') || r.includes('อาคารไม่อนุญาต');
+    const isLatestTransferError = !isNormalReason && (r.includes('เกิดข้อผิดพลาด') || r.includes('เลื่อนวันที่ส่ง') || dg === 'ยังส่งไม่ได้' || r.includes('โอนงาน') || (r.includes('ไม่สามารถเข้าส่งได้') && !r.includes('ถนนปิด') && !r.includes('ลิฟท์') && !r.includes('อาคารไม่อนุญาต')));
 
     // สมาชิกจะเป็น "ยังไม่ได้รับน้ำ (Pending)" ก็ต่อเมื่อ:
     // 1. ไม่เคยมีรอบใดจัดส่งสำเร็จเลย (hasAnySuccessAttempt = false) และ

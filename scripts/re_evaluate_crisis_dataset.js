@@ -43,6 +43,13 @@ function isSuccessReason(reason, status) {
   const r = (reason || '').trim();
   const s = (status || '').trim();
 
+  // Operational restrictions requested to be treated as success (สำเร็จ):
+  // ถนนปิดปรับปรุง, ลิฟท์เสีย, อาคารไม่อนุญาตให้ขึ้นส่ง
+  if (r.includes('ถนนปิด') || r.includes('ลิฟท์') || r.includes('อาคารไม่อนุญาต') ||
+      s.includes('ถนนปิด') || s.includes('ลิฟท์') || s.includes('อาคารไม่อนุญาต')) {
+    return true;
+  }
+
   // Explicit success indicators
   if (r.includes('ลูกค้าตั้งถัง') || r.includes('ตั้งถัง')) return true;
   if (r.includes('ลูกค้าอยู่บ้าน') || r.includes('พบลูกค้า')) return true;
@@ -60,6 +67,12 @@ function isSuccessReason(reason, status) {
 function isFailureReason(reason, status) {
   const r = (reason || '').trim();
   const s = (status || '').trim();
+
+  // Operational restrictions treated as success, not failure
+  if (r.includes('ถนนปิด') || r.includes('ลิฟท์') || r.includes('อาคารไม่อนุญาต') ||
+      s.includes('ถนนปิด') || s.includes('ลิฟท์') || s.includes('อาคารไม่อนุญาต')) {
+    return null;
+  }
 
   if (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || r.includes('รอน้ำลด')) return 'น้ำท่วมสูงไม่สามารถส่งได้';
   if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด')) return 'โอนงานสิ้นวัน';

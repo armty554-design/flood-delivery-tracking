@@ -52,6 +52,14 @@ function isSuccessReason(reason, status, round, note) {
   const ro = (round || '').trim();
   const n = (note || '').trim();
 
+  // Operational restrictions requested to be treated as success (สำเร็จ):
+  // ถนนปิดปรับปรุง, ลิฟท์เสีย, อาคารไม่อนุญาตให้ขึ้นส่ง
+  if (r.includes('ถนนปิด') || r.includes('ลิฟท์') || r.includes('อาคารไม่อนุญาต') ||
+      s.includes('ถนนปิด') || s.includes('ลิฟท์') || s.includes('อาคารไม่อนุญาต') ||
+      n.includes('ถนนปิด') || n.includes('ลิฟท์') || n.includes('อาคารไม่อนุญาต')) {
+    return true;
+  }
+
   // Job 30 Auto Closure is considered SUCCESS (สำเร็จแล้ว)
   if (isJob30AutoClose({ round: ro, note: n, reason: r, status: s })) return true;
 
@@ -73,8 +81,14 @@ function isFailureReason(reason, status) {
   const r = (reason || '').trim();
   const s = (status || '').trim();
 
+  // Operational restrictions are treated as success, not failure
+  if (r.includes('ถนนปิด') || r.includes('ลิฟท์') || r.includes('อาคารไม่อนุญาต') ||
+      s.includes('ถนนปิด') || s.includes('ลิฟท์') || s.includes('อาคารไม่อนุญาต')) {
+    return null;
+  }
+
   if (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || r.includes('รอน้ำลด')) return 'น้ำท่วมสูงไม่สามารถส่งได้';
-  if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด') || r.includes('ถนนปิด') || r.includes('ลิฟท์เสีย') || r.includes('อาคารไม่อนุญาต')) return 'โอนงานสิ้นวัน';
+  if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด')) return 'โอนงานสิ้นวัน';
   if (r.includes('โอนงาน') || s.includes('โอนงาน')) return 'โอนงานสิ้นวัน';
 
   return null;
@@ -85,6 +99,15 @@ function formatShortThaiDate(dateStr) {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return String(dateStr).substring(0, 10);
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear() + 543}`;
+}
+
+function isCrisisOrder(o) {
+  const r = (o.reason || '').trim();
+  const s = (o.status || '').trim();
+  if (o.is_transferred === true) return true;
+  if (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || r.includes('รอน้ำลด')) return true;
+  if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด') || r.includes('โอนงาน') || s.includes('โอนงาน')) return true;
+  return false;
 }
 
 async function auditAndReevaluate() {
@@ -113,7 +136,7 @@ async function auditAndReevaluate() {
     // Sort chronologically ascending
     list.sort((a, b) => new Date(a.delivery_date).getTime() - new Date(b.delivery_date).getTime() || a.id - b.id);
 
-    const hasCrisis = list.some(o => isFailureReason(o.reason, o.status) !== null);
+    const hasCrisis = list.some(o => isCrisisOrder(o));
     if (!hasCrisis) continue;
 
     const latest = list[list.length - 1];
