@@ -767,12 +767,24 @@ function isSuccessReason(reason, status) {
 }
 window.isSuccessReason = isSuccessReason;
 
+function isSystemAutoCancel(row) {
+  const round = String(row.round || '').trim();
+  const note = String(row.note || '').trim();
+  const reason = String(row.reason || '').trim();
+
+  if (round.includes('ยกเลิก') && (!reason || reason === '-' || reason === 'ปกติ')) return true;
+  if (note.includes('auto ปิด Job') || note.includes('ยกเลิกอัตโนมัติ') || note.includes('Job 30')) return true;
+
+  return false;
+}
+window.isSystemAutoCancel = isSystemAutoCancel;
+
 function isFailureReason(reason, status) {
   const r = String(reason || '').trim();
   const s = String(status || '').trim();
 
   if (r.includes('น้ำท่วม') || s.includes('น้ำท่วม') || r.includes('รอน้ำลด')) return 'น้ำท่วมสูงไม่สามารถส่งได้';
-  if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด')) return 'โอนงานสิ้นวัน';
+  if (r.includes('ไม่สามารถเข้าส่งได้') || r.includes('เลื่อนวันที่ส่ง') || r.includes('เกิดข้อผิดพลาด') || r.includes('ถนนปิด') || r.includes('ลิฟท์เสีย') || r.includes('อาคารไม่อนุญาต')) return 'โอนงานสิ้นวัน';
   if (r.includes('โอนงาน') || s.includes('โอนงาน')) return 'โอนงานสิ้นวัน';
 
   return null;
@@ -800,6 +812,9 @@ function syncAppWithNewRecords(records) {
   sortedRecords.forEach(row => {
     const memberId = String(row.member_id || '').trim();
     if (!memberId) return;
+
+    // Ignore system auto-cancel records that do not represent physical delivery runs
+    if (isSystemAutoCancel(row)) return;
 
     const dateIso = row.delivery_date || '';
     if (dateIso && (!maxDate || dateIso > maxDate)) maxDate = dateIso;

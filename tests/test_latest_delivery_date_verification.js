@@ -15,12 +15,12 @@ console.log('\n[2. Verifying Member Latest Status Categorization]');
 const pendingData = JSON.parse(fs.readFileSync('data/pending_latest.json', 'utf8'));
 const resolvedData = JSON.parse(fs.readFileSync('data/resolved_latest.json', 'utf8'));
 
-console.log(`  Pending Count: ${pendingData.length} (Expected: 398)`);
-console.log(`  Resolved Count: ${resolvedData.length} (Expected: 4,674)`);
+console.log(`  Pending Count: ${pendingData.length} (Expected: 442)`);
+console.log(`  Resolved Count: ${resolvedData.length} (Expected: 4,630)`);
 console.log(`  Total Evaluated: ${pendingData.length + resolvedData.length} (Expected: 5,072)`);
 
-assert(pendingData.length === 398, `Pending count must be 398 (actual: ${pendingData.length})`);
-assert(resolvedData.length === 4674, `Resolved count must be 4,674 (actual: ${resolvedData.length})`);
+assert(pendingData.length === 442, `Pending count must be 442 (actual: ${pendingData.length})`);
+assert(resolvedData.length === 4630, `Resolved count must be 4,630 (actual: ${resolvedData.length})`);
 assert(pendingData.length + resolvedData.length === 5072, 'Total count must be 5,072');
 
 // 3. Rule 1 Check: Every pending member MUST have their latest status as flood or transfer, NEVER success/ตั้งถัง
@@ -29,7 +29,7 @@ let invalidPendingCount = 0;
 pendingData.forEach(p => {
   const isSuccess = p.lastReason && (p.lastReason.includes('ตั้งถัง') || p.lastReason.includes('พบลูกค้า') || p.lastReason.includes('ส่งสำเร็จ') || p.lastReason.includes('ปกติ'));
   const isFlood = p.isFlood || (p.lastReason && p.lastReason.includes('น้ำท่วม')) || (p.pendingCategory && p.pendingCategory.includes('น้ำท่วม'));
-  const isTransfer = p.isTransfer || (p.lastReason && p.lastReason.includes('โอนงาน')) || (p.pendingCategory && p.pendingCategory.includes('โอนงาน')) || (p.lastReason && p.lastReason.includes('เลื่อนวันที่ส่ง'));
+  const isTransfer = p.isTransfer || (p.lastReason && p.lastReason.includes('โอนงาน')) || (p.pendingCategory && p.pendingCategory.includes('โอนงาน')) || (p.lastReason && p.lastReason.includes('เลื่อนวันที่ส่ง')) || (p.lastReason && p.lastReason.includes('ไม่สามารถเข้าส่งได้'));
   if (isSuccess || (!isFlood && !isTransfer)) {
     invalidPendingCount++;
     console.error(`  Invalid pending item: ${p.memberId} - ${p.name} - reason: ${p.lastReason}`);
@@ -50,6 +50,18 @@ const r250489 = resolvedData.find(r => r.memberId === '250489');
 assert(!p250489, 'Member 250489 (สมาร์ท โค พัฒนาระบบ จำกัด) MUST NOT be in pending');
 assert(r250489 && (r250489.resolvedStatus || '').includes('พบลูกค้า'), 'Member 250489 MUST be in resolved (ลูกค้าอยู่บ้าน(พบลูกค้า))');
 console.log('  ✔ PASS: Member 250489 (สมาร์ท โค พัฒนาระบบ จำกัด) verified as Resolved (พบลูกค้า) and excluded from Pending Map');
+
+const p267016 = pendingData.find(p => p.memberId === '267016');
+const r267016 = resolvedData.find(r => r.memberId === '267016');
+assert(!p267016, 'Member 267016 MUST NOT be in pending');
+assert(r267016 && (r267016.resolvedStatus || '').includes('ลูกค้าตั้งถัง'), 'Member 267016 MUST be in resolved');
+console.log('  ✔ PASS: Member 267016 (เอกชัย สุขสถาพร) verified as Resolved (ลูกค้าตั้งถัง)');
+
+const p117485 = pendingData.find(p => p.memberId === '117485');
+const r117485 = resolvedData.find(r => r.memberId === '117485');
+assert(!p117485, 'Member 117485 MUST NOT be in pending');
+assert(r117485 && (r117485.resolvedStatus || '').includes('ลูกค้าตั้งถัง'), 'Member 117485 MUST be in resolved (auto-cancel ignored)');
+console.log('  ✔ PASS: Member 117485 verified as Resolved (auto-cancellation excluded)');
 
 // Check other historical benchmark members
 const p249081 = pendingData.find(p => p.memberId === '249081');
@@ -88,9 +100,9 @@ const ramIntra = pendingData.filter(p => p.branch === 'สาขารามอ�
 const krungthep = pendingData.filter(p => p.branch === 'สาขากรุงเทพกรีฑา').length;
 const sukhumvit = pendingData.filter(p => p.branch === 'สาขาสุขุมวิท 50').length;
 console.log('  Branch counts:', { ramIntra, krungthep, sukhumvit });
-assert.strictEqual(ramIntra, 286, 'Ram Intra count must be 286');
-assert.strictEqual(krungthep, 103, 'Krungthep Kreetha count must be 103');
-assert.strictEqual(sukhumvit, 9, 'Sukhumvit 50 count must be 9');
+assert.strictEqual(ramIntra, 307, 'Ram Intra count must be 307');
+assert.strictEqual(krungthep, 124, 'Krungthep Kreetha count must be 124');
+assert.strictEqual(sukhumvit, 11, 'Sukhumvit 50 count must be 11');
 console.log('  ✔ PASS: Branch distribution verified');
 
 // 6. Check HTML & JS Map elements

@@ -46,8 +46,9 @@ async function inspectMember(memberId) {
 }
 
 async function main() {
-  await inspectMember('252998');
-  await inspectMember('250489');
+  await inspectMember('117485');
+  await inspectMember('154781');
+  await inspectMember('224899');
 }
 
 main().catch(console.error);
