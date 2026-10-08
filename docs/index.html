@@ -24,6 +24,9 @@
   <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- SheetJS (Excel .xlsx/.xls/csv Parser) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <!-- Longdo Map JS API v3 -->
   <script src="https://api.longdo.com/map3/?key=82d0b7e65c1ab3653f61021e9733f7d9"></script>
 
@@ -2138,35 +2141,32 @@
         </p>
       </div>
 
-      <!-- Admin Security Gate (PIN 171938) -->
+      <!-- Admin Security Gate (PIN Protected) -->
       <div id="adminAuthGate" class="exec-card max-w-md mx-auto my-12 text-center p-8 shadow-xl border-2 border-indigo-100">
         <div class="w-16 h-16 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-inner">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         </div>
         <h2 class="text-xl font-extrabold text-slate-900">ระบบรักษาความปลอดภัย Admin</h2>
-        <p class="text-xs text-slate-500 mt-1.5 mb-6">กรุณากรอกรหัสผ่าน 6 หลักเพื่อเข้าใช้งานระบบจัดการข้อมูลและอัปเดตฐานข้อมูล</p>
+        <p class="text-xs text-slate-500 mt-1.5 mb-6">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งานระบบจัดการข้อมูลและอัปเดตฐานข้อมูล</p>
 
         <form id="adminPinForm" onsubmit="event.preventDefault(); verifyAdminPin();" class="space-y-4">
           <div class="relative flex items-center">
-            <input type="password" id="adminPinInput" maxlength="15" placeholder="กรอกรหัส 171938" autocomplete="current-password" inputmode="numeric" class="exec-input text-center text-lg font-mono tracking-widest py-3 pr-12 border-2 focus:border-indigo-600">
+            <input type="password" id="adminPinInput" maxlength="20" placeholder="••••••" autocomplete="current-password" inputmode="numeric" class="exec-input text-center text-lg font-mono tracking-widest py-3 pr-12 border-2 focus:border-indigo-600 transition duration-150">
             <button type="button" onclick="togglePinVisibility()" id="btnTogglePin" class="absolute right-3 p-1.5 text-slate-400 hover:text-slate-600 transition" title="แสดง/ซ่อนรหัสผ่าน">
               👁️
             </button>
           </div>
-          <div id="adminLoginError" class="text-xs font-bold text-rose-600 hidden py-1.5 bg-rose-50 rounded-lg border border-rose-200">
-            ❌ รหัสผ่านไม่ถูกต้อง (รหัสที่ถูกต้องคือ 171938)
+          <div id="adminLoginError" class="text-xs font-bold text-rose-600 hidden py-2 px-3 bg-rose-50 rounded-lg border border-rose-200">
+            ❌ รหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง
           </div>
           <div class="flex flex-col gap-2 pt-1">
-            <button type="button" onclick="verifyAdminPin()" id="btnAdminLogin" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
+            <button type="submit" id="btnAdminLogin" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
               <span>🔓 เข้าสู่ระบบ Admin</span>
-            </button>
-            <button type="button" onclick="quickAdminLogin()" class="w-full py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs rounded-xl border border-indigo-200 transition flex items-center justify-center gap-1.5 cursor-pointer">
-              <span>⚡ เข้าสู่ระบบทันทีด้วยรหัสผ่าน 171938</span>
             </button>
           </div>
         </form>
         <div class="mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-400">
-          เฉพาะผู้ดูแลระบบและเจ้าหน้าที่ที่ได้รับมอบหมายเท่านั้น (รหัสผ่านความปลอดภัย: <strong>171938</strong>)
+          เฉพาะผู้ดูแลระบบและเจ้าหน้าที่ที่ได้รับมอบหมายเท่านั้น (หากลืมรหัสผ่าน กรุณาติดต่อ Admin ผู้ดูแลระบบ)
         </div>
       </div>
 
@@ -2347,27 +2347,106 @@
       <div class="exec-card">
         <div class="exec-card-header">
           <div>
-            <h3 class="font-bold text-base text-slate-900">นำเข้าข้อมูลใหม่ (Excel / CSV Uploader)</h3>
-            <p class="text-xs text-slate-500">รองรับคอลัมน์มาตรฐาน 13 คอลัมน์ (รหัสสมาชิก, ชื่อลูกค้า, วันที่, รอบ, เหตุผล, เบอร์รถ, สาขา, พิกัด GPS, โอนงานสิ้นวัน)</p>
+            <h3 class="font-bold text-base text-slate-900">นำเข้าข้อมูลใหม่ (Excel / CSV Uploader & Batch Sync)</h3>
+            <p class="text-xs text-slate-500">รองรับไฟล์ Excel (.xlsx, .xls) และ CSV พร้อมระบบจับคู่คอลัมน์และนำเข้าสู่ตาราง delivery_orders ใน Supabase Cloud อัตโนมัติ</p>
           </div>
-          <span class="badge badge-blue">อัตโนมัติ 13 คอลัมน์</span>
+          <span class="badge badge-blue">Excel / CSV Parser</span>
         </div>
 
-        <input type="file" id="adminFileInput" accept=".csv, .xlsx, .xls" class="hidden">
-        <div id="adminDropZone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/50 rounded-xl p-8 text-center cursor-pointer transition">
-          <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 mx-auto flex items-center justify-center mb-3">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        <input type="file" id="adminFileInput" accept=".xlsx, .xls, .csv" class="hidden">
+        
+        <!-- Dropzone Area -->
+        <div id="adminDropZone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 hover:bg-blue-50/50 rounded-2xl p-8 text-center cursor-pointer transition">
+          <div class="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 mx-auto flex items-center justify-center mb-3 shadow-inner">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
           </div>
-          <div class="font-bold text-sm text-slate-800">ลากและวางไฟล์ Excel (.xlsx) หรือ CSV ที่นี่ หรือคลิกเพื่อเลือกไฟล์</div>
-          <p class="text-xs text-slate-400 mt-1">ไฟล์จะถูกตรวจสอบและอัปเดตตรงเข้าตาราง delivery_orders ใน Supabase</p>
-          <div id="adminFileNameLabel" class="mt-3 text-xs text-blue-700 bg-blue-100 py-1 px-3 rounded-full inline-block hidden"></div>
+          <div class="font-bold text-base text-slate-800">ลากและวางไฟล์ Excel (.xlsx, .xls) หรือ CSV ที่นี่ หรือคลิกเพื่อเลือกไฟล์</div>
+          <p class="text-xs text-slate-400 mt-1">รองรับรายงานรอบจัดส่งน้ำ, รายงานสรุปเหตุขาดส่ง, ข้อมูลออเดอร์รายวัน (วิเคราะห์และนำเข้าทันที)</p>
+          <div id="adminFileNameLabel" class="mt-3 text-xs text-blue-700 bg-blue-100 py-1.5 px-4 rounded-full inline-block font-semibold hidden"></div>
         </div>
 
-        <div class="mt-4 flex justify-end">
-          <button id="btnAdminUpload" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition">
-            🚀 ประมวลผลและนำเข้าสู่ Supabase
-          </button>
+        <!-- File Parsed & Analysis Preview Container (Hidden initially) -->
+        <div id="adminUploadPreviewContainer" class="hidden mt-5 space-y-4 pt-4 border-t border-slate-200">
+          
+          <!-- File Overview Stats Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl">
+              <span class="text-[11px] font-bold text-blue-600 uppercase">📦 จำนวนรายการ</span>
+              <div id="uploadStatRowCount" class="text-xl font-extrabold text-blue-900 mt-0.5">0 รายการ</div>
+            </div>
+            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+              <span class="text-[11px] font-bold text-emerald-600 uppercase">🏢 จำแนกสาขา</span>
+              <div id="uploadStatBranches" class="text-xs font-bold text-emerald-900 mt-1 truncate">-</div>
+            </div>
+            <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-xl">
+              <span class="text-[11px] font-bold text-indigo-600 uppercase">📅 วันที่ในไฟล์</span>
+              <div id="uploadStatDates" class="text-xs font-bold text-indigo-900 mt-1 truncate">-</div>
+            </div>
+            <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <span class="text-[11px] font-bold text-amber-600 uppercase">⚠️ น้ำท่วม / โอนงาน</span>
+              <div id="uploadStatCrisis" class="text-xs font-bold text-amber-900 mt-1 truncate">-</div>
+            </div>
+          </div>
+
+          <!-- Preview Table Accordion -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+            <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-xs text-slate-800">ตัวอย่างข้อมูลที่ตรวจพบ (Preview 5 รายการแรก)</span>
+                <span id="uploadPreviewSheetName" class="badge badge-blue text-[10px]">Sheet1</span>
+              </div>
+              <span class="text-[11px] text-slate-500">ตรวจสอบความถูกต้องก่อนบันทึก</span>
+            </div>
+            <div class="overflow-x-auto max-h-60">
+              <table class="exec-table text-xs">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>รหัสสมาชิก</th>
+                    <th>ชื่อลูกค้า</th>
+                    <th>วันที่</th>
+                    <th>รอบ</th>
+                    <th>สาขา</th>
+                    <th>เบอร์รถ</th>
+                    <th>เหตุผล / สถานะ</th>
+                  </tr>
+                </thead>
+                <tbody id="uploadPreviewTableBody">
+                  <!-- Generated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Upload Progress Bar (Hidden during idle) -->
+          <div id="adminUploadProgressBarContainer" class="hidden p-4 bg-indigo-50 border border-indigo-200 rounded-xl space-y-2">
+            <div class="flex items-center justify-between text-xs font-bold text-indigo-950">
+              <div class="flex items-center gap-2">
+                <span class="live-pulse"></span>
+                <span id="adminUploadProgressLabel">กำลังบันทึกข้อมูลเข้า Supabase Cloud...</span>
+              </div>
+              <span id="adminUploadProgressPercent" class="text-blue-700 font-mono text-sm font-extrabold">0%</span>
+            </div>
+            <div class="w-full bg-indigo-200/70 rounded-full h-3.5 overflow-hidden p-0.5">
+              <div id="adminUploadProgressBar" class="bg-gradient-to-r from-blue-600 to-indigo-600 h-full rounded-full transition-all duration-200" style="width: 0%"></div>
+            </div>
+            <div id="adminUploadProgressDetail" class="text-[11px] text-indigo-700 font-medium">กำลังเตรียมชุดข้อมูล...</div>
+          </div>
+
+          <!-- Upload Actions Bar -->
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+            <button type="button" onclick="resetAdminUploadState()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition cursor-pointer">
+              🔄 ยกเลิก / เลือกไฟล์ใหม่
+            </button>
+            <div class="flex items-center gap-2">
+              <button id="btnAdminUpload" onclick="startParsedDataUpload()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer">
+                <span>🚀 ประมวลผลและนำเข้าสู่ Supabase Cloud</span>
+              </button>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
       <!-- Transfer Matrix Analytics -->

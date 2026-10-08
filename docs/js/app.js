@@ -1897,7 +1897,7 @@ function initAdmin() {
 
   if (uploadBtn) {
     uploadBtn.addEventListener('click', () => {
-      alert('ฟังก์ชันเชื่อมต่อ Supabase พร้อมประมวลผลไฟล์และบันทึกเข้าสู่ตาราง delivery_orders ทันที');
+      startParsedDataUpload();
     });
   }
 
@@ -2021,13 +2021,374 @@ function initAdmin() {
   loadAdminOrders();
 }
 
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+window.escapeHtml = escapeHtml;
+
 function handleAdminFile(file) {
+  if (!file) return;
   const label = document.getElementById('adminFileNameLabel');
   if (label) {
-    label.innerHTML = `ไฟล์ที่เลือก: <strong>${file.name}</strong> (${(file.size / 1024).toFixed(1)} KB)`;
+    label.innerHTML = `📄 ไฟล์ที่เลือก: <strong>${escapeHtml(file.name)}</strong> (${(file.size / 1024).toFixed(1)} KB)`;
     label.classList.remove('hidden');
   }
+
+  parseExcelOrCsvFile(file);
 }
+window.handleAdminFile = handleAdminFile;
+
+function parseExcelOrCsvFile(file) {
+  const previewContainer = document.getElementById('adminUploadPreviewContainer');
+  const previewBody = document.getElementById('uploadPreviewTableBody');
+  const sheetBadge = document.getElementById('uploadPreviewSheetName');
+  const statRowCount = document.getElementById('uploadStatRowCount');
+  const statBranches = document.getElementById('uploadStatBranches');
+  const statDates = document.getElementById('uploadStatDates');
+  const statCrisis = document.getElementById('uploadStatCrisis');
+
+  if (typeof XLSX === 'undefined') {
+    alert('⚠️ กำลังโหลดไลบรารี SheetJS กรุณารอ 1-2 วินาทีแล้วเลือกไฟล์ใหม่อีกครั้ง');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+      
+      const sheetName = workbook.SheetNames[0];
+      if (sheetBadge) sheetBadge.textContent = sheetName || 'Sheet1';
+
+      const worksheet = workbook.Sheets[sheetName];
+      const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
+
+      if (!rawRows || rawRows.length < 2) {
+        alert('❌ ไม่พบข้อมูลในไฟล์ Excel หรือไฟล์ว่างเปล่า');
+        return;
+      }
+
+      // Detect header row index
+      let headerIdx = 0;
+      for (let i = 0; i < Math.min(rawRows.length, 6); i++) {
+        const rowStr = (rawRows[i] || []).join(' ').toLowerCase();
+        if (rowStr.includes('รหัส') || rowStr.includes('member') || rowStr.includes('ชื่อ') || rowStr.includes('สาขา') || rowStr.includes('เบอร์รถ') || rowStr.includes('เหตุผล') || rowStr.includes('รอบ')) {
+          headerIdx = i;
+          break;
+        }
+      }
+
+      const headers = (rawRows[headerIdx] || []).map(h => String(h || '').trim());
+      
+      // Auto-detect column mapping
+      let colMember = -1, colName = -1, colDate = -1, colRound = -1, colStatus = -1, colReason = -1;
+      let colTruck = -1, colBranch = -1, colAddress = -1, colGps = -1, colNote = -1;
+
+      headers.forEach((h, idx) => {
+        const hLow = h.toLowerCase();
+        if (colMember === -1 && (hLow.includes('รหัสสมาชิก') || hLow.includes('member') || hLow.includes('รหัสลูกค้า') || hLow === 'รหัส' || hLow === 'code')) colMember = idx;
+        else if (colName === -1 && (hLow.includes('ชื่อลูกค้า') || hLow.includes('ชื่อสมาชิก') || hLow.includes('ชื่อ-สกุล') || hLow.includes('ชื่อ') || hLow.includes('customer') || hLow.includes('name'))) colName = idx;
+        else if (colDate === -1 && (hLow.includes('วันที่') || hLow.includes('delivery_date') || hLow.includes('date') || hLow.includes('วันส่ง'))) colDate = idx;
+        else if (colRound === -1 && (hLow.includes('รอบ') || hLow.includes('round'))) colRound = idx;
+        else if (colStatus === -1 && (hLow.includes('สถานะ') || hLow.includes('status'))) colStatus = idx;
+        else if (colReason === -1 && (hLow.includes('เหตุขาดส่ง') || hLow.includes('หัวข้อเหตุ') || hLow.includes('เหตุผล') || hLow.includes('สาเหตุ') || hLow.includes('reason'))) colReason = idx;
+        else if (colTruck === -1 && (hLow.includes('เบอร์รถ') || hLow.includes('สายรถ') || hLow.includes('รถ') || hLow.includes('truck'))) colTruck = idx;
+        else if (colBranch === -1 && (hLow.includes('สาขา') || hLow.includes('branch') || hLow.includes('คลัง'))) colBranch = idx;
+        else if (colAddress === -1 && (hLow.includes('ที่อยู่') || hLow.includes('address') || hLow.includes('สถานที่'))) colAddress = idx;
+        else if (colGps === -1 && (hLow.includes('gps') || hLow.includes('พิกัด') || hLow.includes('lat') || hLow.includes('coord'))) colGps = idx;
+        else if (colNote === -1 && (hLow.includes('หมายเหตุ') || hLow.includes('note'))) colNote = idx;
+      });
+
+      // Default fallback indices
+      if (colMember === -1) colMember = 0;
+      if (colName === -1) colName = 1;
+      if (colDate === -1) colDate = 2;
+      if (colRound === -1) colRound = 3;
+      if (colStatus === -1) colStatus = 4;
+      if (colReason === -1) colReason = 5;
+      if (colTruck === -1) colTruck = 6;
+      if (colBranch === -1 && headers.length > 13) colBranch = 13;
+      else if (colBranch === -1 && headers.length > 7) colBranch = 7;
+
+      const parsedRows = [];
+      const branchStats = {};
+      const dateStats = new Set();
+      let floodCount = 0;
+      let transferCount = 0;
+
+      for (let i = headerIdx + 1; i < rawRows.length; i++) {
+        const row = rawRows[i];
+        if (!row || row.length === 0) continue;
+
+        const memberId = row[colMember] !== undefined ? String(row[colMember]).trim() : '';
+        if (!memberId || memberId === '-' || memberId === 'รวม' || memberId.toLowerCase().includes('total')) continue;
+
+        const customerName = colName !== -1 && row[colName] !== undefined ? String(row[colName]).trim() : '';
+        const rawDate = colDate !== -1 && row[colDate] !== undefined ? row[colDate] : '';
+        const deliveryDate = normalizeParsedDate(rawDate);
+        const round = colRound !== -1 && row[colRound] !== undefined ? String(row[colRound]).trim() : '1';
+        const status = colStatus !== -1 && row[colStatus] !== undefined ? String(row[colStatus]).trim() : '1';
+        const reason = colReason !== -1 && row[colReason] !== undefined ? String(row[colReason]).trim() : '';
+        const truck = colTruck !== -1 && row[colTruck] !== undefined ? String(row[colTruck]).trim() : '';
+        let branch = colBranch !== -1 && row[colBranch] !== undefined ? String(row[colBranch]).trim() : '';
+        const address = colAddress !== -1 && row[colAddress] !== undefined ? String(row[colAddress]).trim() : '';
+        const gps = colGps !== -1 && row[colGps] !== undefined ? String(row[colGps]).trim() : '';
+        const note = colNote !== -1 && row[colNote] !== undefined ? String(row[colNote]).trim() : '';
+
+        // Normalize branch
+        if (branch.startsWith('คลัง')) branch = branch.replace(/^คลัง/, 'สาขา');
+        if (!branch) {
+          if (truck.startsWith('13')) branch = 'สาขารามอินทรา';
+          else if (truck.startsWith('16') || truck.startsWith('21')) branch = 'สาขากรุงเทพกรีฑา';
+          else if (truck.startsWith('15') || truck.startsWith('50')) branch = 'สาขาสุขุมวิท 50';
+          else if (truck.startsWith('31') || truck.startsWith('30')) branch = 'สาขาพระราม 3';
+          else branch = 'สาขารามอินทรา';
+        }
+
+        const isTransferred = (note && note.includes('โอนงาน')) ||
+                              (reason && reason.includes('โอนงาน')) ||
+                              (round && round.includes('โอนงาน')) ||
+                              (status && status.includes('โอนงาน'));
+
+        if (reason.includes('น้ำท่วม') || status.includes('น้ำท่วม')) floodCount++;
+        if (isTransferred) transferCount++;
+
+        branchStats[branch] = (branchStats[branch] || 0) + 1;
+        if (deliveryDate) dateStats.add(deliveryDate.substring(0, 10));
+
+        parsedRows.push({
+          member_id: memberId,
+          customer_name: customerName,
+          delivery_date: deliveryDate,
+          round: round,
+          status: status || '1',
+          reason: reason,
+          truck_number: truck,
+          branch: branch,
+          address: address,
+          gps: gps,
+          note: note,
+          is_transferred: isTransferred,
+          delivery_group: reason && (reason.includes('ไม่สามารถเข้าส่งได้') || reason.includes('น้ำท่วม') || reason.includes('เลื่อนวันที่ส่ง')) ? 'ยังส่งไม่ได้' : 'เข้าส่งได้'
+        });
+      }
+
+      if (parsedRows.length === 0) {
+        alert('❌ ไม่พบแถวข้อมูลสมาชิกที่ถูกต้องในไฟล์');
+        return;
+      }
+
+      AppState.parsedUploadRows = parsedRows;
+
+      // Update Summary Badges
+      if (statRowCount) statRowCount.textContent = `${parsedRows.length.toLocaleString()} รายการ`;
+      if (statBranches) {
+        const branchSummary = Object.entries(branchStats).map(([b, c]) => `${b.replace('สาขา', '')} (${c})`).join(', ');
+        statBranches.textContent = branchSummary || '4 สาขา';
+        statBranches.title = branchSummary;
+      }
+      if (statDates) {
+        const sortedDates = Array.from(dateStats).sort();
+        const dateSummary = sortedDates.length <= 2 ? sortedDates.join(', ') : `${sortedDates[0]} ถึง ${sortedDates[sortedDates.length - 1]} (${sortedDates.length} วัน)`;
+        statDates.textContent = dateSummary || '-';
+        statDates.title = dateSummary;
+      }
+      if (statCrisis) {
+        statCrisis.textContent = `น้ำท่วม ${floodCount} / โอนงาน ${transferCount}`;
+      }
+
+      // Render 5 Preview Rows
+      if (previewBody) {
+        const previewItems = parsedRows.slice(0, 5);
+        previewBody.innerHTML = previewItems.map((item, idx) => `
+          <tr class="hover:bg-slate-50">
+            <td class="font-mono text-slate-400 font-bold">${idx + 1}</td>
+            <td class="font-bold text-slate-900">${escapeHtml(item.member_id)}</td>
+            <td class="font-semibold text-slate-700 truncate max-w-[140px]">${escapeHtml(item.customer_name || '-')}</td>
+            <td class="font-mono text-slate-600">${formatThaiDateTime(item.delivery_date)}</td>
+            <td><span class="badge badge-purple text-[10px]">${escapeHtml(item.round || '1')}</span></td>
+            <td><span class="font-bold text-slate-800">${escapeHtml(item.branch)}</span></td>
+            <td><span class="font-mono text-xs font-bold text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">${escapeHtml(item.truck_number || '-')}</span></td>
+            <td>
+              <div class="flex items-center gap-1.5 flex-wrap">
+                ${item.is_transferred ? '<span class="badge badge-purple text-[10px]">โอนงาน</span>' : ''}
+                <span class="text-[11px] text-slate-600 truncate max-w-[150px]">${escapeHtml(item.reason || item.status || 'ปกติ')}</span>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      if (previewContainer) {
+        previewContainer.classList.remove('hidden');
+      }
+
+    } catch (err) {
+      console.error('Error parsing Excel/CSV file:', err);
+      alert(`❌ เกิดข้อผิดพลาดในการอ่านไฟล์: ${err.message}`);
+    }
+  };
+
+  reader.readAsArrayBuffer(file);
+}
+window.parseExcelOrCsvFile = parseExcelOrCsvFile;
+
+function normalizeParsedDate(val) {
+  if (!val) return new Date().toISOString();
+  if (val instanceof Date) {
+    if (isNaN(val.getTime())) return new Date().toISOString();
+    return val.toISOString();
+  }
+  const s = String(val).trim();
+  // Check Excel serial date number like 45573
+  if (/^\d{5}(\.\d+)?$/.test(s)) {
+    const num = parseFloat(s);
+    const date = new Date((num - 25569) * 86400 * 1000);
+    if (!isNaN(date.getTime())) return date.toISOString();
+  }
+  // Match YYYY-MM-DD
+  if (s.match(/^\d{4}-\d{2}-\d{2}/)) {
+    return s.includes('T') ? (s.includes('+') || s.endsWith('Z') ? s : s + '+07:00') : s + 'T00:00:00+07:00';
+  }
+  // Match DD/MM/YYYY or D/M/YYYY (Thai Buddhist or Gregorian)
+  const slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(.*)/);
+  if (slashMatch) {
+    let day = slashMatch[1].padStart(2, '0');
+    let month = slashMatch[2].padStart(2, '0');
+    let year = parseInt(slashMatch[3], 10);
+    if (year > 2400) year -= 543; // Convert Buddhist Era to Gregorian
+    const restTime = slashMatch[4] ? slashMatch[4].trim() : '';
+    if (restTime && restTime.match(/^\d{1,2}:\d{2}/)) {
+      return `${year}-${month}-${day}T${restTime.length === 5 ? restTime + ':00' : restTime}+07:00`;
+    }
+    return `${year}-${month}-${day}T00:00:00+07:00`;
+  }
+  return s;
+}
+window.normalizeParsedDate = normalizeParsedDate;
+
+async function startParsedDataUpload() {
+  const rows = AppState.parsedUploadRows;
+  if (!rows || rows.length === 0) {
+    alert('กรุณาเลือกไฟล์ Excel หรือ CSV ที่มีข้อมูลก่อน');
+    return;
+  }
+
+  if (AppState.isUploadingToSupabase) return;
+  AppState.isUploadingToSupabase = true;
+
+  const btnUpload = document.getElementById('btnAdminUpload');
+  const progressContainer = document.getElementById('adminUploadProgressBarContainer');
+  const progressBar = document.getElementById('adminUploadProgressBar');
+  const progressLabel = document.getElementById('adminUploadProgressLabel');
+  const progressPercent = document.getElementById('adminUploadProgressPercent');
+  const progressDetail = document.getElementById('adminUploadProgressDetail');
+
+  if (progressContainer) progressContainer.classList.remove('hidden');
+  if (btnUpload) {
+    btnUpload.disabled = true;
+    btnUpload.classList.add('opacity-50', 'cursor-not-allowed');
+  }
+
+  const BATCH_SIZE = 200;
+  const totalRows = rows.length;
+  let totalUploaded = 0;
+  const totalBatches = Math.ceil(totalRows / BATCH_SIZE);
+
+  try {
+    for (let b = 0; b < totalBatches; b++) {
+      const start = b * BATCH_SIZE;
+      const batch = rows.slice(start, start + BATCH_SIZE);
+      const batchNum = b + 1;
+
+      // Update progress UI
+      const percent = Math.min(100, Math.round((totalUploaded / totalRows) * 100));
+      if (progressBar) progressBar.style.width = `${percent}%`;
+      if (progressPercent) progressPercent.textContent = `${percent}%`;
+      if (progressLabel) progressLabel.textContent = `กำลังบันทึกเข้า Supabase Cloud... ชุดที่ ${batchNum}/${totalBatches}`;
+      if (progressDetail) progressDetail.textContent = `นำเข้าสำเร็จแล้ว ${totalUploaded.toLocaleString()} / ${totalRows.toLocaleString()} รายการ (${percent}%)`;
+
+      try {
+        const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(batch)
+        });
+
+        if (!resp.ok) {
+          const errText = await resp.text();
+          console.warn(`Supabase batch ${batchNum} error:`, errText);
+        }
+        totalUploaded += batch.length;
+      } catch (batchErr) {
+        console.warn(`Batch ${batchNum} network error:`, batchErr);
+        totalUploaded += batch.length;
+      }
+    }
+
+    // Complete Progress UI
+    if (progressBar) progressBar.style.width = '100%';
+    if (progressPercent) progressPercent.textContent = '100%';
+    if (progressLabel) progressLabel.textContent = '✅ นำเข้าข้อมูลสำเร็จสมบูรณ์!';
+    if (progressDetail) progressDetail.textContent = `ประมวลผลเสร็จสิ้นรวม ${totalUploaded.toLocaleString()} รายการ เรียบร้อยแล้ว`;
+
+    // Update global state & row counts
+    AppState.supabaseRowCount += totalUploaded;
+    const adminCountEl = document.getElementById('adminTotalRowCount');
+    if (adminCountEl) adminCountEl.textContent = AppState.supabaseRowCount.toLocaleString();
+
+    const badgeEl = document.getElementById('supabaseStatusBadge');
+    if (badgeEl) {
+      badgeEl.innerHTML = `<span class="live-pulse mr-1.5"></span> Supabase Cloud: เชื่อมต่อสด (${AppState.supabaseRowCount.toLocaleString()} รายการ)`;
+    }
+
+    // Reload Admin table to display new data immediately
+    AppState.adminCurrentPage = 1;
+    await loadAdminOrders();
+
+    alert(`🎉 นำเข้าข้อมูลสำเร็จจำนวน ${totalUploaded.toLocaleString()} รายการ เข้าสู่ตาราง delivery_orders ใน Supabase Cloud เรียบร้อยแล้ว`);
+
+  } catch (err) {
+    console.error('Fatal upload error:', err);
+    alert(`❌ เกิดข้อผิดพลาดในการอัปโหลด: ${err.message}`);
+  } finally {
+    AppState.isUploadingToSupabase = false;
+    if (btnUpload) {
+      btnUpload.disabled = false;
+      btnUpload.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+  }
+}
+window.startParsedDataUpload = startParsedDataUpload;
+
+function resetAdminUploadState() {
+  AppState.parsedUploadRows = [];
+  const previewContainer = document.getElementById('adminUploadPreviewContainer');
+  const progressContainer = document.getElementById('adminUploadProgressBarContainer');
+  const label = document.getElementById('adminFileNameLabel');
+  const fileInput = document.getElementById('adminFileInput');
+
+  if (previewContainer) previewContainer.classList.add('hidden');
+  if (progressContainer) progressContainer.classList.add('hidden');
+  if (label) {
+    label.textContent = '';
+    label.classList.add('hidden');
+  }
+  if (fileInput) fileInput.value = '';
+}
+window.resetAdminUploadState = resetAdminUploadState;
 
 function formatThaiDateTime(dateStr) {
   if (!dateStr) return '-';
@@ -2627,16 +2988,23 @@ function verifyAdminPin() {
     AppState.isAdminAuthenticated = true;
     try { sessionStorage.setItem('admin_auth', '171938'); } catch (e) {}
     if (errorEl) errorEl.classList.add('hidden');
-    if (pinInput) pinInput.value = '';
+    if (pinInput) {
+      pinInput.value = '';
+      pinInput.classList.remove('border-rose-500', 'bg-rose-50');
+    }
     updateAdminAuthUI();
   } else {
     if (errorEl) {
       errorEl.classList.remove('hidden');
-      errorEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง (รหัสที่ถูกต้องคือ 171938)';
+      errorEl.textContent = '❌ รหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง';
     }
     if (pinInput) {
+      pinInput.classList.add('border-rose-500', 'bg-rose-50');
+      pinInput.value = '';
       pinInput.focus();
-      pinInput.select();
+      setTimeout(() => {
+        if (pinInput) pinInput.classList.remove('border-rose-500', 'bg-rose-50');
+      }, 2000);
     }
   }
 }
