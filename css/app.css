@@ -85,8 +85,8 @@ body.sidebar-collapsed .sidebar-header {
   justify-content: center;
 }
 
-body.sidebar-collapsed #sidebarToggleIcon {
-  transform: rotate(180deg);
+body.sidebar-collapsed .sidebar-expand-btn {
+  display: flex !important;
 }
 
 body.sidebar-collapsed .nav-tab-btn {
