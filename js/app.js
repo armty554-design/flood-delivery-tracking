@@ -249,10 +249,13 @@ function switchPage(pageId) {
       AppState.leafletMap.invalidateSize();
     }, 250);
   } else if (pageId === 'page-cctv') {
-    const iframe = document.getElementById('cctvPortalIframe');
-    if (iframe && (iframe.src === 'about:blank' || !iframe.src)) {
-      iframe.src = iframe.getAttribute('data-src') || 'https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=default&metricTemp=default&metricWind=default&zoom=9&overlay=radar&product=radar&level=surface&lat=13.7563&lon=100.5018&message=true';
-    }
+    switchCctvPortal('LONGDO');
+    setTimeout(() => {
+      initLongdoTrafficMap();
+      if (longdoMapInstance && typeof longdoMapInstance.resize === 'function') {
+        longdoMapInstance.resize();
+      }
+    }, 200);
   } else if (pageId === 'page-admin') {
     updateAdminAuthUI();
   }
@@ -907,7 +910,11 @@ let longdoEventsEnabled = true;
 let longdoCustomMarkers = [];
 
 function initLongdoTrafficMap() {
-  if (longdoMapInstance || typeof longdo === 'undefined') return;
+  if (longdoMapInstance) return;
+  if (typeof longdo === 'undefined') {
+    setTimeout(initLongdoTrafficMap, 250);
+    return;
+  }
   const mapDiv = document.getElementById('longdoMapDiv');
   if (!mapDiv) return;
 
