@@ -567,3 +567,22 @@ body.sidebar-collapsed .nav-tab-btn[title]:hover::after {
     display: none;
   }
 }
+
+/* ==========================================================================
+   60fps Performance & GPU Acceleration Optimizations
+   ========================================================================== */
+.exec-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 200px;
+}
+
+.live-pulse {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+.sidebar-wrapper, .modal-backdrop {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+

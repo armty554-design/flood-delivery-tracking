@@ -262,12 +262,18 @@ function switchPage(pageId) {
     }
   });
 
-  // Specific page activation hooks
-  if (pageId === 'page-pending-map' && AppState.leafletMap) {
-    setTimeout(() => {
-      AppState.leafletMap.invalidateSize();
-    }, 250);
+  // Specific page activation & resource-saving hooks
+  const cctvIframe = document.getElementById('cctvPortalIframe');
+  if (pageId === 'page-pending-map') {
+    if (AppState.leafletMap) {
+      setTimeout(() => {
+        AppState.leafletMap.invalidateSize();
+      }, 200);
+    }
   } else if (pageId === 'page-cctv') {
+    if (cctvIframe && cctvIframe.dataset.src && (!cctvIframe.src || cctvIframe.src === 'about:blank')) {
+      cctvIframe.src = cctvIframe.dataset.src;
+    }
     switchCctvPortal('LONGDO');
     setTimeout(() => {
       initLongdoTrafficMap();
@@ -275,8 +281,15 @@ function switchPage(pageId) {
         longdoMapInstance.resize();
       }
     }, 200);
-  } else if (pageId === 'page-admin') {
-    updateAdminAuthUI();
+  } else {
+    // Suspend heavy background CCTV streaming iframe when user is on other pages to save CPU/RAM/Battery
+    if (cctvIframe && cctvIframe.src && cctvIframe.src !== 'about:blank') {
+      cctvIframe.dataset.src = cctvIframe.src;
+      cctvIframe.src = 'about:blank';
+    }
+    if (pageId === 'page-admin') {
+      updateAdminAuthUI();
+    }
   }
 }
 window.switchPage = switchPage;
@@ -843,7 +856,7 @@ function renderDailyProgressTableAndChart() {
     if (AppState.dailyChart.options && AppState.dailyChart.options.scales && AppState.dailyChart.options.scales.y) {
       AppState.dailyChart.options.scales.y.max = Math.ceil((totalCrisis + 300) / 500) * 500;
     }
-    AppState.dailyChart.update();
+    AppState.dailyChart.update('none');
   }
 }
 window.renderDailyProgressTableAndChart = renderDailyProgressTableAndChart;
@@ -959,7 +972,7 @@ function updateChartsFromLiveDataset() {
     if (AppState.branchChart.data.datasets[0]) AppState.branchChart.data.datasets[0].data = deliveredCounts;
     if (AppState.branchChart.data.datasets[1]) AppState.branchChart.data.datasets[1].data = floodCounts;
     if (AppState.branchChart.data.datasets[2]) AppState.branchChart.data.datasets[2].data = transferCounts;
-    AppState.branchChart.update();
+    AppState.branchChart.update('none');
   }
 
   // 2. Update Daily Progression Table and Daily Chart
@@ -997,7 +1010,7 @@ function updateChartsFromLiveDataset() {
         AppState.durationChart.data.datasets[bc.datasetIdx].data = ratePoints;
       }
     });
-    AppState.durationChart.update();
+    AppState.durationChart.update('none');
   }
 }
 window.updateChartsFromLiveDataset = updateChartsFromLiveDataset;
@@ -1293,7 +1306,9 @@ function initMap() {
   const mapEl = document.getElementById('pendingMapContainer');
   if (!mapEl || typeof L === 'undefined') return;
 
-  AppState.leafletMap = L.map('pendingMapContainer').setView([13.805, 100.68], 11);
+  AppState.leafletMap = L.map('pendingMapContainer', {
+    preferCanvas: true // ⚡ Canvas-based marker rendering for smooth 60fps interaction
+  }).setView([13.805, 100.68], 11);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
