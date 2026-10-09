@@ -17,8 +17,8 @@ const pending = crisisData.pending || [];
 const resolved = crisisData.resolved || [];
 const totalCrisis = pending.length + resolved.length;
 
-assert.strictEqual(pending.length, 347, 'Pending count must be 347');
-assert.strictEqual(resolved.length, 4742, 'Resolved count must be 4,742');
+assert.strictEqual(pending.length, 216, 'Pending count must be 216');
+assert.strictEqual(resolved.length, 4873, 'Resolved count must be 4,873');
 assert.strictEqual(totalCrisis, 5089, 'Total crisis evaluated must be 5,089');
 
 console.log('[1. Data Store Integrity]');
@@ -41,18 +41,19 @@ function getThaiDateKey(isoStr) {
 // 2. Verify Daily Progression Calculation
 console.log('\n[2. Daily Progression Step Calculation]');
 const dateConfigs = [
-  { key: '2026-09-26', label: '26 ก.ย. (เสาร์)', expectedDaily: 9, expectedCum: 9, expectedPending: 5080 },
-  { key: '2026-09-27', label: '27 ก.ย. (อาทิตย์)', expectedDaily: 0, expectedCum: 9, expectedPending: 5080 },
-  { key: '2026-09-28', label: '28 ก.ย. (จันทร์)', expectedDaily: 148, expectedCum: 157, expectedPending: 4932 },
-  { key: '2026-09-29', label: '29 ก.ย. (อังคาร)', expectedDaily: 115, expectedCum: 272, expectedPending: 4817 },
-  { key: '2026-09-30', label: '30 ก.ย. (พุธ)', expectedDaily: 68, expectedCum: 340, expectedPending: 4749 },
-  { key: '2026-10-01', label: '1 ต.ค. (พฤหัส)', expectedDaily: 114, expectedCum: 454, expectedPending: 4635 },
-  { key: '2026-10-02', label: '2 ต.ค. (ศุกร์)', expectedDaily: 83, expectedCum: 537, expectedPending: 4552 },
-  { key: '2026-10-03', label: '3 ต.ค. (เสาร์)', expectedDaily: 2315, expectedCum: 2852, expectedPending: 2237 },
-  { key: '2026-10-04', label: '4 ต.ค. (อาทิตย์)', expectedDaily: 0, expectedCum: 2852, expectedPending: 2237 },
-  { key: '2026-10-05', label: '5 ต.ค. (จันทร์)', expectedDaily: 873, expectedCum: 3725, expectedPending: 1364 },
-  { key: '2026-10-06', label: '6 ต.ค. (อังคาร)', expectedDaily: 560, expectedCum: 4285, expectedPending: 804 },
-  { key: '2026-10-07', label: '7 ต.ค. (ปัจจุบัน)', expectedDaily: 457, expectedCum: 4742, expectedPending: 347 }
+  { key: '2026-09-26', label: '26 ก.ย. (เสาร์)', expectedDaily: 8, expectedCum: 8, expectedPending: 5081 },
+  { key: '2026-09-27', label: '27 ก.ย. (อาทิตย์)', expectedDaily: 0, expectedCum: 8, expectedPending: 5081 },
+  { key: '2026-09-28', label: '28 ก.ย. (จันทร์)', expectedDaily: 148, expectedCum: 156, expectedPending: 4933 },
+  { key: '2026-09-29', label: '29 ก.ย. (อังคาร)', expectedDaily: 114, expectedCum: 270, expectedPending: 4819 },
+  { key: '2026-09-30', label: '30 ก.ย. (พุธ)', expectedDaily: 68, expectedCum: 338, expectedPending: 4751 },
+  { key: '2026-10-01', label: '1 ต.ค. (พฤหัส)', expectedDaily: 102, expectedCum: 440, expectedPending: 4649 },
+  { key: '2026-10-02', label: '2 ต.ค. (ศุกร์)', expectedDaily: 67, expectedCum: 507, expectedPending: 4582 },
+  { key: '2026-10-03', label: '3 ต.ค. (เสาร์)', expectedDaily: 2257, expectedCum: 2764, expectedPending: 2325 },
+  { key: '2026-10-04', label: '4 ต.ค. (อาทิตย์)', expectedDaily: 0, expectedCum: 2764, expectedPending: 2325 },
+  { key: '2026-10-05', label: '5 ต.ค. (จันทร์)', expectedDaily: 843, expectedCum: 3607, expectedPending: 1482 },
+  { key: '2026-10-06', label: '6 ต.ค. (อังคาร)', expectedDaily: 548, expectedCum: 4155, expectedPending: 934 },
+  { key: '2026-10-07', label: '7 ต.ค. (พุธ)', expectedDaily: 452, expectedCum: 4607, expectedPending: 482 },
+  { key: '2026-10-08', label: '8 ต.ค. (ล่าสุด)', expectedDaily: 266, expectedCum: 4873, expectedPending: 216 }
 ];
 
 let runningCum = 0;
@@ -68,8 +69,8 @@ dateConfigs.forEach(d => {
   console.log(`  ✔ ${d.label}: Daily +${dailyResolved} | Cum ${runningCum} | Pending ${remPending} | Rate ${((runningCum/totalCrisis)*100).toFixed(1)}%`);
 });
 
-assert.strictEqual(runningCum, 4742, 'Final cumulative resolved must be 4,742');
-assert.strictEqual(totalCrisis - runningCum, 347, 'Final remaining pending must be 347');
+assert.strictEqual(runningCum, 4873, 'Final cumulative resolved must be 4,873');
+assert.strictEqual(totalCrisis - runningCum, 216, 'Final remaining pending must be 216');
 
 // 3. Verify HTML & JS Markup
 console.log('\n[3. Verifying index.html and docs/index.html markup]');
@@ -79,7 +80,7 @@ console.log('\n[3. Verifying index.html and docs/index.html markup]');
   assert(content.includes('id="dailyProgressHeaderBadge"'), `dailyProgressHeaderBadge must exist in ${file}`);
   assert(content.includes('id="branchMatrixTableBody"'), `branchMatrixTableBody must exist in ${file}`);
   assert(content.includes('id="branchMatrixTableFoot"'), `branchMatrixTableFoot must exist in ${file}`);
-  assert(content.includes('93.2%'), `93.2% progress rate must be present in ${file}`);
+  assert(content.includes('95.8%'), `95.8% progress rate must be present in ${file}`);
   console.log(`  ✔ ${file} verified`);
 });
 

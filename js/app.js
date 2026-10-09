@@ -147,18 +147,33 @@ function closeMobileSidebar() {
 }
 window.closeMobileSidebar = closeMobileSidebar;
 
-// Initialize Supabase Client
+// Initialize Supabase Client & Realtime Subscription
 function initSupabase() {
   const badgeEl = document.getElementById('supabaseStatusBadge');
   try {
     if (window.supabase && typeof window.supabase.createClient === 'function') {
       AppState.supabaseClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+      
+      // Subscribe to Realtime Postgres Changes so any uploaded data updates immediately!
+      try {
+        AppState.supabaseClient
+          .channel('delivery_orders_realtime_stream')
+          .on('postgres_changes', { event: '*', schema: 'public', table: SUPABASE_CONFIG.table }, (payload) => {
+            console.log('⚡ Realtime Supabase change received:', payload);
+            if (payload && payload.new) {
+              syncAppWithNewRecords([payload.new]);
+            }
+          })
+          .subscribe();
+      } catch (rtErr) {
+        console.warn('Realtime subscription notice:', rtErr);
+      }
     }
   } catch (err) {
     console.warn('Supabase initialization warning:', err);
   }
 
-  // Ping Supabase to verify live rows count
+  // Ping Supabase to verify live rows count and auto-sync latest data
   fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=count`, {
     headers: {
       'apikey': SUPABASE_CONFIG.anonKey,
@@ -184,6 +199,7 @@ function initSupabase() {
     syncLatestSupabaseDataToAppState();
   }).catch(err => {
     console.warn('Supabase ping check:', err);
+    syncLatestSupabaseDataToAppState();
   });
 }
 
@@ -691,25 +707,54 @@ function getThaiDateKey(isoStr) {
 }
 window.getThaiDateKey = getThaiDateKey;
 
+function generateDateConfigs(resolvedList, pendingList) {
+  const start = new Date('2026-09-26T00:00:00+07:00');
+  let maxTime = start.getTime();
+
+  const all = [...(resolvedList || []), ...(pendingList || [])];
+  all.forEach(item => {
+    const iso = item.resolvedDateIso || item.lastDateIso;
+    if (iso) {
+      const t = new Date(iso).getTime();
+      if (!isNaN(t) && t > maxTime) maxTime = t;
+    }
+  });
+
+  const configs = [];
+  const cur = new Date(start);
+  const thaiDays = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัส', 'ศุกร์', 'เสาร์'];
+  const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+  const end = new Date(maxTime);
+  end.setHours(23, 59, 59, 999);
+
+  while (cur <= end) {
+    const y = cur.getFullYear();
+    const m = String(cur.getMonth() + 1).padStart(2, '0');
+    const d = String(cur.getDate()).padStart(2, '0');
+    const key = `${y}-${m}-${d}`;
+    const dayName = thaiDays[cur.getDay()];
+    const mName = thaiMonths[cur.getMonth()];
+    const isLastDay = (cur.getTime() + 86400000) > end.getTime();
+    const label = isLastDay ? `${cur.getDate()} ${mName} (ล่าสุด)` : `${cur.getDate()} ${mName} (${dayName})`;
+
+    configs.push({
+      key: key,
+      label: label,
+      note: `การจัดส่งและการฟื้นฟูประจำวัน ${cur.getDate()} ${mName}`
+    });
+    cur.setDate(cur.getDate() + 1);
+  }
+  return configs;
+}
+window.generateDateConfigs = generateDateConfigs;
+
 function renderDailyProgressTableAndChart() {
   const pending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
   const resolved = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
   const totalCrisis = pending.length + resolved.length;
 
-  const dateConfigs = [
-    { key: '2026-09-26', label: '26 ก.ย. (เสาร์)', note: 'วันเกิดเหตุวิกฤตน้ำท่วมฉับพลันและเริ่มบันทึกการโอนงานสิ้นวัน' },
-    { key: '2026-09-27', label: '27 ก.ย. (อาทิตย์)', note: 'เริ่มส่งมอบน้ำบรรเทาความเดือดร้อนเบื้องต้นในพื้นที่เข้าถึงได้' },
-    { key: '2026-09-28', label: '28 ก.ย. (จันทร์)', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
-    { key: '2026-09-29', label: '29 ก.ย. (อังคาร)', note: 'คลี่คลายต่อเนื่องในโซนพื้นที่น้ำลด สาขากรุงเทพกรีฑาเริ่มกลับมาส่งได้' },
-    { key: '2026-09-30', label: '30 ก.ย. (พุธ)', note: 'ยอดจัดส่งสำเร็จสะสมแตะระดับ 340 ราย' },
-    { key: '2026-10-01', label: '1 ต.ค. (พฤหัส)', note: 'เข้าส่งซ้ำในพื้นที่น้ำท่วมสูงกรุงเทพกรีฑาและรามอินทรา' },
-    { key: '2026-10-02', label: '2 ต.ค. (ศุกร์)', note: 'เข้าแก้ไขกลุ่มเคสตกค้างและจุดน้ำลดระดับ' },
-    { key: '2026-10-03', label: '3 ต.ค. (เสาร์)', note: 'เคลียร์ส่งมอบสำเร็จครั้งใหญ่สะสมทะลุ 2,852 ราย (56.0%)' },
-    { key: '2026-10-04', label: '4 ต.ค. (อาทิตย์)', note: 'เก็บตกรอบสุดสัปดาห์ในจุดที่น้ำลด' },
-    { key: '2026-10-05', label: '5 ต.ค. (จันทร์)', note: 'เปิดสัปดาห์ใหม่ เข้าส่งสำเร็จเพิ่มอีก 873 ราย (แตะ 73.2%)' },
-    { key: '2026-10-06', label: '6 ต.ค. (อังคาร)', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 84.2%' },
-    { key: '2026-10-07', label: '7 ต.ค. (ปัจจุบัน)', note: 'สถานะปัจจุบัน จัดส่งสำเร็จ 93.2% คงเหลือกลุ่มน้ำท่วมลึกและโอนงาน 347 ราย' }
-  ];
+  const dateConfigs = generateDateConfigs(resolved, pending);
 
   let cumCount = 0;
   const labels = [];
@@ -923,13 +968,14 @@ function updateChartsFromLiveDataset() {
   // 3. Update Branch Matrix Table and Branch KPI cards
   renderBranchPerformanceMatrixAndKpis();
 
-  // 4. Update Duration Trend Chart (12-day per-branch success rate trends)
+  // 4. Update Duration Trend Chart (Dynamic per-branch success rate trends)
   if (AppState.durationChart && AppState.durationChart.data && AppState.durationChart.data.datasets) {
-    const dateKeys = [
-      '2026-09-26', '2026-09-27', '2026-09-28', '2026-09-29', '2026-09-30',
-      '2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05',
-      '2026-10-06', '2026-10-07'
-    ];
+    const dateConfigs = typeof generateDateConfigs === 'function' 
+      ? generateDateConfigs(resolved, pending) 
+      : [];
+    const dateKeys = dateConfigs.map(d => d.key);
+    AppState.durationChart.data.labels = dateConfigs.map(d => d.label);
+
     const branchConfigs = [
       { key: 'สาขาพระราม 3', datasetIdx: 0 },
       { key: 'สาขาสุขุมวิท 50', datasetIdx: 1 },
@@ -1099,6 +1145,27 @@ function syncAppWithNewRecords(records) {
         if (!r.history.includes(shortDate)) {
           r.history = `${r.history || ''} ➔ ${shortDate} [${successLabel}]`;
         }
+      } else {
+        // Newly added member with success
+        resolvedMap.set(memberId, {
+          memberId: memberId,
+          name: name,
+          branch: branch,
+          address: addr,
+          truck: truck,
+          lastDate: shortDate,
+          lastDateIso: dateIso,
+          lastReason: reason || status,
+          resolvedDate: shortDate,
+          resolvedDateIso: dateIso,
+          resolvedStatus: successLabel,
+          history: `${shortDate} [${successLabel}]`,
+          lat: lat || 13.805,
+          lng: lng || 100.68,
+          gps: lat && lng ? `${lat},${lng}` : '',
+          hasExactGps: !!(lat && lng),
+          attemptsCount: 1
+        });
       }
     } else if (failCategory) {
       if (resolvedMap.has(memberId)) {
@@ -1192,14 +1259,29 @@ window.refreshAllApplicationViews = refreshAllApplicationViews;
 
 async function syncLatestSupabaseDataToAppState() {
   try {
-    // If CRISIS_DATA is already loaded and verified from live Supabase evaluation, refresh all application views
-    if (AppState.dataStore && AppState.dataStore.pending) {
-      refreshAllApplicationViews();
-      console.log(`✅ โหลดชุดข้อมูลประเมินล่าสุดเรียบร้อย: ค้างส่ง ${AppState.dataStore.pending.length.toLocaleString()} ราย | สำเร็จแล้ว ${AppState.dataStore.resolved.length.toLocaleString()} ราย`);
-      return;
+    // If Supabase API is reachable, query latest orders to ensure any live updates/inserts are immediately merged into AppState
+    const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=*&order=delivery_date.desc,id.desc&limit=3000`, {
+      headers: {
+        'apikey': SUPABASE_CONFIG.anonKey,
+        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+      }
+    });
+    if (response.ok) {
+      const records = await response.json();
+      if (Array.isArray(records) && records.length > 0) {
+        // Feed live records into app state tracking in chronological order
+        const sortedRecords = [...records].reverse();
+        syncAppWithNewRecords(sortedRecords);
+        console.log(`⚡ ซิงค์ออเดอร์ล่าสุดจาก Supabase Cloud สำเร็จ (${records.length.toLocaleString()} รายการ)`);
+      }
     }
   } catch (err) {
     console.warn('Sync latest Supabase data notice:', err);
+  } finally {
+    refreshAllApplicationViews();
+    if (AppState.dataStore && AppState.dataStore.pending) {
+      console.log(`✅ โหลดชุดข้อมูลประเมินล่าสุดเรียบร้อย: ค้างส่ง ${AppState.dataStore.pending.length.toLocaleString()} ราย | สำเร็จแล้ว ${AppState.dataStore.resolved.length.toLocaleString()} ราย`);
+    }
   }
 }
 window.syncLatestSupabaseDataToAppState = syncLatestSupabaseDataToAppState;

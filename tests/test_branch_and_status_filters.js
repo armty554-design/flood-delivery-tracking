@@ -79,16 +79,16 @@ assert(crisisData && Array.isArray(crisisData.resolved), 'CRISIS_DATA.resolved i
 // Simulate Page 1 Branch Filter for "สาขารามอินทรา"
 const ramIntraPending = crisisData.pending.filter(p => p.branch === 'สาขารามอินทรา');
 const ramIntraResolved = crisisData.resolved.filter(r => r.branch === 'สาขารามอินทรา');
-assert(ramIntraPending.length === 351, `Ram Intra pending count is 351 (actual: ${ramIntraPending.length})`);
+assert(ramIntraPending.length === 173, `Ram Intra pending count is 173 (actual: ${ramIntraPending.length})`);
 assert(ramIntraResolved.length > 0, `Ram Intra resolved count is > 0 (actual: ${ramIntraResolved.length})`);
 
 // Simulate Page 2 Status Filter for "TRANSFER"
 const transferOnlyPins = crisisData.pending.filter(p => p.pendingCategory === 'โอนงานสิ้นวัน');
-assert(transferOnlyPins.length === 12, `Transfer category pins count is 12 (actual: ${transferOnlyPins.length})`);
+assert(transferOnlyPins.length === 2, `Transfer category pins count is 2 (actual: ${transferOnlyPins.length})`);
 
 // Simulate Page 2 Status Filter for "FLOOD"
 const floodOnlyPins = crisisData.pending.filter(p => p.pendingCategory !== 'โอนงานสิ้นวัน');
-assert(floodOnlyPins.length === 527, `Flood category pins count is 527 (actual: ${floodOnlyPins.length})`);
+assert(floodOnlyPins.length === 214, `Flood category pins count is 214 (actual: ${floodOnlyPins.length})`);
 
 console.log(`\n========================================================`);
 console.log(`RESULTS: ${passedTests} passed, ${failedTests} failed out of ${passedTests + failedTests} tests`);

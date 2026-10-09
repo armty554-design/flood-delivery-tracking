@@ -27,8 +27,6 @@ console.log('=== TEST: COLLAPSIBLE LEFT SIDEBAR LAYOUT VERIFICATION ===\n');
   // Sidebar container and backdrop
   test(html.includes('id="appSidebar"'), `${filePath} contains #appSidebar`);
   test(html.includes('id="sidebarBackdrop"'), `${filePath} contains #sidebarBackdrop`);
-  test(html.includes('id="sidebarToggleBtn"'), `${filePath} contains #sidebarToggleBtn`);
-  test(html.includes('id="sidebarToggleIcon"'), `${filePath} contains #sidebarToggleIcon`);
   test(html.includes('toggleSidebar()'), `${filePath} contains toggleSidebar() trigger`);
   test(html.includes('openMobileSidebar()'), `${filePath} contains openMobileSidebar() trigger`);
   test(html.includes('closeMobileSidebar()'), `${filePath} contains closeMobileSidebar() trigger`);

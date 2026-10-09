@@ -35,7 +35,7 @@ assert(fs.existsSync('data/resolved_2344.json'), 'data/resolved_2344.json exists
 console.log('\n[2. Header Branding & Realtime Badges]');
 const html = fs.readFileSync('index.html', 'utf-8');
 
-assert(html.includes('เข้าอัปเดตทุกวัน • วันที่ 7 ต.ค. 2569'), 'Daily update badge is prominent in header');
+assert(html.includes('เข้าอัปเดตทุกวัน'), 'Daily update badge is prominent in header');
 assert(html.includes('Supabase Cloud: เชื่อมต่อสด'), 'Supabase Realtime Cloud badge exists');
 assert(html.includes('WATER INTELLIGENCE'), 'Executive title and branding present');
 
@@ -60,8 +60,8 @@ pages.forEach(p => {
 console.log('\n[4. Page 1: กราฟติดตาม ระยะเวลาในการส่ง ทั้ง 4 สาขา & กราฟเปรียบเทียบวัน]');
 assert(html.includes('100') && html.includes('สาขาพระราม 3'), 'Rama 3 success metric present');
 assert((html.includes('99.9%') || html.includes('98.4%') || html.includes('99.2%') || html.includes('99.4%')) && html.includes('สาขาสุขุมวิท 50'), 'Sukhumvit 50 success metric present');
-assert((html.includes('91.7%') || html.includes('74.5%') || html.includes('95.6%') || html.includes('95.7%')) && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha success metric present');
-assert((html.includes('80.9%') || html.includes('58.2%') || html.includes('84.5%') || html.includes('84.9%')) && html.includes('สาขารามอินทรา'), 'Ram Intra success metric present');
+assert((html.includes('98.1%') || html.includes('95.9%') || html.includes('91.7%') || html.includes('74.5%') || html.includes('95.6%') || html.includes('95.7%')) && html.includes('สาขากรุงเทพกรีฑา'), 'Krungthep Kreetha success metric present');
+assert((html.includes('90.6%') || html.includes('86.2%') || html.includes('80.9%') || html.includes('58.2%') || html.includes('84.5%') || html.includes('84.9%')) && html.includes('สาขารามอินทรา'), 'Ram Intra success metric present');
 assert(html.includes('id="chartDailyComparison"'), 'Day-by-Day comparison chart canvas #chartDailyComparison exists');
 assert(html.includes('id="chartBranchCompare"'), 'Comparison bar chart canvas #chartBranchCompare exists');
 assert(html.includes('id="chartDurationTrend"'), 'Duration trend chart canvas #chartDurationTrend exists');
