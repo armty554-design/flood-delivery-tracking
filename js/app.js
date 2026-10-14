@@ -82,6 +82,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initSupabase();
   initNavigation();
   initCharts();
+  renderDailyProgressTableAndChart();
+  renderBranchPerformanceMatrixAndKpis();
   renderPage1FilteredView();
   initMap();
   initCCTV();
@@ -673,6 +675,20 @@ function renderPage1FilteredView() {
   if (kpiRemainingText) {
     kpiRemainingText.innerHTML = `คงเหลือค้างจริง: <strong>${pendingRate}% (${pendingCount.toLocaleString()} ราย)</strong>`;
   }
+
+  // Update dynamic badges with current pending count
+  const dailyChartPendingBadge = document.getElementById('dailyChartPendingBadge');
+  if (dailyChartPendingBadge) {
+    dailyChartPendingBadge.textContent = `${pendingCount.toLocaleString()} คงเหลือ`;
+  }
+  const navMapBadge = document.getElementById('navMapBadge');
+  if (navMapBadge && branchFilter === 'ALL' && statusFilter === 'ALL') {
+    navMapBadge.textContent = pendingCount.toLocaleString();
+  }
+  const tableTabPendingBadge = document.getElementById('tableTabPendingBadge');
+  if (tableTabPendingBadge && branchFilter === 'ALL' && statusFilter === 'ALL') {
+    tableTabPendingBadge.textContent = `${pendingCount.toLocaleString()} ราย`;
+  }
 }
 window.renderPage1FilteredView = renderPage1FilteredView;
 
@@ -762,6 +778,9 @@ function generateDateConfigs(resolvedList, pendingList) {
 }
 window.generateDateConfigs = generateDateConfigs;
 
+window.DAILY_METRICS_INFO = window.DAILY_METRICS_INFO || {};
+var DAILY_METRICS_INFO = window.DAILY_METRICS_INFO;
+
 function renderDailyProgressTableAndChart() {
   const pending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
   const resolved = (AppState.dataStore && AppState.dataStore.resolved) || (window.CRISIS_DATA && window.CRISIS_DATA.resolved) || [];
@@ -784,16 +803,14 @@ function renderDailyProgressTableAndChart() {
     const rateText = `${rateVal}%`;
 
     // Dynamically update DAILY_METRICS_INFO for drilldown modal
-    if (typeof DAILY_METRICS_INFO !== 'undefined') {
-      DAILY_METRICS_INFO[d.key] = {
-        label: `${d.label} 2569`,
-        dailyResolved,
-        cumResolved: cumCount,
-        pending: remainingPending,
-        rate: rateText,
-        note: d.note
-      };
-    }
+    DAILY_METRICS_INFO[d.key] = {
+      label: `${d.label} 2569`,
+      dailyResolved,
+      cumResolved: cumCount,
+      pending: remainingPending,
+      rate: rateText,
+      note: d.note
+    };
 
     labels.push(d.label);
     pendingData.push(remainingPending);
@@ -811,7 +828,7 @@ function renderDailyProgressTableAndChart() {
       ? `<span class="font-bold text-rose-600">${remainingPending.toLocaleString()} ราย</span>` 
       : (remainingPending > 500 ? `<span class="font-bold text-amber-600">${remainingPending.toLocaleString()} ราย</span>` : `<span class="font-extrabold text-rose-700">${remainingPending.toLocaleString()} ราย</span>`);
     const rateHtml = isFirst 
-      ? `0.0% (วันวิกฤต)` 
+      ? `${rateText} (วันวิกฤต)` 
       : `<span class="badge ${badgeClass}">${rateText}</span>`;
     const rowClass = isLast 
       ? 'bg-blue-50/70 font-semibold hover:bg-blue-100/70 cursor-pointer transition' 
@@ -845,6 +862,24 @@ function renderDailyProgressTableAndChart() {
   if (headerBadge) {
     const finalRate = totalCrisis > 0 ? ((cumCount / totalCrisis) * 100).toFixed(1) : '92.3';
     headerBadge.textContent = `ความคืบหน้า ${finalRate}%`;
+  }
+
+  // Update Red Box Badge: 216 คงเหลือ (or current pending count)
+  const dailyChartPendingBadge = document.getElementById('dailyChartPendingBadge');
+  if (dailyChartPendingBadge) {
+    dailyChartPendingBadge.textContent = `${pending.length.toLocaleString()} คงเหลือ`;
+  }
+
+  // Update Navigation Sidebar Badge
+  const navMapBadge = document.getElementById('navMapBadge');
+  if (navMapBadge) {
+    navMapBadge.textContent = pending.length.toLocaleString();
+  }
+
+  // Update Table Tab Pending Badge
+  const tableTabPendingBadge = document.getElementById('tableTabPendingBadge');
+  if (tableTabPendingBadge) {
+    tableTabPendingBadge.textContent = `${pending.length.toLocaleString()} ราย`;
   }
 
   // Update Chart
@@ -1152,34 +1187,19 @@ function syncAppWithNewRecords(records) {
         });
       } else if (resolvedMap.has(memberId)) {
         const r = resolvedMap.get(memberId);
-        r.resolvedDate = shortDate;
-        r.resolvedDateIso = dateIso;
-        r.resolvedStatus = successLabel;
+        // Retain original crisis resolution date to preserve accurate daily progression statistics
+        if (!r.resolvedDateIso) {
+          r.resolvedDate = shortDate;
+          r.resolvedDateIso = dateIso;
+          r.resolvedStatus = successLabel;
+        }
+        r.attemptsCount = (r.attemptsCount || 1) + 1;
         if (!r.history.includes(shortDate)) {
           r.history = `${r.history || ''} ➔ ${shortDate} [${successLabel}]`;
         }
-      } else {
-        // Newly added member with success
-        resolvedMap.set(memberId, {
-          memberId: memberId,
-          name: name,
-          branch: branch,
-          address: addr,
-          truck: truck,
-          lastDate: shortDate,
-          lastDateIso: dateIso,
-          lastReason: reason || status,
-          resolvedDate: shortDate,
-          resolvedDateIso: dateIso,
-          resolvedStatus: successLabel,
-          history: `${shortDate} [${successLabel}]`,
-          lat: lat || 13.805,
-          lng: lng || 100.68,
-          gps: lat && lng ? `${lat},${lng}` : '',
-          hasExactGps: !!(lat && lng),
-          attemptsCount: 1
-        });
       }
+      // Note: Normal successful deliveries for non-crisis members outside pendingMap/resolvedMap
+      // are NOT added to resolvedMap, preventing artificial inflation of the flood crisis scope.
     } else if (failCategory) {
       if (resolvedMap.has(memberId)) {
         // If member already had a previous success in the crisis period, they remain Resolved
@@ -1267,26 +1287,60 @@ function refreshAllApplicationViews() {
   if (typeof updateMapFilterButtonCounts === 'function') updateMapFilterButtonCounts();
   if (typeof renderTable === 'function') renderTable();
   if (typeof renderTruckSummaryPage === 'function') renderTruckSummaryPage();
+
+  const curPending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+  const dailyChartBadge = document.getElementById('dailyChartPendingBadge');
+  if (dailyChartBadge) dailyChartBadge.textContent = `${curPending.length.toLocaleString()} คงเหลือ`;
+  const navBadge = document.getElementById('navMapBadge');
+  if (navBadge) navBadge.textContent = curPending.length.toLocaleString();
+  const tableBadge = document.getElementById('tableTabPendingBadge');
+  if (tableBadge) tableBadge.textContent = `${curPending.length.toLocaleString()} ราย`;
 }
 window.refreshAllApplicationViews = refreshAllApplicationViews;
 
 async function syncLatestSupabaseDataToAppState() {
   try {
-    // If Supabase API is reachable, query latest orders to ensure any live updates/inserts are immediately merged into AppState
-    const response = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?select=*&order=delivery_date.desc,id.desc&limit=3000`, {
+    const curPending = (AppState.dataStore && AppState.dataStore.pending) || (window.CRISIS_DATA && window.CRISIS_DATA.pending) || [];
+    const pendingIds = curPending.map(p => String(p.memberId).trim()).filter(Boolean);
+
+    let pendingRecords = [];
+    if (pendingIds.length > 0) {
+      const batchSize = 50;
+      for (let i = 0; i < pendingIds.length; i += batchSize) {
+        const chunk = pendingIds.slice(i, i + batchSize);
+        const listStr = encodeURIComponent(chunk.join(','));
+        const resp = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/${SUPABASE_CONFIG.table}?member_id=in.(${listStr})&delivery_date=gte.2026-10-08T00:00:00&order=delivery_date.asc`, {
+          headers: {
+            'apikey': SUPABASE_CONFIG.anonKey,
+            'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
+          }
+        });
+        if (resp.ok) {
+          const recs = await resp.json();
+          if (Array.isArray(recs)) pendingRecords.push(...recs);
+        }
+      }
+    }
+
+    const floodPath = encodeURI(`/rest/v1/${SUPABASE_CONFIG.table}?or=(reason.like.*น้ำท่วม*,reason.like.*โอนงาน*)&delivery_date=gte.2026-10-08T00:00:00&order=delivery_date.asc`);
+    const floodResp = await fetch(`${SUPABASE_CONFIG.url}${floodPath}`, {
       headers: {
         'apikey': SUPABASE_CONFIG.anonKey,
         'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
       }
     });
-    if (response.ok) {
-      const records = await response.json();
-      if (Array.isArray(records) && records.length > 0) {
-        // Feed live records into app state tracking in chronological order
-        const sortedRecords = [...records].reverse();
-        syncAppWithNewRecords(sortedRecords);
-        console.log(`⚡ ซิงค์ออเดอร์ล่าสุดจาก Supabase Cloud สำเร็จ (${records.length.toLocaleString()} รายการ)`);
-      }
+    let floodRecords = [];
+    if (floodResp.ok) {
+      const fRecs = await floodResp.json();
+      if (Array.isArray(fRecs)) floodRecords = fRecs;
+    }
+
+    const allRecentRecords = [...pendingRecords, ...floodRecords];
+    allRecentRecords.sort((a, b) => new Date(a.delivery_date || 0).getTime() - new Date(b.delivery_date || 0).getTime());
+
+    if (allRecentRecords.length > 0) {
+      syncAppWithNewRecords(allRecentRecords);
+      console.log(`⚡ ซิงค์ออเดอร์วิกฤตล่าสุดจาก Supabase Cloud สำเร็จ (${allRecentRecords.length.toLocaleString()} รายการ)`);
     }
   } catch (err) {
     console.warn('Sync latest Supabase data notice:', err);
