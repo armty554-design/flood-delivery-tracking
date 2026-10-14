@@ -2316,7 +2316,7 @@ function exportTableToCsv() {
 // ==========================================
 // 7. Page 1: Daily Detail Modal (Drilldown)
 // ==========================================
-const DAILY_METRICS_INFO = {
+var DAILY_METRICS_INFO = window.DAILY_METRICS_INFO = Object.assign({
   '2026-09-26': { label: '26 ก.ย. 2569 (เสาร์)', dailyResolved: 0, cumResolved: 0, pending: 5072, rate: '0.0%', note: 'วันเกิดเหตุวิกฤตน้ำท่วมฉับพลันและเริ่มบันทึกการโอนงานสิ้นวัน' },
   '2026-09-27': { label: '27 ก.ย. 2569 (อาทิตย์)', dailyResolved: 4, cumResolved: 4, pending: 5068, rate: '0.1%', note: 'เริ่มส่งมอบน้ำบรรเทาความเดือดร้อนเบื้องต้นในพื้นที่เข้าถึงได้' },
   '2026-09-28': { label: '28 ก.ย. 2569 (จันทร์)', dailyResolved: 145, cumResolved: 149, pending: 4923, rate: '2.9%', note: 'เปิดปฏิบัติการฟื้นฟูเชิงรุก ส่งสำเร็จเพิ่มขึ้นอย่างมีนัยสำคัญ' },
@@ -2329,7 +2329,7 @@ const DAILY_METRICS_INFO = {
   '2026-10-05': { label: '5 ต.ค. 2569 (จันทร์)', dailyResolved: 865, cumResolved: 3708, pending: 1364, rate: '73.1%', note: 'เปิดสัปดาห์ใหม่ เข้าส่งสำเร็จเพิ่มอีก 865 ราย (แตะ 73.1%)' },
   '2026-10-06': { label: '6 ต.ค. 2569 (อังคาร)', dailyResolved: 535, cumResolved: 4243, pending: 829, rate: '83.7%', note: 'อัตราความสำเร็จสะสมเพิ่มเป็น 83.7%' },
   '2026-10-07': { label: '7 ต.ค. 2569 (ปัจจุบัน)', dailyResolved: 436, cumResolved: 4679, pending: 393, rate: '92.3%', note: 'สถานะปัจจุบัน จัดส่งสำเร็จ 92.3% คงเหลือกลุ่มน้ำท่วมลึกและโอนงาน 393 ราย' }
-};
+}, window.DAILY_METRICS_INFO || {});
 
 AppState.currentDailyModalDate = '2026-09-28';
 AppState.currentDailyModalItems = [];
