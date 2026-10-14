@@ -31,10 +31,10 @@ window.AppState = {
   mapMarkersGroup: null,
   branchChart: null,
   durationChart: null,
-  // Truck & Branch Summary State
-  truckSummaryDateMode: 'single',
+  // Truck & Branch Summary State (Default: 26 Sept to Present)
+  truckSummaryDateMode: 'range',
   truckSummaryDate: '',
-  truckSummaryStartDate: '',
+  truckSummaryStartDate: '2026-09-26',
   truckSummaryEndDate: '',
   truckSummaryTruckFilter: '',
   truckSummaryBranchFilter: 'ALL',
@@ -291,6 +291,10 @@ function switchPage(pageId) {
     }
     if (pageId === 'page-admin') {
       updateAdminAuthUI();
+    } else if (pageId === 'page-truck-summary') {
+      if (typeof renderTruckSummaryPage === 'function') {
+        renderTruckSummaryPage();
+      }
     }
   }
 }
@@ -735,6 +739,34 @@ function getThaiDateKey(isoStr) {
   }
 }
 window.getThaiDateKey = getThaiDateKey;
+
+function getItemBangkokDate(item) {
+  if (!item) return '';
+  if (item.lastDateIso) {
+    const k = getThaiDateKey(item.lastDateIso);
+    if (k) return k;
+  }
+  if (item.resolvedDateIso) {
+    const k = getThaiDateKey(item.resolvedDateIso);
+    if (k) return k;
+  }
+  if (item.lastDate) {
+    const m = String(item.lastDate).match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);
+    if (m) {
+      let y = parseInt(m[3], 10);
+      if (y > 2400) y -= 543;
+      return `${y}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+    }
+    const ym = String(item.lastDate).match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+    if (ym) {
+      let y = parseInt(ym[1], 10);
+      if (y > 2400) y -= 543;
+      return `${y}-${ym[2].padStart(2, '0')}-${ym[3].padStart(2, '0')}`;
+    }
+  }
+  return '';
+}
+window.getItemBangkokDate = getItemBangkokDate;
 
 function generateDateConfigs(resolvedList, pendingList) {
   const start = new Date('2026-09-26T00:00:00+07:00');
@@ -2110,18 +2142,19 @@ function getFilteredTableData() {
 
     // 4. Date Filter
     if (dateMode === 'single' && singleDate) {
+      const bkkDate = getItemBangkokDate(item);
       const [y, m, d] = singleDate.split('-');
       const shortThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${parseInt(y, 10) + 543}`;
       const shortAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
       const hist = item.history || '';
       const iso = item.lastDateIso || '';
       const lastD = item.lastDate || '';
-      const matches = iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
+      const matches = bkkDate === singleDate || iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
       if (!matches) return false;
     } else if (dateMode === 'range' && (startDate || endDate)) {
-      const iso = item.lastDateIso ? item.lastDateIso.substring(0, 10) : '';
-      if (startDate && iso && iso < startDate) return false;
-      if (endDate && iso && iso > endDate) return false;
+      const bkkDate = getItemBangkokDate(item);
+      if (startDate && bkkDate && bkkDate < startDate) return false;
+      if (endDate && bkkDate && bkkDate > endDate) return false;
     }
 
     // 5. Search Query
@@ -4094,6 +4127,10 @@ function initTruckSummary() {
   const endDateInput = document.getElementById('truckSummaryEndDateInput');
   const searchInput = document.getElementById('truckSummarySearchInput');
 
+  if (startDateInput && !startDateInput.value) {
+    startDateInput.value = AppState.truckSummaryStartDate || '2026-09-26';
+  }
+
   if (dateInput) {
     dateInput.addEventListener('change', () => {
       AppState.truckSummaryDate = dateInput.value;
@@ -4119,7 +4156,7 @@ function initTruckSummary() {
     });
   }
 
-  renderTruckSummaryPage();
+  setTruckSummaryDateMode(AppState.truckSummaryDateMode || 'range');
 }
 
 function setTruckSummaryDateMode(mode) {
@@ -4159,10 +4196,10 @@ function setTruckSummaryDatePreset(mode, val1, val2) {
     if (document.getElementById('truckSummaryDateInput')) document.getElementById('truckSummaryDateInput').value = val1;
   } else if (mode === 'range') {
     setTruckSummaryDateMode('range');
-    AppState.truckSummaryStartDate = val1;
-    AppState.truckSummaryEndDate = val2;
-    if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = val1;
-    if (document.getElementById('truckSummaryEndDateInput')) document.getElementById('truckSummaryEndDateInput').value = val2;
+    AppState.truckSummaryStartDate = val1 || '2026-09-26';
+    AppState.truckSummaryEndDate = val2 || '';
+    if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = AppState.truckSummaryStartDate;
+    if (document.getElementById('truckSummaryEndDateInput')) document.getElementById('truckSummaryEndDateInput').value = AppState.truckSummaryEndDate;
   }
   renderTruckSummaryPage();
 }
@@ -4185,16 +4222,16 @@ function resetTruckSummaryFilters() {
   AppState.truckSummaryBranchFilter = 'ALL';
   AppState.truckSummaryTruckFilter = '';
   AppState.truckSummaryDate = '';
-  AppState.truckSummaryStartDate = '';
+  AppState.truckSummaryStartDate = '2026-09-26';
   AppState.truckSummaryEndDate = '';
 
   if (document.getElementById('truckSummarySearchInput')) document.getElementById('truckSummarySearchInput').value = '';
   if (document.getElementById('truckSummaryDateInput')) document.getElementById('truckSummaryDateInput').value = '';
-  if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = '';
+  if (document.getElementById('truckSummaryStartDateInput')) document.getElementById('truckSummaryStartDateInput').value = '2026-09-26';
   if (document.getElementById('truckSummaryEndDateInput')) document.getElementById('truckSummaryEndDateInput').value = '';
 
   setTruckSummaryBranch('ALL');
-  setTruckSummaryDateMode('single');
+  setTruckSummaryDateMode('range');
 }
 window.resetTruckSummaryFilters = resetTruckSummaryFilters;
 
@@ -4214,17 +4251,18 @@ function renderTruckSummaryPage() {
   // Filter raw data according to date filters
   const filteredCrisis = allCrisis.filter(item => {
     if (dateMode === 'single' && singleDate) {
+      const bkkDate = getItemBangkokDate(item);
       const [y, m, d] = singleDate.split('-');
       const shortThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${parseInt(y, 10) + 543}`;
       const shortAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
       const hist = item.history || '';
       const iso = item.lastDateIso || '';
       const lastD = item.lastDate || '';
-      return iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
+      return bkkDate === singleDate || iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
     } else if (dateMode === 'range' && (startDate || endDate)) {
-      const iso = item.lastDateIso ? item.lastDateIso.substring(0, 10) : '';
-      if (startDate && iso && iso < startDate) return false;
-      if (endDate && iso && iso > endDate) return false;
+      const bkkDate = getItemBangkokDate(item);
+      if (startDate && bkkDate && bkkDate < startDate) return false;
+      if (endDate && bkkDate && bkkDate > endDate) return false;
     }
     return true;
   });
@@ -4467,7 +4505,32 @@ function openTruckDetailModal(truckNumber, branch) {
   const transferEl = document.getElementById('truckModalTransfer');
 
   const allCrisis = [...(AppState.dataStore.pending || []), ...(AppState.dataStore.resolved || [])];
-  const truckItems = allCrisis.filter(item => String(item.truck) === String(truckNumber));
+
+  // Respect current truckSummary date filters for complete consistency
+  const dateMode = AppState.truckSummaryDateMode;
+  const singleDate = AppState.truckSummaryDate;
+  const startDate = AppState.truckSummaryStartDate;
+  const endDate = AppState.truckSummaryEndDate;
+
+  const dateFiltered = allCrisis.filter(item => {
+    if (dateMode === 'single' && singleDate) {
+      const bkkDate = getItemBangkokDate(item);
+      const [y, m, d] = singleDate.split('-');
+      const shortThai = `${parseInt(d, 10)}/${parseInt(m, 10)}/${parseInt(y, 10) + 543}`;
+      const shortAd = `${parseInt(d, 10)}/${parseInt(m, 10)}/${y}`;
+      const hist = item.history || '';
+      const iso = item.lastDateIso || '';
+      const lastD = item.lastDate || '';
+      return bkkDate === singleDate || iso.startsWith(singleDate) || lastD === shortThai || lastD === shortAd || hist.includes(shortThai) || hist.includes(shortAd);
+    } else if (dateMode === 'range' && (startDate || endDate)) {
+      const bkkDate = getItemBangkokDate(item);
+      if (startDate && bkkDate && bkkDate < startDate) return false;
+      if (endDate && bkkDate && bkkDate > endDate) return false;
+    }
+    return true;
+  });
+
+  const truckItems = dateFiltered.filter(item => String(item.truck) === String(truckNumber));
 
   AppState.activeTruckModalItems = truckItems;
 
